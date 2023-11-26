@@ -3,15 +3,15 @@
 	"id": "zombies_zenxarch",
 	"version": "${version}",
 	"name": "Zombies",
-	"description": "This is an example description! Tell everyone what your mod is about!",
+	"description": "A mod for the people who likes zombies",
 	"authors": [
-		"Me!"
+		"ZenXArch"
 	],
 	"contact": {
 		"homepage": "https://fabricmc.net/",
 		"sources": "https://github.com/FabricMC/fabric-example-mod"
 	},
-	"license": "CC0-1.0",
+	"license": "Mozilla Public License 2.0",
 	"icon": "assets/zombies_zenxarch/icon.png",
 	"environment": "*",
 	"entrypoints": {
@@ -25,10 +25,6 @@
 	"depends": {
 		"fabricloader": ">=0.14.24",
 		"minecraft": "~1.20.2",
-		"java": ">=17",
-		"fabric-api": "*"
-	},
-	"suggests": {
-		"another-mod": "*"
+		"java": ">=17"
 	}
 }
