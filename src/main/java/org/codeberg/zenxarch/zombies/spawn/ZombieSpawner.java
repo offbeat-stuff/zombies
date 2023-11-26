@@ -17,10 +17,10 @@ import java.util.Random;
 public class ZombieSpawner {
 
     private static final Xoroshiro128PlusPlusRandom zombie_spawn_random = new Xoroshiro128PlusPlusRandom((new Random()).nextLong());
-    private static final boolean Debug = true;
+    private static final boolean Debug = false;
 
     public static void spawn_zombies_for_each_world(MinecraftServer server) {
-        final int num_tries = 30;
+        final int num_tries = 5;
         server.getWorlds().forEach(world -> {
             for (int i = 0;i < num_tries;i++) {
                 var selected_player = world.getRandomAlivePlayer();
