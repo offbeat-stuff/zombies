@@ -3,7 +3,8 @@
   "package": "org.codeberg.zenxarch.zombies.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "MinecraftServerMixin"
+    "MinecraftServerMixin",
+    "ZombieEntityMixin"
   ],
   "injectors": {
     "defaultRequire": 1

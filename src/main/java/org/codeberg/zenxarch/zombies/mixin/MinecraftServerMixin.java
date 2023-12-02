@@ -9,8 +9,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(MinecraftServer.class)
 public class MinecraftServerMixin {
-	@Inject(at = @At("TAIL"), method = "tickWorlds")
-	private void zenxarch$zombies$tick_end(CallbackInfo info) {
-		ZombieSpawner.spawn_zombies_for_each_world((MinecraftServer)(Object)this);
-	}
+  @Inject(at = @At("TAIL"), method = "tickWorlds")
+  private void zenxarch$zombies$tick_end(CallbackInfo info) {
+    ZombieSpawner.spawn_zombies_for_each_world((MinecraftServer)(Object)this);
+  }
 }
