@@ -2,6 +2,7 @@ package org.codeberg.zenxarch.zombies.mixin;
 
 import net.minecraft.entity.mob.ZombieEntity;
 import org.codeberg.zenxarch.zombies.ifaces.ZombieAbilityInfo;
+import org.codeberg.zenxarch.zombies.info.ZombieInfo;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -16,8 +17,6 @@ public abstract class ZombieEntityMixin implements ZombieAbilityInfo {
 
   @Unique private boolean zenxarch$zombies$isDaylightImmune = false;
 
-  protected abstract boolean isAffectedByDaylight();
-
   @Inject(method = "burnsInDaylight", at = @At("HEAD"), cancellable = true)
   public void
   zenxarch$zombies$modify_burnsInDaylight(CallbackInfoReturnable<Boolean> cir) {
@@ -28,7 +27,8 @@ public abstract class ZombieEntityMixin implements ZombieAbilityInfo {
   public void zenxarch$zombies$modify_fireTicks(CallbackInfo ci) {
     var zombie = ((ZombieEntity)(Object)this);
     if (this.zenxarch$zombies$isFireImmune &&
-        (zenxarch$zombies$isDaylightImmune || !this.isAffectedByDaylight())) {
+        (zenxarch$zombies$isDaylightImmune ||
+         !ZombieInfo.isAffectedByDaylight((ZombieEntity)(Object)this))) {
       zombie.extinguish();
     }
   }

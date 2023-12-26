@@ -1,16 +1,12 @@
 package org.codeberg.zenxarch.zombies.spawn;
 
 import java.util.Random;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.SpawnReason;
-import net.minecraft.entity.SpawnRestriction;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.random.Xoroshiro128PlusPlusRandom;
-import net.minecraft.world.SpawnHelper;
 import org.codeberg.zenxarch.zombies.Zombies;
 
 public class ZombieSpawner {
@@ -41,17 +37,12 @@ public class ZombieSpawner {
 
   private static void spawn_zombie_at_given_pos(ServerWorld world,
                                                 BlockPos pos) {
-    if (!SpawnHelper.canSpawn(SpawnRestriction.Location.ON_GROUND, world, pos,
-                              EntityType.ZOMBIE)) {
+    var zombieOpt = ZombieFactory.BASE_ZOMBIE.getSpawnedZombie(world, pos);
+    if (zombieOpt.isEmpty()) {
       return;
     }
 
-    var zombie = EntityType.ZOMBIE.spawn(world, pos, SpawnReason.NATURAL);
-    if (zombie == null) {
-      return;
-    }
-    zombie.initialize(world, world.getLocalDifficulty(pos), SpawnReason.NATURAL,
-                      null, null);
+    var zombie = zombieOpt.get();
 
     if (Debug) {
       zombie.addStatusEffect(

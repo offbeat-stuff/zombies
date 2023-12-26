@@ -1,80 +1,94 @@
 package org.codeberg.zenxarch.zombies.spawn;
 
-import java.util.function.Predicate;
-import net.minecraft.block.BlockState;
+import java.util.Optional;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.SpawnRestriction;
-import net.minecraft.fluid.FluidState;
+import net.minecraft.entity.SpawnReason;
+import net.minecraft.entity.mob.ZombieEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.LightType;
-import net.minecraft.world.SpawnHelper;
-import net.minecraft.world.World;
+import net.minecraft.util.math.Box;
+import net.minecraft.util.math.MathHelper;
+
+import org.codeberg.zenxarch.zombies.info.WorldInfo;
 
 public class ZombieFactory {
 
-  public record ZombiePredicateEntry(EntityType<?> entityType,
-                                     Predicate<ServerWorld> dimensionCheck,
-                                     Predicate<PositionDetails> posCheck) {
-    public static ZombiePredicateEntry default_entry = new ZombiePredicateEntry(
-        EntityType.ZOMBIE,
-        world
-        -> world.getRegistryKey().equals(World.OVERWORLD),
-        positionDetails
-        -> SpawnHelper.canSpawn(SpawnRestriction.getLocation(EntityType.ZOMBIE),
-                                positionDetails.world, positionDetails.pos,
-                                EntityType.ZOMBIE));
+  public static Box createSimpleBoundingBox(EntityType<?> entityType,
+                                            BlockPos pos) {
+    return entityType.createSimpleBoundingBox(pos.getX() + 0.5, pos.getY(),
+                                              pos.getZ() + 0.5);
+  }
 
-    public ZombiePredicateEntry withEntityType(EntityType<?> entityType1) {
-      return new ZombiePredicateEntry(entityType1, dimensionCheck, posCheck);
-    }
+  public static void setZombiePos(ServerWorld world, ZombieEntity zombie,
+                                  BlockPos pos) {
+    zombie.refreshPositionAndAngles(
+        (double)pos.getX() + 0.5, (double)pos.getY(), (double)pos.getZ() + 0.5,
+        MathHelper.wrapDegrees(world.random.nextFloat() * 360.0F), 0.0F);
 
-    public ZombiePredicateEntry withDimensionCheck(
-        Predicate<ServerWorld> dimensionCheck1) {
-      return new ZombiePredicateEntry(entityType, dimensionCheck1, posCheck);
-    }
+    zombie.headYaw = zombie.getYaw();
+    zombie.bodyYaw = zombie.getYaw();
+  }
 
-    public ZombiePredicateEntry withPosCheck(
-        Predicate<PositionDetails> posCheck1) {
-      return new ZombiePredicateEntry(entityType, dimensionCheck, posCheck1);
+  public interface ZombieEntry {
+
+    public boolean posCheck(ServerWorld world, BlockPos pos);
+
+    public Optional<ZombieEntity> create(ServerWorld world, BlockPos pos);
+
+    default Optional<ZombieEntity> getSpawnedZombie(ServerWorld world,BlockPos pos) {
+      if (!posCheck(world, pos)) {
+        return Optional.empty();
+      }
+  
+      var zombieOpt = ZombieFactory.BASE_ZOMBIE.create(world, pos);
+      if (zombieOpt.isEmpty()) {
+        return zombieOpt;
+      }
+      var zombie = zombieOpt.get();
+  
+      world.spawnEntity(zombie);
+
+      return Optional.of(zombie);
     }
   }
 
-  public record ZombieAbilitesEntry(boolean fireImmunity,
-                                    boolean daylightImmunity, int strength) {
-    public static ZombieAbilitesEntry default_entry =
-        new ZombieAbilitesEntry(false, false, 1);
-  }
+  public static ZombieEntry BASE_ZOMBIE = new ZombieEntry() {
+    @Override
+    public boolean posCheck(ServerWorld world, BlockPos pos) {
+      if (!SpawnConditions.isWorldHostile(world) || !world.isNight() ||
+          !WorldInfo.isOverworld(world)) {
+        return false;
+      }
 
-  public record PositionDetails(ServerWorld world, BlockPos feetPos,
-                                EntityType<?> entityType,
-                                PositionDetailsData data) {
+      var simpleBoundingBox = createSimpleBoundingBox(EntityType.ZOMBIE, pos);
 
-    private PositionDetails(ServerWorld world, BlockPos feetPos,
-                            EntityType<?> entityType) {
-      this.world = world;
-      this.feetPos = feetPos;
-      this.entityType = entityType;
+      if (!SpawnConditions.isBoxClear(world, simpleBoundingBox) ||
+          !SpawnConditions.canSpawn(world, pos, EntityType.ZOMBIE,
+                                    simpleBoundingBox, false)) {
+        return false;
+      }
 
-      this.data = new PositionDetailsData(
-          world.getLightLevel(LightType.BLOCK, this.feetPos),
-          world.getLightLevel(LightType.SKY, this.feetPos),
-          world.getFluidState(this.feetPos),
-          world.getFluidState(this.feetPos.down()),
-          world.getFluidState(this.feetPos.up()), world.getBlockState(feetPos),
-          world.getBlockState(feetPos.down()),
-          world.getBlockState(feetPos.up()));
+      return true;
     }
 
-    public static PositionDetails createPositionDetails(
-        ServerWorld world, BlockPos feetPos, EntityType<?> entityType) {
-      return new PositionDetails(world, feetPos, entityType);
-    }
-  }
+    @Override
+    public Optional<ZombieEntity> create(ServerWorld world, BlockPos pos) {
+      var zombie = EntityType.ZOMBIE.create(world);
 
-  public record PositionDetailsData(int blocklight, int skylight,
-                                    FluidState fluidAt, FluidState fluidBelow,
-                                    FluidState fluidAbove, BlockState blockAt,
-                                    BlockState blockBelow,
-                                    BlockState blockAbove) {}
+      if (zombie == null) {
+        return Optional.empty();
+      }
+
+      setZombiePos(world, zombie, pos);
+
+      if (!SpawnConditions.doesEntityFit(world, zombie)) {
+        return Optional.empty();
+      }
+
+      zombie.initialize(world, world.getLocalDifficulty(pos),
+                        SpawnReason.NATURAL, null, null);
+
+      return Optional.of(zombie);
+    }
+  };
 }
