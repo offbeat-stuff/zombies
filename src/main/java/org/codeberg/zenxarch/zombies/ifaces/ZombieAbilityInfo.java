@@ -2,9 +2,9 @@ package org.codeberg.zenxarch.zombies.ifaces;
 
 public interface ZombieAbilityInfo {
 
-  public void setFireImmunity(boolean fireImmune);
-  public void setDaylightImmune(boolean daylightImmune);
+  public void setBurnsInGeneral(boolean burnsInGeneral);
+  public void setBurnsUnderSun(boolean burnsUnderSun);
 
-  public boolean getFireImmune();
-  public boolean getDaylightImmune();
+  public boolean getBurnsInGeneral();
+  public boolean getBurnsUnderSun();
 }

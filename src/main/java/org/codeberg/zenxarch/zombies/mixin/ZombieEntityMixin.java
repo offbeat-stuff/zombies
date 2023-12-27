@@ -13,43 +13,46 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(ZombieEntity.class)
 public abstract class ZombieEntityMixin implements ZombieAbilityInfo {
 
-  @Unique private boolean zenxarch$zombies$isFireImmune = false;
+  @Unique private boolean zenxarch$zombies$burnsInGeneral = true;
 
-  @Unique private boolean zenxarch$zombies$isDaylightImmune = false;
+  @Unique private boolean zenxarch$zombies$burnsUnderSun = true;
 
   @Inject(method = "burnsInDaylight", at = @At("HEAD"), cancellable = true)
   public void
   zenxarch$zombies$modify_burnsInDaylight(CallbackInfoReturnable<Boolean> cir) {
-    cir.setReturnValue(!zenxarch$zombies$isDaylightImmune);
+    cir.setReturnValue(zenxarch$zombies$burnsUnderSun);
   }
 
   @Inject(method = "tickMovement", at = @At("HEAD"))
   public void zenxarch$zombies$modify_fireTicks(CallbackInfo ci) {
     var zombie = ((ZombieEntity)(Object)this);
-    if (this.zenxarch$zombies$isFireImmune &&
-        (zenxarch$zombies$isDaylightImmune ||
-         !ZombieInfo.isAffectedByDaylight((ZombieEntity)(Object)this))) {
+    if (!this.zenxarch$zombies$burnsUnderSun &&
+        ZombieInfo.isAffectedByDaylight(zombie)) {
+      zombie.extinguish();
+    }
+
+    if (!this.zenxarch$zombies$burnsInGeneral) {
       zombie.extinguish();
     }
   }
 
-  @Unique
-  public void setFireImmunity(boolean fireImmune) {
-    zenxarch$zombies$isFireImmune = fireImmune;
+  @Override
+  public void setBurnsInGeneral(boolean burnsInGeneral) {
+    this.zenxarch$zombies$burnsInGeneral = burnsInGeneral;
   }
 
-  @Unique
-  public boolean getFireImmune() {
-    return zenxarch$zombies$isFireImmune;
+  @Override
+  public void setBurnsUnderSun(boolean burnsUnderSun) {
+    this.zenxarch$zombies$burnsUnderSun = burnsUnderSun;
   }
 
-  @Unique
-  public void setDaylightImmune(boolean daylightImmune) {
-    zenxarch$zombies$isDaylightImmune = daylightImmune;
+  @Override
+  public boolean getBurnsInGeneral() {
+    return this.zenxarch$zombies$burnsInGeneral;
   }
 
-  @Unique
-  public boolean getDaylightImmune() {
-    return zenxarch$zombies$isDaylightImmune;
+  @Override
+  public boolean getBurnsUnderSun() {
+    return this.zenxarch$zombies$burnsUnderSun;
   }
 }
