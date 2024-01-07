@@ -11,32 +11,31 @@ import org.codeberg.zenxarch.zombies.Zombies;
 
 public class ZombieSpawner {
 
-  private static final Xoroshiro128PlusPlusRandom zombie_spawn_random =
+  private static final Xoroshiro128PlusPlusRandom ZOMBIE_SPAWN_RANDOM =
       new Xoroshiro128PlusPlusRandom((new Random()).nextLong());
-  private static final boolean Debug = false;
+  private static final boolean DEBUG_MODE = false;
+  private static final int NUM_TRIES = 5;
+  private static final int MAX_POS = 64;
 
-  public static void spawn_zombies_for_each_world(MinecraftServer server) {
-    final int num_tries = 5;
+  public static void spawnZombiesForEachWorld(MinecraftServer server) {
     server.getWorlds().forEach(world -> {
-      for (int i = 0; i < num_tries; i++) {
-        var selected_player = world.getRandomAlivePlayer();
-        if (selected_player == null) {
-          continue;
+      for (int i = 0; i < NUM_TRIES; i++) {
+        var selectedPlayer = world.getRandomAlivePlayer();
+        if (selectedPlayer == null) {
+          break;
         }
-        spawn_zombies_around_given_pos(world, selected_player.getBlockPos());
+        spawnZombiesAroundGivenPos(world, selectedPlayer.getBlockPos());
       }
     });
   }
 
-  private static void spawn_zombies_around_given_pos(ServerWorld world,
-                                                     BlockPos pos) {
-    final var spawn_pos = new_random_position_for_zombie_spawn().add(pos);
-
-    spawn_zombie_at_given_pos(world, spawn_pos);
+  private static void spawnZombiesAroundGivenPos(ServerWorld world,
+                                                 BlockPos pos) {
+    var spawnPos = getRandomPositionForZombieSpawn().add(pos);
+    spawnZombieAtGivenPos(world, spawnPos);
   }
 
-  private static void spawn_zombie_at_given_pos(ServerWorld world,
-                                                BlockPos pos) {
+  private static void spawnZombieAtGivenPos(ServerWorld world, BlockPos pos) {
     var zombieOpt = ZombieFactory.BASE_ZOMBIE.getSpawnedZombie(world, pos);
     if (zombieOpt.isEmpty()) {
       return;
@@ -44,7 +43,7 @@ public class ZombieSpawner {
 
     var zombie = zombieOpt.get();
 
-    if (Debug) {
+    if (DEBUG_MODE) {
       zombie.addStatusEffect(
           new StatusEffectInstance(StatusEffects.GLOWING, -1));
       zombie.addStatusEffect(
@@ -53,10 +52,9 @@ public class ZombieSpawner {
     }
   }
 
-  private static BlockPos new_random_position_for_zombie_spawn() {
-    final int max_pos = 64;
-    return new BlockPos(zombie_spawn_random.nextBetween(-max_pos, max_pos),
-                        zombie_spawn_random.nextBetween(-max_pos, max_pos),
-                        zombie_spawn_random.nextBetween(-max_pos, max_pos));
+  private static BlockPos getRandomPositionForZombieSpawn() {
+    return new BlockPos(ZOMBIE_SPAWN_RANDOM.nextBetween(-MAX_POS, MAX_POS),
+                        ZOMBIE_SPAWN_RANDOM.nextBetween(-MAX_POS, MAX_POS),
+                        ZOMBIE_SPAWN_RANDOM.nextBetween(-MAX_POS, MAX_POS));
   }
 }

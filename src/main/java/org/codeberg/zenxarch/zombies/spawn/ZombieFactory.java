@@ -8,7 +8,6 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
-
 import org.codeberg.zenxarch.zombies.info.WorldInfo;
 
 public class ZombieFactory {
@@ -35,17 +34,18 @@ public class ZombieFactory {
 
     public Optional<ZombieEntity> create(ServerWorld world, BlockPos pos);
 
-    default Optional<ZombieEntity> getSpawnedZombie(ServerWorld world,BlockPos pos) {
+    default Optional<ZombieEntity> getSpawnedZombie(ServerWorld world,
+                                                    BlockPos pos) {
       if (!posCheck(world, pos)) {
         return Optional.empty();
       }
-  
+
       var zombieOpt = ZombieFactory.BASE_ZOMBIE.create(world, pos);
       if (zombieOpt.isEmpty()) {
         return zombieOpt;
       }
       var zombie = zombieOpt.get();
-  
+
       world.spawnEntity(zombie);
 
       return Optional.of(zombie);
