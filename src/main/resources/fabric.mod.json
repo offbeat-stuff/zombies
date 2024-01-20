@@ -23,8 +23,8 @@
 		"zombies_zenxarch.mixins.json"
 	],
 	"depends": {
-		"fabricloader": ">=0.14.24",
-		"minecraft": "~1.20.2",
+		"fabricloader": ">=0.15.5",
+		"minecraft": "~1.20.4",
 		"java": ">=17"
 	}
 }
