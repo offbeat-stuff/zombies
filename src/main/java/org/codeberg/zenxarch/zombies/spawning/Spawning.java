@@ -15,6 +15,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.SpawnHelper;
+import org.codeberg.zenxarch.zombies.difficulty.ExtendedDifficulty;
 import org.codeberg.zenxarch.zombies.difficulty.NewZombie;
 
 public class Spawning {
@@ -45,7 +46,9 @@ public class Spawning {
 
   private static Optional<BlockPos> findNearestWorking(ServerWorld world,
                                                        BlockPos pos) {
-    return IntStream.range(0, 10)
+    return IntStream
+        .range(0, 2 + (int)(ExtendedDifficulty.calculateDifficulty(world, pos) *
+                            23.0))
         .mapToObj(i
                   -> pos.add(zrx.nextBetween(-64, 64), zrx.nextBetween(-64, 64),
                              zrx.nextBetween(-64, 64)))
