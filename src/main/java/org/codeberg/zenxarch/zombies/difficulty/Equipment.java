@@ -11,7 +11,6 @@ import net.minecraft.item.Items;
 import net.minecraft.item.SwordItem;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Pair;
-import org.codeberg.zenxarch.zombies.Zombies;
 
 public abstract class Equipment {
 

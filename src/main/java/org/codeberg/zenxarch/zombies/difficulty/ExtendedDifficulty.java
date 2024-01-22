@@ -67,16 +67,21 @@ public class ExtendedDifficulty {
     return (int)MathHelper.clampedLerp(15.0, 40.0, fin);
   }
 
+  private static double mapToCurve(double input) {
+    return (Math.pow((input + 1), -2) - 1) * (-4.0 / 3.0);
+  }
+
   private static <T extends Item>
       Item getItemForList(Pair<List<T>, List<T>> list, boolean lowerHalf) {
-    if (lowerHalf) {
-      var f = list.getLeft();
-      var index = zrx.nextBetween(0, f.size() - 1);
-      return f.get(index);
+    var f = lowerHalf ? list.getLeft() : list.getRight();
+    var r = zrx.nextDouble();
+    for (int i = f.size() - 1; i >= 0; i--) {
+      var x = mapToCurve((double)i / f.size());
+      if (r < x) {
+        return f.get(i);
+      }
     }
-    var f = list.getRight();
-    var index = zrx.nextBetween(0, f.size() - 1);
-    return f.get(index);
+    return f.get(0);
   }
 
   private static Item getItemForSlot(EquipmentSlot slot, boolean lowerHalf) {
@@ -114,14 +119,15 @@ public class ExtendedDifficulty {
       return Optional.of(Items.SHIELD);
     }
 
-    if (zrx.nextDouble() > 0.1) {
+    var ef = endFactor();
+    if (zrx.nextDouble() < 0.5 * ef) {
       Optional.of(getItemForSlot(slot, true));
     }
 
-    if (zrx.nextDouble() > endFactor() * 0.1) {
-      return Optional.empty();
+    if (zrx.nextDouble() < 0.05 * ef) {
+      Optional.of(getItemForSlot(slot, false));
     }
 
-    return Optional.of(getItemForSlot(slot, false));
+    return Optional.empty();
   }
 }
