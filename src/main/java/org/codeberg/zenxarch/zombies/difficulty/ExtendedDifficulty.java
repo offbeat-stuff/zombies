@@ -4,8 +4,10 @@ import static org.codeberg.zenxarch.zombies.Zombies.zrx;
 
 import java.util.List;
 import java.util.Optional;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Pair;
@@ -129,5 +131,22 @@ public class ExtendedDifficulty {
     }
 
     return Optional.empty();
+  }
+
+  public ItemStack enchant(ItemStack input) {
+    if (days < 5.0) {
+      return input;
+    }
+
+    if (days < 50.0) {
+      var mf = midFactor();
+      return EnchantmentHelper.enchant(
+          zrx, input, (int)MathHelper.clamp(5, 20, mf * zrx.nextDouble()),
+          false);
+    }
+
+    var ef = endFactor();
+    return EnchantmentHelper.enchant(
+        zrx, input, (int)MathHelper.clamp(20, 40, ef * zrx.nextDouble()), true);
   }
 }
