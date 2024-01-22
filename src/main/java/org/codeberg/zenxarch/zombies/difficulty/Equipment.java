@@ -1,100 +1,106 @@
 package org.codeberg.zenxarch.zombies.difficulty;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.mob.ZombieEntity;
+import java.util.function.Predicate;
+import net.minecraft.item.ArmorItem;
+import net.minecraft.item.AxeItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.item.SwordItem;
+import net.minecraft.registry.Registries;
+import net.minecraft.util.Pair;
+import org.codeberg.zenxarch.zombies.Zombies;
 
-public class Equipment {
+public abstract class Equipment {
 
-  private static List<Item> getEquipmentListForSlot(EquipmentSlot slot) {
-    switch (slot) {
-    case HEAD:
-      return List.of(Items.LEATHER_HELMET, Items.IRON_HELMET,
-                     Items.DIAMOND_HELMET, Items.NETHERITE_HELMET);
-    case CHEST:
-      return List.of(Items.LEATHER_CHESTPLATE, Items.IRON_CHESTPLATE,
-                     Items.DIAMOND_CHESTPLATE, Items.NETHERITE_CHESTPLATE);
-    case LEGS:
-      return List.of(Items.LEATHER_LEGGINGS, Items.IRON_LEGGINGS,
-                     Items.DIAMOND_LEGGINGS, Items.NETHERITE_LEGGINGS);
-    case FEET:
-      return List.of(Items.LEATHER_BOOTS, Items.IRON_BOOTS, Items.DIAMOND_BOOTS,
-                     Items.NETHERITE_BOOTS);
-    case MAINHAND:
-      return List.of(Items.IRON_SHOVEL, Items.IRON_SWORD, Items.DIAMOND_SWORD,
-                     Items.NETHERITE_AXE);
-    default:
-      return List.of(Items.AIR, Items.AIR, Items.AIR, Items.AIR);
-    }
+  private static final Comparator<ArmorItem> ArmorRanking = (a, b)
+      -> a.getProtection() == b.getProtection()
+             ? Float.compare(a.getToughness(), b.getToughness())
+             : Float.compare(a.getProtection(), b.getProtection());
+
+  private static final Comparator<SwordItem> SwordRanking =
+      (a, b) -> Float.compare(a.getAttackDamage(), b.getAttackDamage());
+  private static final Comparator<AxeItem> AxeRanking =
+      (a, b) -> Float.compare(a.getAttackDamage(), b.getAttackDamage());
+
+  public static Pair<List<ArmorItem>, List<ArmorItem>> HEAD =
+      getSortedList(EquipmentType.HEAD, ArmorRanking);
+  public static Pair<List<ArmorItem>, List<ArmorItem>> CHEST =
+      getSortedList(EquipmentType.CHEST, ArmorRanking);
+  public static Pair<List<ArmorItem>, List<ArmorItem>> LEGS =
+      getSortedList(EquipmentType.LEGS, ArmorRanking);
+  public static Pair<List<ArmorItem>, List<ArmorItem>> FEET =
+      getSortedList(EquipmentType.FEET, ArmorRanking);
+  public static Pair<List<SwordItem>, List<SwordItem>> SWORD =
+      getSortedList(EquipmentType.SWORD, SwordRanking);
+  public static Pair<List<AxeItem>, List<AxeItem>> AXE =
+      getSortedList(EquipmentType.AXE, AxeRanking);
+
+  static { Zombies.LOGGER.info("Helmets: {}", HEAD); }
+
+  private static <T extends Item> Pair<List<T>, List<T>>
+  getSortedList(EquipmentType type, Comparator<T> compare) {
+    var list =
+        findAllMatching(type).stream().map(f -> (T)f).sorted(compare).toList();
+
+    var a = list.stream()
+                .filter(f -> compare.compare(f, (T)type.diamond) < 0)
+                .toList();
+    var b = list.stream()
+                .filter(f -> compare.compare(f, (T)type.diamond) >= 0)
+                .toList();
+    return new Pair<List<T>, List<T>>(a, b);
   }
 
-  private static Item getEquipmentForSlot(EquipmentSlot slot, double level) {
-    var list = getEquipmentListForSlot(slot);
-    if (list == null) {
-      return null;
+  private static List<Item> findAllMatching(EquipmentType type) {
+    var arrayList = new ArrayList<Item>();
+    for (var id : Registries.ITEM.getIds()) {
+      if (!id.getPath().endsWith(type.name)) {
+        continue;
+      }
+      var item = Registries.ITEM.get(id);
+      if (type.predicate.test(item)) {
+        arrayList.add(item);
+      }
     }
-
-    if (level < 0.1) {
-      return list.get(0);
-    }
-
-    if (level < 0.9) {
-      return list.get(1);
-    }
-
-    if (level < 0.975) {
-      return list.get(2);
-    }
-
-    return list.get(3);
+    return List.copyOf(arrayList);
   }
 
-  public static void initEquipment(ZombieEntity zombie, double difficulty) {
-    var random = zombie.getRandom();
+  private static enum EquipmentType {
+    HEAD(
+        "helmet",
+        item -> isArmorItem(item, ArmorItem.Type.HELMET), Items.DIAMOND_HELMET),
+    CHEST("chestplate",
+          item
+          -> isArmorItem(item, ArmorItem.Type.CHESTPLATE),
+          Items.DIAMOND_CHESTPLATE),
+    LEGS("leggings",
+         item
+         -> isArmorItem(item, ArmorItem.Type.LEGGINGS),
+         Items.DIAMOND_LEGGINGS),
+    FEET("boots",
+         item -> isArmorItem(item, ArmorItem.Type.BOOTS), Items.DIAMOND_BOOTS),
+    SWORD("sword", item -> item instanceof SwordItem, Items.DIAMOND_SWORD),
+    AXE("axe", item -> item instanceof AxeItem, Items.DIAMOND_AXE);
 
-    for (var slot : EquipmentSlot.values()) {
-      if (!zombie.getEquippedStack(slot).isEmpty()) {
-        continue;
-      }
+    public final String name;
+    public final Predicate<Item> predicate;
+    public final Item diamond;
 
-      if (random.nextDouble() > difficulty) {
-        continue;
-      }
-
-      zombie.equipStack(
-          slot, getEquipmentForSlot(slot, difficulty * random.nextDouble())
-                    .getDefaultStack());
-    }
-  }
-
-  public static void updateEnchantments(ZombieEntity zombie,
-                                        double difficulty) {
-    var random = zombie.getRandom();
-    if (!zombie.getMainHandStack().isEmpty() &&
-        random.nextDouble() < difficulty) {
-      zombie.equipStack(EquipmentSlot.MAINHAND,
-                        EnchantmentHelper.enchant(
-                            random, zombie.getMainHandStack(),
-                            (int)MathHelper.clampedLerp(
-                                1.0, 40.0, difficulty + random.nextDouble()),
-                            true));
+    private EquipmentType(String name, Predicate<Item> predicate,
+                          Item diamond) {
+      this.name = name;
+      this.predicate = predicate;
+      this.diamond = diamond;
     }
 
-    for (var slot : EquipmentSlot.values()) {
-      if (zombie.getEquippedStack(slot).isEmpty()) {
-        continue;
+    private static boolean isArmorItem(Item item, ArmorItem.Type type) {
+      if (item instanceof ArmorItem armor) {
+        return armor.getType() == type;
       }
-
-      zombie.equipStack(slot,
-                        EnchantmentHelper.enchant(
-                            random, zombie.getEquippedStack(slot),
-                            (int)MathHelper.clampedLerp(
-                                1.0, 40.0, difficulty + random.nextDouble()),
-                            true));
+      return false;
     }
   }
 }

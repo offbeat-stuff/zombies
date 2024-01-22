@@ -16,7 +16,6 @@ import net.minecraft.world.Difficulty;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.SpawnHelper;
 import org.codeberg.zenxarch.zombies.difficulty.ExtendedDifficulty;
-import org.codeberg.zenxarch.zombies.difficulty.NewZombie;
 
 public class Spawning {
   private static boolean canSpawnAtPosBasic(ServerWorld world, BlockPos pos) {
@@ -44,11 +43,9 @@ public class Spawning {
         !world.containsFluid(zombie.getBoundingBox());
   }
 
-  private static Optional<BlockPos> findNearestWorking(ServerWorld world,
-                                                       BlockPos pos) {
-    return IntStream
-        .range(0, 2 + (int)(ExtendedDifficulty.calculateDifficulty(world, pos) *
-                            23.0))
+  private static Optional<BlockPos>
+  findNearestWorking(ServerWorld world, BlockPos pos, int times) {
+    return IntStream.range(0, times)
         .mapToObj(i
                   -> pos.add(zrx.nextBetween(-64, 64), zrx.nextBetween(-64, 64),
                              zrx.nextBetween(-64, 64)))
@@ -56,11 +53,12 @@ public class Spawning {
         .findFirst();
   }
 
-  public static boolean spawnZombieAt(ServerWorld world, BlockPos bpos) {
-
-    var zombieOpt = findNearestWorking(world, bpos)
-                        .map(u -> NewZombie.make(world, u))
-                        .filter(z -> canSpawnAtPosSpace(world, z));
+  public static boolean spawnZombieAt(ServerWorld world, BlockPos ppos) {
+    var difficulty = new ExtendedDifficulty(world, ppos);
+    var zombieOpt =
+        findNearestWorking(world, ppos, difficulty.getTriesForSpawning())
+            .map(u -> NewZombie.make(world, u))
+            .filter(z -> canSpawnAtPosSpace(world, z));
 
     zombieOpt.ifPresent(z -> {
       NewZombie.initialize(world, z);
