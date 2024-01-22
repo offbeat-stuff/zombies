@@ -38,8 +38,6 @@ public abstract class Equipment {
   public static Pair<List<AxeItem>, List<AxeItem>> AXE =
       getSortedList(EquipmentType.AXE, AxeRanking);
 
-  static { Zombies.LOGGER.info("Helmets: {}", HEAD); }
-
   private static <T extends Item> Pair<List<T>, List<T>>
   getSortedList(EquipmentType type, Comparator<T> compare) {
     var list =

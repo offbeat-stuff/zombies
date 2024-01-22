@@ -11,7 +11,7 @@ import net.minecraft.entity.mob.ZombieEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
-// import org.codeberg.zenxarch.zombies.difficulty.ExtendedDifficulty;
+import org.codeberg.zenxarch.zombies.difficulty.ExtendedDifficulty;
 
 public class NewZombie {
   public static ZombieEntity make(ServerWorld world, BlockPos pos) {
@@ -75,7 +75,7 @@ public class NewZombie {
   }
 
   public static void initialize(ServerWorld world, ZombieEntity zombie) {
-    // var difficulty = new ExtendedDifficulty(world, zombie.getBlockPos());
+    var difficulty = new ExtendedDifficulty(world, zombie.getBlockPos());
     var localDifficulty = world.getLocalDifficulty(zombie.getBlockPos())
                               .getClampedLocalDifficulty();
 
@@ -84,6 +84,17 @@ public class NewZombie {
     zombie.setCanBreakDoors(zombie.getType().equals(EntityType.DROWNED) &&
                             zombie.getRandom().nextDouble() <
                                 localDifficulty * 0.1);
+
+    for (var slot : EquipmentSlot.values()) {
+      if (!zombie.getEquippedStack(slot).isEmpty()) {
+        continue;
+      }
+      var item = difficulty.getEquipmentForSlot(slot);
+      if (item.isEmpty()) {
+        continue;
+      }
+      zombie.equipStack(slot, item.get().getDefaultStack());
+    }
     // Equipment.initEquipment(zombie, difficulty);
     // Equipment.updateEnchantments(zombie, difficulty);
     handleHalloween(zombie);

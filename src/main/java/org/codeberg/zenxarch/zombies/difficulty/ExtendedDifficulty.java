@@ -31,19 +31,15 @@ public class ExtendedDifficulty {
     days = (double)world.getTimeOfDay() / 24000.0;
   }
 
-  public int getTriesForSpawning() {
-    if (days < 5.0) {
-      return zrx.nextDouble() < 0.2 ? 1 : 0;
-    }
+  private double midFactor() {
+    var dayFactor = days / 100.0;
+    var inhibFactor = MathHelper.clamp(inhibitedHours / 50.0, 0.0, 1.0) / 4.0;
+    return MathHelper.clamp(difficulty * 0.5 *
+                                ((moonSize * 0.125) + inhibFactor + dayFactor),
+                            0.0, 1.0);
+  }
 
-    if (days < 50.0) {
-      var dayFactor = days / 100.0;
-      var inhibFactor = MathHelper.clamp(inhibitedHours / 50.0, 0.0, 1.0) / 4.0;
-      return (int)MathHelper.clampedLerp(
-          1.0, 15.0,
-          difficulty * 0.5 * ((moonSize * 0.125) + inhibFactor + dayFactor));
-    }
-
+  private double endFactor() {
     var dayFactor = MathHelper.clamp((days - 50.0) / 200.0, 0.0, 1.0) / 2.0;
     var inhibFactor =
         MathHelper.clamp((inhibitedHours - 20.0) / 100.0, 0.0, 1.0) / 2.0;
@@ -52,8 +48,23 @@ public class ExtendedDifficulty {
       dayFactor = moonSize / 4.0;
     }
 
-    return (int)MathHelper.clampedLerp(
-        15.0, 40.0, difficulty * 0.5 * (dayFactor + inhibFactor));
+    return MathHelper.clamp(difficulty * 0.5 * (dayFactor + inhibFactor), 0.0,
+                            1.0);
+  }
+
+  public int getTriesForSpawning() {
+    if (days < 5.0) {
+      return zrx.nextDouble() < 0.2 ? 1 : 0;
+    }
+
+    if (days < 50.0) {
+      var mid = midFactor();
+      return (int)MathHelper.clampedLerp(1.0, 15.0, mid);
+    }
+
+    var fin = endFactor();
+
+    return (int)MathHelper.clampedLerp(15.0, 40.0, fin);
   }
 
   private static <T extends Item>
@@ -91,17 +102,26 @@ public class ExtendedDifficulty {
     }
 
     if (days < 50.0) {
-      if (slot.equals(EquipmentSlot.OFFHAND)) {
+      if (slot.equals(EquipmentSlot.OFFHAND) ||
+          zrx.nextDouble() > midFactor() * 0.1) {
         return Optional.empty();
       }
 
-      return Optional.of(getItemForSlot(slot, false));
+      return Optional.of(getItemForSlot(slot, true));
     }
 
     if (slot.equals(EquipmentSlot.OFFHAND) && zrx.nextDouble() < 0.05) {
       return Optional.of(Items.SHIELD);
     }
 
-    return Optional.of(getItemForSlot(slot, true));
+    if (zrx.nextDouble() > 0.1) {
+      Optional.of(getItemForSlot(slot, true));
+    }
+
+    if (zrx.nextDouble() > endFactor() * 0.1) {
+      return Optional.empty();
+    }
+
+    return Optional.of(getItemForSlot(slot, false));
   }
 }
