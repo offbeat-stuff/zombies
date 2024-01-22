@@ -95,8 +95,16 @@ public class NewZombie {
       }
       zombie.equipStack(slot, item.get().getDefaultStack());
     }
-    // Equipment.initEquipment(zombie, difficulty);
-    // Equipment.updateEnchantments(zombie, difficulty);
+
+    for (var slot : EquipmentSlot.values()) {
+      if (zombie.getEquippedStack(slot).isEmpty()) {
+        return;
+      }
+
+      zombie.equipStack(slot,
+                        difficulty.enchant(zombie.getEquippedStack(slot)));
+    }
+
     handleHalloween(zombie);
     initAttributes(zombie, localDifficulty);
   }
