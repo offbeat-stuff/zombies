@@ -1,6 +1,6 @@
 package org.codeberg.zenxarch.zombies.spawning;
 
-import static org.codeberg.zenxarch.zombies.Zombies.zrx;
+import static org.codeberg.zenxarch.zombies.Zombies.LOGGER;
 
 import java.util.Optional;
 import java.util.stream.IntStream;
@@ -12,13 +12,19 @@ import net.minecraft.entity.mob.ZombieEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.random.Random;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.SpawnHelper;
+import net.minecraft.world.spawner.SpecialSpawner;
 import org.codeberg.zenxarch.zombies.difficulty.ExtendedDifficulty;
+import org.codeberg.zenxarch.zombies.difficulty.ExtendedZombieEntity;
 
-public class Spawning {
-  private static boolean canSpawnAtPosBasic(ServerWorld world, BlockPos pos) {
+public class ZombieApocalypse implements SpecialSpawner {
+
+  private Random random = Random.create();
+
+  private boolean canSpawnAtPosBasic(ServerWorld world, BlockPos pos) {
     if (world.isPlayerInRange(pos.getX(), pos.getY(), pos.getZ(), 16)) {
       return false;
     }
@@ -36,39 +42,55 @@ public class Spawning {
                               pos, world.random);
   }
 
-  private static boolean canSpawnAtPosSpace(ServerWorld world,
-                                            ZombieEntity zombie) {
+  private boolean canSpawnAtPosSpace(ServerWorld world, ZombieEntity zombie) {
     return world.doesNotIntersectEntities(zombie) &&
         world.isSpaceEmpty(zombie) &&
         !world.containsFluid(zombie.getBoundingBox());
   }
 
-  private static Optional<BlockPos>
-  findNearestWorking(ServerWorld world, BlockPos pos, int times) {
+  private Optional<BlockPos> findNearestWorking(ServerWorld world, BlockPos pos,
+                                                int times) {
     return IntStream.range(0, times)
         .mapToObj(i
-                  -> pos.add(zrx.nextBetween(-64, 64), zrx.nextBetween(-64, 64),
-                             zrx.nextBetween(-64, 64)))
+                  -> pos.add(random.nextBetween(-64, 64),
+                             random.nextBetween(-64, 64),
+                             random.nextBetween(-64, 64)))
         .filter(p -> canSpawnAtPosBasic(world, p))
         .findFirst();
   }
 
-  public static boolean spawnZombieAt(ServerWorld world, BlockPos ppos) {
+  public boolean spawnZombieAt(ServerWorld world, BlockPos ppos) {
     var difficulty = new ExtendedDifficulty(world, ppos);
     var zombieOpt =
         findNearestWorking(world, ppos, difficulty.getTriesForSpawning())
-            .map(u -> NewZombie.make(world, u))
+            .map(u -> new ExtendedZombieEntity(world, u))
             .filter(z -> canSpawnAtPosSpace(world, z));
 
     zombieOpt.ifPresent(z -> {
-      NewZombie.initialize(world, z);
+      z.initialize(world);
       world.spawnEntityAndPassengers(z);
     });
 
     return zombieOpt.isPresent();
   }
 
-  public static boolean isSuitablePlayer(ServerPlayerEntity player) {
+  public boolean isSuitablePlayer(ServerPlayerEntity player) {
     return player.isAlive();
+  }
+
+  @Override
+  public int spawn(ServerWorld world, boolean spawnMonsters,
+                   boolean spawnAnimals) {
+    if (!spawnMonsters) {
+      return 0;
+    }
+    var result = 0;
+    for (var player : world.getPlayers(this::isSuitablePlayer)) {
+      result += this.spawnZombieAt(world, player.getBlockPos()) ? 1 : 0;
+    }
+    if (result > 0) {
+      LOGGER.info("Spawner {} zombies", result);
+    }
+    return result;
   }
 }

@@ -11,6 +11,7 @@ import net.minecraft.item.Items;
 import net.minecraft.item.SwordItem;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Pair;
+import org.codeberg.zenxarch.zombies.Zombies;
 
 public abstract class Equipment {
 
@@ -37,18 +38,28 @@ public abstract class Equipment {
   public static Pair<List<AxeItem>, List<AxeItem>> AXE =
       getSortedList(EquipmentType.AXE, AxeRanking);
 
+  @SuppressWarnings("unchecked")
   private static <T extends Item> Pair<List<T>, List<T>>
   getSortedList(EquipmentType type, Comparator<T> compare) {
-    var list =
-        findAllMatching(type).stream().map(f -> (T)f).sorted(compare).toList();
+    try {
 
-    var a = list.stream()
-                .filter(f -> compare.compare(f, (T)type.diamond) < 0)
-                .toList();
-    var b = list.stream()
-                .filter(f -> compare.compare(f, (T)type.diamond) >= 0)
-                .toList();
-    return new Pair<List<T>, List<T>>(a, b);
+      var list = findAllMatching(type)
+                     .stream()
+                     .map(f -> (T)f)
+                     .sorted(compare)
+                     .toList();
+
+      var a = list.stream()
+                  .filter(f -> compare.compare(f, (T)type.diamond) < 0)
+                  .toList();
+      var b = list.stream()
+                  .filter(f -> compare.compare(f, (T)type.diamond) >= 0)
+                  .toList();
+      return new Pair<List<T>, List<T>>(a, b);
+    } catch (ClassCastException e) {
+      Zombies.LOGGER.error("Casting failed {}", e);
+      return new Pair<List<T>, List<T>>(List.of(), List.of());
+    }
   }
 
   private static List<Item> findAllMatching(EquipmentType type) {

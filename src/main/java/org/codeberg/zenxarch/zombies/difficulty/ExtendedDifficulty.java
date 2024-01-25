@@ -9,11 +9,11 @@ import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Pair;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkSectionPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.World;
 
 public class ExtendedDifficulty {
   private double inhibitedHours = 0.0;
@@ -21,7 +21,7 @@ public class ExtendedDifficulty {
   private double difficulty = 0.0;
   private double days = 0.0;
 
-  public ExtendedDifficulty(ServerWorld world, BlockPos pos) {
+  public ExtendedDifficulty(World world, BlockPos pos) {
     if (world.isChunkLoaded(ChunkSectionPos.getSectionCoord(pos.getX()),
                             ChunkSectionPos.getSectionCoord(pos.getZ()))) {
       moonSize = (double)world.getMoonSize();

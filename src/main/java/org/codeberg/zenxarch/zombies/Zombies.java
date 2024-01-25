@@ -1,9 +1,7 @@
 package org.codeberg.zenxarch.zombies;
 
 import net.fabricmc.api.ModInitializer;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.random.Random;
-import org.codeberg.zenxarch.zombies.spawning.Spawning;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,13 +17,5 @@ public class Zombies implements ModInitializer {
   @Override
   public void onInitialize() {
     LOGGER.info("Hello Fabric world!");
-  }
-
-  public static void spawnZombiesForEachWorld(MinecraftServer server) {
-    var world = server.getOverworld();
-
-    for (var player : world.getPlayers(Spawning::isSuitablePlayer)) {
-      Spawning.spawnZombieAt(world, player.getBlockPos());
-    }
   }
 }
