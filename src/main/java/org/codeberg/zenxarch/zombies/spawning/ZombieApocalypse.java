@@ -16,6 +16,7 @@ import net.minecraft.util.math.random.Random;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.SpawnHelper;
+import net.minecraft.world.World;
 import net.minecraft.world.spawner.SpecialSpawner;
 import org.codeberg.zenxarch.zombies.difficulty.ExtendedDifficulty;
 import org.codeberg.zenxarch.zombies.difficulty.ExtendedZombieEntity;
@@ -92,5 +93,12 @@ public class ZombieApocalypse implements SpecialSpawner {
       LOGGER.info("Spawner {} zombies", result);
     }
     return result;
+  }
+
+  public static boolean isApocalypticWorld(ServerWorld world) {
+    if (world.getRegistryKey().equals(World.OVERWORLD)) {
+      return true;
+    }
+    return false;
   }
 }

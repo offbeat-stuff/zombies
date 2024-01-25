@@ -18,7 +18,9 @@ public abstract class ServerWorldMixin {
 
   @Inject(at = @At(value = "TAIL"), method = "<init>", cancellable = false)
   private void zenxarch$inject_init(CallbackInfo ci) {
-    zombieSpawners = ImmutableList.of(new ZombieApocalypse());
+    if (ZombieApocalypse.isApocalypticWorld((ServerWorld)(Object)this)) {
+      zombieSpawners = ImmutableList.of(new ZombieApocalypse());
+    }
   }
 
   @Inject(at = @At(value = "HEAD"), method = "tickSpawners")
