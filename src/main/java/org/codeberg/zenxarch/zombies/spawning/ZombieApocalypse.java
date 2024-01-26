@@ -23,53 +23,54 @@ import org.codeberg.zenxarch.zombies.difficulty.ExtendedZombieEntity;
 
 public class ZombieApocalypse implements SpecialSpawner {
 
-  private Random random = Random.create();
+  private final Random random = Random.create();
+  private ServerWorld world;
 
-  private boolean canSpawnAtPosBasic(ServerWorld world, BlockPos pos) {
-    if (world.isPlayerInRange(pos.getX(), pos.getY(), pos.getZ(), 16)) {
+  public ZombieApocalypse(ServerWorld world) { this.world = world; }
+
+  private boolean canSpawnAtPosBasic(BlockPos pos) {
+    if (this.world.isPlayerInRange(pos.getX(), pos.getY(), pos.getZ(), 16)) {
       return false;
     }
 
-    if (world.getDifficulty().equals(Difficulty.PEACEFUL) ||
-        !world.getGameRules().getBoolean(GameRules.DO_MOB_SPAWNING)) {
+    if (this.world.getDifficulty().equals(Difficulty.PEACEFUL) ||
+        !this.world.getGameRules().getBoolean(GameRules.DO_MOB_SPAWNING)) {
       return false;
     }
 
     var entityType = EntityType.ZOMBIE;
     var location = SpawnRestriction.getLocation(entityType);
 
-    return SpawnHelper.canSpawn(location, world, pos, entityType) &&
-        MobEntity.canMobSpawn(EntityType.ZOMBIE, world, SpawnReason.NATURAL,
-                              pos, world.random);
+    return SpawnHelper.canSpawn(location, this.world, pos, entityType) &&
+        MobEntity.canMobSpawn(EntityType.ZOMBIE, this.world,
+                              SpawnReason.NATURAL, pos, this.world.random);
   }
 
-  private boolean canSpawnAtPosSpace(ServerWorld world, ZombieEntity zombie) {
-    return world.doesNotIntersectEntities(zombie) &&
-        world.isSpaceEmpty(zombie) &&
-        !world.containsFluid(zombie.getBoundingBox());
+  private boolean canSpawnAtPosSpace(ZombieEntity zombie) {
+    return this.world.doesNotIntersectEntities(zombie) &&
+        this.world.isSpaceEmpty(zombie) &&
+        !this.world.containsFluid(zombie.getBoundingBox());
   }
 
-  private Optional<BlockPos> findNearestWorking(ServerWorld world, BlockPos pos,
-                                                int times) {
+  private Optional<BlockPos> findNearestWorking(BlockPos pos, int times) {
     return IntStream.range(0, times)
         .mapToObj(i
                   -> pos.add(random.nextBetween(-64, 64),
                              random.nextBetween(-64, 64),
                              random.nextBetween(-64, 64)))
-        .filter(p -> canSpawnAtPosBasic(world, p))
+        .filter(this::canSpawnAtPosBasic)
         .findFirst();
   }
 
-  public boolean spawnZombieAt(ServerWorld world, BlockPos ppos) {
-    var difficulty = new ExtendedDifficulty(world, ppos);
-    var zombieOpt =
-        findNearestWorking(world, ppos, difficulty.getTriesForSpawning())
-            .map(u -> new ExtendedZombieEntity(world, u))
-            .filter(z -> canSpawnAtPosSpace(world, z));
+  public boolean spawnZombieAt(BlockPos ppos) {
+    var difficulty = new ExtendedDifficulty(this.world, ppos);
+    var zombieOpt = findNearestWorking(ppos, difficulty.getTriesForSpawning())
+                        .map(u -> new ExtendedZombieEntity(this.world, u))
+                        .filter(this::canSpawnAtPosSpace);
 
     zombieOpt.ifPresent(z -> {
-      z.initialize(world);
-      world.spawnEntityAndPassengers(z);
+      z.initialize(this.world);
+      this.world.spawnEntityAndPassengers(z);
     });
 
     return zombieOpt.isPresent();
@@ -82,12 +83,13 @@ public class ZombieApocalypse implements SpecialSpawner {
   @Override
   public int spawn(ServerWorld world, boolean spawnMonsters,
                    boolean spawnAnimals) {
+    this.world = world;
     if (!spawnMonsters) {
       return 0;
     }
     var result = 0;
-    for (var player : world.getPlayers(this::isSuitablePlayer)) {
-      result += this.spawnZombieAt(world, player.getBlockPos()) ? 1 : 0;
+    for (var player : this.world.getPlayers(this::isSuitablePlayer)) {
+      result += this.spawnZombieAt(player.getBlockPos()) ? 1 : 0;
     }
     if (result > 0) {
       LOGGER.info("Spawner {} zombies", result);
