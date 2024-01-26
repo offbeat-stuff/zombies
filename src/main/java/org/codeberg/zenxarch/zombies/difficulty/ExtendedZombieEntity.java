@@ -5,18 +5,18 @@ import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.mob.ZombieEntity;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.LocalDifficulty;
 import net.minecraft.world.ServerWorldAccess;
 import net.minecraft.world.World;
+import org.codeberg.zenxarch.zombies.spawning.ZombieApocalypse;
 
 public class ExtendedZombieEntity extends ZombieEntity {
 
   public ExtendedZombieEntity(World world) { super(world); }
 
-  public ExtendedZombieEntity(ServerWorld world, BlockPos pos) {
+  public ExtendedZombieEntity(World world, BlockPos pos) {
     super(world);
     this.setPos(pos.getX(), pos.getY(), pos.getZ());
   }
@@ -72,5 +72,12 @@ public class ExtendedZombieEntity extends ZombieEntity {
 
       this.equipStack(slot, difficulty.enchant(this.getEquippedStack(slot)));
     }
+  }
+
+  @Override
+  public void writeCustomDataToNbt(NbtCompound nbt) {
+    super.writeCustomDataToNbt(nbt);
+    nbt.putString(ZombieApocalypse.ZOMBIE_ID_KEY,
+                  ZombieApocalypse.BASE_ZOMBIE_ID);
   }
 }

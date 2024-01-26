@@ -4,11 +4,13 @@ import static org.codeberg.zenxarch.zombies.Zombies.LOGGER;
 
 import java.util.Optional;
 import java.util.stream.IntStream;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.SpawnRestriction;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.mob.ZombieEntity;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
@@ -18,6 +20,7 @@ import net.minecraft.world.GameRules;
 import net.minecraft.world.SpawnHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.spawner.SpecialSpawner;
+import org.codeberg.zenxarch.zombies.Zombies;
 import org.codeberg.zenxarch.zombies.difficulty.ExtendedDifficulty;
 import org.codeberg.zenxarch.zombies.difficulty.ExtendedZombieEntity;
 
@@ -102,5 +105,22 @@ public class ZombieApocalypse implements SpecialSpawner {
       return true;
     }
     return false;
+  }
+
+  public static String ZOMBIE_ID_KEY = "zenxarch_zombie_id";
+  public static String BASE_ZOMBIE_ID = "BaseZombie";
+
+  public static Optional<Entity> loadFromNbt(NbtCompound nbt, World world) {
+    var id = nbt.getString("zenxarch_zombie_id");
+    if (id == "") {
+      return Optional.empty();
+    }
+    if (id == "BaseZombie") {
+      var zombie = new ExtendedZombieEntity(world);
+      zombie.readNbt(nbt);
+      return Optional.of(zombie);
+    }
+    Zombies.LOGGER.warn("Skipping Zombie Apocalypse Entity with id {}", id);
+    return Optional.empty();
   }
 }
