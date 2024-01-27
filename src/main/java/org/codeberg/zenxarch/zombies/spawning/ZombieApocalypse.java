@@ -27,6 +27,7 @@ public class ZombieApocalypse implements SpecialSpawner {
 
   private final Random random = Random.create();
   private ServerWorld world;
+  private Debug debug = new Debug();
 
   public ZombieApocalypse(ServerWorld world) { this.world = world; }
 
@@ -44,7 +45,7 @@ public class ZombieApocalypse implements SpecialSpawner {
       return false;
     };
 
-    Debug.spawnCheck();
+    debug.spawnCheck();
 
     var boundingBox = EntityType.ZOMBIE.createSimpleBoundingBox(
         pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
@@ -110,7 +111,7 @@ public class ZombieApocalypse implements SpecialSpawner {
     for (var player : this.world.getPlayers(this::isSuitablePlayer)) {
       result += this.spawnZombieAt(player.getBlockPos()) ? 1 : 0;
     }
-    Debug.attemptedSpawn(result > 0);
+    debug.attemptedSpawn(result > 0);
     return result;
   }
 
