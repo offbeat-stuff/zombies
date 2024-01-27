@@ -18,7 +18,7 @@ public class ExtendedZombieEntity extends ZombieEntity {
 
   public ExtendedZombieEntity(World world, BlockPos pos) {
     super(world);
-    this.setPos(pos.getX(), pos.getY(), pos.getZ());
+    this.refreshPositionAndAngles(pos, this.random.nextFloat() * 360.0F, 0.0F);
   }
 
   @Override

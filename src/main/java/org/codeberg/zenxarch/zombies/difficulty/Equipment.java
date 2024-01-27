@@ -106,7 +106,7 @@ public abstract class Equipment {
 
     private static boolean isArmorItem(Item item, ArmorItem.Type type) {
       if (item instanceof ArmorItem armor) {
-        return armor.getType() == type;
+        return armor.getType().equals(type);
       }
       return false;
     }
