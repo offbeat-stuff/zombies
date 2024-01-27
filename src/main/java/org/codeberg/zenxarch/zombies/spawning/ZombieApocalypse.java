@@ -91,7 +91,7 @@ public class ZombieApocalypse implements SpecialSpawner {
   }
 
   public boolean isSuitablePlayer(ServerPlayerEntity player) {
-    return player.isAlive();
+    return player.isAlive() && !player.isSpectator();
   }
 
   @Override
