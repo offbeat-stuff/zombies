@@ -16,7 +16,7 @@ public class Debug {
   public void attemptedSpawn(boolean successful) {
     spawnAttempts++;
     successfulSpawnAttempts += successful ? 1 : 0;
-    if (spawnAttempts == (20 * 60 * 5)) {
+    if (spawnAttempts % (20 * 60 * 5) == 0) {
       LOGGER.info(
           "Successful Attemps : {} , Total Attempts: {},spawnChecks : {}",
           successfulSpawnAttempts, spawnAttempts, spawnPosChecks);
