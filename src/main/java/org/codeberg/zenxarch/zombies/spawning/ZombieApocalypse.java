@@ -1,7 +1,6 @@
 package org.codeberg.zenxarch.zombies.spawning;
 
 import java.util.Optional;
-import java.util.stream.IntStream;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnReason;
@@ -65,13 +64,15 @@ public class ZombieApocalypse implements SpecialSpawner {
   private static int SPAWN_RANGE = 64;
 
   private Optional<BlockPos> findNearestWorking(BlockPos pos, int times) {
-    return IntStream.range(0, times)
-        .mapToObj(i
-                  -> pos.add(random.nextBetween(-SPAWN_RANGE, SPAWN_RANGE),
-                             random.nextBetween(-SPAWN_RANGE, SPAWN_RANGE),
-                             random.nextBetween(-SPAWN_RANGE, SPAWN_RANGE)))
-        .filter(this::canSpawnAtPosBasic)
-        .findFirst();
+    for (int i = 0; i < times; i++) {
+      var p = pos.add(random.nextBetween(-SPAWN_RANGE, SPAWN_RANGE),
+                      random.nextBetween(-SPAWN_RANGE, SPAWN_RANGE),
+                      random.nextBetween(-SPAWN_RANGE, SPAWN_RANGE));
+      if (canSpawnAtPosBasic(p)) {
+        return Optional.of(p);
+      }
+    }
+    return Optional.empty();
   }
 
   public boolean spawnZombieAt(BlockPos ppos) {
