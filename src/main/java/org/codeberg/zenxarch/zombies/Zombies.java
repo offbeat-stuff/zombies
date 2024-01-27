@@ -1,7 +1,6 @@
 package org.codeberg.zenxarch.zombies;
 
 import net.fabricmc.api.ModInitializer;
-import net.minecraft.util.math.random.Random;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,8 +10,6 @@ public class Zombies implements ModInitializer {
   // That way, it's clear which mod wrote info, warnings, and errors.
   public static final Logger LOGGER =
       LoggerFactory.getLogger("zombies_zenxarch");
-
-  public static final Random zrx = Random.create();
 
   @Override
   public void onInitialize() {

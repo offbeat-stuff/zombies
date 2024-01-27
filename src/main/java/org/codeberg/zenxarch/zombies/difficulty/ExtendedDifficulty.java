@@ -1,7 +1,5 @@
 package org.codeberg.zenxarch.zombies.difficulty;
 
-import static org.codeberg.zenxarch.zombies.Zombies.zrx;
-
 import java.util.List;
 import java.util.Optional;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -13,15 +11,16 @@ import net.minecraft.util.Pair;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkSectionPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.random.Random;
 import net.minecraft.world.World;
 
 public class ExtendedDifficulty {
-  private double inhibitedHours = 0.0;
-  private double moonSize = 0.0;
-  private double difficulty = 0.0;
-  private double days = 0.0;
+  private static final Random random = Random.create();
 
-  public ExtendedDifficulty(World world, BlockPos pos) {
+  private static double getTimeFactor(World world, BlockPos pos) {
+    double inhibitedHours = 0.0;
+    double moonSize = 0.0;
+    double days = 0.0;
     if (world.isChunkLoaded(ChunkSectionPos.getSectionCoord(pos.getX()),
                             ChunkSectionPos.getSectionCoord(pos.getZ()))) {
       moonSize = (double)world.getMoonSize();
@@ -29,44 +28,41 @@ public class ExtendedDifficulty {
           (double)world.getWorldChunk(pos).getInhabitedTime() / (60 * 60 * 20);
     }
 
-    difficulty = (double)world.getDifficulty().getId();
     days = (double)world.getTimeOfDay() / 24000.0;
+
+    return (days * 0.5) + (inhibitedHours * 1.5 * (1.0 + moonSize));
   }
 
-  private double midFactor() {
-    var dayFactor = days / 100.0;
-    var inhibFactor = MathHelper.clamp(inhibitedHours / 50.0, 0.0, 1.0) / 4.0;
-    return MathHelper.clamp(difficulty * 0.5 *
-                                ((moonSize * 0.125) + inhibFactor + dayFactor),
-                            0.0, 1.0);
+  public static IExtendedDifficulty difficulty(World world, BlockPos pos) {
+    var timeFactor = getTimeFactor(world, pos);
+
+    switch (world.getDifficulty()) {
+    case NORMAL:
+      return getExtendedDifficulty(timeFactor, 10.0, 100.0, 500.0);
+    case HARD:
+      return getExtendedDifficulty(timeFactor, 5.0, 50.0, 250.0);
+    default:
+      return getExtendedDifficulty(timeFactor, 25.0, 200.0, 1000.0);
+    }
   }
 
-  private double endFactor() {
-    var dayFactor = MathHelper.clamp((days - 50.0) / 200.0, 0.0, 1.0) / 2.0;
-    var inhibFactor =
-        MathHelper.clamp((inhibitedHours - 20.0) / 100.0, 0.0, 1.0) / 2.0;
-
-    if ((moonSize / 4.0) > dayFactor) {
-      dayFactor = moonSize / 4.0;
+  private static IExtendedDifficulty getExtendedDifficulty(double timeFactor,
+                                                           double grace,
+                                                           double hard,
+                                                           double nightmare) {
+    if (timeFactor < grace) {
+      return new GraceDifficulty(getProgress(timeFactor, 0.0, grace));
+    }
+    if (timeFactor < hard) {
+      return new HardDifficulty(getProgress(timeFactor, grace, hard));
     }
 
-    return MathHelper.clamp(difficulty * 0.5 * (dayFactor + inhibFactor), 0.0,
+    return new NightmareDifficulty(getProgress(timeFactor, hard, nightmare));
+  }
+
+  private static double getProgress(double time, double start, double end) {
+    return MathHelper.clamp(MathHelper.getLerpProgress(time, start, end), 0.0,
                             1.0);
-  }
-
-  public int getTriesForSpawning() {
-    if (days < 5.0) {
-      return zrx.nextDouble() < 0.2 ? 1 : 0;
-    }
-
-    if (days < 50.0) {
-      var mid = midFactor();
-      return (int)MathHelper.clampedLerp(1.0, 15.0, mid);
-    }
-
-    var fin = endFactor();
-
-    return (int)MathHelper.clampedLerp(15.0, 40.0, fin);
   }
 
   private static double mapToCurve(double input) {
@@ -76,7 +72,7 @@ public class ExtendedDifficulty {
   private static <T extends Item>
       Item getItemForList(Pair<List<T>, List<T>> list, boolean lowerHalf) {
     var f = lowerHalf ? list.getLeft() : list.getRight();
-    var r = zrx.nextDouble();
+    var r = random.nextDouble();
     for (int i = f.size() - 1; i >= 0; i--) {
       var x = mapToCurve((double)i / f.size());
       if (r < x) {
@@ -103,50 +99,96 @@ public class ExtendedDifficulty {
     }
   }
 
-  public Optional<Item> getEquipmentForSlot(EquipmentSlot slot) {
-    if (days < 5.0) {
+  public static abstract class IExtendedDifficulty {
+    protected double progress;
+
+    public IExtendedDifficulty(double progress) { this.progress = progress; }
+
+    public abstract int getTriesForSpawning();
+    public abstract Optional<Item> getEquipmentForSlot(EquipmentSlot slot);
+    public abstract ItemStack enchant(ItemStack input);
+  }
+
+  public static class GraceDifficulty extends IExtendedDifficulty {
+
+    public GraceDifficulty(double progress) { super(progress); }
+
+    @Override
+    public int getTriesForSpawning() {
+      return random.nextDouble() < 0.2 ? 1 : 0;
+    }
+
+    @Override
+    public Optional<Item> getEquipmentForSlot(EquipmentSlot slot) {
       return Optional.empty();
     }
 
-    if (days < 50.0) {
+    @Override
+    public ItemStack enchant(ItemStack input) {
+      return input;
+    }
+  }
+
+  public static class HardDifficulty extends IExtendedDifficulty {
+
+    public HardDifficulty(double progress) { super(progress); }
+
+    @Override
+    public int getTriesForSpawning() {
+      return (int)MathHelper.lerp(this.progress, 1.0, 5.1);
+    }
+
+    @Override
+    public Optional<Item> getEquipmentForSlot(EquipmentSlot slot) {
       if (slot.equals(EquipmentSlot.OFFHAND) ||
-          zrx.nextDouble() > midFactor() * 0.1) {
+          random.nextDouble() > this.progress * 0.1) {
         return Optional.empty();
       }
 
       return Optional.of(getItemForSlot(slot, true));
     }
 
-    if (slot.equals(EquipmentSlot.OFFHAND) && zrx.nextDouble() < 0.05) {
-      return Optional.of(Items.SHIELD);
-    }
-
-    var ef = endFactor();
-    if (zrx.nextDouble() < 0.5 * ef) {
-      Optional.of(getItemForSlot(slot, true));
-    }
-
-    if (zrx.nextDouble() < 0.05 * ef) {
-      Optional.of(getItemForSlot(slot, false));
-    }
-
-    return Optional.empty();
-  }
-
-  public ItemStack enchant(ItemStack input) {
-    if (days < 5.0) {
-      return input;
-    }
-
-    if (days < 50.0) {
-      var mf = midFactor();
+    @Override
+    public ItemStack enchant(ItemStack input) {
       return EnchantmentHelper.enchant(
-          zrx, input, (int)MathHelper.clamp(5, 20, mf * zrx.nextDouble()),
+          random, input,
+          (int)MathHelper.clamp(5, 20, this.progress * random.nextDouble()),
           false);
     }
+  }
 
-    var ef = endFactor();
-    return EnchantmentHelper.enchant(
-        zrx, input, (int)MathHelper.clamp(20, 40, ef * zrx.nextDouble()), true);
+  public static class NightmareDifficulty extends IExtendedDifficulty {
+
+    public NightmareDifficulty(double progress) { super(progress); }
+
+    @Override
+    public int getTriesForSpawning() {
+      return (int)MathHelper.lerp(this.progress, 5.1, 15.1);
+    }
+
+    @Override
+    public Optional<Item> getEquipmentForSlot(EquipmentSlot slot) {
+      if (slot.equals(EquipmentSlot.OFFHAND) && random.nextDouble() < 0.05) {
+        return Optional.of(Items.SHIELD);
+      }
+
+      if (random.nextDouble() < 0.5 * this.progress) {
+        Optional.of(getItemForSlot(slot, true));
+      }
+
+      if (random.nextDouble() < 0.05 * this.progress) {
+        Optional.of(getItemForSlot(slot, false));
+      }
+
+      return Optional.empty();
+    }
+
+    @Override
+    public ItemStack enchant(ItemStack input) {
+      return EnchantmentHelper.enchant(
+          random, input,
+          (int)MathHelper.clamp(20, 40, this.progress * random.nextDouble()),
+          true);
+    }
   }
 }

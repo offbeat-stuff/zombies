@@ -82,7 +82,7 @@ public class ZombieApocalypse implements SpecialSpawner {
   }
 
   public boolean spawnZombieAt(BlockPos ppos) {
-    var difficulty = new ExtendedDifficulty(this.world, ppos);
+    var difficulty = ExtendedDifficulty.difficulty(this.world, ppos);
     var zombieOpt = findNearestWorking(ppos, difficulty.getTriesForSpawning())
                         .map(u -> new ExtendedZombieEntity(this.world, u))
                         .filter(this::canSpawnAtPosSpace);

@@ -10,6 +10,7 @@ import net.minecraft.util.math.random.Random;
 import net.minecraft.world.LocalDifficulty;
 import net.minecraft.world.ServerWorldAccess;
 import net.minecraft.world.World;
+import org.codeberg.zenxarch.zombies.difficulty.ExtendedDifficulty.IExtendedDifficulty;
 import org.codeberg.zenxarch.zombies.spawning.ZombieApocalypse;
 
 public class ExtendedZombieEntity extends ZombieEntity {
@@ -26,8 +27,8 @@ public class ExtendedZombieEntity extends ZombieEntity {
     return false;
   }
 
-  protected ExtendedDifficulty getExtentedDifficulty() {
-    return new ExtendedDifficulty(this.getWorld(), this.getBlockPos());
+  protected IExtendedDifficulty getExtentedDifficulty() {
+    return ExtendedDifficulty.difficulty(this.getWorld(), this.getBlockPos());
   }
 
   public void initialize(ServerWorldAccess world) {
