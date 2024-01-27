@@ -15,6 +15,7 @@ import net.minecraft.util.math.random.Random;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.GameRules;
+import net.minecraft.world.LightType;
 import net.minecraft.world.SpawnHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.spawner.SpecialSpawner;
@@ -32,6 +33,10 @@ public class ZombieApocalypse implements SpecialSpawner {
   public ZombieApocalypse(ServerWorld world) { this.world = world; }
 
   private boolean canSpawnAtPosBasic(BlockPos pos) {
+    if (world.getLightLevel(LightType.BLOCK, pos) > 0) {
+      return false;
+    }
+
     if (this.world.isPlayerInRange(pos.getX(), pos.getY(), pos.getZ(), 16)) {
       return false;
     }
