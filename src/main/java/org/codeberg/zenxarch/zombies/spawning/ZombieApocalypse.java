@@ -8,6 +8,7 @@ import net.minecraft.entity.SpawnRestriction;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.mob.ZombieEntity;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.registry.tag.BiomeTags;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
@@ -38,6 +39,10 @@ public class ZombieApocalypse implements SpecialSpawner {
     }
 
     if (this.world.isPlayerInRange(pos.getX(), pos.getY(), pos.getZ(), 16)) {
+      return false;
+    }
+
+    if (this.world.getBiome(pos).isIn(BiomeTags.WITHOUT_ZOMBIE_SIEGES)) {
       return false;
     }
 
