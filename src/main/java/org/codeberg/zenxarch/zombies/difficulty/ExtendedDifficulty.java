@@ -168,7 +168,7 @@ public class ExtendedDifficulty {
 
     @Override
     public Optional<Item> getEquipmentForSlot(EquipmentSlot slot) {
-      if (slot.equals(EquipmentSlot.OFFHAND) && random.nextDouble() < 0.05) {
+      if (slot.equals(EquipmentSlot.OFFHAND) && random.nextDouble() < (0.05 * this.progress)) {
         return Optional.of(Items.SHIELD);
       }
 
