@@ -172,7 +172,7 @@ public class ExtendedDifficulty {
         return Optional.of(Items.SHIELD);
       }
 
-      if (random.nextDouble() < 0.5 * this.progress) {
+      if (random.nextDouble() < ((0.4 * this.progress) + 0.1)) {
         Optional.of(getItemForSlot(slot, true));
       }
 
