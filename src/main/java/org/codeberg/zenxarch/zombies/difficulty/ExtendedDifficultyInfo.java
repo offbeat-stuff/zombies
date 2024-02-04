@@ -32,6 +32,8 @@ public record ExtendedDifficultyInfo(Period period, double progress,
                                       PeriodSize periodSize) {
     if (timeFactor < periodSize.grace) {
       return Period.GRACE;
+    } else if (timeFactor < periodSize.easy) {
+      return Period.EASY;
     } else if (timeFactor < periodSize.hard) {
       return Period.HARD;
     }
@@ -44,8 +46,11 @@ public record ExtendedDifficultyInfo(Period period, double progress,
     if (timeFactor < periodSize.grace) {
       start = 0;
       end = periodSize.grace;
-    } else if (timeFactor < periodSize.hard) {
+    } else if (timeFactor < periodSize.easy) {
       start = periodSize.grace;
+      end = periodSize.easy;
+    } else if (timeFactor < periodSize.hard) {
+      start = periodSize.easy;
       end = periodSize.hard;
     }
 
@@ -67,16 +72,19 @@ public record ExtendedDifficultyInfo(Period period, double progress,
 
   public static enum Period {
     GRACE,
+    EASY,
     HARD,
     NIGHTMARE;
 
-    public static List<Integer> spawnTries = List.of(1, 1, 5, 25);
-    public static List<Double> commonEquipment = List.of(0.0, 0.0, 0.1, 0.5);
-    public static List<Double> rareEquipment = List.of(0.0, 0.0, 0.0, 0.1);
-    public static List<Double> shieldChance = List.of(0.0, 0.0, 0.0, 0.1);
-    public static List<Integer> enchantLevel = List.of(0, 0, 20, 40);
+    public static List<Integer> spawnTries = List.of(0, 1, 2, 5, 25);
+    public static List<Double> commonEquipment =
+        List.of(0.0, 0.0, 0.05, 0.1, 0.5);
+    public static List<Double> rareEquipment =
+        List.of(0.0, 0.0, 0.0, 0.05, 0.1);
+    public static List<Double> shieldChance = List.of(0.0, 0.0, 0.0, 0.05, 0.1);
+    public static List<Integer> enchantLevel = List.of(0, 0, 5, 20, 40);
 
-    public static List<Boolean> treasure = List.of(false, false, true);
+    public static List<Boolean> treasure = List.of(false, false, true, true);
 
     public static int indexOf(Period period) {
       var index = Arrays.binarySearch(Period.values(), period);
@@ -86,15 +94,18 @@ public record ExtendedDifficultyInfo(Period period, double progress,
   }
 
   private static enum PeriodSize {
-    EASY(25, 200, 1000),
-    NORMAL(10, 100, 500),
-    HARD(5, 50, 250);
+    EASY(20, 50, 200, 1000),
+    NORMAL(10, 50, 100, 500),
+    HARD(5, 20, 50, 250);
 
     public final double grace;
+    public final double easy;
     public final double hard;
     public final double nightmare;
-    private PeriodSize(double grace, double hard, double nightmare) {
+    private PeriodSize(double grace, double easy, double hard,
+                       double nightmare) {
       this.grace = grace;
+      this.easy = easy;
       this.hard = hard;
       this.nightmare = nightmare;
     }
