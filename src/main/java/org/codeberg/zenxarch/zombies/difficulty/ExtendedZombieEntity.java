@@ -10,7 +10,6 @@ import net.minecraft.util.math.random.Random;
 import net.minecraft.world.LocalDifficulty;
 import net.minecraft.world.ServerWorldAccess;
 import net.minecraft.world.World;
-import org.codeberg.zenxarch.zombies.difficulty.ExtendedDifficulty.IExtendedDifficulty;
 import org.codeberg.zenxarch.zombies.spawning.ZombieApocalypse;
 
 public class ExtendedZombieEntity extends ZombieEntity {
@@ -27,8 +26,8 @@ public class ExtendedZombieEntity extends ZombieEntity {
     return false;
   }
 
-  protected IExtendedDifficulty getExtentedDifficulty() {
-    return ExtendedDifficulty.difficulty(this.getWorld(), this.getBlockPos());
+  protected ExtendedDifficultyInfo getExtentedDifficulty() {
+    return new ExtendedDifficultyInfo(this.getWorld(), this.getBlockPos());
   }
 
   public void initialize(ServerWorldAccess world) {
@@ -54,7 +53,7 @@ public class ExtendedZombieEntity extends ZombieEntity {
       if (!this.getEquippedStack(slot).isEmpty()) {
         continue;
       }
-      var item = difficulty.getEquipmentForSlot(slot);
+      var item = ExtendedDifficulty.getEquipmentForSlot(difficulty, slot);
       if (item.isEmpty()) {
         continue;
       }
@@ -71,7 +70,8 @@ public class ExtendedZombieEntity extends ZombieEntity {
         return;
       }
 
-      this.equipStack(slot, difficulty.enchant(this.getEquippedStack(slot)));
+      this.equipStack(slot, ExtendedDifficulty.enchant(
+                                difficulty, this.getEquippedStack(slot)));
     }
   }
 

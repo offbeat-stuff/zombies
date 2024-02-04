@@ -23,6 +23,7 @@ import net.minecraft.world.spawner.SpecialSpawner;
 import org.codeberg.zenxarch.zombies.Zombies;
 import org.codeberg.zenxarch.zombies.debug.Debug;
 import org.codeberg.zenxarch.zombies.difficulty.ExtendedDifficulty;
+import org.codeberg.zenxarch.zombies.difficulty.ExtendedDifficultyInfo;
 import org.codeberg.zenxarch.zombies.difficulty.ExtendedZombieEntity;
 
 public class ZombieApocalypse implements SpecialSpawner {
@@ -87,10 +88,12 @@ public class ZombieApocalypse implements SpecialSpawner {
   }
 
   public boolean spawnZombieAt(BlockPos ppos) {
-    var difficulty = ExtendedDifficulty.difficulty(this.world, ppos);
-    var zombieOpt = findNearestWorking(ppos, difficulty.getTriesForSpawning())
-                        .map(u -> new ExtendedZombieEntity(this.world, u))
-                        .filter(this::canSpawnAtPosSpace);
+    var difficulty = new ExtendedDifficultyInfo(this.world, ppos);
+    var zombieOpt =
+        findNearestWorking(ppos,
+                           ExtendedDifficulty.getTriesForSpawning(difficulty))
+            .map(u -> new ExtendedZombieEntity(this.world, u))
+            .filter(this::canSpawnAtPosSpace);
 
     zombieOpt.ifPresent(z -> {
       z.initialize(this.world);
