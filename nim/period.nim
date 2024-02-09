@@ -3,22 +3,22 @@ import strutils
 var buffer = ""
 var spaces = 0
 var className = "Period"
-var values = "GRACE,EASY,HARD,NIGHTMARE"
+var values = "GRACE,EASY,MEDIUM,HARD,NIGHTMARE"
 var valuesSize = values.split(',').len()
 
 var intMembers = [
-    ("spawnTries", [0, 1, 2, 5, 25]),
-    ("enchantLevel", [0, 0, 5, 20, 40])
+    ("spawnTries", [0, 1, 2, 3, 5, 25]),
+    ("enchantLevel", [0, 0, 5, 10, 20, 40])
 ]
 
 var doubleMembers = [
-    ("commonEquipment", [0.0, 0.0, 0.05, 0.1, 0.5]),
-    ("rareEquipment", [0.0, 0.0, 0.0, 0.05, 0.1]),
-    ("shieldChance", [0.0, 0.0, 0.0, 0.05, 0.1])
+    ("commonEquipment", [0.0, 0.0, 0.02, 0.05, 0.1, 0.5]),
+    ("rareEquipment", [0.0, 0.0, 0.0, 0.01, 0.05, 0.1]),
+    ("shieldChance", [0.0, 0.0, 0.0, 0.01, 0.05, 0.1])
 ]
 
 var boolMembers = [
-    ("treasure", [false, false, true, true])
+    ("treasure", [false, false, false, true, true])
 ]
 
 proc addLine(s: string) =

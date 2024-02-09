@@ -47,8 +47,11 @@ public record ExtendedDifficultyInfo(Period period, double progress,
     } else if (timeFactor < periodSize.easy) {
       start = periodSize.grace;
       end = periodSize.easy;
-    } else if (timeFactor < periodSize.hard) {
+    } else if (timeFactor < periodSize.medium) {
       start = periodSize.easy;
+      end = periodSize.medium;
+    } else if (timeFactor < periodSize.hard) {
+      start = periodSize.medium;
       end = periodSize.hard;
     }
 
@@ -69,18 +72,20 @@ public record ExtendedDifficultyInfo(Period period, double progress,
   }
 
   private static enum PeriodSize {
-    EASY(20, 50, 200, 1000),
-    NORMAL(10, 50, 100, 500),
-    HARD(5, 20, 50, 250);
+    EASY(20, 50, 200, 500, 2500),
+    NORMAL(10, 50, 100, 250, 500),
+    HARD(5, 20, 50, 100, 250);
 
     public final double grace;
     public final double easy;
+    public final double medium;
     public final double hard;
     public final double nightmare;
-    private PeriodSize(double grace, double easy, double hard,
+    private PeriodSize(double grace, double easy, double medium, double hard,
                        double nightmare) {
       this.grace = grace;
       this.easy = easy;
+      this.medium = medium;
       this.hard = hard;
       this.nightmare = nightmare;
     }
