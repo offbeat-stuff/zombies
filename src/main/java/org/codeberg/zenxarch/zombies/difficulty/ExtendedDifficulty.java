@@ -8,9 +8,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.Pair;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.random.Random;
-import org.codeberg.zenxarch.zombies.difficulty.ExtendedDifficultyInfo.Period;
 
 public class ExtendedDifficulty {
   private static final Random random = Random.create();
@@ -54,23 +52,18 @@ public class ExtendedDifficulty {
       return 0;
     }
 
-    var index = Period.indexOf(info.period());
-
-    return (int)MathHelper.lerp(info.progress(), Period.spawnTries.get(index),
-                                Period.spawnTries.get(index + 1));
+    return info.period().getSpawnTries(info.progress());
   }
 
   public static Optional<Item> getEquipmentForSlot(ExtendedDifficultyInfo info,
                                                    EquipmentSlot slot) {
-    var index = Period.indexOf(info.period());
+    var index = info.period().ordinal();
     if (index == 0) {
       return Optional.empty();
     }
 
     if (slot.equals(EquipmentSlot.OFFHAND)) {
-      var shieldChance =
-          MathHelper.lerp(info.progress(), Period.shieldChance.get(index),
-                          Period.shieldChance.get(index + 1));
+      var shieldChance = info.period().getShieldChance(info.progress());
 
       if (random.nextDouble() < shieldChance) {
         return Optional.of(Items.SHIELD);
@@ -79,17 +72,13 @@ public class ExtendedDifficulty {
       return Optional.empty();
     }
 
-    var commonChance =
-        MathHelper.lerp(info.progress(), Period.commonEquipment.get(index),
-                        Period.commonEquipment.get(index + 1));
+    var commonChance = info.period().getCommonEquipment(info.progress());
 
     if (random.nextDouble() < commonChance) {
       return Optional.of(getItemForSlot(slot, true));
     }
 
-    var rareChance =
-        MathHelper.lerp(info.progress(), Period.rareEquipment.get(index),
-                        Period.rareEquipment.get(index + 1));
+    var rareChance = info.period().getRareEquipment(info.progress());
 
     if (random.nextDouble() < rareChance) {
       return Optional.of(getItemForSlot(slot, false));
@@ -100,16 +89,15 @@ public class ExtendedDifficulty {
 
   public static ItemStack enchant(ExtendedDifficultyInfo info,
                                   ItemStack input) {
-    var index = Period.indexOf(info.period());
+    var index = info.period().ordinal();
     if (index == 0) {
       return input;
     }
 
-    var level = (int)MathHelper.lerp(info.progress() * random.nextDouble(),
-                                     Period.enchantLevel.get(index),
-                                     Period.enchantLevel.get(index + 1));
+    var level =
+        info.period().getEnchantLevel(info.progress() * random.nextDouble());
 
     return EnchantmentHelper.enchant(random, input, level,
-                                     Period.treasure.get(index));
+                                     info.period().getTreasure());
   }
 }

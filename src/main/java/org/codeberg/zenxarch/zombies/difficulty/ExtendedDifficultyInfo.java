@@ -1,7 +1,5 @@
 package org.codeberg.zenxarch.zombies.difficulty;
 
-import java.util.Arrays;
-import java.util.List;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkSectionPos;
 import net.minecraft.util.math.MathHelper;
@@ -68,29 +66,6 @@ public record ExtendedDifficultyInfo(Period period, double progress,
   public ExtendedDifficultyInfo(World world, BlockPos pos) {
     this(getTimeFactor(world, pos),
          PeriodSize.getFromDifficulty(world.getDifficulty()), world, pos);
-  }
-
-  public static enum Period {
-    GRACE,
-    EASY,
-    HARD,
-    NIGHTMARE;
-
-    public static List<Integer> spawnTries = List.of(0, 1, 2, 5, 25);
-    public static List<Double> commonEquipment =
-        List.of(0.0, 0.0, 0.05, 0.1, 0.5);
-    public static List<Double> rareEquipment =
-        List.of(0.0, 0.0, 0.0, 0.05, 0.1);
-    public static List<Double> shieldChance = List.of(0.0, 0.0, 0.0, 0.05, 0.1);
-    public static List<Integer> enchantLevel = List.of(0, 0, 5, 20, 40);
-
-    public static List<Boolean> treasure = List.of(false, false, true, true);
-
-    public static int indexOf(Period period) {
-      var index = Arrays.binarySearch(Period.values(), period);
-      index = index == -1 ? 0 : index;
-      return index;
-    }
   }
 
   private static enum PeriodSize {
