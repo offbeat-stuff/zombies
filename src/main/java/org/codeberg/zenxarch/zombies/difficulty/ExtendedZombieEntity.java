@@ -5,11 +5,14 @@ import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.mob.ZombieEntity;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.particle.ParticleTypes;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.LocalDifficulty;
 import net.minecraft.world.ServerWorldAccess;
 import net.minecraft.world.World;
+import org.codeberg.zenxarch.zombies.Zombies;
 import org.codeberg.zenxarch.zombies.spawning.ZombieApocalypse;
 
 public class ExtendedZombieEntity extends ZombieEntity {
@@ -33,6 +36,24 @@ public class ExtendedZombieEntity extends ZombieEntity {
   public void initialize(ServerWorldAccess world) {
     this.initialize(world, world.getLocalDifficulty(this.getBlockPos()),
                     SpawnReason.NATURAL, null, null);
+  }
+
+  @Override
+  public void tick() {
+    super.tick();
+
+    if (this.getWorld() instanceof ServerWorld serverWorld && this.isAlive()) {
+      if (this.random.nextInt(20) == 0) {
+        this.runParticle(serverWorld, this.getParticleX(0.5),
+                         this.getRandomBodyY(), this.getParticleZ(0.5));
+      }
+    }
+  }
+
+  private void runParticle(ServerWorld world, double x, double y, double z) {
+    Zombies.LOGGER.info(
+        "{} {} {} : {}", x, y, z,
+        world.spawnParticles(ParticleTypes.LAVA, x, y, z, 2, 0, 0, 0, 0));
   }
 
   @Override
