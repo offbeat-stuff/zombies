@@ -19,15 +19,15 @@ public class ExtendedDifficulty {
 
   private static <T extends Item>
       Item getItemForList(Pair<List<T>, List<T>> list, boolean lowerHalf) {
-    var f = lowerHalf ? list.getLeft() : list.getRight();
-    var r = random.nextDouble();
-    for (int i = f.size() - 1; i >= 0; i--) {
-      var x = mapToCurve((double)i / f.size());
-      if (r < x) {
-        return f.get(i);
+    var itemList = lowerHalf ? list.getLeft() : list.getRight();
+    var randomValue = random.nextDouble();
+    for (int index = itemList.size() - 1; index >= 0; index--) {
+      var chance = mapToCurve((double)index / itemList.size());
+      if (randomValue < chance) {
+        return itemList.get(index);
       }
     }
-    return f.get(0);
+    return itemList.get(0);
   }
 
   private static Item getItemForSlot(EquipmentSlot slot, boolean lowerHalf) {
