@@ -26,43 +26,10 @@ public record ExtendedDifficultyInfo(Period period, double progress,
     return (days * 0.5) + (inhibitedHours * 1.5 * (1.0 + moonSize));
   }
 
-  private static Period getTimePeriod(double timeFactor,
-                                      PeriodSize periodSize) {
-    if (timeFactor < periodSize.grace) {
-      return Period.GRACE;
-    } else if (timeFactor < periodSize.easy) {
-      return Period.EASY;
-    } else if (timeFactor < periodSize.hard) {
-      return Period.HARD;
-    }
-    return Period.NIGHTMARE;
-  }
-
-  private static double getProgress(double timeFactor, PeriodSize periodSize) {
-    var start = periodSize.hard;
-    var end = periodSize.nightmare;
-    if (timeFactor < periodSize.grace) {
-      start = 0;
-      end = periodSize.grace;
-    } else if (timeFactor < periodSize.easy) {
-      start = periodSize.grace;
-      end = periodSize.easy;
-    } else if (timeFactor < periodSize.medium) {
-      start = periodSize.easy;
-      end = periodSize.medium;
-    } else if (timeFactor < periodSize.hard) {
-      start = periodSize.medium;
-      end = periodSize.hard;
-    }
-
-    return MathHelper.clamp(MathHelper.getLerpProgress(timeFactor, start, end),
-                            0.0, 1.0);
-  }
-
   public ExtendedDifficultyInfo(double timeFactor, PeriodSize periodSize,
                                 World world, BlockPos pos) {
-    this(getTimePeriod(timeFactor, periodSize),
-         getProgress(timeFactor, periodSize),
+    this(periodSize.getTimePeriod(timeFactor),
+         periodSize.getProgress(timeFactor),
          (double)world.getLightLevel(LightType.SKY, pos) / 15.0, world.isDay());
   }
 
@@ -76,18 +43,32 @@ public record ExtendedDifficultyInfo(Period period, double progress,
     NORMAL(10, 50, 100, 250, 500),
     HARD(5, 20, 50, 100, 250);
 
-    public final double grace;
-    public final double easy;
-    public final double medium;
-    public final double hard;
-    public final double nightmare;
-    private PeriodSize(double grace, double easy, double medium, double hard,
-                       double nightmare) {
-      this.grace = grace;
-      this.easy = easy;
-      this.medium = medium;
-      this.hard = hard;
-      this.nightmare = nightmare;
+    public final double[] args;
+
+    private PeriodSize(double... args) {
+      assert args.length == Period.values().length;
+      this.args = args;
+    }
+
+    public Period getTimePeriod(double timeFactor) {
+      var returnIndex = 0;
+      while (returnIndex < args.length && timeFactor > args[returnIndex]) {
+        returnIndex++;
+      }
+      return Period.values()[returnIndex];
+    }
+
+    public double getProgress(double timeFactor) {
+      var start = 0.0;
+      var end = args[0];
+      var index = 0;
+      while ((index + 1) < args.length && timeFactor > end) {
+        start = this.args[index];
+        end = this.args[index + 1];
+      }
+
+      return MathHelper.clamp(
+          MathHelper.getLerpProgress(timeFactor, start, end), 0.0, 1.0);
     }
 
     public static PeriodSize getFromDifficulty(Difficulty difficulty) {
