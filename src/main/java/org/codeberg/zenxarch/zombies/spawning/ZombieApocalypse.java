@@ -18,7 +18,6 @@ import org.codeberg.zenxarch.zombies.difficulty.ExtendedDifficultyInfo;
 import org.codeberg.zenxarch.zombies.difficulty.ExtendedZombieEntity;
 
 public class ZombieApocalypse implements SpecialSpawner {
-
   private ServerWorld world;
   private final Debug debug = new Debug();
   private final SpawnProvider spawnProvider;
@@ -29,17 +28,14 @@ public class ZombieApocalypse implements SpecialSpawner {
   }
 
   private boolean canSpawnAtPosSpace(ZombieEntity zombie) {
-    return this.world.doesNotIntersectEntities(zombie) &&
-        this.world.isSpaceEmpty(zombie) &&
-        !this.world.containsFluid(zombie.getBoundingBox());
+    return this.world.doesNotIntersectEntities(zombie) && this.world.isSpaceEmpty(zombie)
+        && !this.world.containsFluid(zombie.getBoundingBox());
   }
 
   public boolean spawnZombieAt(BlockPos ppos) {
     var difficulty = new ExtendedDifficultyInfo(this.world, ppos);
     var zombieOpt =
-        spawnProvider
-            .giveSpawnPos(world, ppos,
-                          ExtendedDifficulty.getTriesForSpawning(difficulty))
+        spawnProvider.giveSpawnPos(world, ppos, ExtendedDifficulty.getTriesForSpawning(difficulty))
             .map(u -> new ExtendedZombieEntity(this.world, u))
             .filter(this::canSpawnAtPosSpace);
 
@@ -56,12 +52,10 @@ public class ZombieApocalypse implements SpecialSpawner {
   }
 
   @Override
-  public int spawn(ServerWorld world, boolean spawnMonsters,
-                   boolean spawnAnimals) {
+  public int spawn(ServerWorld world, boolean spawnMonsters, boolean spawnAnimals) {
     this.world = world;
-    if (!spawnMonsters ||
-        this.world.getDifficulty().equals(Difficulty.PEACEFUL) ||
-        !this.world.getGameRules().getBoolean(GameRules.DO_MOB_SPAWNING)) {
+    if (!spawnMonsters || this.world.getDifficulty().equals(Difficulty.PEACEFUL)
+        || !this.world.getGameRules().getBoolean(GameRules.DO_MOB_SPAWNING)) {
       return 0;
     }
 

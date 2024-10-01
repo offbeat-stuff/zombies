@@ -13,23 +13,21 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ServerWorld.class)
 public abstract class ServerWorldMixin {
-
   @Unique private List<SpecialSpawner> zombieSpawners;
 
   @Inject(at = @At(value = "TAIL"), method = "<init>", cancellable = false)
   private void zenxarch$inject_init(CallbackInfo ci) {
-    var world = (ServerWorld)(Object)this;
+    var world = (ServerWorld) (Object) this;
     zombieSpawners = ZombieApocalypse.isApocalypticWorld(world)
-                         ? ImmutableList.of(new ZombieApocalypse(world))
-                         : ImmutableList.of();
+        ? ImmutableList.of(new ZombieApocalypse(world))
+        : ImmutableList.of();
   }
 
   @Inject(at = @At(value = "HEAD"), method = "tickSpawners")
-  private void zenxarch$inject_tickSpawners(boolean spawnMonsters,
-                                            boolean spawnAnimals,
-                                            CallbackInfo ci) {
+  private void zenxarch$inject_tickSpawners(
+      boolean spawnMonsters, boolean spawnAnimals, CallbackInfo ci) {
     for (var spawner : zombieSpawners) {
-      spawner.spawn((ServerWorld)(Object)this, spawnMonsters, spawnAnimals);
+      spawner.spawn((ServerWorld) (Object) this, spawnMonsters, spawnAnimals);
     }
   }
 }

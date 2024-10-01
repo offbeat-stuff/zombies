@@ -21,12 +21,12 @@ public class ExtendedDifficulty {
     return (Math.pow((input + 1), -2) - 1) * (-4.0 / 3.0);
   }
 
-  private static <T extends Item>
-      Item getItemForList(Pair<List<T>, List<T>> list, boolean lowerHalf) {
+  private static <T extends Item> Item getItemForList(
+      Pair<List<T>, List<T>> list, boolean lowerHalf) {
     var itemList = lowerHalf ? list.getLeft() : list.getRight();
     var randomValue = random.nextDouble();
     for (int index = itemList.size() - 1; index >= 0; index--) {
-      var chance = mapToCurve((double)index / itemList.size());
+      var chance = mapToCurve((double) index / itemList.size());
       if (randomValue < chance) {
         return itemList.get(index);
       }
@@ -36,18 +36,18 @@ public class ExtendedDifficulty {
 
   private static Item getItemForSlot(EquipmentSlot slot, boolean lowerHalf) {
     switch (slot) {
-    case HEAD:
-      return getItemForList(Equipment.HEAD, lowerHalf);
-    case CHEST:
-      return getItemForList(Equipment.CHEST, lowerHalf);
-    case LEGS:
-      return getItemForList(Equipment.LEGS, lowerHalf);
-    case FEET:
-      return getItemForList(Equipment.FEET, lowerHalf);
-    case MAINHAND:
-      return getItemForList(Equipment.SWORD, lowerHalf);
-    default:
-      return Items.AIR;
+      case HEAD:
+        return getItemForList(Equipment.HEAD, lowerHalf);
+      case CHEST:
+        return getItemForList(Equipment.CHEST, lowerHalf);
+      case LEGS:
+        return getItemForList(Equipment.LEGS, lowerHalf);
+      case FEET:
+        return getItemForList(Equipment.FEET, lowerHalf);
+      case MAINHAND:
+        return getItemForList(Equipment.SWORD, lowerHalf);
+      default:
+        return Items.AIR;
     }
   }
 
@@ -59,8 +59,8 @@ public class ExtendedDifficulty {
     return info.period().getSpawnTries(info.progress());
   }
 
-  public static Optional<Item> getEquipmentForSlot(ExtendedDifficultyInfo info,
-                                                   EquipmentSlot slot) {
+  public static Optional<Item> getEquipmentForSlot(
+      ExtendedDifficultyInfo info, EquipmentSlot slot) {
     var index = info.period().ordinal();
     if (index == 0) {
       return Optional.empty();
@@ -91,27 +91,25 @@ public class ExtendedDifficulty {
     return Optional.empty();
   }
 
-  public static ItemStack enchant(ServerWorldAccess world,
-                                  ExtendedDifficultyInfo info,
-                                  ItemStack input) {
+  public static ItemStack enchant(
+      ServerWorldAccess world, ExtendedDifficultyInfo info, ItemStack input) {
     var index = info.period().ordinal();
     if (index == 0) {
       return input;
     }
 
-    var level =
-        info.period().getEnchantLevel(info.progress() * random.nextDouble());
+    var level = info.period().getEnchantLevel(info.progress() * random.nextDouble());
 
     var enchantments = world.getRegistryManager()
                            .get(RegistryKeys.ENCHANTMENT)
                            .getOrCreateEntryList(EnchantmentTags.NON_TREASURE)
                            .stream();
     if (info.period().getTreasure()) {
-      enchantments = Stream.concat(
-          enchantments, world.getRegistryManager()
-                            .get(RegistryKeys.ENCHANTMENT)
-                            .getOrCreateEntryList(EnchantmentTags.TREASURE)
-                            .stream());
+      enchantments = Stream.concat(enchantments,
+          world.getRegistryManager()
+              .get(RegistryKeys.ENCHANTMENT)
+              .getOrCreateEntryList(EnchantmentTags.TREASURE)
+              .stream());
     }
     return EnchantmentHelper.enchant(random, input, level, enchantments);
   }

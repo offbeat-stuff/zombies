@@ -13,11 +13,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(EntityType.class)
 public abstract class EntityTypeMixin {
-
   @Inject(method = "getEntityFromNbt", at = @At("HEAD"), cancellable = true)
   private static void zenxarch$inject_getEntityFromNbt(
-      NbtCompound nbt, World world,
-      CallbackInfoReturnable<Optional<Entity>> cir) {
+      NbtCompound nbt, World world, CallbackInfoReturnable<Optional<Entity>> cir) {
     var opt = ZombieApocalypse.loadFromNbt(nbt, world);
     if (opt.isPresent()) {
       cir.setReturnValue(opt);

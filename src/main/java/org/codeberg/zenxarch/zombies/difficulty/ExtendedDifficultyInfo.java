@@ -7,35 +7,32 @@ import net.minecraft.world.Difficulty;
 import net.minecraft.world.LightType;
 import net.minecraft.world.World;
 
-public record ExtendedDifficultyInfo(Period period, double progress,
-                                     double skylight, boolean isDay) {
-
+public record ExtendedDifficultyInfo(
+    Period period, double progress, double skylight, boolean isDay) {
   private static double getTimeFactor(World world, BlockPos pos) {
     double inhibitedHours = 0.0;
     double moonSize = 0.0;
     double days = 0.0;
     if (world.isChunkLoaded(ChunkSectionPos.getSectionCoord(pos.getX()),
-                            ChunkSectionPos.getSectionCoord(pos.getZ()))) {
-      moonSize = (double)world.getMoonSize();
-      inhibitedHours =
-          (double)world.getWorldChunk(pos).getInhabitedTime() / (60 * 60 * 20);
+            ChunkSectionPos.getSectionCoord(pos.getZ()))) {
+      moonSize = (double) world.getMoonSize();
+      inhibitedHours = (double) world.getWorldChunk(pos).getInhabitedTime() / (60 * 60 * 20);
     }
 
-    days = (double)world.getTimeOfDay() / 24000.0;
+    days = (double) world.getTimeOfDay() / 24000.0;
 
     return (days * 0.5) + (inhibitedHours * 1.5 * (1.0 + moonSize));
   }
 
-  public ExtendedDifficultyInfo(double timeFactor, PeriodSize periodSize,
-                                World world, BlockPos pos) {
-    this(periodSize.getTimePeriod(timeFactor),
-         periodSize.getProgress(timeFactor),
-         (double)world.getLightLevel(LightType.SKY, pos) / 15.0, world.isDay());
+  public ExtendedDifficultyInfo(
+      double timeFactor, PeriodSize periodSize, World world, BlockPos pos) {
+    this(periodSize.getTimePeriod(timeFactor), periodSize.getProgress(timeFactor),
+        (double) world.getLightLevel(LightType.SKY, pos) / 15.0, world.isDay());
   }
 
   public ExtendedDifficultyInfo(World world, BlockPos pos) {
-    this(getTimeFactor(world, pos),
-         PeriodSize.getFromDifficulty(world.getDifficulty()), world, pos);
+    this(
+        getTimeFactor(world, pos), PeriodSize.getFromDifficulty(world.getDifficulty()), world, pos);
   }
 
   private static enum PeriodSize {
@@ -67,18 +64,17 @@ public record ExtendedDifficultyInfo(Period period, double progress,
         end = this.args[index + 1];
       }
 
-      return MathHelper.clamp(
-          MathHelper.getLerpProgress(timeFactor, start, end), 0.0, 1.0);
+      return MathHelper.clamp(MathHelper.getLerpProgress(timeFactor, start, end), 0.0, 1.0);
     }
 
     public static PeriodSize getFromDifficulty(Difficulty difficulty) {
       switch (difficulty) {
-      case HARD:
-        return HARD;
-      case NORMAL:
-        return NORMAL;
-      default:
-        return EASY;
+        case HARD:
+          return HARD;
+        case NORMAL:
+          return NORMAL;
+        default:
+          return EASY;
       }
     }
   }
