@@ -4,6 +4,11 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.Predicate;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.AttributeModifiersComponent;
+import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.entity.attribute.EntityAttributes;
+import net.minecraft.entity.mob.ZombieEntity;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.AxeItem;
 import net.minecraft.item.Item;
@@ -20,10 +25,20 @@ public abstract class Equipment {
              ? Float.compare(a.getToughness(), b.getToughness())
              : Float.compare(a.getProtection(), b.getProtection());
 
+  private static float getAttackDamage(Item item) {
+    return (float)item.getComponents()
+        .getOrDefault(DataComponentTypes.ATTRIBUTE_MODIFIERS,
+                      AttributeModifiersComponent.DEFAULT)
+        .applyOperations(
+            ZombieEntity.createZombieAttributes().build().getBaseValue(
+                EntityAttributes.GENERIC_ATTACK_DAMAGE),
+            EquipmentSlot.MAINHAND);
+  }
+
   private static final Comparator<SwordItem> SwordRanking =
-      (a, b) -> Float.compare(a.getAttackDamage(), b.getAttackDamage());
+      (a, b) -> Float.compare(getAttackDamage(a), getAttackDamage(b));
   private static final Comparator<AxeItem> AxeRanking =
-      (a, b) -> Float.compare(a.getAttackDamage(), b.getAttackDamage());
+      (a, b) -> Float.compare(getAttackDamage(a), getAttackDamage(b));
 
   public static Pair<List<ArmorItem>, List<ArmorItem>> HEAD =
       getSortedList(EquipmentType.HEAD, ArmorRanking);

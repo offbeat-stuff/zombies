@@ -12,7 +12,6 @@ import net.minecraft.util.math.random.Random;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.LightType;
-import net.minecraft.world.SpawnHelper;
 import org.codeberg.zenxarch.zombies.debug.Debug;
 
 public class SpawnProvider {
@@ -30,8 +29,11 @@ public class SpawnProvider {
     if (this.world.getLightLevel(LightType.BLOCK, pos) > 0 ||
         this.world.isPlayerInRange(pos.getX(), pos.getY(), pos.getZ(), 16) ||
         this.world.getBiome(pos).isIn(BiomeTags.WITHOUT_ZOMBIE_SIEGES) ||
-        !SpawnHelper.canSpawn(SpawnRestriction.getLocation(EntityType.ZOMBIE),
-                              this.world, pos, EntityType.ZOMBIE) ||
+        !SpawnRestriction.canSpawn(EntityType.ZOMBIE, this.world,
+                                   SpawnReason.NATURAL, pos,
+                                   this.world.random) ||
+        // !SpawnHelper.canSpawn(SpawnRestriction.getLocation(EntityType.ZOMBIE),
+        // this.world, pos, EntityType.ZOMBIE) ||
         !MobEntity.canMobSpawn(EntityType.ZOMBIE, this.world,
                                SpawnReason.NATURAL, pos, this.world.random)) {
       return false;
@@ -39,7 +41,7 @@ public class SpawnProvider {
 
     this.debug.spawnCheck();
 
-    var boundingBox = EntityType.ZOMBIE.createSimpleBoundingBox(
+    var boundingBox = EntityType.ZOMBIE.getSpawnBox(
         pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
 
     return world.doesNotIntersectEntities(null,

@@ -35,7 +35,7 @@ public class ExtendedZombieEntity extends ZombieEntity {
 
   public void initialize(ServerWorldAccess world) {
     this.initialize(world, world.getLocalDifficulty(this.getBlockPos()),
-                    SpawnReason.NATURAL, null, null);
+                    SpawnReason.NATURAL, null);
   }
 
   @Override
@@ -59,11 +59,9 @@ public class ExtendedZombieEntity extends ZombieEntity {
   @Override
   public EntityData initialize(ServerWorldAccess world,
                                LocalDifficulty difficulty,
-                               SpawnReason spawnReason, EntityData entityData,
-                               NbtCompound entityNbt) {
+                               SpawnReason spawnReason, EntityData entityData) {
     entityData = new ZombieData(false, false);
-    return super.initialize(world, difficulty, spawnReason, entityData,
-                            entityNbt);
+    return super.initialize(world, difficulty, spawnReason, entityData);
   }
 
   @Override
@@ -83,7 +81,8 @@ public class ExtendedZombieEntity extends ZombieEntity {
   }
 
   @Override
-  protected void updateEnchantments(Random random, LocalDifficulty unused) {
+  protected void updateEnchantments(ServerWorldAccess world, Random random,
+                                    LocalDifficulty unused) {
     var difficulty = getExtentedDifficulty();
 
     for (var slot : EquipmentSlot.values()) {
@@ -91,8 +90,9 @@ public class ExtendedZombieEntity extends ZombieEntity {
         return;
       }
 
-      this.equipStack(slot, ExtendedDifficulty.enchant(
-                                difficulty, this.getEquippedStack(slot)));
+      this.equipStack(slot,
+                      ExtendedDifficulty.enchant(world, difficulty,
+                                                 this.getEquippedStack(slot)));
     }
   }
 

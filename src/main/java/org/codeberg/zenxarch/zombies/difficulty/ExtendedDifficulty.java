@@ -2,13 +2,17 @@ package org.codeberg.zenxarch.zombies.difficulty;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.tag.EnchantmentTags;
 import net.minecraft.util.Pair;
 import net.minecraft.util.math.random.Random;
+import net.minecraft.world.ServerWorldAccess;
 
 public class ExtendedDifficulty {
   private static final Random random = Random.create();
@@ -87,7 +91,8 @@ public class ExtendedDifficulty {
     return Optional.empty();
   }
 
-  public static ItemStack enchant(ExtendedDifficultyInfo info,
+  public static ItemStack enchant(ServerWorldAccess world,
+                                  ExtendedDifficultyInfo info,
                                   ItemStack input) {
     var index = info.period().ordinal();
     if (index == 0) {
@@ -97,7 +102,17 @@ public class ExtendedDifficulty {
     var level =
         info.period().getEnchantLevel(info.progress() * random.nextDouble());
 
-    return EnchantmentHelper.enchant(random, input, level,
-                                     info.period().getTreasure());
+    var enchantments = world.getRegistryManager()
+                           .get(RegistryKeys.ENCHANTMENT)
+                           .getOrCreateEntryList(EnchantmentTags.NON_TREASURE)
+                           .stream();
+    if (info.period().getTreasure()) {
+      enchantments = Stream.concat(
+          enchantments, world.getRegistryManager()
+                            .get(RegistryKeys.ENCHANTMENT)
+                            .getOrCreateEntryList(EnchantmentTags.TREASURE)
+                            .stream());
+    }
+    return EnchantmentHelper.enchant(random, input, level, enchantments);
   }
 }
