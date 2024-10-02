@@ -4,7 +4,6 @@ import java.util.Optional;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.SpawnRestriction;
-import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.registry.tag.BiomeTags;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
@@ -28,13 +27,13 @@ public class SpawnProvider {
     if (this.world.getLightLevel(LightType.BLOCK, pos) > 0
         || this.world.isPlayerInRange(pos.getX(), pos.getY(), pos.getZ(), 16)
         || this.world.getBiome(pos).isIn(BiomeTags.WITHOUT_ZOMBIE_SIEGES)
+        || !SpawnRestriction.isSpawnPosAllowed(EntityType.ZOMBIE, world, pos)
         || !SpawnRestriction.canSpawn(
-            EntityType.ZOMBIE, this.world, SpawnReason.NATURAL, pos, this.world.random)
-        ||
-        // !SpawnHelper.canSpawn(SpawnRestriction.getLocation(EntityType.ZOMBIE),
-        // this.world, pos, EntityType.ZOMBIE) ||
-        !MobEntity.canMobSpawn(
             EntityType.ZOMBIE, this.world, SpawnReason.NATURAL, pos, this.world.random)) {
+      // !SpawnHelper.canSpawn(SpawnRestriction.getLocation(EntityType.ZOMBIE),
+      // this.world, pos, EntityType.ZOMBIE) ||
+      // !MobEntity.canMobSpawn(
+      // EntityType.ZOMBIE, this.world, SpawnReason.NATURAL, pos, this.world.random)) {
       return false;
     };
 
