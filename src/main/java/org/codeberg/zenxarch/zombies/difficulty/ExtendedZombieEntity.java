@@ -12,7 +12,6 @@ import net.minecraft.util.math.random.Random;
 import net.minecraft.world.LocalDifficulty;
 import net.minecraft.world.ServerWorldAccess;
 import net.minecraft.world.World;
-import org.codeberg.zenxarch.zombies.Zombies;
 import org.codeberg.zenxarch.zombies.spawning.ZombieApocalypse;
 
 public class ExtendedZombieEntity extends ZombieEntity {
@@ -51,8 +50,7 @@ public class ExtendedZombieEntity extends ZombieEntity {
   }
 
   private void runParticle(ServerWorld world, double x, double y, double z) {
-    Zombies.LOGGER.info(
-        "{} {} {} : {}", x, y, z, world.spawnParticles(ParticleTypes.LAVA, x, y, z, 2, 0, 0, 0, 0));
+    world.spawnParticles(ParticleTypes.LAVA, x, y, z, 2, 0, 0, 0, 0);
   }
 
   @Override
