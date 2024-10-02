@@ -52,6 +52,7 @@ public record ExtendedDifficultyInfo(
       while (returnIndex < args.length && timeFactor > args[returnIndex]) {
         returnIndex++;
       }
+      returnIndex = MathHelper.clamp(returnIndex, 0, Period.values().length - 1);
       return Period.values()[returnIndex];
     }
 
@@ -62,6 +63,7 @@ public record ExtendedDifficultyInfo(
       while ((index + 1) < args.length && timeFactor > end) {
         start = this.args[index];
         end = this.args[index + 1];
+        index++;
       }
 
       return MathHelper.clamp(MathHelper.getLerpProgress(timeFactor, start, end), 0.0, 1.0);

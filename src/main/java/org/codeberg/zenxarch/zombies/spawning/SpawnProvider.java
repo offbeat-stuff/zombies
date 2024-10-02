@@ -47,24 +47,30 @@ public class SpawnProvider {
 
   private static int SPAWN_RANGE = 64;
 
-  private BlockPos giveRandomPos(BlockPos center) {
+  private Optional<BlockPos> giveRandomPos(BlockPos center) {
     int x = this.random.nextBetween(-SPAWN_RANGE, SPAWN_RANGE);
     int z = this.random.nextBetween(-SPAWN_RANGE, SPAWN_RANGE);
 
     int minY = Math.max(this.world.getBottomY(), center.getY() - SPAWN_RANGE);
 
-    int maxY = Math.min(this.world.getTopY(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, x, z),
+    int maxY = Math.min(this.world.getTopY(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES,
+                            x + center.getX(), z + center.getZ()),
         center.getY() + SPAWN_RANGE);
 
-    return center.add(x, this.random.nextBetween(minY, maxY), z);
+    if (maxY < minY)
+      return Optional.empty();
+
+    return Optional.of(center.add(x, this.random.nextBetween(minY, maxY), z));
   }
 
   public Optional<BlockPos> giveSpawnPos(ServerWorld world, BlockPos centerPos, int times) {
     this.world = world;
     for (int i = 0; i < times; i++) {
       var pos = giveRandomPos(centerPos);
-      if (canSpawnAtPosBasic(pos)) {
-        return Optional.of(pos);
+      if (pos.isEmpty())
+        continue;
+      if (canSpawnAtPosBasic(pos.get())) {
+        return pos;
       }
     }
     return Optional.empty();
