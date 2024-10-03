@@ -35,14 +35,15 @@ public class SpawnProvider {
       // !MobEntity.canMobSpawn(
       // EntityType.ZOMBIE, this.world, SpawnReason.NATURAL, pos, this.world.random)) {
       return false;
-    };
+    }
 
     this.debug.spawnCheck();
 
     var boundingBox = EntityType.ZOMBIE.getSpawnBox(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
 
     return world.doesNotIntersectEntities(null, VoxelShapes.cuboid(boundingBox))
-        && world.isSpaceEmpty(boundingBox) && !world.containsFluid(boundingBox);
+        && world.isSpaceEmpty(boundingBox)
+        && !world.containsFluid(boundingBox);
   }
 
   private static int SPAWN_RANGE = 64;
@@ -53,12 +54,13 @@ public class SpawnProvider {
 
     int minY = Math.max(this.world.getBottomY(), center.getY() - SPAWN_RANGE);
 
-    int maxY = Math.min(this.world.getTopY(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES,
-                            x + center.getX(), z + center.getZ()),
-        center.getY() + SPAWN_RANGE);
+    int maxY =
+        Math.min(
+            this.world.getTopY(
+                Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, x + center.getX(), z + center.getZ()),
+            center.getY() + SPAWN_RANGE);
 
-    if (maxY < minY)
-      return Optional.empty();
+    if (maxY < minY) return Optional.empty();
 
     return Optional.of(center.add(x, this.random.nextBetween(minY, maxY), z));
   }
@@ -67,8 +69,7 @@ public class SpawnProvider {
     this.world = world;
     for (int i = 0; i < times; i++) {
       var pos = giveRandomPos(centerPos);
-      if (pos.isEmpty())
-        continue;
+      if (pos.isEmpty()) continue;
       if (canSpawnAtPosBasic(pos.get())) {
         return pos;
       }

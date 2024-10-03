@@ -18,8 +18,11 @@ public class Debug {
     spawnAttempts++;
     successfulSpawnAttempts += successful ? 1 : 0;
     if (spawnAttempts % (20 * 60 * 5) == 0) {
-      LOGGER.info("Successful Attemps : {} , Total Attempts: {},spawnChecks : {}",
-          successfulSpawnAttempts, spawnAttempts, spawnPosChecks);
+      LOGGER.info(
+          "Successful Attemps : {} , Total Attempts: {},spawnChecks : {}",
+          successfulSpawnAttempts,
+          spawnAttempts,
+          spawnPosChecks);
     }
   }
 }

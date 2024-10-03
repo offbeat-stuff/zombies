@@ -19,16 +19,19 @@ import net.minecraft.util.Pair;
 import org.codeberg.zenxarch.zombies.Zombies;
 
 public abstract class Equipment {
-  private static final Comparator<ArmorItem> ArmorRanking = (a, b)
-      -> a.getProtection() == b.getProtection()
-      ? Float.compare(a.getToughness(), b.getToughness())
-      : Float.compare(a.getProtection(), b.getProtection());
+  private static final Comparator<ArmorItem> ArmorRanking =
+      (a, b) ->
+          a.getProtection() == b.getProtection()
+              ? Float.compare(a.getToughness(), b.getToughness())
+              : Float.compare(a.getProtection(), b.getProtection());
 
   private static double getAttackDamage(Item item) {
     return item.getComponents()
         .getOrDefault(DataComponentTypes.ATTRIBUTE_MODIFIERS, AttributeModifiersComponent.DEFAULT)
-        .applyOperations(ZombieEntity.createZombieAttributes().build().getBaseValue(
-                             EntityAttributes.GENERIC_ATTACK_DAMAGE),
+        .applyOperations(
+            ZombieEntity.createZombieAttributes()
+                .build()
+                .getBaseValue(EntityAttributes.GENERIC_ATTACK_DAMAGE),
             EquipmentSlot.MAINHAND);
   }
 
@@ -81,8 +84,10 @@ public abstract class Equipment {
 
   private static enum EquipmentType {
     HEAD("helmet", item -> isArmorItem(item, ArmorItem.Type.HELMET), Items.DIAMOND_HELMET),
-    CHEST("chestplate",
-        item -> isArmorItem(item, ArmorItem.Type.CHESTPLATE), Items.DIAMOND_CHESTPLATE),
+    CHEST(
+        "chestplate",
+        item -> isArmorItem(item, ArmorItem.Type.CHESTPLATE),
+        Items.DIAMOND_CHESTPLATE),
     LEGS("leggings", item -> isArmorItem(item, ArmorItem.Type.LEGGINGS), Items.DIAMOND_LEGGINGS),
     FEET("boots", item -> isArmorItem(item, ArmorItem.Type.BOOTS), Items.DIAMOND_BOOTS),
     SWORD("sword", item -> item instanceof SwordItem, Items.DIAMOND_SWORD),

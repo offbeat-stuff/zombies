@@ -28,21 +28,24 @@ public class ZombieApocalypse implements SpecialSpawner {
   }
 
   private boolean canSpawnAtPosSpace(ZombieEntity zombie) {
-    return this.world.doesNotIntersectEntities(zombie) && this.world.isSpaceEmpty(zombie)
+    return this.world.doesNotIntersectEntities(zombie)
+        && this.world.isSpaceEmpty(zombie)
         && !this.world.containsFluid(zombie.getBoundingBox());
   }
 
   public boolean spawnZombieAt(BlockPos ppos) {
     var difficulty = new ExtendedDifficultyInfo(this.world, ppos);
     var zombieOpt =
-        spawnProvider.giveSpawnPos(world, ppos, ExtendedDifficulty.getTriesForSpawning(difficulty))
+        spawnProvider
+            .giveSpawnPos(world, ppos, ExtendedDifficulty.getTriesForSpawning(difficulty))
             .map(u -> new ExtendedZombieEntity(this.world, u))
             .filter(this::canSpawnAtPosSpace);
 
-    zombieOpt.ifPresent(z -> {
-      z.initialize(this.world);
-      this.world.spawnEntityAndPassengers(z);
-    });
+    zombieOpt.ifPresent(
+        z -> {
+          z.initialize(this.world);
+          this.world.spawnEntityAndPassengers(z);
+        });
 
     return zombieOpt.isPresent();
   }
@@ -54,7 +57,8 @@ public class ZombieApocalypse implements SpecialSpawner {
   @Override
   public int spawn(ServerWorld world, boolean spawnMonsters, boolean spawnAnimals) {
     this.world = world;
-    if (!spawnMonsters || this.world.getDifficulty().equals(Difficulty.PEACEFUL)
+    if (!spawnMonsters
+        || this.world.getDifficulty().equals(Difficulty.PEACEFUL)
         || !this.world.getGameRules().getBoolean(GameRules.DO_MOB_SPAWNING)) {
       return 0;
     }
@@ -85,7 +89,7 @@ public class ZombieApocalypse implements SpecialSpawner {
         zombie.readNbt(nbt);
         yield Optional.of(zombie);
       }
-      case String id -> { 
+      case String id -> {
         Zombies.LOGGER.warn("Skipping Zombie Apocalypse Entity with id {}", id);
         yield Optional.empty();
       }

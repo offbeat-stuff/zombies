@@ -28,16 +28,16 @@ public enum Period {
 
   public double getCommonEquipment(double progress) {
     int index = this.ordinal();
-    return (double) MathHelper.lerp(
-        progress, commonEquipment.get(index), commonEquipment.get(index + 1));
+    return (double)
+        MathHelper.lerp(progress, commonEquipment.get(index), commonEquipment.get(index + 1));
   }
 
   public static List<Double> rareEquipment = List.of(0.0, 0.0, 0.0, 0.01, 0.05, 0.1);
 
   public double getRareEquipment(double progress) {
     int index = this.ordinal();
-    return (double) MathHelper.lerp(
-        progress, rareEquipment.get(index), rareEquipment.get(index + 1));
+    return (double)
+        MathHelper.lerp(progress, rareEquipment.get(index), rareEquipment.get(index + 1));
   }
 
   public static List<Double> shieldChance = List.of(0.0, 0.0, 0.0, 0.01, 0.05, 0.1);

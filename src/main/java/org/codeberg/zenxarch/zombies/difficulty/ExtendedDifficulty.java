@@ -94,16 +94,21 @@ public class ExtendedDifficulty {
 
     var level = info.period().getEnchantLevel(info.progress() * random.nextDouble());
 
-    var enchantments = world.getRegistryManager()
-                           .get(RegistryKeys.ENCHANTMENT)
-                           .getOrCreateEntryList(EnchantmentTags.NON_TREASURE)
-                           .stream();
+    var enchantments =
+        world
+            .getRegistryManager()
+            .get(RegistryKeys.ENCHANTMENT)
+            .getOrCreateEntryList(EnchantmentTags.NON_TREASURE)
+            .stream();
     if (info.period().getTreasure()) {
-      enchantments = Stream.concat(enchantments,
-          world.getRegistryManager()
-              .get(RegistryKeys.ENCHANTMENT)
-              .getOrCreateEntryList(EnchantmentTags.TREASURE)
-              .stream());
+      enchantments =
+          Stream.concat(
+              enchantments,
+              world
+                  .getRegistryManager()
+                  .get(RegistryKeys.ENCHANTMENT)
+                  .getOrCreateEntryList(EnchantmentTags.TREASURE)
+                  .stream());
     }
     return EnchantmentHelper.enchant(random, input, level, enchantments);
   }

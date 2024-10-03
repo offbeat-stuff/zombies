@@ -13,8 +13,8 @@ public record ExtendedDifficultyInfo(
     double inhibitedHours = 0.0;
     double moonSize = 0.0;
     double days = 0.0;
-    if (world.isChunkLoaded(ChunkSectionPos.getSectionCoord(pos.getX()),
-            ChunkSectionPos.getSectionCoord(pos.getZ()))) {
+    if (world.isChunkLoaded(
+        ChunkSectionPos.getSectionCoord(pos.getX()), ChunkSectionPos.getSectionCoord(pos.getZ()))) {
       moonSize = (double) world.getMoonSize();
       inhibitedHours = (double) world.getWorldChunk(pos).getInhabitedTime() / (60 * 60 * 20);
     }
@@ -26,8 +26,11 @@ public record ExtendedDifficultyInfo(
 
   public ExtendedDifficultyInfo(
       double timeFactor, PeriodSize periodSize, World world, BlockPos pos) {
-    this(periodSize.getTimePeriod(timeFactor), periodSize.getProgress(timeFactor),
-        (double) world.getLightLevel(LightType.SKY, pos) / 15.0, world.isDay());
+    this(
+        periodSize.getTimePeriod(timeFactor),
+        periodSize.getProgress(timeFactor),
+        (double) world.getLightLevel(LightType.SKY, pos) / 15.0,
+        world.isDay());
   }
 
   public ExtendedDifficultyInfo(World world, BlockPos pos) {

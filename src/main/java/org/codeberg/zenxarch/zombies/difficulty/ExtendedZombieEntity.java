@@ -54,8 +54,11 @@ public class ExtendedZombieEntity extends ZombieEntity {
   }
 
   @Override
-  public EntityData initialize(ServerWorldAccess world, LocalDifficulty difficulty,
-      SpawnReason spawnReason, EntityData entityData) {
+  public EntityData initialize(
+      ServerWorldAccess world,
+      LocalDifficulty difficulty,
+      SpawnReason spawnReason,
+      EntityData entityData) {
     entityData = new ZombieData(false, false);
     return super.initialize(world, difficulty, spawnReason, entityData);
   }
