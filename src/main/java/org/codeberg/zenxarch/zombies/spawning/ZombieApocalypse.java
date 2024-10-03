@@ -74,20 +74,21 @@ public class ZombieApocalypse implements SpecialSpawner {
     return false;
   }
 
-  public static String ZOMBIE_ID_KEY = "zenxarch_zombie_id";
-  public static String BASE_ZOMBIE_ID = "BaseZombie";
+  public static final String ZOMBIE_ID_KEY = "zenxarch_zombie_id";
+  public static final String BASE_ZOMBIE_ID = "BaseZombie";
 
   public static Optional<Entity> loadFromNbt(NbtCompound nbt, World world) {
-    var id = nbt.getString(ZOMBIE_ID_KEY);
-    if (id.equals("")) {
-      return Optional.empty();
-    }
-    if (id.equals(BASE_ZOMBIE_ID)) {
-      var zombie = new ExtendedZombieEntity(world);
-      zombie.readNbt(nbt);
-      return Optional.of(zombie);
-    }
-    Zombies.LOGGER.warn("Skipping Zombie Apocalypse Entity with id {}", id);
-    return Optional.empty();
+    return switch (nbt.getString(ZOMBIE_ID_KEY)) {
+      case "" -> Optional.empty();
+      case BASE_ZOMBIE_ID -> {
+        var zombie = new ExtendedZombieEntity(world);
+        zombie.readNbt(nbt);
+        yield Optional.of(zombie);
+      }
+      case String id -> { 
+        Zombies.LOGGER.warn("Skipping Zombie Apocalypse Entity with id {}", id);
+        yield Optional.empty();
+      }
+    };
   }
 }
