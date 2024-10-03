@@ -24,8 +24,8 @@ public abstract class Equipment {
       ? Float.compare(a.getToughness(), b.getToughness())
       : Float.compare(a.getProtection(), b.getProtection());
 
-  private static float getAttackDamage(Item item) {
-    return (float) item.getComponents()
+  private static double getAttackDamage(Item item) {
+    return item.getComponents()
         .getOrDefault(DataComponentTypes.ATTRIBUTE_MODIFIERS, AttributeModifiersComponent.DEFAULT)
         .applyOperations(ZombieEntity.createZombieAttributes().build().getBaseValue(
                              EntityAttributes.GENERIC_ATTACK_DAMAGE),
@@ -33,9 +33,9 @@ public abstract class Equipment {
   }
 
   private static final Comparator<SwordItem> SwordRanking =
-      (a, b) -> Float.compare(getAttackDamage(a), getAttackDamage(b));
+      (a, b) -> Double.compare(getAttackDamage(a), getAttackDamage(b));
   private static final Comparator<AxeItem> AxeRanking =
-      (a, b) -> Float.compare(getAttackDamage(a), getAttackDamage(b));
+      (a, b) -> Double.compare(getAttackDamage(a), getAttackDamage(b));
 
   public static Pair<List<ArmorItem>, List<ArmorItem>> HEAD =
       getSortedList(EquipmentType.HEAD, ArmorRanking);
