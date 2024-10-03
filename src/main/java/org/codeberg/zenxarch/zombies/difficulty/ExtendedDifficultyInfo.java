@@ -70,14 +70,11 @@ public record ExtendedDifficultyInfo(
     }
 
     public static PeriodSize getFromDifficulty(Difficulty difficulty) {
-      switch (difficulty) {
-        case HARD:
-          return HARD;
-        case NORMAL:
-          return NORMAL;
-        default:
-          return EASY;
-      }
+      return switch (difficulty) {
+        case HARD -> HARD;
+        case NORMAL -> NORMAL;
+        default -> EASY;
+      };
     }
   }
 }
