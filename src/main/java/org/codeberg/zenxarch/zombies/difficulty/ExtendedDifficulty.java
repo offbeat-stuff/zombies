@@ -35,20 +35,14 @@ public class ExtendedDifficulty {
   }
 
   private static Item getItemForSlot(EquipmentSlot slot, boolean lowerHalf) {
-    switch (slot) {
-      case HEAD:
-        return getItemForList(Equipment.HEAD, lowerHalf);
-      case CHEST:
-        return getItemForList(Equipment.CHEST, lowerHalf);
-      case LEGS:
-        return getItemForList(Equipment.LEGS, lowerHalf);
-      case FEET:
-        return getItemForList(Equipment.FEET, lowerHalf);
-      case MAINHAND:
-        return getItemForList(Equipment.SWORD, lowerHalf);
-      default:
-        return Items.AIR;
-    }
+    return switch (slot) {
+      case HEAD -> getItemForList(Equipment.HEAD, lowerHalf);
+      case CHEST -> getItemForList(Equipment.CHEST, lowerHalf);
+      case LEGS -> getItemForList(Equipment.LEGS, lowerHalf);
+      case FEET -> getItemForList(Equipment.FEET, lowerHalf);
+      case MAINHAND -> getItemForList(Equipment.SWORD, lowerHalf);
+      default -> Items.AIR;
+    };
   }
 
   public static int getTriesForSpawning(ExtendedDifficultyInfo info) {
