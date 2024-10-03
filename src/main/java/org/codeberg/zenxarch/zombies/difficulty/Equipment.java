@@ -104,10 +104,7 @@ public abstract class Equipment {
     }
 
     private static boolean isArmorItem(Item item, ArmorItem.Type type) {
-      if (item instanceof ArmorItem armor) {
-        return armor.getType().equals(type);
-      }
-      return false;
+      return item instanceof ArmorItem armor && armor.getType().equals(type);
     }
   }
 }
