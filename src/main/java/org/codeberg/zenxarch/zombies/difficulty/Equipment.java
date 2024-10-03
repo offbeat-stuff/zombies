@@ -71,13 +71,9 @@ public abstract class Equipment {
   private static List<Item> findAllMatching(EquipmentType type) {
     var arrayList = new ArrayList<Item>();
     for (var id : Registries.ITEM.getIds()) {
-      if (!id.getPath().endsWith(type.name)) {
-        continue;
-      }
+      if (!id.getPath().endsWith(type.name)) continue;
       var item = Registries.ITEM.get(id);
-      if (type.predicate.test(item)) {
-        arrayList.add(item);
-      }
+      if (type.predicate.test(item)) arrayList.add(item);
     }
     return List.copyOf(arrayList);
   }

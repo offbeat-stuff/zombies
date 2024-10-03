@@ -13,6 +13,7 @@ import net.minecraft.registry.tag.EnchantmentTags;
 import net.minecraft.util.Pair;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.ServerWorldAccess;
+import org.jetbrains.annotations.Nullable;
 
 public class ExtendedDifficulty {
   private static final Random random = Random.create();
@@ -46,43 +47,36 @@ public class ExtendedDifficulty {
   }
 
   public static int getTriesForSpawning(ExtendedDifficultyInfo info) {
-    if (random.nextDouble() < (1.0 - info.skylight())) {
-      return 0;
-    }
+    return random.nextDouble() > info.skylight() ? info.period().getSpawnTries(info.progress()) : 0;
+  }
 
-    return info.period().getSpawnTries(info.progress());
+  @Nullable
+  private static Item offhandItem(double chance) {
+    return random.nextDouble() < chance ? Items.SHIELD : null;
+  }
+
+  @Nullable
+  private static Item equipmentItem(EquipmentSlot slot, double commonChance, double rareChance) {
+    return random.nextDouble() < commonChance
+        ? getItemForSlot(slot, true)
+        : random.nextDouble() < rareChance ? getItemForSlot(slot, false) : null;
   }
 
   public static Optional<Item> getEquipmentForSlot(
       ExtendedDifficultyInfo info, EquipmentSlot slot) {
-    var index = info.period().ordinal();
-    if (index == 0) {
-      return Optional.empty();
-    }
+    var period = info.period();
+    var progress = info.progress();
+    var index = period.ordinal();
+    if (index == 0) return Optional.empty();
 
-    if (slot.equals(EquipmentSlot.OFFHAND)) {
-      var shieldChance = info.period().getShieldChance(info.progress());
-
-      if (random.nextDouble() < shieldChance) {
-        return Optional.of(Items.SHIELD);
-      }
-
-      return Optional.empty();
-    }
-
-    var commonChance = info.period().getCommonEquipment(info.progress());
-
-    if (random.nextDouble() < commonChance) {
-      return Optional.of(getItemForSlot(slot, true));
-    }
-
-    var rareChance = info.period().getRareEquipment(info.progress());
-
-    if (random.nextDouble() < rareChance) {
-      return Optional.of(getItemForSlot(slot, false));
-    }
-
-    return Optional.empty();
+    var item =
+        switch (slot) {
+          case EquipmentSlot.OFFHAND -> offhandItem(period.getShieldChance(progress));
+          default ->
+              equipmentItem(
+                  slot, period.getCommonEquipment(progress), period.getRareEquipment(progress));
+        };
+    return Optional.ofNullable(item);
   }
 
   public static ItemStack enchant(
