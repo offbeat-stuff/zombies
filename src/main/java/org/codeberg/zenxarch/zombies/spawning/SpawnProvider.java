@@ -10,7 +10,6 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.util.shape.VoxelShapes;
-import net.minecraft.world.Heightmap;
 import net.minecraft.world.LightType;
 import org.codeberg.zenxarch.zombies.debug.Debug;
 
@@ -56,7 +55,9 @@ public class SpawnProvider {
     int maxY =
         Math.min(
             this.world.getTopY(
-                Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, x + center.getX(), z + center.getZ()),
+                SpawnRestriction.getHeightmapType(EntityType.ZOMBIE),
+                x + center.getX(),
+                z + center.getZ()),
             center.getY() + SPAWN_RANGE);
 
     if (maxY < minY) return Optional.empty();
