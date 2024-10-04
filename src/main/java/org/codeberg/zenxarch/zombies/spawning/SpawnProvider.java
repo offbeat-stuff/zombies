@@ -4,6 +4,7 @@ import java.util.Optional;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.SpawnRestriction;
+import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.registry.tag.BiomeTags;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
@@ -23,17 +24,15 @@ public class SpawnProvider {
     this.debug = debug;
   }
 
+  // Using MobEntity.canMobSpawn instead of SpawnRestriction.canSpawn
+  // to remove check for light level/difficulty
   private boolean canSpawnAtPosBasic(BlockPos pos) {
     if (this.world.getLightLevel(LightType.BLOCK, pos) > 0
         || this.world.isPlayerInRange(pos.getX(), pos.getY(), pos.getZ(), 16)
         || this.world.getBiome(pos).isIn(BiomeTags.WITHOUT_ZOMBIE_SIEGES)
         || !SpawnRestriction.isSpawnPosAllowed(EntityType.ZOMBIE, world, pos)
-        || !SpawnRestriction.canSpawn(
+        || !MobEntity.canMobSpawn(
             EntityType.ZOMBIE, this.world, SpawnReason.NATURAL, pos, this.world.random)) {
-      // !SpawnHelper.canSpawn(SpawnRestriction.getLocation(EntityType.ZOMBIE),
-      // this.world, pos, EntityType.ZOMBIE) ||
-      // !MobEntity.canMobSpawn(
-      // EntityType.ZOMBIE, this.world, SpawnReason.NATURAL, pos, this.world.random)) {
       return false;
     }
 
@@ -41,9 +40,9 @@ public class SpawnProvider {
 
     var boundingBox = EntityType.ZOMBIE.getSpawnBox(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
 
-    return world.doesNotIntersectEntities(null, VoxelShapes.cuboid(boundingBox))
+    return !world.containsFluid(boundingBox)
         && world.isSpaceEmpty(boundingBox)
-        && !world.containsFluid(boundingBox);
+        && world.doesNotIntersectEntities(null, VoxelShapes.cuboid(boundingBox));
   }
 
   private static int SPAWN_RANGE = 64;
