@@ -1,5 +1,7 @@
 package org.codeberg.zenxarch.zombies.spawning;
 
+import static org.codeberg.zenxarch.zombies.Zombies.CONFIG;
+
 import java.util.Optional;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnReason;
@@ -27,7 +29,8 @@ public class SpawnProvider {
   // to remove check for light level/difficulty
   private boolean canSpawnAtPosBasic(BlockPos pos) {
     if (this.world.getLightLevel(LightType.BLOCK, pos) > 0
-        || this.world.isPlayerInRange(pos.getX(), pos.getY(), pos.getZ(), 16)
+        || this.world.isPlayerInRange(
+            pos.getX(), pos.getY(), pos.getZ(), CONFIG.NO_SPAWN_NEAR_PLAYER_RANGE.value())
         || this.world.getBiome(pos).isIn(BiomeTags.WITHOUT_ZOMBIE_SIEGES)
         || !SpawnRestriction.isSpawnPosAllowed(EntityType.ZOMBIE, world, pos)
         || !MobEntity.canMobSpawn(
@@ -44,13 +47,12 @@ public class SpawnProvider {
         && world.doesNotIntersectEntities(null, VoxelShapes.cuboid(boundingBox));
   }
 
-  private static int SPAWN_RANGE = 64;
-
   private Optional<BlockPos> giveRandomPos(BlockPos center) {
-    int x = this.random.nextBetween(-SPAWN_RANGE, SPAWN_RANGE);
-    int z = this.random.nextBetween(-SPAWN_RANGE, SPAWN_RANGE);
+    var range = CONFIG.SPAWN_RANGE_FROM_INITIAL_POINT.value();
+    int x = this.random.nextBetween(-range, range);
+    int z = this.random.nextBetween(-range, range);
 
-    int minY = Math.max(this.world.getBottomY(), center.getY() - SPAWN_RANGE);
+    int minY = Math.max(this.world.getBottomY(), center.getY() - range);
 
     int maxY =
         Math.min(
@@ -58,7 +60,7 @@ public class SpawnProvider {
                 SpawnRestriction.getHeightmapType(EntityType.ZOMBIE),
                 x + center.getX(),
                 z + center.getZ()),
-            center.getY() + SPAWN_RANGE);
+            center.getY() + range);
 
     if (maxY < minY) return Optional.empty();
 
