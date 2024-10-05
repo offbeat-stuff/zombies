@@ -76,11 +76,8 @@ public class SpawnProvider {
   public Optional<BlockPos> giveSpawnPos(ServerWorld world, BlockPos centerPos, int times) {
     this.world = world;
     for (int i = 0; i < times; i++) {
-      var pos = giveRandomPos(centerPos);
-      if (pos.isEmpty()) continue;
-      if (canSpawnAtPosBasic(pos.get())) {
-        return pos;
-      }
+      var pos = giveRandomPos(centerPos).filter(this::canSpawnAtPosBasic);
+      if (pos.isPresent()) return pos;
     }
     return Optional.empty();
   }
