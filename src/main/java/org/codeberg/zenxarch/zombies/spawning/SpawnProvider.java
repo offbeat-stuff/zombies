@@ -40,8 +40,6 @@ public class SpawnProvider {
     return SpawnRestriction.isSpawnPosAllowed(EntityType.ZOMBIE, world, pos);
   }
 
-  // Using MobEntity.canMobSpawn instead of SpawnRestriction.canSpawn
-  // to remove check for light level/difficulty
   private boolean canSpawnAtPosBasic(BlockPos pos) {
     if (!isLightLevelOk(pos)
         || isPlayerInRange(pos)
