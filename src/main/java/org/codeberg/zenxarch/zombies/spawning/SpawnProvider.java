@@ -65,7 +65,7 @@ public class SpawnProvider {
 
     int maxY =
         Math.min(
-            this.world.getTopY(SpawnRestriction.getHeightmapType(EntityType.ZOMBIE), x, z),
+            this.world.getTopY(SpawnRestriction.getHeightmapType(EntityType.ZOMBIE), x, z) + 1,
             center.getY() + range);
 
     if (maxY < minY) return Optional.empty();
