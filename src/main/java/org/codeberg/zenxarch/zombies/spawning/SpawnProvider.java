@@ -34,12 +34,16 @@ public class SpawnProvider {
         && CONFIG.SKYLIGHT.test(this.world, pos, this.world.random);
   }
 
+  private boolean isPlayerInRange(BlockPos pos) {
+    return this.world.isPlayerInRange(
+        pos.getX(), pos.getY(), pos.getZ(), CONFIG.NO_SPAWN_NEAR_PLAYER_RANGE.value());
+  }
+
   // Using MobEntity.canMobSpawn instead of SpawnRestriction.canSpawn
   // to remove check for light level/difficulty
   private boolean canSpawnAtPosBasic(BlockPos pos) {
     if (!isLightLevelOk(pos)
-        || this.world.isPlayerInRange(
-            pos.getX(), pos.getY(), pos.getZ(), CONFIG.NO_SPAWN_NEAR_PLAYER_RANGE.value())
+        || isPlayerInRange(pos)
         || cannotSpawnInBiome(this.world.getBiome(pos))
         || !SpawnRestriction.isSpawnPosAllowed(EntityType.ZOMBIE, world, pos)
         || !MobEntity.canMobSpawn(
