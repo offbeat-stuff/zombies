@@ -58,22 +58,19 @@ public class SpawnProvider {
 
   private Optional<BlockPos> giveRandomPos(BlockPos center) {
     var range = CONFIG.SPAWN_RANGE_FROM_INITIAL_POINT.value();
-    int x = this.random.nextBetween(-range, range);
-    int z = this.random.nextBetween(-range, range);
+    int x = center.getX() + this.random.nextBetween(-range, range);
+    int z = center.getZ() + this.random.nextBetween(-range, range);
 
     int minY = Math.max(this.world.getBottomY(), center.getY() - range);
 
     int maxY =
         Math.min(
-            this.world.getTopY(
-                SpawnRestriction.getHeightmapType(EntityType.ZOMBIE),
-                x + center.getX(),
-                z + center.getZ()),
+            this.world.getTopY(SpawnRestriction.getHeightmapType(EntityType.ZOMBIE), x, z),
             center.getY() + range);
 
     if (maxY < minY) return Optional.empty();
 
-    return Optional.of(center.add(x, this.random.nextBetween(minY, maxY), z));
+    return Optional.of(new BlockPos(x, this.random.nextBetween(minY, maxY), z));
   }
 
   public Optional<BlockPos> giveSpawnPos(ServerWorld world, BlockPos centerPos, int times) {
