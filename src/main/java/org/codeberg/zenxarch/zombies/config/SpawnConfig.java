@@ -37,6 +37,7 @@ public class SpawnConfig extends ReflectiveConfig {
       new LightSpawnRange(LightType.SKY, true, 0, 1.0f, 15, 0.1f);
 
   public static class LightSpawnRange extends Section {
+    @Comment("In case min == max uses min_probability")
     public final TrackedValue<Boolean> enabled;
 
     @IntegerRange(min = 0, max = 15)
@@ -81,6 +82,7 @@ public class SpawnConfig extends ReflectiveConfig {
     }
 
     private static double getProgress(int value, int min, int max) {
+      if (min == max) return value == min ? 0.0 : -1.0;
       if (max < min) {
         max += 16;
         if (value < min) value += 16;
