@@ -47,7 +47,7 @@ public class ExtendedDifficulty {
   }
 
   public static int getTriesForSpawning(ExtendedDifficultyInfo info) {
-    return random.nextDouble() > info.skylight() ? info.period().getSpawnTries(info.progress()) : 0;
+    return info.period().getSpawnTries(info.progress());
   }
 
   @Nullable

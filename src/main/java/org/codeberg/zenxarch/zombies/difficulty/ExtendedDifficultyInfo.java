@@ -4,11 +4,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkSectionPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.Difficulty;
-import net.minecraft.world.LightType;
 import net.minecraft.world.World;
 
-public record ExtendedDifficultyInfo(
-    Period period, double progress, double skylight, boolean isDay) {
+public record ExtendedDifficultyInfo(Period period, double progress, boolean isDay) {
   private static double getTimeFactor(World world, BlockPos pos) {
     double inhibitedHours = 0.0;
     double moonSize = 0.0;
@@ -26,11 +24,7 @@ public record ExtendedDifficultyInfo(
 
   public ExtendedDifficultyInfo(
       double timeFactor, PeriodSize periodSize, World world, BlockPos pos) {
-    this(
-        periodSize.getTimePeriod(timeFactor),
-        periodSize.getProgress(timeFactor),
-        (double) world.getLightLevel(LightType.SKY, pos) / 15.0,
-        world.isDay());
+    this(periodSize.getTimePeriod(timeFactor), periodSize.getProgress(timeFactor), world.isDay());
   }
 
   public ExtendedDifficultyInfo(World world, BlockPos pos) {

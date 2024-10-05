@@ -12,7 +12,6 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.util.shape.VoxelShapes;
-import net.minecraft.world.LightType;
 import net.minecraft.world.biome.Biome;
 import org.codeberg.zenxarch.zombies.debug.Debug;
 
@@ -30,10 +29,15 @@ public class SpawnProvider {
     return CONFIG.NO_SPAWN_IN_BIOMES.value().stream().anyMatch(b -> b.test(biome));
   }
 
+  private boolean isLightLevelOk(BlockPos pos) {
+    return CONFIG.BLOCKLIGHT.test(this.world, pos, this.world.random)
+        && CONFIG.SKYLIGHT.test(this.world, pos, this.world.random);
+  }
+
   // Using MobEntity.canMobSpawn instead of SpawnRestriction.canSpawn
   // to remove check for light level/difficulty
   private boolean canSpawnAtPosBasic(BlockPos pos) {
-    if (this.world.getLightLevel(LightType.BLOCK, pos) > 0
+    if (!isLightLevelOk(pos)
         || this.world.isPlayerInRange(
             pos.getX(), pos.getY(), pos.getZ(), CONFIG.NO_SPAWN_NEAR_PLAYER_RANGE.value())
         || cannotSpawnInBiome(this.world.getBiome(pos))
