@@ -7,12 +7,13 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.SpawnRestriction;
 import net.minecraft.entity.mob.MobEntity;
-import net.minecraft.registry.tag.BiomeTags;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.LightType;
+import net.minecraft.world.biome.Biome;
 import org.codeberg.zenxarch.zombies.debug.Debug;
 
 public class SpawnProvider {
@@ -25,13 +26,17 @@ public class SpawnProvider {
     this.debug = debug;
   }
 
+  private boolean cannotSpawnInBiome(RegistryEntry<Biome> biome) {
+    return CONFIG.NO_SPAWN_IN_BIOMES.value().stream().anyMatch(b -> b.test(biome));
+  }
+
   // Using MobEntity.canMobSpawn instead of SpawnRestriction.canSpawn
   // to remove check for light level/difficulty
   private boolean canSpawnAtPosBasic(BlockPos pos) {
     if (this.world.getLightLevel(LightType.BLOCK, pos) > 0
         || this.world.isPlayerInRange(
             pos.getX(), pos.getY(), pos.getZ(), CONFIG.NO_SPAWN_NEAR_PLAYER_RANGE.value())
-        || this.world.getBiome(pos).isIn(BiomeTags.WITHOUT_ZOMBIE_SIEGES)
+        || cannotSpawnInBiome(this.world.getBiome(pos))
         || !SpawnRestriction.isSpawnPosAllowed(EntityType.ZOMBIE, world, pos)
         || !MobEntity.canMobSpawn(
             EntityType.ZOMBIE, this.world, SpawnReason.NATURAL, pos, this.world.random)) {

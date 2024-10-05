@@ -6,6 +6,8 @@ import folk.sisby.kaleido.lib.quiltconfig.api.annotations.IntegerRange;
 import folk.sisby.kaleido.lib.quiltconfig.api.annotations.SerializedNameConvention;
 import folk.sisby.kaleido.lib.quiltconfig.api.metadata.NamingSchemes;
 import folk.sisby.kaleido.lib.quiltconfig.api.values.TrackedValue;
+import folk.sisby.kaleido.lib.quiltconfig.api.values.ValueList;
+import net.minecraft.registry.tag.BiomeTags;
 
 @SerializedNameConvention(NamingSchemes.SNAKE_CASE)
 public class SpawnConfig extends ReflectiveConfig {
@@ -16,4 +18,10 @@ public class SpawnConfig extends ReflectiveConfig {
   @Comment("Range from player within which random spawn positions will be used")
   @IntegerRange(min = 0, max = 128)
   public final TrackedValue<Integer> SPAWN_RANGE_FROM_INITIAL_POINT = this.value(64);
+
+  @Comment("Biomes in which mob spawning should be cancelled")
+  public final TrackedValue<ValueList<BiomeConfigEntry>> NO_SPAWN_IN_BIOMES =
+      this.value(
+          ValueList.create(
+              new BiomeConfigEntry(), new BiomeConfigEntry(BiomeTags.WITHOUT_ZOMBIE_SIEGES)));
 }
