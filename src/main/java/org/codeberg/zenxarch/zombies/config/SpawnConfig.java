@@ -25,19 +25,25 @@ public class SpawnConfig extends ReflectiveConfig {
   @IntegerRange(min = 0, max = 128)
   public final TrackedValue<Integer> SPAWN_RANGE_FROM_INITIAL_POINT = this.value(64);
 
-  @Comment("Biomes in which mob spawning should be cancelled")
+  @Comment("Biomes in which zombies spawning should be cancelled")
   public final TrackedValue<ValueList<BiomeConfigEntry>> NO_SPAWN_IN_BIOMES =
       this.value(
           ValueList.create(
               new BiomeConfigEntry(), new BiomeConfigEntry(BiomeTags.WITHOUT_ZOMBIE_SIEGES)));
 
+  @Comment("In case min equals max uses min_probability")
+  @Comment("Basically if block light level is min uses min prob and at max uses max prob")
+  @Comment("and in between, in case max < min values in range [0,max] U [min,16] are considered")
   public final LightSpawnRange BLOCKLIGHT =
       new LightSpawnRange(LightType.BLOCK, true, 0, 1.0f, 0, 1.0f);
+
+  @Comment("In case min equals max uses min_probability")
+  @Comment("Basically if sky light level is min uses min prob and at max uses max prob")
+  @Comment("and in between, in case max < min values in range [0,max] U [min,16] are considered")
   public final LightSpawnRange SKYLIGHT =
       new LightSpawnRange(LightType.SKY, true, 0, 1.0f, 15, 0.1f);
 
   public static class LightSpawnRange extends Section {
-    @Comment("In case min == max uses min_probability")
     public final TrackedValue<Boolean> enabled;
 
     @IntegerRange(min = 0, max = 15)
