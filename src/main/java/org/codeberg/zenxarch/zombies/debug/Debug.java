@@ -1,5 +1,6 @@
 package org.codeberg.zenxarch.zombies.debug;
 
+import static org.codeberg.zenxarch.zombies.Zombies.DEBUG_CONFIG;
 import static org.codeberg.zenxarch.zombies.Zombies.LOGGER;
 
 public class Debug {
@@ -17,6 +18,7 @@ public class Debug {
   public void attemptedSpawn(boolean successful) {
     spawnAttempts++;
     successfulSpawnAttempts += successful ? 1 : 0;
+    if (!DEBUG_CONFIG.LOGGING.value()) return;
     if (spawnAttempts % (20 * 60 * 5) == 0) {
       LOGGER.info(
           "Successful Attemps : {} , Total Attempts: {},spawnChecks : {}",

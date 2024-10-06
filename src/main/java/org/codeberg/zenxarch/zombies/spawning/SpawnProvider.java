@@ -1,6 +1,6 @@
 package org.codeberg.zenxarch.zombies.spawning;
 
-import static org.codeberg.zenxarch.zombies.Zombies.CONFIG;
+import static org.codeberg.zenxarch.zombies.Zombies.SPAWN_CONFIG;
 
 import java.util.Optional;
 import net.minecraft.entity.EntityType;
@@ -23,17 +23,17 @@ public class SpawnProvider {
 
   private boolean cannotSpawnInBiomeAt(BlockPos pos) {
     var biome = world.getBiome(pos);
-    return CONFIG.NO_SPAWN_IN_BIOMES.value().stream().anyMatch(b -> b.test(biome));
+    return SPAWN_CONFIG.NO_SPAWN_IN_BIOMES.value().stream().anyMatch(b -> b.test(biome));
   }
 
   private boolean isLightLevelOk(BlockPos pos) {
-    return CONFIG.BLOCKLIGHT.test(this.world, pos, this.world.random)
-        && CONFIG.SKYLIGHT.test(this.world, pos, this.world.random);
+    return SPAWN_CONFIG.BLOCKLIGHT.test(this.world, pos, this.world.random)
+        && SPAWN_CONFIG.SKYLIGHT.test(this.world, pos, this.world.random);
   }
 
   private boolean isPlayerInRange(BlockPos pos) {
     return this.world.isPlayerInRange(
-        pos.getX(), pos.getY(), pos.getZ(), CONFIG.NO_SPAWN_NEAR_PLAYER_RANGE.value());
+        pos.getX(), pos.getY(), pos.getZ(), SPAWN_CONFIG.NO_SPAWN_NEAR_PLAYER_RANGE.value());
   }
 
   private boolean canZombieSpawnAt(BlockPos pos) {
@@ -58,7 +58,7 @@ public class SpawnProvider {
   }
 
   private Optional<BlockPos> giveRandomPos(BlockPos center) {
-    var range = CONFIG.SPAWN_RANGE_FROM_INITIAL_POINT.value();
+    var range = SPAWN_CONFIG.SPAWN_RANGE_FROM_INITIAL_POINT.value();
     int x = center.getX() + this.random.nextBetween(-range, range);
     int z = center.getZ() + this.random.nextBetween(-range, range);
 
