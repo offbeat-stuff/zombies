@@ -46,8 +46,8 @@ public class ExtendedDifficulty {
     };
   }
 
-  public static int getTriesForSpawning(ExtendedDifficultyInfo info) {
-    return info.period().getSpawnTries(info.progress());
+  public static int getTriesForSpawning(double difficulty) {
+    return Period.getSpawnTries(difficulty);
   }
 
   @Nullable
@@ -62,31 +62,21 @@ public class ExtendedDifficulty {
         : random.nextDouble() < rareChance ? getItemForSlot(slot, false) : null;
   }
 
-  public static Optional<Item> getEquipmentForSlot(
-      ExtendedDifficultyInfo info, EquipmentSlot slot) {
-    var period = info.period();
-    var progress = info.progress();
-    var index = period.ordinal();
-    if (index == 0) return Optional.empty();
-
+  public static Optional<Item> getEquipmentForSlot(double difficulty, EquipmentSlot slot) {
     var item =
         switch (slot) {
-          case EquipmentSlot.OFFHAND -> offhandItem(period.getShieldChance(progress));
+          case EquipmentSlot.OFFHAND -> offhandItem(Period.getShieldChance(difficulty));
           default ->
               equipmentItem(
-                  slot, period.getCommonEquipment(progress), period.getRareEquipment(progress));
+                  slot, Period.getCommonEquipment(difficulty), Period.getRareEquipment(difficulty));
         };
     return Optional.ofNullable(item);
   }
 
-  public static ItemStack enchant(
-      ServerWorldAccess world, ExtendedDifficultyInfo info, ItemStack input) {
-    var index = info.period().ordinal();
-    if (index == 0) {
-      return input;
-    }
+  public static ItemStack enchant(ServerWorldAccess world, double difficulty, ItemStack input) {
+    var level = Period.getEnchantLevel(difficulty * random.nextDouble());
 
-    var level = info.period().getEnchantLevel(info.progress() * random.nextDouble());
+    if (level == 0) return input;
 
     var enchantments =
         world
@@ -94,7 +84,7 @@ public class ExtendedDifficulty {
             .get(RegistryKeys.ENCHANTMENT)
             .getOrCreateEntryList(EnchantmentTags.NON_TREASURE)
             .stream();
-    if (info.period().getTreasure()) {
+    if (Period.getTreasure(difficulty))
       enchantments =
           Stream.concat(
               enchantments,
@@ -103,7 +93,6 @@ public class ExtendedDifficulty {
                   .get(RegistryKeys.ENCHANTMENT)
                   .getOrCreateEntryList(EnchantmentTags.TREASURE)
                   .stream());
-    }
     return EnchantmentHelper.enchant(random, input, level, enchantments);
   }
 }

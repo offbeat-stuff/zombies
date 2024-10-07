@@ -34,7 +34,9 @@ public class ZombieApocalypse implements SpecialSpawner {
   }
 
   public boolean spawnZombieAt(BlockPos ppos) {
-    var difficulty = new ExtendedDifficultyInfo(this.world, ppos);
+    var difficulty = ExtendedDifficultyInfo.getDifficulty(this.world, ppos);
+    if (difficulty <= 0.0) return false;
+
     var zombieOpt =
         spawnProvider
             .giveSpawnPos(world, ppos, ExtendedDifficulty.getTriesForSpawning(difficulty))

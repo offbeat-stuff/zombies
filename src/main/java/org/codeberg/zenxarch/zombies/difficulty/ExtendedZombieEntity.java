@@ -31,8 +31,8 @@ public class ExtendedZombieEntity extends ZombieEntity {
     return false;
   }
 
-  protected ExtendedDifficultyInfo getExtentedDifficulty() {
-    return new ExtendedDifficultyInfo(this.getWorld(), this.getBlockPos());
+  protected double getExtentedDifficulty() {
+    return ExtendedDifficultyInfo.getDifficulty(this.getWorld(), this.getBlockPos());
   }
 
   public void initialize(ServerWorldAccess world) {
@@ -69,6 +69,7 @@ public class ExtendedZombieEntity extends ZombieEntity {
   @Override
   protected void initEquipment(Random random, LocalDifficulty unused) {
     var difficulty = getExtentedDifficulty();
+    if (difficulty <= 0.0) return;
 
     for (var slot : EquipmentSlot.values()) {
       if (!this.getEquippedStack(slot).isEmpty()) continue;

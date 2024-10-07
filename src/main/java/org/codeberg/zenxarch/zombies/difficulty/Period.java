@@ -1,55 +1,42 @@
 package org.codeberg.zenxarch.zombies.difficulty;
 
 import java.util.List;
-import net.minecraft.util.math.MathHelper;
+import org.codeberg.zenxarch.zombies.helper.LerpImpl;
 
-public enum Period {
-  GRACE,
-  EASY,
-  MEDIUM,
-  HARD,
-  NIGHTMARE;
+public abstract class Period {
+  private static List<Double> spawnTries = List.of(0.0, 1.0, 2.0, 3.0, 5.0, 25.0);
 
-  public static List<Integer> spawnTries = List.of(0, 1, 2, 3, 5, 25);
-
-  public int getSpawnTries(double progress) {
-    int index = this.ordinal();
-    return (int) MathHelper.lerp(progress, spawnTries.get(index), spawnTries.get(index + 1));
+  public static int getSpawnTries(double progress) {
+    return LerpImpl.lerp(spawnTries, progress).intValue();
   }
 
-  public static List<Integer> enchantLevel = List.of(0, 0, 5, 10, 20, 40);
+  private static List<Double> enchantLevel = List.of(0.0, 0.0, 5.0, 10.0, 20.0, 40.0);
 
-  public int getEnchantLevel(double progress) {
-    int index = this.ordinal();
-    return (int) MathHelper.lerp(progress, enchantLevel.get(index), enchantLevel.get(index + 1));
+  public static int getEnchantLevel(double progress) {
+    return LerpImpl.lerp(enchantLevel, progress).intValue();
   }
 
-  public static List<Double> commonEquipment = List.of(0.0, 0.0, 0.02, 0.05, 0.1, 0.5);
+  private static List<Double> commonEquipment = List.of(0.0, 0.0, 0.02, 0.05, 0.1, 0.5);
 
-  public double getCommonEquipment(double progress) {
-    int index = this.ordinal();
-    return (double)
-        MathHelper.lerp(progress, commonEquipment.get(index), commonEquipment.get(index + 1));
+  public static double getCommonEquipment(double progress) {
+    return LerpImpl.lerp(commonEquipment, progress);
   }
 
-  public static List<Double> rareEquipment = List.of(0.0, 0.0, 0.0, 0.01, 0.05, 0.1);
+  private static List<Double> rareEquipment = List.of(0.0, 0.0, 0.0, 0.01, 0.05, 0.1);
 
-  public double getRareEquipment(double progress) {
-    int index = this.ordinal();
-    return (double)
-        MathHelper.lerp(progress, rareEquipment.get(index), rareEquipment.get(index + 1));
+  public static double getRareEquipment(double progress) {
+    return LerpImpl.lerp(rareEquipment, progress);
   }
 
-  public static List<Double> shieldChance = List.of(0.0, 0.0, 0.0, 0.01, 0.05, 0.1);
+  private static List<Double> shieldChance = List.of(0.0, 0.0, 0.0, 0.01, 0.05, 0.1);
 
-  public double getShieldChance(double progress) {
-    int index = this.ordinal();
-    return (double) MathHelper.lerp(progress, shieldChance.get(index), shieldChance.get(index + 1));
+  public static double getShieldChance(double progress) {
+    return LerpImpl.lerp(shieldChance, progress);
   }
 
-  public static List<Boolean> treasure = List.of(false, false, false, true, true);
+  private static List<Double> treasure = List.of(-1.0, 0.2);
 
-  public boolean getTreasure() {
-    return treasure.get(this.ordinal());
+  public static boolean getTreasure(double progress) {
+    return LerpImpl.lerp(treasure, progress) > 0.0;
   }
 }
