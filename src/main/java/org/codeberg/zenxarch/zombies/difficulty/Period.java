@@ -34,7 +34,7 @@ public abstract class Period {
     return LerpImpl.lerp(shieldChance, progress);
   }
 
-  private static List<Double> treasure = List.of(-1.0, 0.2);
+  private static List<Double> treasure = List.of(-1.0, 0.25);
 
   public static boolean getTreasure(double progress) {
     return LerpImpl.lerp(treasure, progress) > 0.0;

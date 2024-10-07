@@ -4,6 +4,7 @@ import folk.sisby.kaleido.api.ReflectiveConfig;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 import org.codeberg.zenxarch.zombies.config.DebugConfig;
+import org.codeberg.zenxarch.zombies.config.EquipmentConfig;
 import org.codeberg.zenxarch.zombies.config.SpawnConfig;
 import org.codeberg.zenxarch.zombies.config.TimeConfig;
 import org.slf4j.Logger;
@@ -23,6 +24,7 @@ public class Zombies implements ModInitializer {
   public static final SpawnConfig SPAWN_CONFIG = config("spawn", SpawnConfig.class);
   public static final DebugConfig DEBUG_CONFIG = config("debug", DebugConfig.class);
   public static final TimeConfig TIME_CONFIG = config("time", TimeConfig.class);
+  public static final EquipmentConfig EQUIPMENT_CONFIG = config("equipment", EquipmentConfig.class);
 
   @Override
   public void onInitialize() {

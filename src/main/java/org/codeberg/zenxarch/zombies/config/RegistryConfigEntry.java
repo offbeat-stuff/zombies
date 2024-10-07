@@ -3,6 +3,7 @@ package org.codeberg.zenxarch.zombies.config;
 import folk.sisby.kaleido.lib.quiltconfig.api.values.ComplexConfigValue;
 import folk.sisby.kaleido.lib.quiltconfig.api.values.ConfigSerializableObject;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.entry.RegistryEntry;
@@ -62,5 +63,11 @@ public class RegistryConfigEntry<T>
     if (this.value.isFirst()) return value.isIn(this.value.getFirst());
     if (this.value.isSecond()) return value.matchesKey(this.value.getSecond());
     return false;
+  }
+
+  public Stream<? extends RegistryEntry<T>> streamEntries(Registry<T> registry) {
+    if (this.value.isFirst()) return registry.getOrCreateEntryList(this.value.getFirst()).stream();
+    if (this.value.isSecond()) return registry.getEntry(this.value.getSecond()).stream();
+    return Stream.empty();
   }
 }

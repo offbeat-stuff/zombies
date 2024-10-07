@@ -1,5 +1,7 @@
 package org.codeberg.zenxarch.zombies.difficulty;
 
+import static org.codeberg.zenxarch.zombies.Zombies.EQUIPMENT_CONFIG;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -8,8 +10,6 @@ import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.registry.tag.EnchantmentTags;
 import net.minecraft.util.Pair;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.ServerWorldAccess;
@@ -79,20 +79,9 @@ public class ExtendedDifficulty {
     if (level == 0) return input;
 
     var enchantments =
-        world
-            .getRegistryManager()
-            .get(RegistryKeys.ENCHANTMENT)
-            .getOrCreateEntryList(EnchantmentTags.NON_TREASURE)
-            .stream();
-    if (Period.getTreasure(difficulty))
-      enchantments =
-          Stream.concat(
-              enchantments,
-              world
-                  .getRegistryManager()
-                  .get(RegistryKeys.ENCHANTMENT)
-                  .getOrCreateEntryList(EnchantmentTags.TREASURE)
-                  .stream());
+        Stream.concat(
+            EQUIPMENT_CONFIG.NON_TREASURE.getEnchantments(world, difficulty),
+            EQUIPMENT_CONFIG.TREASURE.getEnchantments(world, difficulty));
     return EnchantmentHelper.enchant(random, input, level, enchantments);
   }
 }
