@@ -1,7 +1,5 @@
 package org.codeberg.zenxarch.zombies.config;
 
-import static org.codeberg.zenxarch.zombies.config.RegistryEntries.*;
-
 import folk.sisby.kaleido.api.ReflectiveConfig;
 import folk.sisby.kaleido.lib.quiltconfig.api.annotations.SerializedNameConvention;
 import folk.sisby.kaleido.lib.quiltconfig.api.metadata.NamingSchemes;
@@ -31,7 +29,9 @@ public class EquipmentConfig extends ReflectiveConfig {
     public EnchantmentList(double min, double max, TagKey<Enchantment> tag) {
       this.min = this.value(min);
       this.max = this.value(max);
-      this.entries = this.list(enchantmentEntry(), enchantmentEntry(tag));
+      this.entries =
+          this.list(
+              RegistryConfigEntry.registry(RegistryKeys.ENCHANTMENT), RegistryConfigEntry.tag(tag));
     }
 
     public Stream<RegistryEntry<Enchantment>> getEnchantments(

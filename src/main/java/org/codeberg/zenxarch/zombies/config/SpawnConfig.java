@@ -1,7 +1,5 @@
 package org.codeberg.zenxarch.zombies.config;
 
-import static org.codeberg.zenxarch.zombies.config.RegistryEntries.*;
-
 import folk.sisby.kaleido.api.ReflectiveConfig;
 import folk.sisby.kaleido.lib.quiltconfig.api.annotations.Comment;
 import folk.sisby.kaleido.lib.quiltconfig.api.annotations.FloatRange;
@@ -10,6 +8,7 @@ import folk.sisby.kaleido.lib.quiltconfig.api.annotations.SerializedNameConventi
 import folk.sisby.kaleido.lib.quiltconfig.api.metadata.NamingSchemes;
 import folk.sisby.kaleido.lib.quiltconfig.api.values.TrackedValue;
 import folk.sisby.kaleido.lib.quiltconfig.api.values.ValueList;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.tag.BiomeTags;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
@@ -30,7 +29,10 @@ public class SpawnConfig extends ReflectiveConfig {
 
   @Comment("Biomes in which zombies spawning should be cancelled")
   public final TrackedValue<ValueList<RegistryConfigEntry<Biome>>> NO_SPAWN_IN_BIOMES =
-      this.value(ValueList.create(biomeEntry(), biomeEntry(BiomeTags.WITHOUT_ZOMBIE_SIEGES)));
+      this.value(
+          ValueList.create(
+              RegistryConfigEntry.registry(RegistryKeys.BIOME),
+              RegistryConfigEntry.tag(BiomeTags.WITHOUT_ZOMBIE_SIEGES)));
 
   @Comment("In case min equals max uses min_probability")
   @Comment("Basically if block light level is min uses min prob and at max uses max prob")
