@@ -1,46 +1,57 @@
 package org.codeberg.zenxarch.zombies.helper;
 
-import java.util.Objects;
-import java.util.Optional;
+public sealed interface OptionalPair<K, V>
+    permits OptionalPair.Left, OptionalPair.Right, OptionalPair.Empty {
 
-public class OptionalPair<K, V> {
-  Optional<K> first;
-  Optional<V> second;
-
-  private OptionalPair(K first, V second) {
-    this.first = Optional.ofNullable(first);
-    this.second = Optional.ofNullable(second);
+  public static <K, V> OptionalPair<K, V> left(K element) {
+    return new Left<K, V>(element);
   }
 
-  public static <K, V> OptionalPair<K, V> first(K first) {
-    return new OptionalPair<K, V>(Objects.requireNonNull(first), null);
-  }
-
-  public static <K, V> OptionalPair<K, V> second(V second) {
-    return new OptionalPair<K, V>(null, Objects.requireNonNull(second));
+  public static <K, V> OptionalPair<K, V> right(V element) {
+    return new Right<K, V>(element);
   }
 
   public static <K, V> OptionalPair<K, V> empty() {
-    return new OptionalPair<K, V>(null, null);
+    return new Empty<K, V>();
   }
 
-  public K getFirst() {
-    return this.first.get();
+  public K getLeft();
+
+  public V getRight();
+
+  public static final record Left<K, V>(K element) implements OptionalPair<K, V> {
+    @Override
+    public K getLeft() {
+      return element;
+    }
+
+    @Override
+    public V getRight() {
+      return null;
+    }
   }
 
-  public V getSecond() {
-    return this.second.get();
+  public static final record Right<K, V>(V element) implements OptionalPair<K, V> {
+    @Override
+    public K getLeft() {
+      return null;
+    }
+
+    @Override
+    public V getRight() {
+      return element;
+    }
   }
 
-  public boolean isFirst() {
-    return first.isPresent();
-  }
+  public static final record Empty<K, V>() implements OptionalPair<K, V> {
+    @Override
+    public K getLeft() {
+      return null;
+    }
 
-  public boolean isSecond() {
-    return second.isPresent();
-  }
-
-  public boolean isEmpty() {
-    return first.isEmpty() && second.isEmpty();
+    @Override
+    public V getRight() {
+      return null;
+    }
   }
 }

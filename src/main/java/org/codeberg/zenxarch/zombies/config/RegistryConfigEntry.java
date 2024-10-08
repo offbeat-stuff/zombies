@@ -18,16 +18,18 @@ public class RegistryConfigEntry<T>
   private RegistryKey<? extends Registry<T>> registry;
 
   public RegistryConfigEntry<T> withTag(TagKey<T> tag) {
-    if (this.value.isSecond()) return this;
-    this.value = OptionalPair.first(tag);
-    this.registry = tag.registry();
+    if (!(this.value instanceof OptionalPair.Right)) {
+      this.value = OptionalPair.left(tag);
+      this.registry = tag.registry();
+    }
     return this;
   }
 
   public RegistryConfigEntry<T> withKey(RegistryKey<T> key) {
-    if (this.value.isFirst()) return this;
-    this.value = OptionalPair.second(key);
-    this.registry = key.getRegistryRef();
+    if (!(this.value instanceof OptionalPair.Left)) {
+      this.value = OptionalPair.right(key);
+      this.registry = key.getRegistryRef();
+    }
     return this;
   }
 
@@ -54,20 +56,26 @@ public class RegistryConfigEntry<T>
 
   @Override
   public String getRepresentation() {
-    if (this.value.isFirst()) return "#" + this.value.getFirst().id().toString();
-    if (this.value.isSecond()) return this.value.getSecond().getValue().toString();
-    return "";
+    return switch (this.value) {
+      case OptionalPair.Left(var left) -> "#" + left.id().toString();
+      case OptionalPair.Right(var right) -> right.getValue().toString();
+      case OptionalPair.Empty() -> "";
+    };
   }
 
   public boolean test(RegistryEntry<T> value) {
-    if (this.value.isFirst()) return value.isIn(this.value.getFirst());
-    if (this.value.isSecond()) return value.matchesKey(this.value.getSecond());
-    return false;
+    return switch (this.value) {
+      case OptionalPair.Left(var left) -> value.isIn(left);
+      case OptionalPair.Right(var right) -> value.matchesKey(right);
+      case OptionalPair.Empty() -> false;
+    };
   }
 
   public Stream<? extends RegistryEntry<T>> streamEntries(Registry<T> registry) {
-    if (this.value.isFirst()) return registry.getOrCreateEntryList(this.value.getFirst()).stream();
-    if (this.value.isSecond()) return registry.getEntry(this.value.getSecond()).stream();
-    return Stream.empty();
+    return switch (this.value) {
+      case OptionalPair.Left(var left) -> registry.getOrCreateEntryList(left).stream();
+      case OptionalPair.Right(var right) -> registry.getEntry(right).stream();
+      case OptionalPair.Empty() -> Stream.empty();
+    };
   }
 }

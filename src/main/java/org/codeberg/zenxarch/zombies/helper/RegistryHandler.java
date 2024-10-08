@@ -13,8 +13,8 @@ public abstract class RegistryHandler {
     var id = Identifier.of(filter(value));
     if (id.getPath().isEmpty()) return OptionalPair.empty();
     return isTag
-        ? OptionalPair.first(TagKey.of(registry, id))
-        : OptionalPair.second(RegistryKey.of(registry, id));
+        ? OptionalPair.left(TagKey.of(registry, id))
+        : OptionalPair.right(RegistryKey.of(registry, id));
   }
 
   private static String filter(String value) {
