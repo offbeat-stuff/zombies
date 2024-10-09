@@ -10,10 +10,12 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.util.shape.VoxelShapes;
 import org.codeberg.zenxarch.zombies.debug.Debug;
+import org.codeberg.zenxarch.zombies.difficulty.ExtendedDifficulty;
 
 public class SpawnProvider {
   private final Random random = Random.create();
   private ServerWorld world;
+  private double difficulty;
   private final Debug debug;
 
   public SpawnProvider(ServerWorld world, Debug debug) {
@@ -23,7 +25,7 @@ public class SpawnProvider {
 
   private boolean cannotSpawnInBiomeAt(BlockPos pos) {
     var biome = world.getBiome(pos);
-    return SPAWN_CONFIG.NO_SPAWN_IN_BIOMES.value().stream().anyMatch(b -> b.test(biome));
+    return SPAWN_CONFIG.skipSpawnIn(biome, this.random, this.difficulty);
   }
 
   private boolean isLightLevelOk(BlockPos pos) {
@@ -74,8 +76,10 @@ public class SpawnProvider {
     return Optional.of(new BlockPos(x, this.random.nextBetween(minY, maxY), z));
   }
 
-  public Optional<BlockPos> giveSpawnPos(ServerWorld world, BlockPos centerPos, int times) {
+  public Optional<BlockPos> giveSpawnPos(ServerWorld world, BlockPos centerPos, double difficulty) {
+    var times = ExtendedDifficulty.getTriesForSpawning(difficulty);
     this.world = world;
+    this.difficulty = difficulty;
     for (int i = 0; i < times; i++) {
       var pos = giveRandomPos(centerPos).filter(this::canSpawnAtPosBasic);
       if (pos.isPresent()) return pos;

@@ -2,12 +2,12 @@ package org.codeberg.zenxarch.zombies.helper;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Random;
 import java.util.stream.Stream;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.random.Random;
 
 public record WeightedRegistryEntryPredicate<T>(
     RegistryKey<? extends Registry<T>> registry,
@@ -63,12 +63,14 @@ public record WeightedRegistryEntryPredicate<T>(
         .toList();
   }
 
-  // @TODO: test for biome check, refactor required
-  public boolean test(RegistryEntry<T> entry, Random random, double progress) {
-    var chance = MathHelper.lerp(progress, this.min, this.max);
-    if (chance < random.nextDouble()) return false;
+  public boolean matches(RegistryEntry<T> entry) {
     for (var v : this.list) if (v.test(entry)) return true;
     return false;
+  }
+
+  public boolean nextBoolean(Random random, double progress) {
+    var chance = MathHelper.lerp(progress, this.min, this.max);
+    return random.nextDouble() < chance;
   }
 
   public Stream<RegistryEntry<T>> streamEntries(Registry<T> registry, double progress) {

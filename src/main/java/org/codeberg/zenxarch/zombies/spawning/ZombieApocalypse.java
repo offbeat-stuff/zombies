@@ -13,7 +13,6 @@ import net.minecraft.world.World;
 import net.minecraft.world.spawner.SpecialSpawner;
 import org.codeberg.zenxarch.zombies.Zombies;
 import org.codeberg.zenxarch.zombies.debug.Debug;
-import org.codeberg.zenxarch.zombies.difficulty.ExtendedDifficulty;
 import org.codeberg.zenxarch.zombies.difficulty.ExtendedDifficultyInfo;
 import org.codeberg.zenxarch.zombies.difficulty.ExtendedZombieEntity;
 
@@ -39,7 +38,7 @@ public class ZombieApocalypse implements SpecialSpawner {
 
     var zombieOpt =
         spawnProvider
-            .giveSpawnPos(world, ppos, ExtendedDifficulty.getTriesForSpawning(difficulty))
+            .giveSpawnPos(world, ppos, difficulty)
             .map(u -> new ExtendedZombieEntity(this.world, u))
             .filter(this::canSpawnAtPosSpace);
 

@@ -8,14 +8,19 @@ import folk.sisby.kaleido.lib.quiltconfig.api.annotations.SerializedNameConventi
 import folk.sisby.kaleido.lib.quiltconfig.api.metadata.NamingSchemes;
 import folk.sisby.kaleido.lib.quiltconfig.api.values.TrackedValue;
 import folk.sisby.kaleido.lib.quiltconfig.api.values.ValueList;
+import java.util.List;
 import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.tag.BiomeTags;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.LightType;
 import net.minecraft.world.biome.Biome;
+import org.codeberg.zenxarch.zombies.helper.RegistryEntryPredicate;
+import org.codeberg.zenxarch.zombies.helper.WeightedRegistryEntryPredicate;
 
 @SerializedNameConvention(NamingSchemes.SNAKE_CASE)
 public class SpawnConfig extends ReflectiveConfig {
@@ -32,7 +37,27 @@ public class SpawnConfig extends ReflectiveConfig {
       this.value(
           ValueList.create(
               RegistryConfigEntry.registry(RegistryKeys.BIOME),
-              RegistryConfigEntry.tag(BiomeTags.WITHOUT_ZOMBIE_SIEGES)));
+              RegistryConfigEntry.tag(BiomeTags.WITHOUT_ZOMBIE_SIEGES),
+              RegistryConfigEntry.tag(BiomeTags.ANCIENT_CITY_HAS_STRUCTURE)));
+
+  public final TrackedValue<ValueList<WeightedRegistryConfigEntry<Biome>>> SPECIAL_SPAWN_BIOMES =
+      this.list(
+          helperNew(0.0, 1.0, List.of()),
+          helperNew(0.2, 0.6, List.of(BiomeTags.VILLAGE_PLAINS_HAS_STRUCTURE)));
+
+  private static WeightedRegistryConfigEntry<Biome> helperNew(
+      double min, double max, List<TagKey<Biome>> tag) {
+    return new WeightedRegistryConfigEntry<Biome>(
+        new WeightedRegistryEntryPredicate<Biome>(
+            RegistryKeys.BIOME, tag.stream().map(RegistryEntryPredicate::tag).toList(), min, max));
+  }
+
+  public boolean skipSpawnIn(RegistryEntry<Biome> biome, Random random, double difficulty) {
+    for (var v : NO_SPAWN_IN_BIOMES.value()) if (v.test(biome)) return true;
+    for (var v : SPECIAL_SPAWN_BIOMES.value())
+      if (v.value().matches(biome)) return !v.value().nextBoolean(random, difficulty);
+    return false;
+  }
 
   @Comment("In case min equals max uses min_probability")
   @Comment("Basically if block light level is min uses min prob and at max uses max prob")
