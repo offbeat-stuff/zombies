@@ -29,11 +29,13 @@ public abstract class ExtendedDifficultyInfo {
   }
 
   public static double getDifficulty(World world, BlockPos pos) {
-    var time = mapTimeFactor(getTimeFactor(world, pos));
-    return switch (world.getDifficulty()) {
-      default -> TIME_CONFIG.EASY.getDifficulty(time);
-      case NORMAL -> TIME_CONFIG.NORMAL.getDifficulty(time);
-      case HARD -> TIME_CONFIG.HARD.getDifficulty(time);
-    };
+    var time = getTimeFactor(world, pos);
+    var difficulty =
+        switch (world.getDifficulty()) {
+          default -> TIME_CONFIG.EASY.getDifficulty(time);
+          case NORMAL -> TIME_CONFIG.NORMAL.getDifficulty(time);
+          case HARD -> TIME_CONFIG.HARD.getDifficulty(time);
+        };
+    return mapTimeFactor(difficulty);
   }
 }
