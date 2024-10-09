@@ -40,6 +40,9 @@ public class SpawnConfig extends ReflectiveConfig {
               RegistryConfigEntry.tag(BiomeTags.WITHOUT_ZOMBIE_SIEGES),
               RegistryConfigEntry.tag(BiomeTags.ANCIENT_CITY_HAS_STRUCTURE)));
 
+  @Comment("Weighted list of biomes with special min and max chance of zombies to spawn there")
+  @Comment("Syntax is min<biome1,biome2,biome3<max")
+  @Comment("min and max can be ommited and default to 0.0 and 1.0")
   public final TrackedValue<ValueList<WeightedRegistryConfigEntry<Biome>>> SPECIAL_SPAWN_BIOMES =
       this.list(
           helperNew(0.0, 1.0, List.of()),
