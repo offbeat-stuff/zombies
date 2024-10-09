@@ -8,6 +8,7 @@ public class Debug {
   private int successfulSpawnAttempts = 0;
 
   private int spawnPosChecks = 0;
+  private int[] spawnCheckFails = new int[5];
 
   public Debug() {}
 
@@ -15,16 +16,21 @@ public class Debug {
     spawnPosChecks++;
   }
 
+  public void spawnCheckNum(int index) {
+    spawnCheckFails[index]++;
+  }
+
   public void attemptedSpawn(boolean successful) {
     spawnAttempts++;
     successfulSpawnAttempts += successful ? 1 : 0;
     if (!DEBUG_CONFIG.LOGGING.value()) return;
-    if (spawnAttempts % (20 * 60 * 5) == 0) {
+    if (spawnAttempts % (20 * DEBUG_CONFIG.LOGGING_INTERVAL.value()) == 0) {
       LOGGER.info(
-          "Successful Attemps : {} , Total Attempts: {},spawnChecks : {}",
+          "Successful Attemps : {} , Total Attempts: {},spawnChecks : {},spawnCheckFails : {}",
           successfulSpawnAttempts,
           spawnAttempts,
-          spawnPosChecks);
+          spawnPosChecks,
+          spawnCheckFails);
     }
   }
 }

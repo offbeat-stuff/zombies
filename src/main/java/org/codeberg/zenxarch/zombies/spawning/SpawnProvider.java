@@ -25,24 +25,35 @@ public class SpawnProvider {
 
   private boolean cannotSpawnInBiomeAt(BlockPos pos) {
     var biome = world.getBiome(pos);
-    return SPAWN_CONFIG.skipSpawnIn(biome, this.random, this.difficulty);
+    var result = SPAWN_CONFIG.skipSpawnIn(biome, this.random, this.difficulty);
+    if (result) debug.spawnCheckNum(0);
+    return result;
   }
 
   private boolean isLightLevelOk(BlockPos pos) {
-    return SPAWN_CONFIG.BLOCKLIGHT.test(this.world, pos, this.world.random)
-        && SPAWN_CONFIG.SKYLIGHT.test(this.world, pos, this.world.random);
+    var result =
+        SPAWN_CONFIG.BLOCKLIGHT.test(this.world, pos, this.world.random)
+            && SPAWN_CONFIG.SKYLIGHT.test(this.world, pos, this.world.random);
+    if (!result) debug.spawnCheckNum(1);
+    return result;
   }
 
   private boolean isPlayerInRange(BlockPos pos) {
-    return this.world.isPlayerInRange(
-        pos.getX(), pos.getY(), pos.getZ(), SPAWN_CONFIG.NO_SPAWN_NEAR_PLAYER_RANGE.value());
+    var result =
+        this.world.isPlayerInRange(
+            pos.getX(), pos.getY(), pos.getZ(), SPAWN_CONFIG.NO_SPAWN_NEAR_PLAYER_RANGE.value());
+    if (result) debug.spawnCheckNum(2);
+    return result;
   }
 
   private boolean canZombieSpawnAt(BlockPos pos) {
-    return SpawnRestriction.isSpawnPosAllowed(EntityType.ZOMBIE, world, pos);
+    var result = SpawnRestriction.isSpawnPosAllowed(EntityType.ZOMBIE, world, pos);
+    if (!result) debug.spawnCheckNum(3);
+    return result;
   }
 
   private boolean canSpawnAtPosBasic(BlockPos pos) {
+    debug.spawnCheckNum(4);
     if (!isLightLevelOk(pos)
         || isPlayerInRange(pos)
         || cannotSpawnInBiomeAt(pos)
