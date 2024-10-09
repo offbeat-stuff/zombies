@@ -3,6 +3,7 @@ package org.codeberg.zenxarch.zombies.helper;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
+import java.util.stream.Stream;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.entry.RegistryEntry;
@@ -62,10 +63,19 @@ public record WeightedRegistryEntryPredicate<T>(
         .toList();
   }
 
+  // @TODO: test for biome check, refactor required
   public boolean test(RegistryEntry<T> entry, Random random, double progress) {
     var chance = MathHelper.lerp(progress, this.min, this.max);
-    if (chance > random.nextDouble()) return false;
+    if (chance < random.nextDouble()) return false;
     for (var v : this.list) if (v.test(entry)) return true;
     return false;
+  }
+
+  public Stream<RegistryEntry<T>> streamEntries(Registry<T> registry, double progress) {
+    var chance = MathHelper.lerp(progress, this.min, this.max);
+    if (chance < 0.0) return Stream.empty();
+    Stream<RegistryEntry<T>> result = Stream.empty();
+    for (var v : this.list) result = Stream.concat(result, v.streamEntries(registry));
+    return result;
   }
 }

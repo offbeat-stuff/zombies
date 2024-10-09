@@ -4,7 +4,6 @@ import static org.codeberg.zenxarch.zombies.Zombies.EQUIPMENT_CONFIG;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.Item;
@@ -75,13 +74,9 @@ public class ExtendedDifficulty {
 
   public static ItemStack enchant(ServerWorldAccess world, double difficulty, ItemStack input) {
     var level = Period.getEnchantLevel(difficulty * random.nextDouble());
-
     if (level == 0) return input;
 
-    var enchantments =
-        Stream.concat(
-            EQUIPMENT_CONFIG.NON_TREASURE.getEnchantments(world, difficulty),
-            EQUIPMENT_CONFIG.TREASURE.getEnchantments(world, difficulty));
+    var enchantments = EQUIPMENT_CONFIG.getEnchantments(world, difficulty);
     return EnchantmentHelper.enchant(random, input, level, enchantments);
   }
 }

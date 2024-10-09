@@ -5,43 +5,42 @@ import folk.sisby.kaleido.lib.quiltconfig.api.annotations.SerializedNameConventi
 import folk.sisby.kaleido.lib.quiltconfig.api.metadata.NamingSchemes;
 import folk.sisby.kaleido.lib.quiltconfig.api.values.TrackedValue;
 import folk.sisby.kaleido.lib.quiltconfig.api.values.ValueList;
+import java.util.List;
 import java.util.stream.Stream;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.tag.EnchantmentTags;
 import net.minecraft.registry.tag.TagKey;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.ServerWorldAccess;
+import org.codeberg.zenxarch.zombies.helper.RegistryEntryPredicate;
+import org.codeberg.zenxarch.zombies.helper.WeightedRegistryEntryPredicate;
 
 @SerializedNameConvention(NamingSchemes.SNAKE_CASE)
 public class EquipmentConfig extends ReflectiveConfig {
 
-  public final EnchantmentList NON_TREASURE =
-      new EnchantmentList(1.0, 1.0, EnchantmentTags.NON_TREASURE);
-  public final EnchantmentList TREASURE = new EnchantmentList(-1.0, 0.25, EnchantmentTags.TREASURE);
+  public final TrackedValue<ValueList<WeightedRegistryConfigEntry<Enchantment>>> ENCHANTMENTS =
+      this.list(
+          helperNew(0.0, 1.0, List.of()),
+          helperNew(1.0, 1.0, List.of(EnchantmentTags.NON_TREASURE)),
+          helperNew(-1.0, 0.25, List.of(EnchantmentTags.TREASURE)));
 
-  public static class EnchantmentList extends Section {
-    public final TrackedValue<Double> min;
-    public final TrackedValue<Double> max;
-    public final TrackedValue<ValueList<RegistryConfigEntry<Enchantment>>> entries;
+  private static WeightedRegistryConfigEntry<Enchantment> helperNew(
+      double min, double max, List<TagKey<Enchantment>> tag) {
+    return new WeightedRegistryConfigEntry<Enchantment>(
+        new WeightedRegistryEntryPredicate<Enchantment>(
+            RegistryKeys.ENCHANTMENT,
+            tag.stream().map(RegistryEntryPredicate::tag).toList(),
+            min,
+            max));
+  }
 
-    public EnchantmentList(double min, double max, TagKey<Enchantment> tag) {
-      this.min = this.value(min);
-      this.max = this.value(max);
-      this.entries =
-          this.list(
-              RegistryConfigEntry.registry(RegistryKeys.ENCHANTMENT), RegistryConfigEntry.tag(tag));
-    }
-
-    public Stream<RegistryEntry<Enchantment>> getEnchantments(
-        ServerWorldAccess world, double difficulty) {
-      Stream<RegistryEntry<Enchantment>> stream = Stream.empty();
-      var registry = world.getRegistryManager().get(RegistryKeys.ENCHANTMENT);
-      if (MathHelper.lerp(difficulty, this.min.value(), this.max.value()) < 0.0) return stream;
-      for (var entry : this.entries.value())
-        stream = Stream.concat(stream, entry.streamEntries(registry));
-      return stream;
-    }
+  public Stream<RegistryEntry<Enchantment>> getEnchantments(
+      ServerWorldAccess world, double difficulty) {
+    Stream<RegistryEntry<Enchantment>> result = Stream.empty();
+    var registry = world.getRegistryManager().get(RegistryKeys.ENCHANTMENT);
+    for (var v : this.ENCHANTMENTS.value())
+      result = Stream.concat(result, v.value().streamEntries(registry, difficulty));
+    return result;
   }
 }
