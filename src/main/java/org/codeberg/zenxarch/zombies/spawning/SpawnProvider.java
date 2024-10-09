@@ -75,16 +75,14 @@ public class SpawnProvider {
     int x = center.getX() + this.random.nextBetween(-range, range);
     int z = center.getZ() + this.random.nextBetween(-range, range);
 
-    int minY = Math.max(this.world.getBottomY(), center.getY() - range);
-
-    int maxY =
-        Math.min(
-            this.world.getTopY(SpawnRestriction.getHeightmapType(EntityType.ZOMBIE), x, z) + 1,
-            center.getY() + range);
-
+    int minY = this.world.getBottomY();
+    int maxY = this.world.getTopY(SpawnRestriction.getHeightmapType(EntityType.ZOMBIE), x, z) + 1;
     if (maxY < minY) return Optional.empty();
 
-    return Optional.of(new BlockPos(x, this.random.nextBetween(minY, maxY), z));
+    var y = center.getY() + this.random.nextBetween(-range, range);
+    if (y < minY || y > maxY) return Optional.empty();
+
+    return Optional.of(new BlockPos(x, y, z));
   }
 
   public Optional<BlockPos> giveSpawnPos(ServerWorld world, BlockPos centerPos, double difficulty) {
