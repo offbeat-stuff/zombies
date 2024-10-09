@@ -30,11 +30,11 @@ public class SpawnProvider {
     return result;
   }
 
-  private boolean isLightLevelOk(BlockPos pos) {
+  private boolean isLightLevelBad(BlockPos pos) {
     var result =
-        SPAWN_CONFIG.BLOCKLIGHT.test(this.world, pos, this.world.random)
-            && SPAWN_CONFIG.SKYLIGHT.test(this.world, pos, this.world.random);
-    if (!result) debug.spawnCheckNum(1);
+        !(SPAWN_CONFIG.BLOCKLIGHT.test(this.world, pos, this.world.random)
+            && SPAWN_CONFIG.SKYLIGHT.test(this.world, pos, this.world.random));
+    if (result) debug.spawnCheckNum(1);
     return result;
   }
 
@@ -46,18 +46,18 @@ public class SpawnProvider {
     return result;
   }
 
-  private boolean canZombieSpawnAt(BlockPos pos) {
-    var result = SpawnRestriction.isSpawnPosAllowed(EntityType.ZOMBIE, world, pos);
-    if (!result) debug.spawnCheckNum(3);
+  private boolean zombieCannotSpawnAt(BlockPos pos) {
+    var result = !SpawnRestriction.isSpawnPosAllowed(EntityType.ZOMBIE, world, pos);
+    if (result) debug.spawnCheckNum(3);
     return result;
   }
 
   private boolean canSpawnAtPosBasic(BlockPos pos) {
     debug.spawnCheckNum(4);
-    if (!isLightLevelOk(pos)
+    if (isLightLevelBad(pos)
         || isPlayerInRange(pos)
         || cannotSpawnInBiomeAt(pos)
-        || !canZombieSpawnAt(pos)) {
+        || zombieCannotSpawnAt(pos)) {
       return false;
     }
 
