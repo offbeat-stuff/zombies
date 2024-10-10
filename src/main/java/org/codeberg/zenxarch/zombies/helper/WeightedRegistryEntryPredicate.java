@@ -44,7 +44,7 @@ public record WeightedRegistryEntryPredicate<T>(
       String list,
       Optional<Double> max) {
     return new WeightedRegistryEntryPredicate<T>(
-        registry, parseList(registry, list), min.orElse(0.0), min.orElse(1.0));
+        registry, parseList(registry, list), min.orElse(0.0), max.orElse(1.0));
   }
 
   private static Optional<Double> parseDouble(String value) {
