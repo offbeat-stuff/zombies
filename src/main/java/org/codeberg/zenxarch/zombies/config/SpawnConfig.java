@@ -19,6 +19,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.LightType;
 import net.minecraft.world.biome.Biome;
+import org.codeberg.zenxarch.zombies.helper.ProbabilityImpl;
 import org.codeberg.zenxarch.zombies.helper.RegistryEntryPredicate;
 import org.codeberg.zenxarch.zombies.helper.WeightedRegistryEntryPredicate;
 
@@ -114,8 +115,9 @@ public class SpawnConfig extends ReflectiveConfig {
       if (!this.enabled.value()) return true;
       var progress = getProgress(value, this.min.value(), this.max.value());
       if (progress < 0.0 || progress > 1.0) return false;
-      return random.nextDouble()
-          < MathHelper.lerp(progress, this.min_probability.value(), this.max_probability.value());
+      var chance =
+          MathHelper.lerp(progress, this.min_probability.value(), this.max_probability.value());
+      return ProbabilityImpl.nextBoolean(random, chance);
     }
 
     private static double getProgress(int value, int min, int max) {

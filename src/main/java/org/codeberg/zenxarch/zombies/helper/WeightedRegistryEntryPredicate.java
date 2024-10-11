@@ -70,7 +70,7 @@ public record WeightedRegistryEntryPredicate<T>(
 
   public boolean nextBoolean(Random random, double progress) {
     var chance = MathHelper.lerp(progress, this.min, this.max);
-    return random.nextDouble() < chance;
+    return ProbabilityImpl.nextBoolean(random, chance);
   }
 
   public Stream<RegistryEntry<T>> streamEntries(Registry<T> registry, double progress) {

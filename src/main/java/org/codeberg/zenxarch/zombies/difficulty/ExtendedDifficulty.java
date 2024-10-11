@@ -12,6 +12,7 @@ import net.minecraft.item.Items;
 import net.minecraft.util.Pair;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.ServerWorldAccess;
+import org.codeberg.zenxarch.zombies.helper.ProbabilityImpl;
 import org.jetbrains.annotations.Nullable;
 
 public class ExtendedDifficulty {
@@ -27,7 +28,7 @@ public class ExtendedDifficulty {
     var randomValue = random.nextDouble();
     for (int index = itemList.size() - 1; index >= 0; index--) {
       var chance = mapToCurve((double) index / itemList.size());
-      if (randomValue < chance) {
+      if (ProbabilityImpl.nextBoolean(randomValue, chance)) {
         return itemList.get(index);
       }
     }
@@ -46,34 +47,34 @@ public class ExtendedDifficulty {
   }
 
   public static int getTriesForSpawning(double difficulty) {
-    return Period.getSpawnTries(difficulty);
+    return Period.getSpawnTries(random, difficulty);
   }
 
   @Nullable
-  private static Item offhandItem(double chance) {
-    return random.nextDouble() < chance ? Items.SHIELD : null;
+  private static Item offhandItem(boolean ok) {
+    return ok ? Items.SHIELD : null;
   }
 
   @Nullable
-  private static Item equipmentItem(EquipmentSlot slot, double commonChance, double rareChance) {
-    return random.nextDouble() < commonChance
-        ? getItemForSlot(slot, true)
-        : random.nextDouble() < rareChance ? getItemForSlot(slot, false) : null;
+  private static Item equipmentItem(EquipmentSlot slot, boolean common, boolean rare) {
+    return (common || rare) ? getItemForSlot(slot, common) : null;
   }
 
   public static Optional<Item> getEquipmentForSlot(double difficulty, EquipmentSlot slot) {
     var item =
         switch (slot) {
-          case EquipmentSlot.OFFHAND -> offhandItem(Period.getShieldChance(difficulty));
+          case EquipmentSlot.OFFHAND -> offhandItem(Period.shouldEquipShield(random, difficulty));
           default ->
               equipmentItem(
-                  slot, Period.getCommonEquipment(difficulty), Period.getRareEquipment(difficulty));
+                  slot,
+                  Period.shouldEquipCommonEquipment(random, difficulty),
+                  Period.shouldEquipRareEquipment(random, difficulty));
         };
     return Optional.ofNullable(item);
   }
 
   public static ItemStack enchant(ServerWorldAccess world, double difficulty, ItemStack input) {
-    var level = Period.getEnchantLevel(difficulty * random.nextDouble());
+    var level = Period.getEnchantLevel(random, difficulty);
     if (level == 0) return input;
 
     var enchantments = EQUIPMENT_CONFIG.getEnchantments(world, difficulty);
