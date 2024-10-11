@@ -68,7 +68,7 @@ public class ZombieApocalypse implements SpecialSpawner {
     for (var player : this.world.getPlayers(this::isSuitablePlayer)) {
       result += this.spawnZombieAt(player.getBlockPos()) ? 1 : 0;
     }
-    debug.attemptedSpawn(result > 0);
+    debug.attemptedSpawn(this.world, result > 0);
     return result;
   }
 

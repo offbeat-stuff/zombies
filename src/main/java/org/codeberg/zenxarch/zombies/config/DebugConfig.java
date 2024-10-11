@@ -18,4 +18,7 @@ public class DebugConfig extends ReflectiveConfig {
 
   @Comment("If enabled partciles for shown for mod spawned zombies")
   public final TrackedValue<Boolean> PARTICLES = this.value(false);
+
+  @Comment("If enabled will send player subtitles with debug info")
+  public final TrackedValue<Boolean> SEND_PLAYER_DEBUG_INFO = this.value(false);
 }
