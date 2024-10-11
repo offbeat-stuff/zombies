@@ -20,24 +20,28 @@ public abstract class Period {
     return 1 + (int) getRandomVariable(random, spawnTriesAvg, spawnTriesSpread, difficulty);
   }
 
-  private static List<Double> enchantLevelAvg = List.of(0.0, 20.0);
-  private static List<Double> enchantLevelSpread = List.of(0.0, 20.0);
+  private static List<Double> enchantChance = List.of(0.0, 0.0, 0.025, 0.05);
+  private static List<Double> enchantLevelAvg = List.of(0.0, 5.0, 12.5, 28.5);
+  private static List<Double> enchantLevelSpread = List.of(0.0, 2.0, 7.5, 2.5);
 
   public static int getEnchantLevel(Random random, double difficulty) {
-    return (int) getRandomVariable(random, enchantLevelAvg, enchantLevelSpread, difficulty);
+    return ProbabilityImpl.nextBoolean(random, LerpImpl.lerp(enchantChance, difficulty))
+        ? 0
+        : (int) getRandomVariable(random, enchantLevelAvg, enchantLevelSpread, difficulty);
   }
 
-  private static List<Double> commonEquipment = List.of(0.0, 0.0, 0.02, 0.05, 0.1, 0.5);
+  private static List<Double> equipmentChance = List.of(0.0, 0.5);
 
-  public static boolean shouldEquipCommonEquipment(Random random, double difficulty) {
-    var chance = LerpImpl.lerp(commonEquipment, difficulty);
+  public static boolean shouldSpawnWithEquipment(Random random, double difficulty) {
+    var atLeastOnce = LerpImpl.lerp(equipmentChance, difficulty);
+    var chance = 1.0 - Math.pow(1.0 - atLeastOnce, 1.0 / 5.0);
     return ProbabilityImpl.nextBoolean(random, chance);
   }
 
-  private static List<Double> rareEquipment = List.of(0.0, 0.0, 0.0, 0.01, 0.05, 0.1);
+  private static List<Double> rareEquipmentChance = List.of(0.0, 0.01, 0.05, 0.1);
 
-  public static boolean shouldEquipRareEquipment(Random random, double difficulty) {
-    var chance = LerpImpl.lerp(rareEquipment, difficulty);
+  public static boolean useRareEquipment(Random random, double difficulty) {
+    var chance = LerpImpl.lerp(rareEquipmentChance, difficulty);
     return ProbabilityImpl.nextBoolean(random, chance);
   }
 

@@ -8,9 +8,9 @@ import org.codeberg.zenxarch.zombies.helper.LerpImpl;
 
 public class TimeConfig extends ReflectiveConfig {
 
-  public final PhaseLength EASY = new PhaseLength(5, 2500);
-  public final PhaseLength NORMAL = new PhaseLength(2, 500);
-  public final PhaseLength HARD = new PhaseLength(0, 250);
+  public final PhaseLength EASY = new PhaseLength(2, 500);
+  public final PhaseLength NORMAL = new PhaseLength(1, 250);
+  public final PhaseLength HARD = new PhaseLength(0, 100);
 
   public static class PhaseLength extends Section {
     @Comment("Length of time for which no zombies should spawn")

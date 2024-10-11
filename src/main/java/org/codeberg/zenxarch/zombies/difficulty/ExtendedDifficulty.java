@@ -56,8 +56,9 @@ public class ExtendedDifficulty {
   }
 
   @Nullable
-  private static Item equipmentItem(EquipmentSlot slot, boolean common, boolean rare) {
-    return (common || rare) ? getItemForSlot(slot, common) : null;
+  private static Item equipmentItem(
+      EquipmentSlot slot, boolean shouldSpawnWithEquipment, boolean useRareEquipment) {
+    return shouldSpawnWithEquipment ? getItemForSlot(slot, !useRareEquipment) : null;
   }
 
   public static Optional<Item> getEquipmentForSlot(double difficulty, EquipmentSlot slot) {
@@ -67,8 +68,8 @@ public class ExtendedDifficulty {
           default ->
               equipmentItem(
                   slot,
-                  Period.shouldEquipCommonEquipment(random, difficulty),
-                  Period.shouldEquipRareEquipment(random, difficulty));
+                  Period.shouldSpawnWithEquipment(random, difficulty),
+                  Period.useRareEquipment(random, difficulty));
         };
     return Optional.ofNullable(item);
   }
