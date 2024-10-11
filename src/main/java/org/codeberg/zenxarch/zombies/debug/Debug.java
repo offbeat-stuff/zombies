@@ -29,7 +29,12 @@ public class Debug {
   private void sendPlayerDebugInfo(ServerWorld world) {
     for (var player : world.getPlayers(LivingEntity::isAlive)) {
       var difficulty = ExtendedDifficultyInfo.getDifficulty(world, player.getBlockPos());
-      var text = Text.of(String.format("Difficulty: %.3f", difficulty));
+      var days = ((double) world.getTimeOfDay()) / 24000.0;
+      var hours = ((double) world.getChunk(player.getBlockPos()).getInhabitedTime()) / 72000.0;
+      var text =
+          Text.of(
+              String.format(
+                  "Difficulty: %.3f | Days: %.1f | Hours: %.3f", difficulty, days, hours));
       player.networkHandler.sendPacket(new OverlayMessageS2CPacket(text));
     }
   }
