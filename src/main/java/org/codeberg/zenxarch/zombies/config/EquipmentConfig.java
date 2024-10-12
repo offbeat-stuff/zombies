@@ -29,11 +29,11 @@ public class EquipmentConfig extends ReflectiveConfig {
   @Comment("The enchants can either be tags or id")
   public final TrackedValue<ValueList<WeightedRegistryConfigEntry<Enchantment>>> ENCHANTMENTS =
       this.list(
-          helperNew(0.0, 1.0, List.of()),
-          helperNew(0.0, 1.0, List.of(EnchantmentTags.NON_TREASURE)),
-          helperNew(-1.0, 0.25, List.of(EnchantmentTags.TREASURE)));
+          newEnchantmentEntry(0.0, 1.0, List.of()),
+          newEnchantmentEntry(0.0, 1.0, List.of(EnchantmentTags.NON_TREASURE)),
+          newEnchantmentEntry(-1.0, 0.25, List.of(EnchantmentTags.TREASURE)));
 
-  private static WeightedRegistryConfigEntry<Enchantment> helperNew(
+  private static WeightedRegistryConfigEntry<Enchantment> newEnchantmentEntry(
       double min, double max, List<TagKey<Enchantment>> tag) {
     return new WeightedRegistryConfigEntry<Enchantment>(
         new WeightedRegistryEntryPredicate<Enchantment>(

@@ -38,13 +38,6 @@ public abstract class Period {
     return ProbabilityImpl.nextBoolean(random, chance);
   }
 
-  private static List<Double> rareEquipmentChance = List.of(0.0, 0.01, 0.05, 0.1);
-
-  public static boolean useRareEquipment(Random random, double difficulty) {
-    var chance = LerpImpl.lerp(rareEquipmentChance, difficulty);
-    return ProbabilityImpl.nextBoolean(random, chance);
-  }
-
   private static List<Double> shieldChance = List.of(0.0, 0.0, 0.0, 0.01, 0.05, 0.1);
 
   public static boolean shouldEquipShield(Random random, double difficulty) {
