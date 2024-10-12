@@ -1,11 +1,13 @@
 package org.codeberg.zenxarch.zombies.helper;
 
+import java.util.List;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.AttributeModifiersComponent;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.AttributeContainer;
+import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.DefaultAttributeRegistry;
 import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributeInstance;
@@ -14,26 +16,38 @@ import net.minecraft.item.Item;
 import net.minecraft.registry.entry.RegistryEntry;
 
 public abstract class ItemAttributesImpl {
-  public static double getAttributeValue(
-      EntityType<? extends LivingEntity> type,
-      Item item,
-      RegistryEntry<EntityAttribute> attribute) {
-    var baseAttributes = new AttributeContainer(DefaultAttributeRegistry.get(type));
+  private static EntityAttributeInstance getAttributeInstance(
+      EntityType<? extends LivingEntity> type, RegistryEntry<EntityAttribute> attribute) {
+    var base = DefaultAttributeRegistry.get(type);
+    if (!base.has(attribute)) base = DefaultAttributeContainer.builder().add(attribute).build();
+
+    var container = new AttributeContainer(base);
+    return container.getCustomInstance(attribute);
+  }
+
+  private static List<AttributeModifiersComponent.Entry> getAttributes(
+      Item item, RegistryEntry<EntityAttribute> attribute) {
     var attributes =
         item.getComponents()
             .getOrDefault(
                 DataComponentTypes.ATTRIBUTE_MODIFIERS, AttributeModifiersComponent.DEFAULT);
-    attributes.applyModifiers(
-        EquipmentSlot.MAINHAND,
-        (registryEntry, entityAttributeModifier) -> {
-          EntityAttributeInstance entityAttributeInstance =
-              baseAttributes.getCustomInstance(registryEntry);
-          if (entityAttributeInstance != null) {
-            entityAttributeInstance.removeModifier(entityAttributeModifier.id());
-            entityAttributeInstance.addTemporaryModifier(entityAttributeModifier);
-          }
-        });
-    return baseAttributes.getValue(attribute);
+    return attributes.modifiers().stream()
+        .filter(f -> f.slot().matches(EquipmentSlot.MAINHAND))
+        .filter(f -> f.attribute().equals(attribute))
+        .toList();
+  }
+
+  public static double getAttributeValue(
+      EntityType<? extends LivingEntity> type,
+      Item item,
+      RegistryEntry<EntityAttribute> attribute) {
+    var instance = getAttributeInstance(type, attribute);
+    var attributes = getAttributes(item, attribute);
+    for (var entry : attributes) {
+      instance.removeModifier(entry.modifier().id());
+      instance.addTemporaryModifier(entry.modifier());
+    }
+    return instance.getValue();
   }
 
   public static double getZombieAttackDamage(Item item) {
@@ -44,10 +58,5 @@ public abstract class ItemAttributesImpl {
   public static double getZombieAttackSpeed(Item item) {
     return ItemAttributesImpl.getAttributeValue(
         EntityType.ZOMBIE, item, EntityAttributes.GENERIC_ATTACK_SPEED);
-  }
-
-  public static double getZombieAttackKnockback(Item item) {
-    return ItemAttributesImpl.getAttributeValue(
-        EntityType.ZOMBIE, item, EntityAttributes.GENERIC_ATTACK_KNOCKBACK);
   }
 }
