@@ -7,6 +7,7 @@ import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.Item;
+import net.minecraft.item.ToolItem;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.tag.ItemTags;
 import net.minecraft.registry.tag.TagKey;
@@ -17,11 +18,13 @@ public abstract class Equipment {
   // private static final Comparator<Double> LOOSE_COMPARE =
   // (a, b) -> Math.abs(b - a) < 0.4 ? 0 : Double.compare(a, b);
 
-  private static double scoreWeapon(Item item) {
-    return item.getComponents().getOrDefault(DataComponentTypes.RARITY, Rarity.COMMON).ordinal()
-            * 5.0
-        + ItemAttributesImpl.getZombieAttackDamage(item)
-            * ItemAttributesImpl.getZombieAttackSpeed(item);
+  public static double scoreWeapon(Item item) {
+    var rarityBonus =
+        item.getComponents().getOrDefault(DataComponentTypes.RARITY, Rarity.COMMON).ordinal() * 5.0;
+    var attributeBonus = ItemAttributesImpl.getZombieAttackDamage(item);
+    var miscBonus = item.getEnchantability() / 15.0;
+    if (item instanceof ToolItem tool) miscBonus += tool.getMaterial().getAttackDamage();
+    return rarityBonus + attributeBonus + miscBonus;
   }
 
   private static double scoreArmor(ArmorItem item, EquipmentSlot slot) {
