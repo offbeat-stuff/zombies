@@ -3,17 +3,32 @@ package org.codeberg.zenxarch.zombies.difficulty;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Stream;
+import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.tag.ItemTags;
 import net.minecraft.registry.tag.TagKey;
+import net.minecraft.util.Rarity;
 import org.codeberg.zenxarch.zombies.helper.ItemAttributesImpl;
 
 public abstract class Equipment {
   // private static final Comparator<Double> LOOSE_COMPARE =
   // (a, b) -> Math.abs(b - a) < 0.4 ? 0 : Double.compare(a, b);
+
+  private static double scoreWeapon(Item item) {
+    return item.getComponents().getOrDefault(DataComponentTypes.RARITY, Rarity.COMMON).ordinal()
+            * 5.0
+        + ItemAttributesImpl.getZombieAttackDamage(item)
+            * ItemAttributesImpl.getZombieAttackSpeed(item);
+  }
+
+  private static double scoreArmor(ArmorItem item, EquipmentSlot slot) {
+    return ItemAttributesImpl.getZombieArmor(item, slot)
+        + ItemAttributesImpl.getZombieArmorToughness(item, slot)
+        + ItemAttributesImpl.getZombieKnockbackResistance(item, slot);
+  }
 
   private static <T> Stream<T> reduceStream(Stream<List<T>> streams) {
     return streams.map(List::stream).reduce(Stream.empty(), Stream::concat);
@@ -35,7 +50,7 @@ public abstract class Equipment {
 
   public static List<Item> getWeaponsList() {
     var tags = List.of(ItemTags.WEAPON_ENCHANTABLE, ItemTags.TRIDENT_ENCHANTABLE);
-    return sortStream(toStream(tags), ItemAttributesImpl::getZombieAttackDamage).toList();
+    return sortStream(toStream(tags), Equipment::scoreWeapon).toList();
   }
 
   private static List<ArmorItem> getArmorListFromTags(EquipmentSlot slot, List<TagKey<Item>> tags) {
@@ -43,7 +58,7 @@ public abstract class Equipment {
             toStream(tags)
                 .filter(i -> i instanceof ArmorItem armor && armor.getSlotType().equals(slot))
                 .map(i -> (ArmorItem) i),
-            v -> (double) v.getProtection())
+            v -> scoreArmor(v, slot))
         .toList();
   }
 
