@@ -37,10 +37,6 @@ public abstract class Equipment {
         + ItemAttributesImpl.getZombieKnockbackResistance(item, slot);
   }
 
-  private static <T> Stream<T> reduceStream(Stream<List<T>> streams) {
-    return streams.map(List::stream).reduce(Stream.empty(), Stream::concat);
-  }
-
   private static List<Item> getListFrom(TagKey<Item> tag) {
     var registry = Registries.ITEM;
     var entries = registry.getOrCreateEntryList(tag);
@@ -48,7 +44,7 @@ public abstract class Equipment {
   }
 
   private static Stream<Item> toStream(List<TagKey<Item>> tags) {
-    return reduceStream(tags.stream().map(Equipment::getListFrom));
+    return tags.stream().map(Equipment::getListFrom).flatMap(List::stream);
   }
 
   private static <T> Stream<T> sortStream(Stream<T> stream, Function<T, Double> score) {

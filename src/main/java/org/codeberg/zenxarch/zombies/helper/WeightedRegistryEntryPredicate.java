@@ -76,8 +76,6 @@ public record WeightedRegistryEntryPredicate<T>(
   public Stream<RegistryEntry<T>> streamEntries(Registry<T> registry, double progress) {
     var chance = MathHelper.lerp(progress, this.min, this.max);
     if (chance < 0.0) return Stream.empty();
-    Stream<RegistryEntry<T>> result = Stream.empty();
-    for (var v : this.list) result = Stream.concat(result, v.streamEntries(registry));
-    return result;
+    return this.list.stream().flatMap(v -> v.streamEntries(registry));
   }
 }
