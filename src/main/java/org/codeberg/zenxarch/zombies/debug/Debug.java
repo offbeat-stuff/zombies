@@ -7,7 +7,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.network.packet.s2c.play.OverlayMessageS2CPacket;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
-import org.codeberg.zenxarch.zombies.difficulty.ExtendedDifficultyInfo;
+import org.codeberg.zenxarch.zombies.difficulty.ExtendedDifficulty;
 
 public class Debug {
   private int spawnAttempts = 0;
@@ -28,7 +28,7 @@ public class Debug {
 
   private void sendPlayerDebugInfo(ServerWorld world) {
     for (var player : world.getPlayers(LivingEntity::isAlive)) {
-      var difficulty = ExtendedDifficultyInfo.getDifficulty(world, player.getBlockPos());
+      var difficulty = ExtendedDifficulty.getDifficulty(world, player.getBlockPos());
       var days = ((double) world.getTimeOfDay()) / 24000.0;
       var hours = ((double) world.getChunk(player.getBlockPos()).getInhabitedTime()) / 72000.0;
       var text =
