@@ -51,27 +51,18 @@ public record RegistryEntryPredicate<T>(
 
   @Override
   public final String toString() {
-    return switch (this.value) {
-      case OptionalPair.Left(var left) -> "#" + left.id().toString();
-      case OptionalPair.Right(var right) -> right.getValue().toString();
-      case OptionalPair.Empty() -> "";
-    };
+    return this.value.mapAndUnwrap(l -> "#" + l.id(), r -> r.getValue().toString()).orElse("");
   }
 
   @Override
   public boolean test(RegistryEntry<T> entry) {
-    return switch (this.value) {
-      case OptionalPair.Left(var left) -> entry.isIn(left);
-      case OptionalPair.Right(var right) -> entry.matchesKey(right);
-      case OptionalPair.Empty() -> false;
-    };
+    return this.value.mapAndUnwrap(l -> entry.isIn(l), r -> entry.matchesKey(r)).orElse(false);
   }
 
   public Stream<? extends RegistryEntry<T>> streamEntries(Registry<T> registry) {
-    return switch (this.value) {
-      case OptionalPair.Left(var left) -> registry.getOrCreateEntryList(left).stream();
-      case OptionalPair.Right(var right) -> registry.getEntry(right).stream();
-      case OptionalPair.Empty() -> Stream.empty();
-    };
+    return this.value
+        .mapAndUnwrap(
+            l -> registry.getOrCreateEntryList(l).stream(), r -> registry.getEntry(r).stream())
+        .orElse(Stream.empty());
   }
 }

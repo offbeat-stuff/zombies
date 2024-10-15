@@ -1,5 +1,6 @@
 package org.codeberg.zenxarch.zombies.difficulty;
 
+import com.mojang.datafixers.util.Either;
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.Function;
@@ -42,13 +43,14 @@ public record ItemGenerator(
     var registry = Registries.ITEM;
     Function<OptionalPair<TagKey<Item>, Item>, Stream<Item>> optToItem =
         v ->
-            switch (v) {
-              case OptionalPair.Left(var tag) ->
-                  registry.getOrCreateEntryList(tag).stream()
-                      .map(entry -> entry.getKeyOrValue().map(registry::get, a -> a));
-              case OptionalPair.Right(var item) -> Stream.of(item);
-              default -> Stream.empty();
-            };
+            v.mapAndUnwrap(
+                    tag ->
+                        registry.getOrCreateEntryList(tag).stream()
+                            .map(
+                                entry ->
+                                    Either.unwrap(entry.getKeyOrValue().mapLeft(registry::get))),
+                    Stream::of)
+                .orElse(Stream.empty());
     var items =
         this.entries.stream()
             .flatMap(optToItem)
