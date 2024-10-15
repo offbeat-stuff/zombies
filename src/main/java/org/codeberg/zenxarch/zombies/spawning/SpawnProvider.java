@@ -86,7 +86,7 @@ public class SpawnProvider {
   }
 
   public Optional<BlockPos> giveSpawnPos(ServerWorld world, BlockPos centerPos, double difficulty) {
-    var times = ExtendedDifficulty.getTriesForSpawning(difficulty);
+    var times = ExtendedDifficulty.getSpawnTries(difficulty);
     this.world = world;
     this.difficulty = difficulty;
     for (int i = 0; i < times; i++) {

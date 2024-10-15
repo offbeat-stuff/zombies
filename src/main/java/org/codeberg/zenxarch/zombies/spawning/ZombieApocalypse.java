@@ -13,7 +13,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.spawner.SpecialSpawner;
 import org.codeberg.zenxarch.zombies.Zombies;
 import org.codeberg.zenxarch.zombies.debug.Debug;
-import org.codeberg.zenxarch.zombies.difficulty.ExtendedDifficultyInfo;
+import org.codeberg.zenxarch.zombies.difficulty.ExtendedDifficulty;
 import org.codeberg.zenxarch.zombies.difficulty.ExtendedZombieEntity;
 
 public class ZombieApocalypse implements SpecialSpawner {
@@ -33,7 +33,7 @@ public class ZombieApocalypse implements SpecialSpawner {
   }
 
   public boolean spawnZombieAt(BlockPos ppos) {
-    var difficulty = ExtendedDifficultyInfo.getDifficulty(this.world, ppos);
+    var difficulty = ExtendedDifficulty.getDifficulty(this.world, ppos);
     if (difficulty <= 0.0) return false;
 
     var zombieOpt =

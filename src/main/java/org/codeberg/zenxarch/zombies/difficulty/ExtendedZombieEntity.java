@@ -32,7 +32,7 @@ public class ExtendedZombieEntity extends ZombieEntity {
   }
 
   protected double getExtentedDifficulty() {
-    return ExtendedDifficultyInfo.getDifficulty(this.getWorld(), this.getBlockPos());
+    return ExtendedDifficulty.getDifficulty(this.getWorld(), this.getBlockPos());
   }
 
   public void initialize(ServerWorldAccess world) {
@@ -73,7 +73,7 @@ public class ExtendedZombieEntity extends ZombieEntity {
 
     for (var slot : EquipmentSlot.values()) {
       if (!this.getEquippedStack(slot).isEmpty()) continue;
-      var item = ExtendedDifficulty.getEquipmentForSlot(difficulty, slot);
+      var item = Equipment.getEquipmentForSlot(random, difficulty, slot);
       if (item.isEmpty()) continue;
       this.equipStack(slot, item.get().getDefaultStack());
     }
@@ -88,7 +88,7 @@ public class ExtendedZombieEntity extends ZombieEntity {
       if (this.getEquippedStack(slot).isEmpty()) return;
 
       this.equipStack(
-          slot, ExtendedDifficulty.enchant(world, difficulty, this.getEquippedStack(slot)));
+          slot, Equipment.enchant(world, random, difficulty, this.getEquippedStack(slot)));
     }
   }
 

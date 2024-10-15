@@ -1,12 +1,18 @@
 package org.codeberg.zenxarch.zombies.difficulty;
 
+import static org.codeberg.zenxarch.zombies.Zombies.EQUIPMENT_CONFIG;
+
 import java.util.List;
+import java.util.Optional;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.registry.tag.ItemTags;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.math.random.Random;
+import net.minecraft.world.ServerWorldAccess;
 import org.codeberg.zenxarch.zombies.helper.ItemSelector;
 import org.codeberg.zenxarch.zombies.helper.LerpImpl;
 
@@ -59,5 +65,23 @@ public abstract class Equipment {
         };
     if (generator == null) return null;
     return generator.generate(random, difficulty);
+  }
+
+  public static Optional<Item> getEquipmentForSlot(
+      Random random, double difficulty, EquipmentSlot slot) {
+    var item =
+        ExtendedDifficulty.shouldSpawnWithEquipment(difficulty)
+            ? Equipment.getItemForSlot(slot, random, difficulty)
+            : null;
+    return Optional.ofNullable(item);
+  }
+
+  public static ItemStack enchant(
+      ServerWorldAccess world, Random random, double difficulty, ItemStack input) {
+    var level = ExtendedDifficulty.getEnchantLevel(difficulty);
+    if (level == 0) return input;
+
+    var enchantments = EQUIPMENT_CONFIG.getEnchantments(world, difficulty);
+    return EnchantmentHelper.enchant(random, input, level, enchantments);
   }
 }
