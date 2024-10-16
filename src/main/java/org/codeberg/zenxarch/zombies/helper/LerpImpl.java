@@ -7,10 +7,12 @@ import net.minecraft.util.math.random.Random;
 public abstract class LerpImpl {
 
   public static Double lerp(List<Double> list, double delta) {
+    if (list.isEmpty()) return 0.0;
+    if (list.size() == 1) return list.get(0);
     if (delta >= 1.0) return list.getLast();
     if (delta <= 0.0) return list.getFirst();
-    double properDelta = delta * (list.size() - 1);
-    float subDelta = (float) MathHelper.fractionalPart(properDelta);
+    var properDelta = delta * (list.size() - 1);
+    var subDelta = MathHelper.fractionalPart(properDelta);
     int index = (int) properDelta;
     return MathHelper.lerp(subDelta, list.get(index), list.get(index + 1));
   }
@@ -20,10 +22,8 @@ public abstract class LerpImpl {
   }
 
   public static double clampedLerpProgress(double value, double min, double max) {
-    if (min == max || value < min) return 0.0;
-    if (value > max) return 1.0;
-
-    return MathHelper.getLerpProgress(value, min, max);
+    if (min == max) return 0.0;
+    return MathHelper.clamp(MathHelper.getLerpProgress(value, min, max), 0.0, 1.0);
   }
 
   /**
@@ -34,17 +34,18 @@ public abstract class LerpImpl {
     final var sum = n * (start + end) * 0.5;
     final var inc = (end - start) / (n - 1);
     var acc = start;
-    final var rand = random.nextDouble() * sum;
+    var rand = random.nextDouble() * sum;
     for (int i = 0; i < (n - 1); i++) {
-      if (acc < rand) return i;
+      rand -= acc;
+      if (rand < 0) return i;
       acc += inc;
     }
     return n - 1;
   }
 
   public static <T> T lerpWeighted(Random random, double start, double end, List<T> list) {
+    if (list.isEmpty()) return null;
     var n = lerpWeighted(random, start, end, list.size());
-    if (n == -1) return null;
     return list.get(n);
   }
 }
