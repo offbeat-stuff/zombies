@@ -2,9 +2,9 @@ use-grammars = { only = [ "json","gradle","java","toml" ] }
 
 [[language]]
 name = "java"
-formatter = {command = "clang-format",args = ["--assume-filename=.java"]}
+# formatter = {command = "clang-format",args = ["--assume-filename=.java"]}
 # language-servers = { {name = "jdtls",command = "jdtls"} }
-auto-format = true
+# auto-format = true
 
 [[language]]
 name = "json"
