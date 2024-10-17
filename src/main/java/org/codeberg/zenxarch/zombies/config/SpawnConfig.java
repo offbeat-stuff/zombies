@@ -73,7 +73,7 @@ public class SpawnConfig extends ReflectiveConfig {
   @Comment("Basically if sky light level is min uses min prob and at max uses max prob")
   @Comment("and in between, in case max < min values in range [0,max] U [min,16] are considered")
   public final LightSpawnRange SKYLIGHT =
-      new LightSpawnRange(LightType.SKY, true, 0, 1.0f, 15, 0.1f);
+      new LightSpawnRange(LightType.SKY, true, 0, 1.0f, 15, 0.5f);
 
   public static class LightSpawnRange extends Section {
     public final TrackedValue<Boolean> enabled;
