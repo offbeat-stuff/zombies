@@ -96,6 +96,8 @@ public class SpawnProvider {
     var extraTries = ExtendedDifficulty.getExtraTries(difficulty);
     var maxSuccess = ExtendedDifficulty.getMaxExtraSuccessfulTries(difficulty);
 
+    if (extraTries == 0 || maxSuccess == 0) return Stream.empty();
+
     return IntStream.range(0, extraTries)
         .mapToObj(v -> giveRandomSpawnPos(initialPos, extraRange))
         .filter(Optional::isPresent)
