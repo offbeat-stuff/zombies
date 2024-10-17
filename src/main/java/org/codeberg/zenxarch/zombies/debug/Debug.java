@@ -34,7 +34,8 @@ public class Debug {
       var text =
           Text.of(
               String.format(
-                  "Difficulty: %.3f | Days: %.1f | Hours: %.3f", difficulty, days, hours));
+                  "Difficulty: %.3f | Days: %.1f | Hours: %.3f | %d",
+                  difficulty, days, hours, successfulSpawnAttempts));
       player.networkHandler.sendPacket(new OverlayMessageS2CPacket(text));
     }
   }
