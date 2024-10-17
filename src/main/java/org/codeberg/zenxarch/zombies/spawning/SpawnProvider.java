@@ -3,6 +3,8 @@ package org.codeberg.zenxarch.zombies.spawning;
 import static org.codeberg.zenxarch.zombies.Zombies.SPAWN_CONFIG;
 
 import java.util.Optional;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnRestriction;
 import net.minecraft.server.world.ServerWorld;
@@ -70,8 +72,7 @@ public class SpawnProvider {
         && world.doesNotIntersectEntities(null, VoxelShapes.cuboid(boundingBox));
   }
 
-  private Optional<BlockPos> giveRandomPos(BlockPos center) {
-    var range = SPAWN_CONFIG.SPAWN_RANGE_FROM_INITIAL_POINT.value();
+  private Optional<BlockPos> giveRandomPos(BlockPos center, int range) {
     int x = center.getX() + this.random.nextBetween(-range, range);
     int z = center.getZ() + this.random.nextBetween(-range, range);
 
@@ -85,14 +86,29 @@ public class SpawnProvider {
     return Optional.of(new BlockPos(x, y, z));
   }
 
-  public Optional<BlockPos> giveSpawnPos(ServerWorld world, BlockPos centerPos, double difficulty) {
-    var times = ExtendedDifficulty.getSpawnTries(difficulty);
+  private Optional<BlockPos> giveRandomSpawnPos(BlockPos center, int range) {
+    return giveRandomPos(center, range).filter(this::canSpawnAtPosBasic);
+  }
+
+  private Stream<BlockPos> giveExtraSpawnPositions(BlockPos initialPos) {
+    var extraRange = SPAWN_CONFIG.SPAWN_RANGE_FROM_INITIAL_POINT.value();
+
+    var extraTries = ExtendedDifficulty.getExtraTries(difficulty);
+    var maxSuccess = ExtendedDifficulty.getMaxExtraSuccessfulTries(difficulty);
+
+    return IntStream.range(0, extraTries)
+        .mapToObj(v -> giveRandomSpawnPos(initialPos, extraRange))
+        .filter(Optional::isPresent)
+        .limit(maxSuccess)
+        .map(Optional::get);
+  }
+
+  public Stream<BlockPos> giveSpawnPositions(
+      ServerWorld world, BlockPos centerPos, double difficulty) {
     this.world = world;
     this.difficulty = difficulty;
-    for (int i = 0; i < times; i++) {
-      var pos = giveRandomPos(centerPos).filter(this::canSpawnAtPosBasic);
-      if (pos.isPresent()) return pos;
-    }
-    return Optional.empty();
+    var baseRange = SPAWN_CONFIG.SPAWN_RANGE_FROM_PLAYER.value();
+    return giveRandomSpawnPos(centerPos, baseRange).stream()
+        .flatMap(v -> Stream.concat(Stream.of(v), giveExtraSpawnPositions(v)));
   }
 }

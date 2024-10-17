@@ -32,23 +32,22 @@ public class ZombieApocalypse implements SpecialSpawner {
         && !this.world.containsFluid(zombie.getBoundingBox());
   }
 
-  public boolean spawnZombieAt(BlockPos ppos) {
-    var difficulty = ExtendedDifficulty.getDifficulty(this.world, ppos);
-    if (difficulty <= 0.0) return false;
+  private void spawnZombie(ExtendedZombieEntity zombie) {
+    zombie.initialize(this.world);
+    this.world.spawnEntityAndPassengers(zombie);
+  }
 
-    var zombieOpt =
+  public int spawnZombiesAt(BlockPos playerPos) {
+    var difficulty = ExtendedDifficulty.getDifficulty(this.world, playerPos);
+    if (difficulty <= 0.0) return 0;
+
+    return (int)
         spawnProvider
-            .giveSpawnPos(world, ppos, difficulty)
+            .giveSpawnPositions(world, playerPos, difficulty)
             .map(u -> new ExtendedZombieEntity(this.world, u))
-            .filter(this::canSpawnAtPosSpace);
-
-    zombieOpt.ifPresent(
-        z -> {
-          z.initialize(this.world);
-          this.world.spawnEntityAndPassengers(z);
-        });
-
-    return zombieOpt.isPresent();
+            .filter(this::canSpawnAtPosSpace)
+            .peek(this::spawnZombie)
+            .count();
   }
 
   public boolean isSuitablePlayer(ServerPlayerEntity player) {
@@ -66,7 +65,7 @@ public class ZombieApocalypse implements SpecialSpawner {
 
     var result = 0;
     for (var player : this.world.getPlayers(this::isSuitablePlayer)) {
-      result += this.spawnZombieAt(player.getBlockPos()) ? 1 : 0;
+      result += this.spawnZombiesAt(player.getBlockPos());
     }
     debug.attemptedSpawn(this.world, result > 0);
     return result;

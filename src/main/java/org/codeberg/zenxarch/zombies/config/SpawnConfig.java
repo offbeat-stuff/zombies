@@ -31,7 +31,11 @@ public class SpawnConfig extends ReflectiveConfig {
 
   @Comment("Range from player within which random spawn positions will be used")
   @IntegerRange(min = 0, max = 128)
-  public final TrackedValue<Integer> SPAWN_RANGE_FROM_INITIAL_POINT = this.value(64);
+  public final TrackedValue<Integer> SPAWN_RANGE_FROM_PLAYER = this.value(64);
+
+  @Comment("Range from initial within which extra spawns will be attempted")
+  @IntegerRange(min = 0, max = 128)
+  public final TrackedValue<Integer> SPAWN_RANGE_FROM_INITIAL_POINT = this.value(16);
 
   @Comment("Biomes in which zombies spawning should be cancelled")
   public final TrackedValue<ValueList<RegistryConfigEntry<Biome>>> NO_SPAWN_IN_BIOMES =
