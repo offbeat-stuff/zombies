@@ -77,7 +77,7 @@ public class ExtendedDifficulty {
 
   public static boolean shouldSpawnWithEquipment(double difficulty) {
     var atLeastOnce = LerpImpl.lerp(equipmentChance, difficulty);
-    var chance = 1.0 - Math.pow(1.0 - atLeastOnce, 1.0 / 5.0);
+    var chance = 1.0 - Math.pow(1.0 - atLeastOnce, 1.0 / 6.0);
     return ProbabilityImpl.nextBoolean(random, chance);
   }
 }
