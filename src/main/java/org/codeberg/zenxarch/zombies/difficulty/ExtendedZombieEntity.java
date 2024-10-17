@@ -5,10 +5,13 @@ import static org.codeberg.zenxarch.zombies.Zombies.DEBUG_CONFIG;
 import net.minecraft.entity.EntityData;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.SpawnReason;
+import net.minecraft.entity.attribute.EntityAttributes;
+import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.mob.ZombieEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.LocalDifficulty;
@@ -90,6 +93,22 @@ public class ExtendedZombieEntity extends ZombieEntity {
       this.equipStack(
           slot, Equipment.enchant(world, random, difficulty, this.getEquippedStack(slot)));
     }
+  }
+
+  @Override
+  public boolean damage(DamageSource source, float amount) {
+    if (!super.damage(source, amount)) return false;
+    if (!(this.getWorld() instanceof ServerWorld serverWorld)) return false;
+
+    return true;
+  }
+
+  @Override
+  protected void applyAttributeModifiers(float chanceMultiplier) {
+    super.applyAttributeModifiers(chanceMultiplier);
+    var spawnAttribute = this.getAttributeInstance(EntityAttributes.ZOMBIE_SPAWN_REINFORCEMENTS);
+    spawnAttribute.setBaseValue(0.0);
+    spawnAttribute.removeModifier(Identifier.ofVanilla("leader_zombie_bonus"));
   }
 
   @Override
