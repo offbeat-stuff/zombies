@@ -46,4 +46,8 @@ public record TagEntry(boolean isTag, Identifier id) {
         ? registry.getEntryList(TagKey.of(registry.getKey(), id)).stream().flatMap(Named::stream)
         : registry.getEntry(id).stream();
   }
+
+  public <T> Stream<T> streamValues(Registry<T> registry) {
+    return streamEntries(registry).map(RegistryEntry::value);
+  }
 }

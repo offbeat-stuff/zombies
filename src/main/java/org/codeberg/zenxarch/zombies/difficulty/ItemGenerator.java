@@ -1,10 +1,8 @@
 package org.codeberg.zenxarch.zombies.difficulty;
 
-import com.mojang.datafixers.util.Either;
 import java.util.Comparator;
 import java.util.List;
-import java.util.function.Function;
-import java.util.stream.Stream;
+import java.util.function.Consumer;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.ArmorItem;
@@ -15,45 +13,35 @@ import net.minecraft.util.Rarity;
 import net.minecraft.util.math.random.Random;
 import org.codeberg.zenxarch.zombies.helper.ItemAttributesImpl;
 import org.codeberg.zenxarch.zombies.helper.ItemSelector;
-import org.codeberg.zenxarch.zombies.helper.OptionalPair;
+import org.codeberg.zenxarch.zombies.registry.TagEntry;
+import org.codeberg.zenxarch.zombies.registry.TagEntryListBuilder;
+import org.codeberg.zenxarch.zombies.registry.TagEntryListBuilder.InnerTagEntryListBuilder;
 
-public record ItemGenerator(
-    List<OptionalPair<TagKey<Item>, Item>> entries, EquipmentSlot slot, ItemSelector selector) {
+public record ItemGenerator(List<TagEntry> entries, EquipmentSlot slot, ItemSelector selector) {
 
-  public static ItemGenerator items(List<Item> items, EquipmentSlot slot, ItemSelector selector) {
-    return new ItemGenerator(
-        items.stream().map(OptionalPair::<TagKey<Item>, Item>right).toList(), slot, selector);
+  public static ItemGenerator fromBuilder(
+      Consumer<TagEntryListBuilder> buildFunction,
+      Consumer<InnerTagEntryListBuilder<Item>> valueFunction,
+      EquipmentSlot slot,
+      ItemSelector selector) {
+    var builder = new TagEntryListBuilder();
+    buildFunction.accept(builder);
+    builder.add(Registries.ITEM, valueFunction);
+    return new ItemGenerator(builder.build(), slot, selector);
   }
 
-  public static ItemGenerator item(Item item, EquipmentSlot slot, ItemSelector selector) {
-    return items(List.of(item), slot, selector);
+  public static ItemGenerator fromTag(TagKey<Item> tag, EquipmentSlot slot, ItemSelector selector) {
+    return fromBuilder(b -> b.add(tag), v -> {}, slot, selector);
   }
 
-  public static ItemGenerator tags(
-      List<TagKey<Item>> tags, EquipmentSlot slot, ItemSelector selector) {
-    return new ItemGenerator(
-        tags.stream().map(OptionalPair::<TagKey<Item>, Item>left).toList(), slot, selector);
-  }
-
-  public static ItemGenerator tag(TagKey<Item> tag, EquipmentSlot slot, ItemSelector selector) {
-    return tags(List.of(tag), slot, selector);
+  public static ItemGenerator fromItem(Item item, EquipmentSlot slot, ItemSelector selector) {
+    return fromBuilder(b -> {}, v -> v.add(item), slot, selector);
   }
 
   public Item generate(Random random, double difficulty) {
-    var registry = Registries.ITEM;
-    Function<OptionalPair<TagKey<Item>, Item>, Stream<Item>> optToItem =
-        v ->
-            v.mapAndUnwrap(
-                    tag ->
-                        registry.getOrCreateEntryList(tag).stream()
-                            .map(
-                                entry ->
-                                    Either.unwrap(entry.getKeyOrValue().mapLeft(registry::get))),
-                    Stream::of)
-                .orElse(Stream.empty());
     var items =
         this.entries.stream()
-            .flatMap(optToItem)
+            .flatMap(v -> v.streamValues(Registries.ITEM))
             .filter(item -> matchesSlot(item, this.slot))
             .sorted(Comparator.comparingDouble(ItemGenerator::score))
             .distinct()

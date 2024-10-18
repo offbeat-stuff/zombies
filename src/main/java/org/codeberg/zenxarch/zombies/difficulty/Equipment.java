@@ -30,7 +30,14 @@ public abstract class Equipment {
       double min,
       double max) {
     var selected = LerpImpl.lerpWeighted(random, min, max, tags.size());
-    return ItemGenerator.tags(tags.get(selected), slot, selectors.get(selected));
+    return ItemGenerator.fromBuilder(
+        b -> {
+          var tagList = tags.get(selected);
+          for (var tag : tagList) b.add(tag);
+        },
+        v -> {},
+        slot,
+        selectors.get(selected));
   }
 
   public static Item getItemForSlot(EquipmentSlot slot, Random random, double difficulty) {
@@ -40,10 +47,11 @@ public abstract class Equipment {
         new ItemSelector.WeightedSelector((d) -> LerpImpl.lerp(List.of(1000.0), 100.0), (d) -> 1.0);
     var generator =
         switch (slot) {
-          case HEAD -> ItemGenerator.tag(ItemTags.HEAD_ARMOR_ENCHANTABLE, slot, armorSelector);
-          case CHEST -> ItemGenerator.tag(ItemTags.CHEST_ARMOR_ENCHANTABLE, slot, armorSelector);
-          case LEGS -> ItemGenerator.tag(ItemTags.LEG_ARMOR_ENCHANTABLE, slot, armorSelector);
-          case FEET -> ItemGenerator.tag(ItemTags.LEG_ARMOR_ENCHANTABLE, slot, armorSelector);
+          case HEAD -> ItemGenerator.fromTag(ItemTags.HEAD_ARMOR_ENCHANTABLE, slot, armorSelector);
+          case CHEST ->
+              ItemGenerator.fromTag(ItemTags.CHEST_ARMOR_ENCHANTABLE, slot, armorSelector);
+          case LEGS -> ItemGenerator.fromTag(ItemTags.LEG_ARMOR_ENCHANTABLE, slot, armorSelector);
+          case FEET -> ItemGenerator.fromTag(ItemTags.LEG_ARMOR_ENCHANTABLE, slot, armorSelector);
           case MAINHAND ->
               weightedSelect(
                   List.of(
@@ -59,7 +67,7 @@ public abstract class Equipment {
                   250.0,
                   1.0);
           case OFFHAND ->
-              ItemGenerator.item(
+              ItemGenerator.fromItem(
                   Items.SHIELD, slot, new ItemSelector.RecursiveChanceBased((d) -> 0.3));
           default -> null;
         };
