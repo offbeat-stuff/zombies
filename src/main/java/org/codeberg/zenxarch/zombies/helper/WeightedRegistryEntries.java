@@ -27,8 +27,8 @@ public record WeightedRegistryEntries(List<TagEntry> list, double min, double ma
   public final String toString() {
     var builder = new StringBuilder();
     if (this.min != 0.0) builder.append(this.min).append("<");
-    var list = this.list.stream().map(v -> v.toString()).toList();
-    builder.append(String.join(",", list));
+    for (var v : this.list) builder.append(v).append(",");
+    builder.setLength(builder.length() - 1);
     if (this.max != 1.0) builder.append("<").append(this.max);
     return builder.toString();
   }
