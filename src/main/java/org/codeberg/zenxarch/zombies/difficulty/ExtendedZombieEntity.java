@@ -2,13 +2,13 @@ package org.codeberg.zenxarch.zombies.difficulty;
 
 import static org.codeberg.zenxarch.zombies.Zombies.DEBUG_CONFIG;
 
-import java.util.stream.Stream;
 import net.minecraft.entity.EntityData;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.mob.ZombieEntity;
+import net.minecraft.item.Item;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
@@ -75,24 +75,26 @@ public class ExtendedZombieEntity extends ZombieEntity {
     var difficulty = getExtentedDifficulty();
     if (difficulty <= 0.0) return;
 
-    Stream.of(EquipmentSlot.values())
-        .filter(slot -> this.getEquippedStack(slot).isEmpty())
-        .forEach(
-            slot ->
-                Equipment.getEquipmentForSlot(random, difficulty, slot)
-                    .ifPresent(item -> this.equipStack(slot, item.getDefaultStack())));
+    for (var slot : EquipmentSlot.values()) {
+      if (!this.getEquippedStack(slot).isEmpty()) continue;
+
+      var equipment = Equipment.getEquipmentForSlot(random, difficulty, slot);
+      equipment.map(Item::getDefaultStack).ifPresent(s -> this.equipStack(slot, s));
+    }
   }
 
   @Override
   protected void updateEnchantments(
       ServerWorldAccess world, Random random, LocalDifficulty unused) {
     var difficulty = getExtentedDifficulty();
+    if (difficulty <= 0.0) return;
 
     for (var slot : EquipmentSlot.values()) {
-      if (this.getEquippedStack(slot).isEmpty()) return;
+      var stack = this.getEquippedStack(slot);
+      if (stack.isEmpty()) continue;
 
-      this.equipStack(
-          slot, Equipment.enchant(world, random, difficulty, this.getEquippedStack(slot)));
+      stack = Equipment.enchant(world, random, difficulty, stack);
+      this.equipStack(slot, stack);
     }
   }
 
