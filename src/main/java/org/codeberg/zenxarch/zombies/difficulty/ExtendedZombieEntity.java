@@ -2,6 +2,7 @@ package org.codeberg.zenxarch.zombies.difficulty;
 
 import static org.codeberg.zenxarch.zombies.Zombies.DEBUG_CONFIG;
 
+import java.util.stream.Stream;
 import net.minecraft.entity.EntityData;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.SpawnReason;
@@ -74,12 +75,12 @@ public class ExtendedZombieEntity extends ZombieEntity {
     var difficulty = getExtentedDifficulty();
     if (difficulty <= 0.0) return;
 
-    for (var slot : EquipmentSlot.values()) {
-      if (!this.getEquippedStack(slot).isEmpty()) continue;
-      var item = Equipment.getEquipmentForSlot(random, difficulty, slot);
-      if (item.isEmpty()) continue;
-      this.equipStack(slot, item.get().getDefaultStack());
-    }
+    Stream.of(EquipmentSlot.values())
+        .filter(slot -> this.getEquippedStack(slot).isEmpty())
+        .forEach(
+            slot ->
+                Equipment.getEquipmentForSlot(random, difficulty, slot)
+                    .ifPresent(item -> this.equipStack(slot, item.getDefaultStack())));
   }
 
   @Override

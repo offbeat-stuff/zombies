@@ -2,20 +2,19 @@ package org.codeberg.zenxarch.zombies.config;
 
 import folk.sisby.kaleido.lib.quiltconfig.api.values.ComplexConfigValue;
 import folk.sisby.kaleido.lib.quiltconfig.api.values.ConfigSerializableObject;
-import org.codeberg.zenxarch.zombies.helper.WeightedRegistryEntryPredicate;
+import org.codeberg.zenxarch.zombies.helper.WeightedRegistryEntries;
 
-public record WeightedRegistryConfigEntry<T>(WeightedRegistryEntryPredicate<T> value)
+public record WeightedRegistryConfigEntry(WeightedRegistryEntries value)
     implements ConfigSerializableObject<String> {
 
   @Override
   public ComplexConfigValue copy() {
-    return new WeightedRegistryConfigEntry<T>(this.value);
+    return new WeightedRegistryConfigEntry(this.value);
   }
 
   @Override
   public ConfigSerializableObject<String> convertFrom(String value) {
-    return new WeightedRegistryConfigEntry<T>(
-        WeightedRegistryEntryPredicate.fromString(this.value.registry(), value));
+    return new WeightedRegistryConfigEntry(WeightedRegistryEntries.fromString(value));
   }
 
   @Override

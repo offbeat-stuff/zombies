@@ -9,10 +9,8 @@ import folk.sisby.kaleido.lib.quiltconfig.api.metadata.NamingSchemes;
 import folk.sisby.kaleido.lib.quiltconfig.api.values.TrackedValue;
 import folk.sisby.kaleido.lib.quiltconfig.api.values.ValueList;
 import java.util.List;
-import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.tag.BiomeTags;
-import net.minecraft.registry.tag.TagKey;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -20,8 +18,9 @@ import net.minecraft.util.math.random.Random;
 import net.minecraft.world.LightType;
 import net.minecraft.world.biome.Biome;
 import org.codeberg.zenxarch.zombies.helper.ProbabilityImpl;
-import org.codeberg.zenxarch.zombies.helper.RegistryEntryPredicate;
-import org.codeberg.zenxarch.zombies.helper.WeightedRegistryEntryPredicate;
+import org.codeberg.zenxarch.zombies.helper.WeightedRegistryEntries;
+import org.codeberg.zenxarch.zombies.registry.TagEntry;
+import org.codeberg.zenxarch.zombies.registry.TagEntryListBuilder;
 
 @SerializedNameConvention(NamingSchemes.SNAKE_CASE)
 public class SpawnConfig extends ReflectiveConfig {
@@ -38,30 +37,27 @@ public class SpawnConfig extends ReflectiveConfig {
   public final TrackedValue<Integer> SPAWN_RANGE_FROM_INITIAL_POINT = this.value(16);
 
   @Comment("Biomes in which zombies spawning should be cancelled")
-  public final TrackedValue<ValueList<RegistryConfigEntry<Biome>>> NO_SPAWN_IN_BIOMES =
+  public final TrackedValue<ValueList<RegistryConfigEntry>> NO_SPAWN_IN_BIOMES =
       this.value(
           ValueList.create(
-              RegistryConfigEntry.registry(RegistryKeys.BIOME),
-              RegistryConfigEntry.tag(BiomeTags.WITHOUT_ZOMBIE_SIEGES),
-              RegistryConfigEntry.tag(BiomeTags.ANCIENT_CITY_HAS_STRUCTURE)));
+              new RegistryConfigEntry(TagEntry.EMPTY),
+              new RegistryConfigEntry(TagEntry.of(BiomeTags.WITHOUT_ZOMBIE_SIEGES)),
+              new RegistryConfigEntry(TagEntry.of(BiomeTags.ANCIENT_CITY_HAS_STRUCTURE))));
 
   @Comment("Weighted list of biomes with special min and max chance of zombies to spawn there")
   @Comment("Syntax is min<biome1,biome2,biome3<max")
   @Comment("min and max can be ommited and default to 0.0 and 1.0")
-  public final TrackedValue<ValueList<WeightedRegistryConfigEntry<Biome>>> SPECIAL_SPAWN_BIOMES =
+  public final TrackedValue<ValueList<WeightedRegistryConfigEntry>> SPECIAL_SPAWN_BIOMES =
       this.list(
-          helperNew(0.0, 1.0, List.of()),
-          helperNew(0.2, 0.6, List.of(BiomeTags.VILLAGE_PLAINS_HAS_STRUCTURE)));
-
-  private static WeightedRegistryConfigEntry<Biome> helperNew(
-      double min, double max, List<TagKey<Biome>> tag) {
-    return new WeightedRegistryConfigEntry<Biome>(
-        new WeightedRegistryEntryPredicate<Biome>(
-            RegistryKeys.BIOME, tag.stream().map(RegistryEntryPredicate::tag).toList(), min, max));
-  }
+          new WeightedRegistryConfigEntry(new WeightedRegistryEntries(List.of(), 0.0, 1.0)),
+          new WeightedRegistryConfigEntry(
+              new WeightedRegistryEntries(
+                  (new TagEntryListBuilder()).add(BiomeTags.VILLAGE_PLAINS_HAS_STRUCTURE).build(),
+                  0.2,
+                  0.6)));
 
   public boolean skipSpawnIn(RegistryEntry<Biome> biome, Random random, double difficulty) {
-    for (var v : NO_SPAWN_IN_BIOMES.value()) if (v.test(biome)) return true;
+    for (var v : NO_SPAWN_IN_BIOMES.value()) if (v.value().matches(biome)) return true;
     for (var v : SPECIAL_SPAWN_BIOMES.value())
       if (v.value().matches(biome)) return !v.value().nextBoolean(random, difficulty);
     return false;

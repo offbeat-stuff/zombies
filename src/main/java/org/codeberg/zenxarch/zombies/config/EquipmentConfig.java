@@ -6,16 +6,15 @@ import folk.sisby.kaleido.lib.quiltconfig.api.annotations.SerializedNameConventi
 import folk.sisby.kaleido.lib.quiltconfig.api.metadata.NamingSchemes;
 import folk.sisby.kaleido.lib.quiltconfig.api.values.TrackedValue;
 import folk.sisby.kaleido.lib.quiltconfig.api.values.ValueList;
-import java.util.List;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.tag.EnchantmentTags;
-import net.minecraft.registry.tag.TagKey;
 import net.minecraft.world.ServerWorldAccess;
-import org.codeberg.zenxarch.zombies.helper.RegistryEntryPredicate;
-import org.codeberg.zenxarch.zombies.helper.WeightedRegistryEntryPredicate;
+import org.codeberg.zenxarch.zombies.helper.WeightedRegistryEntries;
+import org.codeberg.zenxarch.zombies.registry.TagEntryListBuilder;
 
 @SerializedNameConvention(NamingSchemes.SNAKE_CASE)
 public class EquipmentConfig extends ReflectiveConfig {
@@ -27,20 +26,17 @@ public class EquipmentConfig extends ReflectiveConfig {
   @Comment(
       "If the value comes out above 0.0 the enchantment list is added to possible pool of enchants")
   @Comment("The enchants can either be tags or id")
-  public final TrackedValue<ValueList<WeightedRegistryConfigEntry<Enchantment>>> ENCHANTMENTS =
+  public final TrackedValue<ValueList<WeightedRegistryConfigEntry>> ENCHANTMENTS =
       this.list(
-          newEnchantmentEntry(0.0, 1.0, List.of()),
-          newEnchantmentEntry(0.0, 1.0, List.of(EnchantmentTags.NON_TREASURE)),
-          newEnchantmentEntry(-1.0, 0.25, List.of(EnchantmentTags.TREASURE)));
+          helperNew(0.0, 1.0, b -> {}),
+          helperNew(0.0, 1.0, builder -> builder.add(EnchantmentTags.NON_TREASURE)),
+          helperNew(-1.0, 0.25, builder -> builder.add(EnchantmentTags.TREASURE)));
 
-  private static WeightedRegistryConfigEntry<Enchantment> newEnchantmentEntry(
-      double min, double max, List<TagKey<Enchantment>> tag) {
-    return new WeightedRegistryConfigEntry<Enchantment>(
-        new WeightedRegistryEntryPredicate<Enchantment>(
-            RegistryKeys.ENCHANTMENT,
-            tag.stream().map(RegistryEntryPredicate::tag).toList(),
-            min,
-            max));
+  private static WeightedRegistryConfigEntry helperNew(
+      double min, double max, Consumer<TagEntryListBuilder> buildFunction) {
+    var builder = new TagEntryListBuilder();
+    buildFunction.accept(builder);
+    return new WeightedRegistryConfigEntry(new WeightedRegistryEntries(builder.build(), min, max));
   }
 
   public Stream<RegistryEntry<Enchantment>> getEnchantments(
