@@ -8,14 +8,12 @@ import folk.sisby.kaleido.lib.quiltconfig.api.annotations.SerializedNameConventi
 import folk.sisby.kaleido.lib.quiltconfig.api.metadata.NamingSchemes;
 import folk.sisby.kaleido.lib.quiltconfig.api.values.TrackedValue;
 import folk.sisby.kaleido.lib.quiltconfig.api.values.ValueList;
-import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.tag.BiomeTags;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.LightType;
-import net.minecraft.world.biome.Biome;
 import org.codeberg.zenxarch.zombies.random.RandomUtils;
 
 @SerializedNameConvention(NamingSchemes.SNAKE_CASE)
@@ -46,11 +44,24 @@ public class SpawnConfig extends ReflectiveConfig {
       this.value(
           ConfigUtils.tagList(builder -> builder.add(BiomeTags.VILLAGE_PLAINS_HAS_STRUCTURE)));
 
-  public boolean skipSpawnIn(RegistryEntry<Biome> biome, Random random, double difficulty) {
+  public boolean skipSpawnIn(ServerWorld world, BlockPos pos, Random random, double difficulty) {
+    var biome = world.getBiome(pos);
     for (var v : NO_SPAWN_IN_BIOMES.value()) if (v.value().matches(biome)) return true;
     for (var v : SPECIAL_SPAWN_BIOMES.value())
       if (v.value().matches(biome)) return !RandomUtils.nextBoolean(random, difficulty);
     return false;
+  }
+
+  public boolean insufficientLightLevel(
+      ServerWorld world, BlockPos pos, Random random, double difficulty) {
+    var isLightLevelOk = BLOCKLIGHT.test(world, pos, random) && SKYLIGHT.test(world, pos, random);
+    return !isLightLevelOk;
+  }
+
+  public boolean isPlayerTooClose(
+      ServerWorld world, BlockPos pos, Random random, double difficulty) {
+    return world.isPlayerInRange(
+        pos.getX(), pos.getY(), pos.getZ(), SPAWN_RANGE_FROM_PLAYER.value());
   }
 
   @Comment("In case min equals max uses min_probability")

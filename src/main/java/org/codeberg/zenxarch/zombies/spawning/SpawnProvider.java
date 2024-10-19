@@ -5,6 +5,7 @@ import static org.codeberg.zenxarch.zombies.Zombies.SPAWN_CONFIG;
 import java.util.Optional;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
+import net.minecraft.data.client.BlockStateVariantMap.QuadFunction;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnRestriction;
 import net.minecraft.server.world.ServerWorld;
@@ -25,43 +26,38 @@ public class SpawnProvider {
     this.debug = debug;
   }
 
-  private boolean cannotSpawnInBiomeAt(BlockPos pos) {
-    var biome = world.getBiome(pos);
-    var result = SPAWN_CONFIG.skipSpawnIn(biome, this.random, this.difficulty);
-    if (result) debug.spawnCheckNum(0);
-    return result;
-  }
+  private static enum SpawnConditions {
+    BIOME(SPAWN_CONFIG::skipSpawnIn),
+    LIGHT(SPAWN_CONFIG::insufficientLightLevel),
+    PLAYER_RANGE(SPAWN_CONFIG::isPlayerTooClose),
+    POS_CHECK((w, b, r, d) -> !SpawnRestriction.isSpawnPosAllowed(EntityType.ZOMBIE, w, b));
 
-  private boolean isLightLevelBad(BlockPos pos) {
-    var result =
-        !(SPAWN_CONFIG.BLOCKLIGHT.test(this.world, pos, this.world.random)
-            && SPAWN_CONFIG.SKYLIGHT.test(this.world, pos, this.world.random));
-    if (result) debug.spawnCheckNum(1);
-    return result;
-  }
+    private final QuadFunction<ServerWorld, BlockPos, Random, Double, Boolean> spawnCondition;
 
-  private boolean isPlayerInRange(BlockPos pos) {
-    var result =
-        this.world.isPlayerInRange(
-            pos.getX(), pos.getY(), pos.getZ(), SPAWN_CONFIG.NO_SPAWN_NEAR_PLAYER_RANGE.value());
-    if (result) debug.spawnCheckNum(2);
-    return result;
-  }
+    private SpawnConditions(
+        QuadFunction<ServerWorld, BlockPos, Random, Double, Boolean> spawnCondition) {
+      this.spawnCondition = spawnCondition;
+    }
 
-  private boolean zombieCannotSpawnAt(BlockPos pos) {
-    var result = !SpawnRestriction.isSpawnPosAllowed(EntityType.ZOMBIE, world, pos);
-    if (result) debug.spawnCheckNum(3);
-    return result;
+    public boolean spawnCheck(ServerWorld world, BlockPos pos, Random random, Double difficulty) {
+      return this.spawnCondition.apply(world, pos, random, difficulty);
+    }
+
+    public static boolean skipSpawn(
+        ServerWorld world, BlockPos pos, Random random, Double difficulty, Debug debug) {
+      for (var check : values()) {
+        if (!check.spawnCheck(world, pos, random, difficulty)) continue;
+        debug.spawnCheckNum(check.ordinal());
+        return true;
+      }
+      return false;
+    }
   }
 
   private boolean canSpawnAtPosBasic(BlockPos pos) {
     debug.spawnCheckNum(4);
-    if (isLightLevelBad(pos)
-        || isPlayerInRange(pos)
-        || cannotSpawnInBiomeAt(pos)
-        || zombieCannotSpawnAt(pos)) {
+    if (SpawnConditions.skipSpawn(this.world, pos, this.random, this.difficulty, this.debug))
       return false;
-    }
 
     this.debug.spawnCheck();
 
