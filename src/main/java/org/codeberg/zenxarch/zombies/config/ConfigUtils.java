@@ -11,6 +11,6 @@ public abstract class ConfigUtils {
     buildFunc.accept(builder);
     return ValueList.create(
         new RegistryConfigEntry(TagEntry.EMPTY),
-        (RegistryConfigEntry[]) builder.build().stream().map(RegistryConfigEntry::new).toArray());
+        builder.build().stream().map(RegistryConfigEntry::new).toArray(RegistryConfigEntry[]::new));
   }
 }
