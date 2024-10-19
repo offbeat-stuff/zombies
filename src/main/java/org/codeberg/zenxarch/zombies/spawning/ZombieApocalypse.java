@@ -12,18 +12,16 @@ import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import net.minecraft.world.spawner.SpecialSpawner;
 import org.codeberg.zenxarch.zombies.Zombies;
-import org.codeberg.zenxarch.zombies.debug.Debug;
 import org.codeberg.zenxarch.zombies.difficulty.ExtendedDifficulty;
 import org.codeberg.zenxarch.zombies.difficulty.ExtendedZombieEntity;
 
 public class ZombieApocalypse implements SpecialSpawner {
   private ServerWorld world;
-  private final Debug debug = new Debug();
   private final SpawnProvider spawnProvider;
 
   public ZombieApocalypse(ServerWorld world) {
     this.world = world;
-    this.spawnProvider = new SpawnProvider(world, debug);
+    this.spawnProvider = new SpawnProvider(world);
   }
 
   private boolean canSpawnAtPosSpace(ZombieEntity zombie) {
@@ -67,7 +65,6 @@ public class ZombieApocalypse implements SpecialSpawner {
     for (var player : this.world.getPlayers(this::isSuitablePlayer)) {
       result += this.spawnZombiesAt(player.getBlockPos());
     }
-    debug.attemptedSpawn(this.world, result > 0);
     return result;
   }
 

@@ -1,7 +1,5 @@
 package org.codeberg.zenxarch.zombies.difficulty;
 
-import static org.codeberg.zenxarch.zombies.Zombies.DEBUG_CONFIG;
-
 import net.minecraft.entity.EntityData;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.SpawnReason;
@@ -10,7 +8,6 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.mob.ZombieEntity;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
@@ -41,23 +38,6 @@ public class ExtendedZombieEntity extends ZombieEntity {
 
   public void initialize(ServerWorldAccess world) {
     this.initialize(world, world.getLocalDifficulty(this.getBlockPos()), SpawnReason.NATURAL, null);
-  }
-
-  @Override
-  public void tick() {
-    super.tick();
-
-    if (DEBUG_CONFIG.PARTICLES.value()
-        && this.getWorld() instanceof ServerWorld serverWorld
-        && this.isAlive()) {
-      if (this.random.nextInt(20) == 0)
-        this.runParticle(
-            serverWorld, this.getParticleX(0.5), this.getRandomBodyY(), this.getParticleZ(0.5));
-    }
-  }
-
-  private void runParticle(ServerWorld world, double x, double y, double z) {
-    world.spawnParticles(ParticleTypes.LAVA, x, y, z, 2, 0, 0, 0, 0);
   }
 
   @Override

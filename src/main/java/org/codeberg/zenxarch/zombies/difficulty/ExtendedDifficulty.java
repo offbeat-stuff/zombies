@@ -1,7 +1,5 @@
 package org.codeberg.zenxarch.zombies.difficulty;
 
-import static org.codeberg.zenxarch.zombies.Zombies.TIME_CONFIG;
-
 import it.unimi.dsi.fastutil.doubles.DoubleDoublePair;
 import java.util.List;
 import net.minecraft.util.math.BlockPos;
@@ -33,13 +31,9 @@ public class ExtendedDifficulty {
 
   public static double getDifficulty(World world, BlockPos pos) {
     var time = getTimeFactor(world, pos);
-    var difficulty =
-        switch (world.getDifficulty()) {
-          default -> TIME_CONFIG.EASY.getDifficulty(time);
-          case NORMAL -> TIME_CONFIG.NORMAL.getDifficulty(time);
-          case HARD -> TIME_CONFIG.HARD.getDifficulty(time);
-        };
-    return difficulty;
+    var left = LerpUtils.clampedLerpProgress(time.leftDouble(), 0.0, 100.0);
+    var right = LerpUtils.clampedLerpProgress(time.rightDouble(), 0.0, 100.0);
+    return (left + right) / 2;
   }
 
   private static final Random random = Random.create();
