@@ -12,6 +12,7 @@ import net.minecraft.registry.tag.EnchantmentTags;
 import net.minecraft.registry.tag.ItemTags;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.ServerWorldAccess;
+import org.codeberg.zenxarch.zombies.data.ItemGenerator;
 import org.codeberg.zenxarch.zombies.data.ItemSelector;
 import org.codeberg.zenxarch.zombies.random.LerpUtils;
 import org.codeberg.zenxarch.zombies.random.RandomUtils;

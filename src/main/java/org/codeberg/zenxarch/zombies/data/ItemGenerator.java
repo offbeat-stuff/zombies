@@ -1,4 +1,4 @@
-package org.codeberg.zenxarch.zombies.difficulty;
+package org.codeberg.zenxarch.zombies.data;
 
 import java.util.Comparator;
 import java.util.List;
@@ -12,8 +12,6 @@ import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Rarity;
 import net.minecraft.util.math.random.Random;
-import org.codeberg.zenxarch.zombies.data.ItemAttributeUtils;
-import org.codeberg.zenxarch.zombies.data.ItemSelector;
 
 public record ItemGenerator(List<Item> entries, EquipmentSlot slot, ItemSelector selector) {
 
