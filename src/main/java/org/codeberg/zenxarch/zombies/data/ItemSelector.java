@@ -1,9 +1,11 @@
-package org.codeberg.zenxarch.zombies.helper;
+package org.codeberg.zenxarch.zombies.data;
 
 import java.util.List;
 import java.util.function.Function;
 import net.minecraft.item.Item;
 import net.minecraft.util.math.random.Random;
+import org.codeberg.zenxarch.zombies.random.LerpUtils;
+import org.codeberg.zenxarch.zombies.random.RandomUtils;
 
 @FunctionalInterface
 public interface ItemSelector {
@@ -15,7 +17,7 @@ public interface ItemSelector {
 
     @Override
     public int apply(List<Item> items, Random random, double difficulty) {
-      return LerpImpl.lerpWeighted(
+      return LerpUtils.lerpWeighted(
           random, minSupplier.apply(difficulty), maxSupplier.apply(difficulty), items.size());
     }
   }
@@ -27,8 +29,7 @@ public interface ItemSelector {
     public int apply(List<Item> items, Random random, double difficulty) {
       if (items.isEmpty()) return -1;
       var chance = chanceSupplier.apply(difficulty);
-      for (int i = 0; i < items.size(); i++)
-        if (ProbabilityImpl.nextBoolean(random, chance)) return i;
+      for (int i = 0; i < items.size(); i++) if (RandomUtils.nextBoolean(random, chance)) return i;
       return 0;
     }
   }

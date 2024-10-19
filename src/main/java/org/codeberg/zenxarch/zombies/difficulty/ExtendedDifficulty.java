@@ -8,8 +8,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkSectionPos;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.World;
-import org.codeberg.zenxarch.zombies.helper.LerpImpl;
-import org.codeberg.zenxarch.zombies.helper.ProbabilityImpl;
+import org.codeberg.zenxarch.zombies.random.LerpUtils;
+import org.codeberg.zenxarch.zombies.random.RandomUtils;
 
 public class ExtendedDifficulty {
   private static final int TICKS_PER_HOUR = 60 * 60 * 20;
@@ -46,9 +46,9 @@ public class ExtendedDifficulty {
 
   private static double getRandomVariable(
       List<Double> avgl, List<Double> spreadl, double progress) {
-    var avg = LerpImpl.lerp(avgl, progress);
-    var spread = LerpImpl.lerp(spreadl, progress);
-    return ProbabilityImpl.nextDoubleAround(random, avg, spread);
+    var avg = LerpUtils.lerp(avgl, progress);
+    var spread = LerpUtils.lerp(spreadl, progress);
+    return RandomUtils.nextDoubleAround(random, avg, spread);
   }
 
   private static List<Double> spawnTriesAvg = List.of(0.0, 8.0);
@@ -60,7 +60,7 @@ public class ExtendedDifficulty {
 
   public static int getMaxExtraSuccessfulTries(double difficulty) {
     return Math.round(
-        LerpImpl.lerp(List.of(0.0, 4.0), difficulty * random.nextDouble()).floatValue());
+        LerpUtils.lerp(List.of(0.0, 4.0), difficulty * random.nextDouble()).floatValue());
   }
 
   private static List<Double> enchantChance = List.of(0.0, 0.0, 0.025, 0.05);
@@ -68,7 +68,7 @@ public class ExtendedDifficulty {
   private static List<Double> enchantLevelSpread = List.of(0.0, 2.0, 7.5, 2.5);
 
   public static int getEnchantLevel(double difficulty) {
-    return ProbabilityImpl.nextBoolean(random, LerpImpl.lerp(enchantChance, difficulty))
+    return RandomUtils.nextBoolean(random, LerpUtils.lerp(enchantChance, difficulty))
         ? 0
         : (int) getRandomVariable(enchantLevelAvg, enchantLevelSpread, difficulty);
   }
@@ -76,8 +76,8 @@ public class ExtendedDifficulty {
   private static List<Double> equipmentChance = List.of(0.0, 0.5);
 
   public static boolean shouldSpawnWithEquipment(double difficulty) {
-    var atLeastOnce = LerpImpl.lerp(equipmentChance, difficulty);
+    var atLeastOnce = LerpUtils.lerp(equipmentChance, difficulty);
     var chance = 1.0 - Math.pow(1.0 - atLeastOnce, 1.0 / 6.0);
-    return ProbabilityImpl.nextBoolean(random, chance);
+    return RandomUtils.nextBoolean(random, chance);
   }
 }

@@ -4,7 +4,7 @@ import folk.sisby.kaleido.api.ReflectiveConfig;
 import folk.sisby.kaleido.lib.quiltconfig.api.annotations.Comment;
 import folk.sisby.kaleido.lib.quiltconfig.api.values.TrackedValue;
 import it.unimi.dsi.fastutil.doubles.DoubleDoublePair;
-import org.codeberg.zenxarch.zombies.helper.LerpImpl;
+import org.codeberg.zenxarch.zombies.random.LerpUtils;
 
 public class TimeConfig extends ReflectiveConfig {
 
@@ -27,8 +27,8 @@ public class TimeConfig extends ReflectiveConfig {
     public double getDifficulty(DoubleDoublePair time) {
       var min = this.grace.value();
       var max = this.grace.value() + this.length.value();
-      var dayFactor = LerpImpl.clampedLerpProgress(time.leftDouble(), min, max);
-      var timeFactor = LerpImpl.clampedLerpProgress(time.rightDouble(), min, max);
+      var dayFactor = LerpUtils.clampedLerpProgress(time.leftDouble(), min, max);
+      var timeFactor = LerpUtils.clampedLerpProgress(time.rightDouble(), min, max);
       return (dayFactor + timeFactor) / 2;
     }
   }

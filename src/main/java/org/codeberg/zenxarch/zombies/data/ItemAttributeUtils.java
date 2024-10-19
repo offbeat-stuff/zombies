@@ -1,4 +1,4 @@
-package org.codeberg.zenxarch.zombies.helper;
+package org.codeberg.zenxarch.zombies.data;
 
 import java.util.List;
 import net.minecraft.component.DataComponentTypes;
@@ -15,7 +15,7 @@ import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.item.Item;
 import net.minecraft.registry.entry.RegistryEntry;
 
-public abstract class ItemAttributesImpl {
+public abstract class ItemAttributeUtils {
   private static EntityAttributeInstance getAttributeInstance(
       EntityType<? extends LivingEntity> type, RegistryEntry<EntityAttribute> attribute) {
     var base = DefaultAttributeRegistry.get(type);
@@ -54,27 +54,27 @@ public abstract class ItemAttributesImpl {
   }
 
   public static double getZombieAttackDamage(Item item) {
-    return ItemAttributesImpl.getAttributeValue(
+    return ItemAttributeUtils.getAttributeValue(
         EntityType.ZOMBIE, item, EntityAttributes.GENERIC_ATTACK_DAMAGE, EquipmentSlot.MAINHAND);
   }
 
   public static double getZombieAttackSpeed(Item item) {
-    return ItemAttributesImpl.getAttributeValue(
+    return ItemAttributeUtils.getAttributeValue(
         EntityType.ZOMBIE, item, EntityAttributes.GENERIC_ATTACK_SPEED, EquipmentSlot.MAINHAND);
   }
 
   public static double getZombieArmor(Item item, EquipmentSlot slot) {
-    return ItemAttributesImpl.getAttributeValue(
+    return ItemAttributeUtils.getAttributeValue(
         EntityType.ZOMBIE, item, EntityAttributes.GENERIC_ARMOR, slot);
   }
 
   public static double getZombieArmorToughness(Item item, EquipmentSlot slot) {
-    return ItemAttributesImpl.getAttributeValue(
+    return ItemAttributeUtils.getAttributeValue(
         EntityType.ZOMBIE, item, EntityAttributes.GENERIC_ARMOR_TOUGHNESS, slot);
   }
 
   public static double getZombieKnockbackResistance(Item item, EquipmentSlot slot) {
-    return ItemAttributesImpl.getAttributeValue(
+    return ItemAttributeUtils.getAttributeValue(
         EntityType.ZOMBIE, item, EntityAttributes.GENERIC_KNOCKBACK_RESISTANCE, slot);
   }
 }

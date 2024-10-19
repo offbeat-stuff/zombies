@@ -11,20 +11,20 @@ import net.minecraft.registry.Registries;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Rarity;
 import net.minecraft.util.math.random.Random;
-import org.codeberg.zenxarch.zombies.helper.ItemAttributesImpl;
-import org.codeberg.zenxarch.zombies.helper.ItemSelector;
+import org.codeberg.zenxarch.zombies.data.ItemAttributeUtils;
+import org.codeberg.zenxarch.zombies.data.ItemSelector;
+import org.codeberg.zenxarch.zombies.registry.TagBuilder;
+import org.codeberg.zenxarch.zombies.registry.TagBuilder.InnerTagBuilder;
 import org.codeberg.zenxarch.zombies.registry.TagEntry;
-import org.codeberg.zenxarch.zombies.registry.TagEntryListBuilder;
-import org.codeberg.zenxarch.zombies.registry.TagEntryListBuilder.InnerTagEntryListBuilder;
 
 public record ItemGenerator(List<TagEntry> entries, EquipmentSlot slot, ItemSelector selector) {
 
   public static ItemGenerator fromBuilder(
-      Consumer<TagEntryListBuilder> buildFunction,
-      Consumer<InnerTagEntryListBuilder<Item>> valueFunction,
+      Consumer<TagBuilder> buildFunction,
+      Consumer<InnerTagBuilder<Item>> valueFunction,
       EquipmentSlot slot,
       ItemSelector selector) {
-    var builder = new TagEntryListBuilder();
+    var builder = new TagBuilder();
     buildFunction.accept(builder);
     builder.add(Registries.ITEM, valueFunction);
     return new ItemGenerator(builder.build(), slot, selector);
@@ -56,7 +56,7 @@ public record ItemGenerator(List<TagEntry> entries, EquipmentSlot slot, ItemSele
   }
 
   private static double scoreWeapon(Item item) {
-    var damageBonus = ItemAttributesImpl.getZombieAttackDamage(item);
+    var damageBonus = ItemAttributeUtils.getZombieAttackDamage(item);
     var rarityBonus = getRarity(item).ordinal() * 5.0;
     var enchantabilityBonus = item.getEnchantability() / 15.0;
     return damageBonus + rarityBonus + enchantabilityBonus;
@@ -64,9 +64,9 @@ public record ItemGenerator(List<TagEntry> entries, EquipmentSlot slot, ItemSele
 
   private static double scoreArmor(ArmorItem armor) {
     var slot = armor.getSlotType();
-    return ItemAttributesImpl.getZombieArmor(armor, slot)
-        + ItemAttributesImpl.getZombieArmorToughness(armor, slot)
-        + ItemAttributesImpl.getZombieKnockbackResistance(armor, slot);
+    return ItemAttributeUtils.getZombieArmor(armor, slot)
+        + ItemAttributeUtils.getZombieArmorToughness(armor, slot)
+        + ItemAttributeUtils.getZombieKnockbackResistance(armor, slot);
   }
 
   private static double score(Item item) {

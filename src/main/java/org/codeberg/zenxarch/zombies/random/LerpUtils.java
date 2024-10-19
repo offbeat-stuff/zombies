@@ -1,10 +1,10 @@
-package org.codeberg.zenxarch.zombies.helper;
+package org.codeberg.zenxarch.zombies.random;
 
 import java.util.List;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.random.Random;
 
-public abstract class LerpImpl {
+public abstract class LerpUtils {
 
   public static Double lerp(List<Double> list, double delta) {
     if (list.isEmpty()) return 0.0;

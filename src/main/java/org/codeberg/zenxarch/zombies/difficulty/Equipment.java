@@ -13,13 +13,10 @@ import net.minecraft.registry.tag.ItemTags;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.ServerWorldAccess;
-import org.codeberg.zenxarch.zombies.helper.ItemSelector;
-import org.codeberg.zenxarch.zombies.helper.LerpImpl;
+import org.codeberg.zenxarch.zombies.data.ItemSelector;
+import org.codeberg.zenxarch.zombies.random.LerpUtils;
 
 public abstract class Equipment {
-  // private static final Comparator<Double> LOOSE_COMPARE =
-  // (a, b) -> Math.abs(b - a) < 0.4 ? 0 : Double.compare(a, b);
-
   private static final List<Double> ARMOR_SELECT_CHANCE = List.of(0.9, 0.3);
 
   private static ItemGenerator weightedSelect(
@@ -29,7 +26,7 @@ public abstract class Equipment {
       Random random,
       double min,
       double max) {
-    var selected = LerpImpl.lerpWeighted(random, min, max, tags.size());
+    var selected = LerpUtils.lerpWeighted(random, min, max, tags.size());
     return ItemGenerator.fromBuilder(
         b -> {
           var tagList = tags.get(selected);
@@ -42,9 +39,11 @@ public abstract class Equipment {
 
   public static Item getItemForSlot(EquipmentSlot slot, Random random, double difficulty) {
     var armorSelector =
-        new ItemSelector.RecursiveChanceBased((delta) -> LerpImpl.lerp(ARMOR_SELECT_CHANCE, delta));
+        new ItemSelector.RecursiveChanceBased(
+            (delta) -> LerpUtils.lerp(ARMOR_SELECT_CHANCE, delta));
     var basicWeaponSelector =
-        new ItemSelector.WeightedSelector((d) -> LerpImpl.lerp(List.of(1000.0), 100.0), (d) -> 1.0);
+        new ItemSelector.WeightedSelector(
+            (d) -> LerpUtils.lerp(List.of(1000.0), 100.0), (d) -> 1.0);
     var generator =
         switch (slot) {
           case HEAD -> ItemGenerator.fromTag(ItemTags.HEAD_ARMOR_ENCHANTABLE, slot, armorSelector);
@@ -89,7 +88,7 @@ public abstract class Equipment {
     var level = ExtendedDifficulty.getEnchantLevel(difficulty);
     if (level == 0) return input;
 
-    var enchantments = EQUIPMENT_CONFIG.getEnchantments(world, difficulty);
+    var enchantments = EQUIPMENT_CONFIG.getEnchantments(world);
     return EnchantmentHelper.enchant(random, input, level, enchantments);
   }
 }

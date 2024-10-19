@@ -1,8 +1,8 @@
-package org.codeberg.zenxarch.zombies.helper;
+package org.codeberg.zenxarch.zombies.random;
 
 import net.minecraft.util.math.random.Random;
 
-public abstract class ProbabilityImpl {
+public abstract class RandomUtils {
   public static double nextDoubleAround(Random random, double average, double spread) {
     var min = average - spread;
     var max = average + spread;
