@@ -92,18 +92,6 @@ public class ExtendedDifficulty {
     return RandomUtils.nextDoubleAround(random, avg, spread);
   }
 
-  private static List<Double> spawnTriesAvg = List.of(0.0, 8.0);
-  private static List<Double> spawnTriesSpread = List.of(0.0, 10.0);
-
-  public static int getExtraTries(double difficulty) {
-    return (int) getRandomVariable(spawnTriesAvg, spawnTriesSpread, difficulty);
-  }
-
-  public static int getMaxExtraSuccessfulTries(double difficulty) {
-    return Math.round(
-        LerpUtils.lerp(List.of(0.0, 4.0), difficulty * random.nextDouble()).floatValue());
-  }
-
   private static List<Double> enchantChance = List.of(0.0, 0.0, 0.025, 0.05);
   private static List<Double> enchantLevelAvg = List.of(0.0, 5.0, 12.5, 28.5);
   private static List<Double> enchantLevelSpread = List.of(0.0, 2.0, 7.5, 2.5);

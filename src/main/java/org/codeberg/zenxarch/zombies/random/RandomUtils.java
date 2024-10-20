@@ -28,7 +28,7 @@ public abstract class RandomUtils {
     var axes = random.nextInt(3) + 1;
     var axis = Axis.pickRandomAxis(random);
     for (int i = 0; i < axes; i++) {
-      pos.offset(axis, random.nextBetween(-range, range));
+      pos = pos.offset(axis, random.nextBetween(-range, range));
       axis = AxisCycleDirection.FORWARD.cycle(axis);
     }
 

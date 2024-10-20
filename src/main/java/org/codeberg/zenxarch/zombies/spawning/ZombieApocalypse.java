@@ -17,11 +17,9 @@ import org.codeberg.zenxarch.zombies.difficulty.ExtendedZombieEntity;
 
 public class ZombieApocalypse implements SpecialSpawner {
   private ServerWorld world;
-  private final SpawnProvider spawnProvider;
 
   public ZombieApocalypse(ServerWorld world) {
     this.world = world;
-    this.spawnProvider = new SpawnProvider(world);
   }
 
   private boolean canSpawnAtPosSpace(ZombieEntity zombie) {
@@ -30,22 +28,21 @@ public class ZombieApocalypse implements SpecialSpawner {
         && !this.world.containsFluid(zombie.getBoundingBox());
   }
 
-  private void spawnZombie(ExtendedZombieEntity zombie) {
+  private int spawnZombie(ExtendedZombieEntity zombie) {
     zombie.initialize(this.world);
     this.world.spawnEntityAndPassengers(zombie);
+    return 1;
   }
 
   public int spawnZombiesAt(BlockPos playerPos) {
     var difficulty = ExtendedDifficulty.getDifficulty(this.world, playerPos);
     if (difficulty <= 0.0) return 0;
 
-    return (int)
-        spawnProvider
-            .giveSpawnPositions(world, playerPos, difficulty)
-            .map(u -> new ExtendedZombieEntity(this.world, u))
-            .filter(this::canSpawnAtPosSpace)
-            .peek(this::spawnZombie)
-            .count();
+    return SpawnProvider.giveSpawnPositions(world, playerPos, difficulty)
+        .map(u -> new ExtendedZombieEntity(this.world, u))
+        .filter(this::canSpawnAtPosSpace)
+        .map(this::spawnZombie)
+        .orElse(0);
   }
 
   public boolean isSuitablePlayer(ServerPlayerEntity player) {
