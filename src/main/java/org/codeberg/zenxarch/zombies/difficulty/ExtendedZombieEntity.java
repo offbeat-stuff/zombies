@@ -33,7 +33,9 @@ public class ExtendedZombieEntity extends ZombieEntity {
   }
 
   protected double getExtentedDifficulty() {
-    return ExtendedDifficulty.getDifficulty(this.getWorld(), this.getBlockPos());
+    if (this.getWorld() instanceof ServerWorld serverWorld)
+      return ExtendedDifficulty.getDifficulty(serverWorld, this.getBlockPos());
+    return 0.0;
   }
 
   public void initialize(ServerWorldAccess world) {
