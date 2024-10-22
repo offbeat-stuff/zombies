@@ -10,6 +10,7 @@ import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
+import net.minecraft.registry.entry.RegistryEntryList.Named;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Rarity;
 import net.minecraft.util.math.random.Random;
@@ -45,7 +46,8 @@ public record ItemGenerator(
         v ->
             v.mapAndUnwrap(
                     tag ->
-                        registry.getOrCreateEntryList(tag).stream()
+                        registry.getOptional(tag).stream()
+                            .flatMap(Named::stream)
                             .map(
                                 entry ->
                                     Either.unwrap(entry.getKeyOrValue().mapLeft(registry::get))),
@@ -70,12 +72,15 @@ public record ItemGenerator(
   private static double scoreWeapon(Item item) {
     var damageBonus = ItemAttributesImpl.getZombieAttackDamage(item);
     var rarityBonus = getRarity(item).ordinal() * 5.0;
-    var enchantabilityBonus = item.getEnchantability() / 15.0;
+    var enchantableComponent = item.getComponents().get(DataComponentTypes.ENCHANTABLE);
+    var enchantabilityBonus =
+        (enchantableComponent == null ? 0 : enchantableComponent.value()) / 15.0;
     return damageBonus + rarityBonus + enchantabilityBonus;
   }
 
   private static double scoreArmor(ArmorItem armor) {
-    var slot = armor.getSlotType();
+    var equippableComponent = armor.getComponents().get(DataComponentTypes.EQUIPPABLE);
+    var slot = equippableComponent == null ? EquipmentSlot.MAINHAND : equippableComponent.slot();
     return ItemAttributesImpl.getZombieArmor(armor, slot)
         + ItemAttributesImpl.getZombieArmorToughness(armor, slot)
         + ItemAttributesImpl.getZombieKnockbackResistance(armor, slot);
@@ -89,9 +94,8 @@ public record ItemGenerator(
   }
 
   private static boolean matchesSlot(Item item, EquipmentSlot slot) {
-    return switch (item) {
-      case net.minecraft.item.Equipment equ -> equ.getSlotType().equals(slot);
-      default -> slot.getType().equals(EquipmentSlot.Type.HAND);
-    };
+    if (item.getComponents().contains(DataComponentTypes.EQUIPPABLE))
+      return item.getComponents().get(DataComponentTypes.EQUIPPABLE).slot().equals(slot);
+    return slot.getType().equals(EquipmentSlot.Type.HAND);
   }
 }

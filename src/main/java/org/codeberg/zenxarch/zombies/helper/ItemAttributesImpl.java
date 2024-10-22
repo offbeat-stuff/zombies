@@ -25,14 +25,12 @@ public abstract class ItemAttributesImpl {
     return container.getCustomInstance(attribute);
   }
 
-  @SuppressWarnings("deprecation")
   private static List<AttributeModifiersComponent.Entry> getAttributes(
       Item item, RegistryEntry<EntityAttribute> attribute, EquipmentSlot slot) {
     var attributes =
         item.getComponents()
             .getOrDefault(
                 DataComponentTypes.ATTRIBUTE_MODIFIERS, AttributeModifiersComponent.DEFAULT);
-    if (attributes.modifiers().isEmpty()) attributes = item.getAttributeModifiers();
     return attributes.modifiers().stream()
         .filter(f -> f.slot().matches(slot))
         .filter(f -> f.attribute().equals(attribute))
@@ -55,26 +53,26 @@ public abstract class ItemAttributesImpl {
 
   public static double getZombieAttackDamage(Item item) {
     return ItemAttributesImpl.getAttributeValue(
-        EntityType.ZOMBIE, item, EntityAttributes.GENERIC_ATTACK_DAMAGE, EquipmentSlot.MAINHAND);
+        EntityType.ZOMBIE, item, EntityAttributes.ATTACK_DAMAGE, EquipmentSlot.MAINHAND);
   }
 
   public static double getZombieAttackSpeed(Item item) {
     return ItemAttributesImpl.getAttributeValue(
-        EntityType.ZOMBIE, item, EntityAttributes.GENERIC_ATTACK_SPEED, EquipmentSlot.MAINHAND);
+        EntityType.ZOMBIE, item, EntityAttributes.ATTACK_SPEED, EquipmentSlot.MAINHAND);
   }
 
   public static double getZombieArmor(Item item, EquipmentSlot slot) {
     return ItemAttributesImpl.getAttributeValue(
-        EntityType.ZOMBIE, item, EntityAttributes.GENERIC_ARMOR, slot);
+        EntityType.ZOMBIE, item, EntityAttributes.ARMOR, slot);
   }
 
   public static double getZombieArmorToughness(Item item, EquipmentSlot slot) {
     return ItemAttributesImpl.getAttributeValue(
-        EntityType.ZOMBIE, item, EntityAttributes.GENERIC_ARMOR_TOUGHNESS, slot);
+        EntityType.ZOMBIE, item, EntityAttributes.ARMOR_TOUGHNESS, slot);
   }
 
   public static double getZombieKnockbackResistance(Item item, EquipmentSlot slot) {
     return ItemAttributesImpl.getAttributeValue(
-        EntityType.ZOMBIE, item, EntityAttributes.GENERIC_KNOCKBACK_RESISTANCE, slot);
+        EntityType.ZOMBIE, item, EntityAttributes.KNOCKBACK_RESISTANCE, slot);
   }
 }

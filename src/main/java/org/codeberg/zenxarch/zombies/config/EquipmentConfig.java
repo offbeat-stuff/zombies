@@ -45,8 +45,13 @@ public class EquipmentConfig extends ReflectiveConfig {
 
   public Stream<RegistryEntry<Enchantment>> getEnchantments(
       ServerWorldAccess world, double difficulty) {
-    var registry = world.getRegistryManager().get(RegistryKeys.ENCHANTMENT);
-    return this.ENCHANTMENTS.value().stream()
-        .flatMap(v -> v.value().streamEntries(registry, difficulty));
+    return world
+        .getRegistryManager()
+        .getOptional(RegistryKeys.ENCHANTMENT)
+        .map(
+            registry ->
+                this.ENCHANTMENTS.value().stream()
+                    .flatMap(v -> v.value().streamEntries(registry, difficulty)))
+        .orElse(Stream.empty());
   }
 }

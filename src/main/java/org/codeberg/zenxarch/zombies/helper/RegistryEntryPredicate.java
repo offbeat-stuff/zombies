@@ -5,6 +5,7 @@ import java.util.stream.Stream;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.registry.entry.RegistryEntryList.Named;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
 
@@ -22,7 +23,7 @@ public record RegistryEntryPredicate<T>(
   }
 
   public static <T> RegistryEntryPredicate<T> tag(TagKey<T> tag) {
-    return new RegistryEntryPredicate<T>(tag.registry(), OptionalPair.left(tag));
+    return new RegistryEntryPredicate<T>(tag.registryRef(), OptionalPair.left(tag));
   }
 
   public static <T> RegistryEntryPredicate<T> key(RegistryKey<T> key) {
@@ -62,7 +63,8 @@ public record RegistryEntryPredicate<T>(
   public Stream<? extends RegistryEntry<T>> streamEntries(Registry<T> registry) {
     return this.value
         .mapAndUnwrap(
-            l -> registry.getOrCreateEntryList(l).stream(), r -> registry.getEntry(r).stream())
+            l -> registry.getOptional(l).stream().flatMap(Named::stream),
+            r -> registry.getOptional(r).stream())
         .orElse(Stream.empty());
   }
 }
