@@ -1,8 +1,5 @@
 package org.codeberg.zenxarch.zombies.random;
 
-import net.minecraft.util.math.AxisCycleDirection;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction.Axis;
 import net.minecraft.util.math.random.Random;
 
 public abstract class RandomUtils {
@@ -22,16 +19,5 @@ public abstract class RandomUtils {
 
   public static boolean nextBoolean(double random, double chance) {
     return random < chance;
-  }
-
-  public static BlockPos randomOffset(Random random, BlockPos pos, int range) {
-    var axes = random.nextInt(3) + 1;
-    var axis = Axis.pickRandomAxis(random);
-    for (int i = 0; i < axes; i++) {
-      pos = pos.offset(axis, random.nextBetween(-range, range));
-      axis = AxisCycleDirection.FORWARD.cycle(axis);
-    }
-
-    return pos;
   }
 }

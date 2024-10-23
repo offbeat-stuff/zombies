@@ -6,16 +6,18 @@ import net.minecraft.entity.SpawnRestriction;
 import net.minecraft.registry.tag.BiomeTags;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.LightType;
-import org.codeberg.zenxarch.zombies.random.RandomUtils;
 
 public abstract class SpawnProvider {
   private static final Random random = Random.create();
 
-  private static boolean canSpawnAtPosBasic(ServerWorld world, BlockPos pos) {
+  private static boolean canSpawnAtPosBasic(ServerWorld world, BlockPos centerPos, BlockPos pos) {
+    var dist = pos.getSquaredDistance(centerPos);
+    if (dist < MathHelper.square(16) || dist > MathHelper.square(80)) return false;
     if (pos.getY() < world.getBottomY()) return false;
     if (pos.getY()
         > world.getTopY(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, pos.getX(), pos.getZ()))
@@ -36,8 +38,9 @@ public abstract class SpawnProvider {
 
   public static Optional<BlockPos> giveSpawnPositions(
       ServerWorld world, BlockPos centerPos, double difficulty) {
-    var range = 128;
-    return Optional.of(RandomUtils.randomOffset(random, centerPos, range))
-        .filter(p -> canSpawnAtPosBasic(world, p));
+    var range = 80;
+    for (var pos : BlockPos.iterateRandomly(random, 25, centerPos, range))
+      if (canSpawnAtPosBasic(world, centerPos, pos)) return Optional.of(pos);
+    return Optional.empty();
   }
 }

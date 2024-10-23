@@ -1,9 +1,14 @@
 package org.codeberg.zenxarch.zombies.spawning;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Stream;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.mob.ZombieEntity;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.predicate.entity.EntityPredicates;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
@@ -45,8 +50,24 @@ public class ZombieApocalypse implements SpecialSpawner {
         .orElse(0);
   }
 
-  public boolean isSuitablePlayer(ServerPlayerEntity player) {
-    return player.isAlive() && !player.isSpectator();
+  public Map<BlockPos, Integer> countZombies(List<BlockPos> positions) {
+    var result = new HashMap<BlockPos, Integer>();
+    for (var pos : positions) result.put(pos, 0);
+    for (var entity : world.iterateEntities()) {
+      if (!(entity instanceof ExtendedZombieEntity zombie)) continue;
+      for (var pos : positions)
+        if (zombie.getBlockPos().isWithinDistance(pos, 128)) result.put(pos, result.get(pos) + 1);
+    }
+    return result;
+  }
+
+  private List<ServerPlayerEntity> players() {
+    return this.world.getPlayers(
+        EntityPredicates.VALID_LIVING_ENTITY.and(EntityPredicates.EXCEPT_SPECTATOR));
+  }
+
+  private Stream<BlockPos> spawnCenters() {
+    return players().stream().map(ServerPlayerEntity::getBlockPos);
   }
 
   @Override
@@ -58,11 +79,13 @@ public class ZombieApocalypse implements SpecialSpawner {
       return 0;
     }
 
-    var result = 0;
-    for (var player : this.world.getPlayers(this::isSuitablePlayer)) {
-      result += this.spawnZombiesAt(player.getBlockPos());
-    }
-    return result;
+    var positions = spawnCenters().toList();
+    var zombieCount = countZombies(positions);
+
+    return positions.stream()
+        .filter(pos -> zombieCount.get(pos) < 100)
+        .mapToInt(this::spawnZombiesAt)
+        .sum();
   }
 
   public static boolean isApocalypticWorld(ServerWorld world) {
