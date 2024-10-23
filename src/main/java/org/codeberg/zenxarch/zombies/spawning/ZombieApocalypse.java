@@ -83,7 +83,11 @@ public class ZombieApocalypse implements SpecialSpawner {
     var zombieCount = countZombies(positions);
 
     return positions.stream()
-        .filter(pos -> zombieCount.get(pos) < 100)
+        .filter(
+            pos ->
+                zombieCount.get(pos)
+                    < ExtendedDifficulty.getMaxZombies(
+                        ExtendedDifficulty.getDifficulty(world, pos)))
         .mapToInt(this::spawnZombiesAt)
         .sum();
   }

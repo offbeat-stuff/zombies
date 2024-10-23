@@ -11,6 +11,7 @@ import net.minecraft.util.math.random.Random;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.LightType;
+import org.codeberg.zenxarch.zombies.difficulty.ExtendedDifficulty;
 
 public abstract class SpawnProvider {
   private static final Random random = Random.create();
@@ -39,7 +40,9 @@ public abstract class SpawnProvider {
   public static Optional<BlockPos> giveSpawnPositions(
       ServerWorld world, BlockPos centerPos, double difficulty) {
     var range = 80;
-    for (var pos : BlockPos.iterateRandomly(random, 25, centerPos, range))
+    for (var pos :
+        BlockPos.iterateRandomly(
+            random, ExtendedDifficulty.getSpawnTries(difficulty), centerPos, range))
       if (canSpawnAtPosBasic(world, centerPos, pos)) return Optional.of(pos);
     return Optional.empty();
   }

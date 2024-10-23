@@ -11,6 +11,7 @@ import net.minecraft.registry.tag.ItemTags;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkSectionPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.World;
 import org.codeberg.zenxarch.zombies.data.ItemGenerator;
@@ -90,6 +91,14 @@ public class ExtendedDifficulty {
     var avg = LerpUtils.lerp(avgl, progress);
     var spread = LerpUtils.lerp(spreadl, progress);
     return RandomUtils.nextDoubleAround(random, avg, spread);
+  }
+
+  public static int getMaxZombies(double difficulty) {
+    return (int) MathHelper.clampedLerp(16.0, 100.0, difficulty);
+  }
+
+  public static int getSpawnTries(double difficulty) {
+    return (int) MathHelper.clampedLerp(10.0, 100.0, difficulty);
   }
 
   private static List<Double> enchantChance = List.of(0.0, 0.0, 0.025, 0.05);
