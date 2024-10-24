@@ -24,9 +24,12 @@ import org.codeberg.zenxarch.zombies.difficulty.ExtendedZombieEntity;
 
 public class ZombieApocalypse implements SpecialSpawner {
   private ServerWorld world;
+  private SpawnProvider spawnProvider;
+  private Map<BlockPos, Integer> zombieCount;
 
   public ZombieApocalypse(ServerWorld world) {
     this.world = world;
+    this.spawnProvider = new SpawnProvider();
   }
 
   private boolean canSpawnAtPosSpace(ZombieEntity zombie) {
@@ -45,7 +48,13 @@ public class ZombieApocalypse implements SpecialSpawner {
     var difficulty = ExtendedDifficulty.getDifficulty(this.world, playerPos);
     if (difficulty <= 0.0) return 0;
 
-    return SpawnProvider.giveSpawnPositions(world, playerPos, difficulty)
+    var targetZombies = ExtendedDifficulty.getMaxZombies(difficulty);
+    var currentZombies = this.zombieCount.getOrDefault(playerPos, 0);
+
+    if (currentZombies >= targetZombies) return 0;
+
+    return spawnProvider
+        .giveSpawnPositions(world, playerPos, targetZombies, currentZombies)
         .map(u -> new ExtendedZombieEntity(this.world, u))
         .filter(this::canSpawnAtPosSpace)
         .map(this::spawnZombie)
@@ -92,18 +101,11 @@ public class ZombieApocalypse implements SpecialSpawner {
     }
 
     var positions = spawnCenters().toList();
-    var zombieCount = countZombies(positions);
+    this.zombieCount = countZombies(positions);
 
-    debugCheck(zombieCount);
+    debugCheck(this.zombieCount);
 
-    return positions.stream()
-        .filter(
-            pos ->
-                zombieCount.get(pos)
-                    < ExtendedDifficulty.getMaxZombies(
-                        ExtendedDifficulty.getDifficulty(world, pos)))
-        .mapToInt(this::spawnZombiesAt)
-        .sum();
+    return positions.stream().mapToInt(this::spawnZombiesAt).sum();
   }
 
   public static boolean isApocalypticWorld(ServerWorld world) {

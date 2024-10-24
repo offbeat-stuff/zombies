@@ -97,10 +97,6 @@ public class ExtendedDifficulty {
     return (int) MathHelper.clampedLerp(50.0, 250.0, difficulty);
   }
 
-  public static int getSpawnTries(double difficulty) {
-    return (int) MathHelper.clampedLerp(10.0, 100.0, difficulty);
-  }
-
   private static List<Double> enchantChance = List.of(0.0, 0.0, 0.025, 0.05);
   private static List<Double> enchantLevelAvg = List.of(0.0, 5.0, 12.5, 28.5);
   private static List<Double> enchantLevelSpread = List.of(0.0, 2.0, 7.5, 2.5);
