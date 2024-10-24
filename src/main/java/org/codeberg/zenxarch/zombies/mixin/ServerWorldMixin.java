@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import java.util.List;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.world.spawner.SpecialSpawner;
+import org.codeberg.zenxarch.zombies.spawning.SpawnerProvider;
 import org.codeberg.zenxarch.zombies.spawning.ZombieApocalypse;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -12,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ServerWorld.class)
-public abstract class ServerWorldMixin {
+public abstract class ServerWorldMixin implements SpawnerProvider {
   @Unique private List<SpecialSpawner> zombieSpawners;
 
   @Inject(at = @At(value = "TAIL"), method = "<init>", cancellable = false)
@@ -30,5 +31,10 @@ public abstract class ServerWorldMixin {
     for (var spawner : zombieSpawners) {
       spawner.spawn((ServerWorld) (Object) this, spawnMonsters, spawnAnimals);
     }
+  }
+
+  @Override
+  public List<SpecialSpawner> getSpawners() {
+    return zombieSpawners;
   }
 }

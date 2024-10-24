@@ -15,6 +15,7 @@ import net.minecraft.util.math.random.Random;
 import net.minecraft.world.LocalDifficulty;
 import net.minecraft.world.ServerWorldAccess;
 import net.minecraft.world.World;
+import org.codeberg.zenxarch.zombies.spawning.SpawnerProvider;
 import org.codeberg.zenxarch.zombies.spawning.ZombieApocalypse;
 
 public class ExtendedZombieEntity extends ZombieEntity {
@@ -84,7 +85,8 @@ public class ExtendedZombieEntity extends ZombieEntity {
   public boolean damage(DamageSource source, float amount) {
     if (!super.damage(source, amount)) return false;
     if (!(this.getWorld() instanceof ServerWorld serverWorld)) return false;
-
+    if (!(serverWorld instanceof SpawnerProvider spawnerProvider)) return false;
+    for (var spawner : spawnerProvider.getSpawners()) spawner.spawn(serverWorld, true, true);
     return true;
   }
 
