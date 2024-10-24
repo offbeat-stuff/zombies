@@ -8,9 +8,11 @@ import java.util.stream.Stream;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.mob.ZombieEntity;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.network.packet.s2c.play.OverlayMessageS2CPacket;
 import net.minecraft.predicate.entity.EntityPredicates;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.GameRules;
@@ -70,6 +72,16 @@ public class ZombieApocalypse implements SpecialSpawner {
     return players().stream().map(ServerPlayerEntity::getBlockPos);
   }
 
+  private void debugCheck(Map<BlockPos, Integer> zombieCount) {
+    for (var player : players()) {
+      var pos = player.getBlockPos();
+      var difficulty = (int) (ExtendedDifficulty.getDifficulty(world, pos) * 100);
+      var zcount = zombieCount.getOrDefault(pos, 0);
+      player.networkHandler.sendPacket(
+          new OverlayMessageS2CPacket(Text.of(difficulty + " : " + zcount)));
+    }
+  }
+
   @Override
   public int spawn(ServerWorld world, boolean spawnMonsters, boolean spawnAnimals) {
     this.world = world;
@@ -81,6 +93,8 @@ public class ZombieApocalypse implements SpecialSpawner {
 
     var positions = spawnCenters().toList();
     var zombieCount = countZombies(positions);
+
+    debugCheck(zombieCount);
 
     return positions.stream()
         .filter(

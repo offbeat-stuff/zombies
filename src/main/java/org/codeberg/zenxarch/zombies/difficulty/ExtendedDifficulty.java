@@ -94,7 +94,7 @@ public class ExtendedDifficulty {
   }
 
   public static int getMaxZombies(double difficulty) {
-    return (int) MathHelper.clampedLerp(16.0, 100.0, difficulty);
+    return (int) MathHelper.clampedLerp(50.0, 250.0, difficulty);
   }
 
   public static int getSpawnTries(double difficulty) {
