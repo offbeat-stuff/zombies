@@ -20,4 +20,9 @@ public abstract class RandomUtils {
   public static boolean nextBoolean(double random, double chance) {
     return random < chance;
   }
+
+  public static boolean nextBoolean(Random random, double atLeastOnce, int times) {
+    var chance = 1.0 - Math.pow(1.0 - atLeastOnce, 1.0 / times);
+    return nextBoolean(random, chance);
+  }
 }

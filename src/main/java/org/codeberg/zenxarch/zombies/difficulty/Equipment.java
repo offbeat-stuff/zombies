@@ -58,7 +58,7 @@ public abstract class Equipment {
   public static Optional<Item> getEquipmentForSlot(
       Random random, double difficulty, EquipmentSlot slot) {
     var item =
-        ExtendedDifficulty.shouldSpawnWithEquipment(difficulty)
+        ExtendedDifficulty.shouldSpawnWithEquipment(slot, difficulty)
             ? Equipment.getItemForSlot(slot, random, difficulty)
             : null;
     return Optional.ofNullable(item);

@@ -107,11 +107,10 @@ public class ExtendedDifficulty {
         : (int) getRandomVariable(enchantLevelAvg, enchantLevelSpread, difficulty);
   }
 
-  private static List<Double> equipmentChance = List.of(0.0, 0.5);
-
-  public static boolean shouldSpawnWithEquipment(double difficulty) {
-    var atLeastOnce = LerpUtils.lerp(equipmentChance, difficulty);
-    var chance = 1.0 - Math.pow(1.0 - atLeastOnce, 1.0 / 6.0);
-    return RandomUtils.nextBoolean(random, chance);
+  public static boolean shouldSpawnWithEquipment(EquipmentSlot slot, double difficulty) {
+    return switch (slot) {
+      case MAINHAND, OFFHAND -> RandomUtils.nextBoolean(random, difficulty);
+      default -> RandomUtils.nextBoolean(random, difficulty, 4);
+    };
   }
 }
