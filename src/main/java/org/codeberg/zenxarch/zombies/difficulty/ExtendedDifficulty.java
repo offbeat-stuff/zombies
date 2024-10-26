@@ -1,103 +1,116 @@
 package org.codeberg.zenxarch.zombies.difficulty;
 
+import it.unimi.dsi.fastutil.doubles.DoubleDoublePair;
 import java.util.List;
-import java.util.Optional;
-import net.minecraft.enchantment.EnchantmentHelper;
+import java.util.stream.Stream;
 import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.item.Item;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.util.Pair;
+import net.minecraft.predicate.entity.EntityPredicates;
+import net.minecraft.registry.tag.ItemTags;
+import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkSectionPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.random.Random;
+import net.minecraft.world.World;
+import org.codeberg.zenxarch.zombies.data.ItemGenerator;
+import org.codeberg.zenxarch.zombies.random.LerpUtils;
+import org.codeberg.zenxarch.zombies.random.RandomUtils;
 
 public class ExtendedDifficulty {
+  private static final int TICKS_PER_HOUR = 60 * 60 * 20;
+  private static final int TICKS_PER_DAY = 20 * 60 * 20;
+
+  private static DoubleDoublePair getTimeFactor(World world, BlockPos pos) {
+    double inhibitedHours = 0.0;
+    double moonSize = 0.0;
+    double days = 0.0;
+
+    if (world.isChunkLoaded(
+        ChunkSectionPos.getSectionCoord(pos.getX()), ChunkSectionPos.getSectionCoord(pos.getZ()))) {
+      moonSize = (double) world.getMoonSize();
+      inhibitedHours = (double) world.getWorldChunk(pos).getInhabitedTime() / TICKS_PER_HOUR;
+    }
+
+    days = (double) world.getTimeOfDay() / TICKS_PER_DAY;
+
+    return DoubleDoublePair.of(days, inhibitedHours * 1.5 * (1.0 + moonSize));
+  }
+
+  private static double getPlayerScore(PlayerEntity player) {
+    var weapons =
+        player.getInventory().main.stream()
+            .filter(
+                f ->
+                    f.isIn(ItemTags.AXES)
+                        || f.isIn(ItemTags.SWORDS)
+                        || f.isIn(ItemTags.MACE_ENCHANTABLE)
+                        || f.isIn(ItemTags.TRIDENT_ENCHANTABLE));
+    var head =
+        Stream.of(player.getEquippedStack(EquipmentSlot.HEAD))
+            .filter(f -> f.isIn(ItemTags.HEAD_ARMOR_ENCHANTABLE));
+    var chest =
+        Stream.of(player.getEquippedStack(EquipmentSlot.CHEST))
+            .filter(f -> f.isIn(ItemTags.CHEST_ARMOR_ENCHANTABLE));
+    var legs =
+        Stream.of(player.getEquippedStack(EquipmentSlot.LEGS))
+            .filter(f -> f.isIn(ItemTags.LEG_ARMOR_ENCHANTABLE));
+    var feet =
+        Stream.of(player.getEquippedStack(EquipmentSlot.FEET))
+            .filter(f -> f.isIn(ItemTags.FOOT_ARMOR_ENCHANTABLE));
+
+    return Stream.of(weapons, head, chest, legs, feet)
+        .mapToDouble(
+            v -> v.map(ItemStack::getItem).mapToDouble(ItemGenerator::score).max().orElse(0.0))
+        .sum();
+  }
+
+  public static double getDifficulty(ServerWorld world, BlockPos pos) {
+    var time = getTimeFactor(world, pos);
+    var left = LerpUtils.clampedLerpProgress(time.leftDouble(), 0.0, 100.0);
+    var right = LerpUtils.clampedLerpProgress(time.rightDouble(), 0.0, 100.0);
+    var timeFactor = (left + right) / 2;
+    var playerPredicate =
+        EntityPredicates.EXCEPT_SPECTATOR.and(EntityPredicates.VALID_LIVING_ENTITY).negate();
+    var scoreSum = 0.0;
+    var players = 0;
+    for (var player : world.getPlayers()) {
+      if (playerPredicate.test(player)) continue;
+      if (player.squaredDistanceTo(pos.toCenterPos()) > 128.0 * 128.0) continue;
+      players++;
+      scoreSum += getPlayerScore(player);
+    }
+    return timeFactor * 0.25 + LerpUtils.clampedLerpProgress(scoreSum / players, 8.0, 64.0) * 0.75;
+  }
+
   private static final Random random = Random.create();
 
-  private static double mapToCurve(double input) {
-    return (Math.pow((input + 1), -2) - 1) * (-4.0 / 3.0);
+  private static double getRandomVariable(
+      List<Double> avgl, List<Double> spreadl, double progress) {
+    var avg = LerpUtils.lerp(avgl, progress);
+    var spread = LerpUtils.lerp(spreadl, progress);
+    return RandomUtils.nextDoubleAround(random, avg, spread);
   }
 
-  private static <T extends Item>
-      Item getItemForList(Pair<List<T>, List<T>> list, boolean lowerHalf) {
-    var itemList = lowerHalf ? list.getLeft() : list.getRight();
-    var randomValue = random.nextDouble();
-    for (int index = itemList.size() - 1; index >= 0; index--) {
-      var chance = mapToCurve((double)index / itemList.size());
-      if (randomValue < chance) {
-        return itemList.get(index);
-      }
-    }
-    return itemList.get(0);
+  public static int getMaxZombies(double difficulty) {
+    return (int) MathHelper.clampedLerp(50.0, 250.0, difficulty);
   }
 
-  private static Item getItemForSlot(EquipmentSlot slot, boolean lowerHalf) {
-    switch (slot) {
-    case HEAD:
-      return getItemForList(Equipment.HEAD, lowerHalf);
-    case CHEST:
-      return getItemForList(Equipment.CHEST, lowerHalf);
-    case LEGS:
-      return getItemForList(Equipment.LEGS, lowerHalf);
-    case FEET:
-      return getItemForList(Equipment.FEET, lowerHalf);
-    case MAINHAND:
-      return getItemForList(Equipment.SWORD, lowerHalf);
-    default:
-      return Items.AIR;
-    }
+  private static List<Double> enchantChance = List.of(0.0, 0.0, 0.025, 0.05);
+  private static List<Double> enchantLevelAvg = List.of(0.0, 5.0, 12.5, 28.5);
+  private static List<Double> enchantLevelSpread = List.of(0.0, 2.0, 7.5, 2.5);
+
+  public static int getEnchantLevel(double difficulty) {
+    return RandomUtils.nextBoolean(random, LerpUtils.lerp(enchantChance, difficulty))
+        ? 0
+        : (int) getRandomVariable(enchantLevelAvg, enchantLevelSpread, difficulty);
   }
 
-  public static int getTriesForSpawning(ExtendedDifficultyInfo info) {
-    if (random.nextDouble() < (1.0 - info.skylight())) {
-      return 0;
-    }
-
-    return info.period().getSpawnTries(info.progress());
-  }
-
-  public static Optional<Item> getEquipmentForSlot(ExtendedDifficultyInfo info,
-                                                   EquipmentSlot slot) {
-    var index = info.period().ordinal();
-    if (index == 0) {
-      return Optional.empty();
-    }
-
-    if (slot.equals(EquipmentSlot.OFFHAND)) {
-      var shieldChance = info.period().getShieldChance(info.progress());
-
-      if (random.nextDouble() < shieldChance) {
-        return Optional.of(Items.SHIELD);
-      }
-
-      return Optional.empty();
-    }
-
-    var commonChance = info.period().getCommonEquipment(info.progress());
-
-    if (random.nextDouble() < commonChance) {
-      return Optional.of(getItemForSlot(slot, true));
-    }
-
-    var rareChance = info.period().getRareEquipment(info.progress());
-
-    if (random.nextDouble() < rareChance) {
-      return Optional.of(getItemForSlot(slot, false));
-    }
-
-    return Optional.empty();
-  }
-
-  public static ItemStack enchant(ExtendedDifficultyInfo info,
-                                  ItemStack input) {
-    var index = info.period().ordinal();
-    if (index == 0) {
-      return input;
-    }
-
-    var level =
-        info.period().getEnchantLevel(info.progress() * random.nextDouble());
-
-    return EnchantmentHelper.enchant(random, input, level,
-                                     info.period().getTreasure());
+  public static boolean shouldSpawnWithEquipment(EquipmentSlot slot, double difficulty) {
+    return switch (slot) {
+      case MAINHAND, OFFHAND -> RandomUtils.nextBoolean(random, difficulty);
+      default -> RandomUtils.nextBoolean(random, difficulty, 4);
+    };
   }
 }

@@ -1,114 +1,77 @@
 package org.codeberg.zenxarch.zombies.difficulty;
 
-import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-import java.util.function.Predicate;
-import net.minecraft.item.ArmorItem;
-import net.minecraft.item.AxeItem;
+import java.util.Optional;
+import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.item.SwordItem;
-import net.minecraft.registry.Registries;
-import net.minecraft.util.Pair;
-import org.codeberg.zenxarch.zombies.Zombies;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.tag.EnchantmentTags;
+import net.minecraft.registry.tag.ItemTags;
+import net.minecraft.util.math.random.Random;
+import net.minecraft.world.ServerWorldAccess;
+import org.codeberg.zenxarch.zombies.data.ItemGenerator;
+import org.codeberg.zenxarch.zombies.data.ItemSelector;
+import org.codeberg.zenxarch.zombies.random.LerpUtils;
+import org.codeberg.zenxarch.zombies.random.RandomUtils;
 
 public abstract class Equipment {
+  private static final List<Double> ARMOR_SELECT_CHANCE = List.of(0.9, 0.3);
 
-  private static final Comparator<ArmorItem> ArmorRanking = (a, b)
-      -> a.getProtection() == b.getProtection()
-             ? Float.compare(a.getToughness(), b.getToughness())
-             : Float.compare(a.getProtection(), b.getProtection());
-
-  private static final Comparator<SwordItem> SwordRanking =
-      (a, b) -> Float.compare(a.getAttackDamage(), b.getAttackDamage());
-  private static final Comparator<AxeItem> AxeRanking =
-      (a, b) -> Float.compare(a.getAttackDamage(), b.getAttackDamage());
-
-  public static Pair<List<ArmorItem>, List<ArmorItem>> HEAD =
-      getSortedList(EquipmentType.HEAD, ArmorRanking);
-  public static Pair<List<ArmorItem>, List<ArmorItem>> CHEST =
-      getSortedList(EquipmentType.CHEST, ArmorRanking);
-  public static Pair<List<ArmorItem>, List<ArmorItem>> LEGS =
-      getSortedList(EquipmentType.LEGS, ArmorRanking);
-  public static Pair<List<ArmorItem>, List<ArmorItem>> FEET =
-      getSortedList(EquipmentType.FEET, ArmorRanking);
-  public static Pair<List<SwordItem>, List<SwordItem>> SWORD =
-      getSortedList(EquipmentType.SWORD, SwordRanking);
-  public static Pair<List<AxeItem>, List<AxeItem>> AXE =
-      getSortedList(EquipmentType.AXE, AxeRanking);
-
-  @SuppressWarnings("unchecked")
-  private static <T extends Item> Pair<List<T>, List<T>>
-  getSortedList(EquipmentType type, Comparator<T> compare) {
-    try {
-
-      var list = findAllMatching(type)
-                     .stream()
-                     .map(f -> (T)f)
-                     .sorted(compare)
-                     .toList();
-
-      var a = list.stream()
-                  .filter(f -> compare.compare(f, (T)type.diamond) < 0)
-                  .toList();
-      var b = list.stream()
-                  .filter(f -> compare.compare(f, (T)type.diamond) >= 0)
-                  .toList();
-      return new Pair<List<T>, List<T>>(a, b);
-    } catch (ClassCastException e) {
-      Zombies.LOGGER.error("Casting failed {}", e);
-      return new Pair<List<T>, List<T>>(List.of(), List.of());
-    }
+  public static Item getItemForSlot(EquipmentSlot slot, Random random, double difficulty) {
+    var armorSelector =
+        new ItemSelector.RecursiveChanceBased(
+            (delta) -> LerpUtils.lerp(ARMOR_SELECT_CHANCE, delta));
+    var basicWeaponSelector =
+        new ItemSelector.WeightedSelector(
+            (d) -> LerpUtils.lerp(List.of(1000.0), 100.0), (d) -> 1.0);
+    var generator =
+        switch (slot) {
+          case HEAD -> ItemGenerator.fromTag(slot, armorSelector, ItemTags.HEAD_ARMOR_ENCHANTABLE);
+          case CHEST ->
+              ItemGenerator.fromTag(slot, armorSelector, ItemTags.CHEST_ARMOR_ENCHANTABLE);
+          case LEGS -> ItemGenerator.fromTag(slot, armorSelector, ItemTags.LEG_ARMOR_ENCHANTABLE);
+          case FEET -> ItemGenerator.fromTag(slot, armorSelector, ItemTags.FOOT_ARMOR_ENCHANTABLE);
+          case MAINHAND -> {
+            if (RandomUtils.nextBoolean(random, 0.01))
+              yield ItemGenerator.fromTag(
+                  slot,
+                  new ItemSelector.RecursiveChanceBased((d) -> 0.3),
+                  ItemTags.TRIDENT_ENCHANTABLE,
+                  ItemTags.MACE_ENCHANTABLE);
+            yield ItemGenerator.fromTag(
+                slot,
+                basicWeaponSelector,
+                RandomUtils.nextBoolean(random, 0.7) ? ItemTags.SWORDS : ItemTags.AXES);
+          }
+          case OFFHAND ->
+              ItemGenerator.fromItem(
+                  Items.SHIELD, slot, new ItemSelector.RecursiveChanceBased((d) -> 0.3));
+          default -> null;
+        };
+    if (generator == null) return null;
+    return generator.generate(random, difficulty);
   }
 
-  private static List<Item> findAllMatching(EquipmentType type) {
-    var arrayList = new ArrayList<Item>();
-    for (var id : Registries.ITEM.getIds()) {
-      if (!id.getPath().endsWith(type.name)) {
-        continue;
-      }
-      var item = Registries.ITEM.get(id);
-      if (type.predicate.test(item)) {
-        arrayList.add(item);
-      }
-    }
-    return List.copyOf(arrayList);
+  public static Optional<Item> getEquipmentForSlot(
+      Random random, double difficulty, EquipmentSlot slot) {
+    var item =
+        ExtendedDifficulty.shouldSpawnWithEquipment(slot, difficulty)
+            ? Equipment.getItemForSlot(slot, random, difficulty)
+            : null;
+    return Optional.ofNullable(item);
   }
 
-  private static enum EquipmentType {
-    HEAD(
-        "helmet",
-        item -> isArmorItem(item, ArmorItem.Type.HELMET), Items.DIAMOND_HELMET),
-    CHEST("chestplate",
-          item
-          -> isArmorItem(item, ArmorItem.Type.CHESTPLATE),
-          Items.DIAMOND_CHESTPLATE),
-    LEGS("leggings",
-         item
-         -> isArmorItem(item, ArmorItem.Type.LEGGINGS),
-         Items.DIAMOND_LEGGINGS),
-    FEET("boots",
-         item -> isArmorItem(item, ArmorItem.Type.BOOTS), Items.DIAMOND_BOOTS),
-    SWORD("sword", item -> item instanceof SwordItem, Items.DIAMOND_SWORD),
-    AXE("axe", item -> item instanceof AxeItem, Items.DIAMOND_AXE);
+  public static ItemStack enchant(
+      ServerWorldAccess world, Random random, double difficulty, ItemStack input) {
+    var level = ExtendedDifficulty.getEnchantLevel(difficulty);
+    if (level == 0) return input;
 
-    public final String name;
-    public final Predicate<Item> predicate;
-    public final Item diamond;
-
-    private EquipmentType(String name, Predicate<Item> predicate,
-                          Item diamond) {
-      this.name = name;
-      this.predicate = predicate;
-      this.diamond = diamond;
-    }
-
-    private static boolean isArmorItem(Item item, ArmorItem.Type type) {
-      if (item instanceof ArmorItem armor) {
-        return armor.getType().equals(type);
-      }
-      return false;
-    }
+    var registry = world.getRegistryManager().get(RegistryKeys.ENCHANTMENT);
+    var enchantments =
+        registry.getOrCreateEntryList(EnchantmentTags.ON_MOB_SPAWN_EQUIPMENT).stream();
+    return EnchantmentHelper.enchant(random, input, level, enchantments);
   }
 }

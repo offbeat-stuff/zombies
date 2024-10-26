@@ -1,76 +1,111 @@
 package org.codeberg.zenxarch.zombies.spawning;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Stream;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.mob.ZombieEntity;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.network.packet.s2c.play.OverlayMessageS2CPacket;
+import net.minecraft.predicate.entity.EntityPredicates;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import net.minecraft.world.spawner.SpecialSpawner;
 import org.codeberg.zenxarch.zombies.Zombies;
-import org.codeberg.zenxarch.zombies.debug.Debug;
 import org.codeberg.zenxarch.zombies.difficulty.ExtendedDifficulty;
-import org.codeberg.zenxarch.zombies.difficulty.ExtendedDifficultyInfo;
 import org.codeberg.zenxarch.zombies.difficulty.ExtendedZombieEntity;
 
 public class ZombieApocalypse implements SpecialSpawner {
-
   private ServerWorld world;
-  private final Debug debug = new Debug();
-  private final SpawnProvider spawnProvider;
+  private SpawnProvider spawnProvider;
+  private Map<BlockPos, Integer> zombieCount;
 
   public ZombieApocalypse(ServerWorld world) {
     this.world = world;
-    this.spawnProvider = new SpawnProvider(world, debug);
+    this.spawnProvider = new SpawnProvider();
   }
 
   private boolean canSpawnAtPosSpace(ZombieEntity zombie) {
-    return this.world.doesNotIntersectEntities(zombie) &&
-        this.world.isSpaceEmpty(zombie) &&
-        !this.world.containsFluid(zombie.getBoundingBox());
+    return this.world.doesNotIntersectEntities(zombie)
+        && this.world.isSpaceEmpty(zombie)
+        && !this.world.containsFluid(zombie.getBoundingBox());
   }
 
-  public boolean spawnZombieAt(BlockPos ppos) {
-    var difficulty = new ExtendedDifficultyInfo(this.world, ppos);
-    var zombieOpt =
-        spawnProvider
-            .giveSpawnPos(world, ppos,
-                          ExtendedDifficulty.getTriesForSpawning(difficulty))
-            .map(u -> new ExtendedZombieEntity(this.world, u))
-            .filter(this::canSpawnAtPosSpace);
-
-    zombieOpt.ifPresent(z -> {
-      z.initialize(this.world);
-      this.world.spawnEntityAndPassengers(z);
-    });
-
-    return zombieOpt.isPresent();
+  private int spawnZombie(ExtendedZombieEntity zombie) {
+    zombie.initialize(this.world);
+    this.world.spawnEntityAndPassengers(zombie);
+    return 1;
   }
 
-  public boolean isSuitablePlayer(ServerPlayerEntity player) {
-    return player.isAlive() && !player.isSpectator();
+  public int spawnZombiesAt(BlockPos playerPos) {
+    var difficulty = ExtendedDifficulty.getDifficulty(this.world, playerPos);
+    if (difficulty <= 0.0) return 0;
+
+    var targetZombies = ExtendedDifficulty.getMaxZombies(difficulty);
+    var currentZombies = this.zombieCount.getOrDefault(playerPos, 0);
+
+    if (currentZombies >= targetZombies) return 0;
+
+    return spawnProvider
+        .giveSpawnPositions(world, playerPos, targetZombies, currentZombies)
+        .map(u -> new ExtendedZombieEntity(this.world, u))
+        .filter(this::canSpawnAtPosSpace)
+        .map(this::spawnZombie)
+        .orElse(0);
+  }
+
+  public Map<BlockPos, Integer> countZombies(List<BlockPos> positions) {
+    var result = new HashMap<BlockPos, Integer>();
+    for (var pos : positions) result.put(pos, 0);
+    for (var entity : world.iterateEntities()) {
+      if (!(entity instanceof ExtendedZombieEntity zombie)) continue;
+      for (var pos : positions)
+        if (zombie.getBlockPos().isWithinDistance(pos, 128)) result.put(pos, result.get(pos) + 1);
+    }
+    return result;
+  }
+
+  private List<ServerPlayerEntity> players() {
+    return this.world.getPlayers(
+        EntityPredicates.VALID_LIVING_ENTITY.and(EntityPredicates.EXCEPT_SPECTATOR));
+  }
+
+  private Stream<BlockPos> spawnCenters() {
+    return players().stream().map(ServerPlayerEntity::getBlockPos);
+  }
+
+  private void debugCheck(Map<BlockPos, Integer> zombieCount) {
+    for (var player : players()) {
+      var pos = player.getBlockPos();
+      var difficulty = (int) (ExtendedDifficulty.getDifficulty(world, pos) * 100);
+      var zcount = zombieCount.getOrDefault(pos, 0);
+      player.networkHandler.sendPacket(
+          new OverlayMessageS2CPacket(Text.of(difficulty + " : " + zcount)));
+    }
   }
 
   @Override
-  public int spawn(ServerWorld world, boolean spawnMonsters,
-                   boolean spawnAnimals) {
+  public int spawn(ServerWorld world, boolean spawnMonsters, boolean spawnAnimals) {
     this.world = world;
-    if (!spawnMonsters ||
-        this.world.getDifficulty().equals(Difficulty.PEACEFUL) ||
-        !this.world.getGameRules().getBoolean(GameRules.DO_MOB_SPAWNING)) {
+    if (!spawnMonsters
+        || this.world.getDifficulty().equals(Difficulty.PEACEFUL)
+        || !this.world.getGameRules().getBoolean(GameRules.DO_MOB_SPAWNING)) {
       return 0;
     }
 
-    var result = 0;
-    for (var player : this.world.getPlayers(this::isSuitablePlayer)) {
-      result += this.spawnZombieAt(player.getBlockPos()) ? 1 : 0;
-    }
-    debug.attemptedSpawn(result > 0);
-    return result;
+    var positions = spawnCenters().toList();
+    this.zombieCount = countZombies(positions);
+
+    debugCheck(this.zombieCount);
+
+    return positions.stream().mapToInt(this::spawnZombiesAt).sum();
   }
 
   public static boolean isApocalypticWorld(ServerWorld world) {
@@ -80,20 +115,21 @@ public class ZombieApocalypse implements SpecialSpawner {
     return false;
   }
 
-  public static String ZOMBIE_ID_KEY = "zenxarch_zombie_id";
-  public static String BASE_ZOMBIE_ID = "BaseZombie";
+  public static final String ZOMBIE_ID_KEY = "zenxarch_zombie_id";
+  public static final String BASE_ZOMBIE_ID = "BaseZombie";
 
   public static Optional<Entity> loadFromNbt(NbtCompound nbt, World world) {
-    var id = nbt.getString(ZOMBIE_ID_KEY);
-    if (id.equals("")) {
-      return Optional.empty();
-    }
-    if (id.equals(BASE_ZOMBIE_ID)) {
-      var zombie = new ExtendedZombieEntity(world);
-      zombie.readNbt(nbt);
-      return Optional.of(zombie);
-    }
-    Zombies.LOGGER.warn("Skipping Zombie Apocalypse Entity with id {}", id);
-    return Optional.empty();
+    return switch (nbt.getString(ZOMBIE_ID_KEY)) {
+      case "" -> Optional.empty();
+      case BASE_ZOMBIE_ID -> {
+        var zombie = new ExtendedZombieEntity(world);
+        zombie.readNbt(nbt);
+        yield Optional.of(zombie);
+      }
+      case String id -> {
+        Zombies.LOGGER.warn("Skipping Zombie Apocalypse Entity with id {}", id);
+        yield Optional.empty();
+      }
+    };
   }
 }
