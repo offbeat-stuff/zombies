@@ -6,14 +6,13 @@ import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.registry.tag.EnchantmentTags;
-import net.minecraft.registry.tag.ItemTags;
 import net.minecraft.util.math.random.Random;
+import net.minecraft.world.LocalDifficulty;
 import net.minecraft.world.ServerWorldAccess;
 import org.codeberg.zenxarch.zombies.data.ItemGenerator;
 import org.codeberg.zenxarch.zombies.data.ItemSelector;
+import org.codeberg.zenxarch.zombies.datagen.ZEnchantmentProviders;
+import org.codeberg.zenxarch.zombies.datagen.ZItemTags;
 import org.codeberg.zenxarch.zombies.random.LerpUtils;
 import org.codeberg.zenxarch.zombies.random.RandomUtils;
 
@@ -29,26 +28,24 @@ public abstract class Equipment {
             (d) -> LerpUtils.lerp(List.of(1000.0), 100.0), (d) -> 1.0);
     var generator =
         switch (slot) {
-          case HEAD -> ItemGenerator.fromTag(slot, armorSelector, ItemTags.HEAD_ARMOR_ENCHANTABLE);
-          case CHEST ->
-              ItemGenerator.fromTag(slot, armorSelector, ItemTags.CHEST_ARMOR_ENCHANTABLE);
-          case LEGS -> ItemGenerator.fromTag(slot, armorSelector, ItemTags.LEG_ARMOR_ENCHANTABLE);
-          case FEET -> ItemGenerator.fromTag(slot, armorSelector, ItemTags.FOOT_ARMOR_ENCHANTABLE);
+          case HEAD -> ItemGenerator.fromTag(slot, armorSelector, ZItemTags.HEAD_ARMOR);
+          case CHEST -> ItemGenerator.fromTag(slot, armorSelector, ZItemTags.CHEST_ARMOR);
+          case LEGS -> ItemGenerator.fromTag(slot, armorSelector, ZItemTags.LEG_ARMOR);
+          case FEET -> ItemGenerator.fromTag(slot, armorSelector, ZItemTags.FEET_ARMOR);
           case MAINHAND -> {
             if (RandomUtils.nextBoolean(random, 0.01))
               yield ItemGenerator.fromTag(
-                  slot,
-                  new ItemSelector.RecursiveChanceBased((d) -> 0.3),
-                  ItemTags.TRIDENT_ENCHANTABLE,
-                  ItemTags.MACE_ENCHANTABLE);
+                  slot, new ItemSelector.RecursiveChanceBased((d) -> 0.3), ZItemTags.RARE_WEAPONS);
             yield ItemGenerator.fromTag(
                 slot,
                 basicWeaponSelector,
-                RandomUtils.nextBoolean(random, 0.7) ? ItemTags.SWORDS : ItemTags.AXES);
+                RandomUtils.nextBoolean(random, 0.7)
+                    ? ZItemTags.COMMON_WEAPONS
+                    : ZItemTags.UNCOMMON_WEAPONS);
           }
           case OFFHAND ->
-              ItemGenerator.fromItem(
-                  Items.SHIELD, slot, new ItemSelector.RecursiveChanceBased((d) -> 0.3));
+              ItemGenerator.fromTag(
+                  slot, new ItemSelector.RecursiveChanceBased((d) -> 0.3), ZItemTags.EXTRA_ITEMS);
           default -> null;
         };
     if (generator == null) return null;
@@ -66,12 +63,15 @@ public abstract class Equipment {
 
   public static ItemStack enchant(
       ServerWorldAccess world, Random random, double difficulty, ItemStack input) {
-    var level = ExtendedDifficulty.getEnchantLevel(difficulty);
-    if (level == 0) return input;
+    if (!ExtendedDifficulty.shouldEnchantEquipment(difficulty)) return input;
 
-    var registry = world.getRegistryManager().get(RegistryKeys.ENCHANTMENT);
-    var enchantments =
-        registry.getOrCreateEntryList(EnchantmentTags.ON_MOB_SPAWN_EQUIPMENT).stream();
-    return EnchantmentHelper.enchant(random, input, level, enchantments);
+    var registryManager = world.getRegistryManager();
+    EnchantmentHelper.applyEnchantmentProvider(
+        input,
+        registryManager,
+        ZEnchantmentProviders.ZOMBIE_SPAWN_EQUIPMENT,
+        new LocalDifficulty(world.getDifficulty(), 0, 0, 0),
+        random);
+    return input;
   }
 }

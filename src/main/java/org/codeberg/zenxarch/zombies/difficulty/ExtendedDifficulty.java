@@ -7,7 +7,6 @@ import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.predicate.entity.EntityPredicates;
-import net.minecraft.registry.tag.ItemTags;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkSectionPos;
@@ -15,6 +14,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.World;
 import org.codeberg.zenxarch.zombies.data.ItemGenerator;
+import org.codeberg.zenxarch.zombies.datagen.ZItemTags;
 import org.codeberg.zenxarch.zombies.random.LerpUtils;
 import org.codeberg.zenxarch.zombies.random.RandomUtils;
 
@@ -39,26 +39,19 @@ public class ExtendedDifficulty {
   }
 
   private static double getPlayerScore(PlayerEntity player) {
-    var weapons =
-        player.getInventory().main.stream()
-            .filter(
-                f ->
-                    f.isIn(ItemTags.AXES)
-                        || f.isIn(ItemTags.SWORDS)
-                        || f.isIn(ItemTags.MACE_ENCHANTABLE)
-                        || f.isIn(ItemTags.TRIDENT_ENCHANTABLE));
+    var weapons = player.getInventory().main.stream().filter(f -> f.isIn(ZItemTags.WEAPONS));
     var head =
         Stream.of(player.getEquippedStack(EquipmentSlot.HEAD))
-            .filter(f -> f.isIn(ItemTags.HEAD_ARMOR_ENCHANTABLE));
+            .filter(f -> f.isIn(ZItemTags.HEAD_ARMOR));
     var chest =
         Stream.of(player.getEquippedStack(EquipmentSlot.CHEST))
-            .filter(f -> f.isIn(ItemTags.CHEST_ARMOR_ENCHANTABLE));
+            .filter(f -> f.isIn(ZItemTags.CHEST_ARMOR));
     var legs =
         Stream.of(player.getEquippedStack(EquipmentSlot.LEGS))
-            .filter(f -> f.isIn(ItemTags.LEG_ARMOR_ENCHANTABLE));
+            .filter(f -> f.isIn(ZItemTags.LEG_ARMOR));
     var feet =
         Stream.of(player.getEquippedStack(EquipmentSlot.FEET))
-            .filter(f -> f.isIn(ItemTags.FOOT_ARMOR_ENCHANTABLE));
+            .filter(f -> f.isIn(ZItemTags.FEET_ARMOR));
 
     return Stream.of(weapons, head, chest, legs, feet)
         .mapToDouble(
@@ -86,25 +79,14 @@ public class ExtendedDifficulty {
 
   private static final Random random = Random.create();
 
-  private static double getRandomVariable(
-      List<Double> avgl, List<Double> spreadl, double progress) {
-    var avg = LerpUtils.lerp(avgl, progress);
-    var spread = LerpUtils.lerp(spreadl, progress);
-    return RandomUtils.nextDoubleAround(random, avg, spread);
-  }
-
   public static int getMaxZombies(double difficulty) {
     return (int) MathHelper.clampedLerp(50.0, 250.0, difficulty);
   }
 
   private static List<Double> enchantChance = List.of(0.0, 0.0, 0.025, 0.05);
-  private static List<Double> enchantLevelAvg = List.of(0.0, 5.0, 12.5, 28.5);
-  private static List<Double> enchantLevelSpread = List.of(0.0, 2.0, 7.5, 2.5);
 
-  public static int getEnchantLevel(double difficulty) {
-    return RandomUtils.nextBoolean(random, LerpUtils.lerp(enchantChance, difficulty))
-        ? 0
-        : (int) getRandomVariable(enchantLevelAvg, enchantLevelSpread, difficulty);
+  public static boolean shouldEnchantEquipment(double difficulty) {
+    return RandomUtils.nextBoolean(random, LerpUtils.lerp(enchantChance, difficulty));
   }
 
   public static boolean shouldSpawnWithEquipment(EquipmentSlot slot, double difficulty) {

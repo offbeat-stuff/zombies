@@ -15,20 +15,11 @@ import net.minecraft.util.math.random.Random;
 
 public record ItemGenerator(List<Item> entries, EquipmentSlot slot, ItemSelector selector) {
 
-  @SafeVarargs
-  public static ItemGenerator fromTag(
-      EquipmentSlot slot, ItemSelector selector, TagKey<Item>... tags) {
-    var stream =
-        Stream.of(tags)
-            .flatMap(
-                tag ->
-                    Registries.ITEM.getOrCreateEntryList(tag).stream().map(RegistryEntry::value));
+  public static ItemGenerator fromTag(EquipmentSlot slot, ItemSelector selector, TagKey<Item> tag) {
+    var registry = Registries.ITEM;
+    var stream = registry.getOrCreateEntryList(tag).stream().map(RegistryEntry::value);
     var list = getList(stream, slot);
     return new ItemGenerator(list, slot, selector);
-  }
-
-  public static ItemGenerator fromItem(Item item, EquipmentSlot slot, ItemSelector selector) {
-    return new ItemGenerator(List.of(item), slot, selector);
   }
 
   private static List<Item> getList(Stream<Item> stream, EquipmentSlot slot) {
