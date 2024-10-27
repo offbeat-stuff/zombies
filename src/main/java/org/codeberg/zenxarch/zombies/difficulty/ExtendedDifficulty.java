@@ -2,7 +2,6 @@ package org.codeberg.zenxarch.zombies.difficulty;
 
 import it.unimi.dsi.fastutil.doubles.DoubleDoublePair;
 import java.util.List;
-import java.util.stream.Stream;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -39,24 +38,22 @@ public class ExtendedDifficulty {
   }
 
   private static double getPlayerScore(PlayerEntity player) {
-    var weapons = player.getInventory().main.stream().filter(f -> f.isIn(ZItemTags.WEAPONS));
-    var head =
-        Stream.of(player.getEquippedStack(EquipmentSlot.HEAD))
-            .filter(f -> f.isIn(ZItemTags.HEAD_ARMOR));
-    var chest =
-        Stream.of(player.getEquippedStack(EquipmentSlot.CHEST))
-            .filter(f -> f.isIn(ZItemTags.CHEST_ARMOR));
-    var legs =
-        Stream.of(player.getEquippedStack(EquipmentSlot.LEGS))
-            .filter(f -> f.isIn(ZItemTags.LEG_ARMOR));
-    var feet =
-        Stream.of(player.getEquippedStack(EquipmentSlot.FEET))
-            .filter(f -> f.isIn(ZItemTags.FEET_ARMOR));
+    var totalScore = 0.0;
+    totalScore +=
+        player.getInventory().main.stream()
+            .filter(f -> f.isIn(ZItemTags.WEAPONS))
+            .map(ItemStack::getItem)
+            .mapToDouble(ItemGenerator::score)
+            .max()
+            .orElse(0.0);
 
-    return Stream.of(weapons, head, chest, legs, feet)
-        .mapToDouble(
-            v -> v.map(ItemStack::getItem).mapToDouble(ItemGenerator::score).max().orElse(0.0))
-        .sum();
+    for (var slot : EquipmentSlot.values()) {
+      if (!slot.getType().equals(EquipmentSlot.Type.HUMANOID_ARMOR)) continue;
+      var stack = player.getEquippedStack(slot);
+      if (!stack.isIn(ZItemTags.fromSlot(slot))) continue;
+      totalScore += ItemGenerator.score(stack.getItem());
+    }
+    return totalScore;
   }
 
   public static double getDifficulty(ServerWorld world, BlockPos pos) {

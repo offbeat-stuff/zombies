@@ -3,6 +3,7 @@ package org.codeberg.zenxarch.zombies.datagen;
 import java.util.concurrent.CompletableFuture;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagProvider;
+import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
 import net.minecraft.registry.RegistryKeys;
@@ -47,5 +48,16 @@ public final class ZItemTags extends FabricTagProvider.ItemTagProvider {
     getOrCreateTagBuilder(CHEST_ARMOR).addTag(ItemTags.CHEST_ARMOR_ENCHANTABLE);
     getOrCreateTagBuilder(LEG_ARMOR).addTag(ItemTags.LEG_ARMOR_ENCHANTABLE);
     getOrCreateTagBuilder(FEET_ARMOR).addTag(ItemTags.FOOT_ARMOR_ENCHANTABLE);
+  }
+
+  public static TagKey<Item> fromSlot(EquipmentSlot slot) {
+    return switch (slot) {
+      case HEAD -> HEAD_ARMOR;
+      case CHEST -> CHEST_ARMOR;
+      case FEET -> FEET_ARMOR;
+      case LEGS -> LEG_ARMOR;
+      case OFFHAND -> EXTRA_ITEMS;
+      default -> WEAPONS;
+    };
   }
 }

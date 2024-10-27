@@ -20,36 +20,37 @@ public abstract class Equipment {
   private static final List<Double> ARMOR_SELECT_CHANCE = List.of(0.9, 0.3);
 
   public static Item getItemForSlot(EquipmentSlot slot, Random random, double difficulty) {
-    var armorSelector =
-        new ItemSelector.RecursiveChanceBased(
-            (delta) -> LerpUtils.lerp(ARMOR_SELECT_CHANCE, delta));
     var basicWeaponSelector =
         new ItemSelector.WeightedSelector(
             (d) -> LerpUtils.lerp(List.of(1000.0), 100.0), (d) -> 1.0);
-    var generator =
+    var extraSelector = new ItemSelector.RecursiveChanceBased((d) -> 0.3);
+
+    if (slot.equals(EquipmentSlot.MAINHAND)) {
+      var rare = RandomUtils.nextBoolean(random, 0.01);
+      var selector = rare ? extraSelector : basicWeaponSelector;
+      var tag = ZItemTags.RARE_WEAPONS;
+      if (!rare) {
+        tag = ZItemTags.COMMON_WEAPONS;
+        if (RandomUtils.nextBoolean(random, 0.3)) tag = ZItemTags.UNCOMMON_WEAPONS;
+      }
+      return ItemGenerator.fromTag(slot, selector, tag).generate(random, difficulty);
+    }
+
+    var armorSelector =
+        new ItemSelector.RecursiveChanceBased(
+            (delta) -> LerpUtils.lerp(ARMOR_SELECT_CHANCE, delta));
+
+    var selector =
         switch (slot) {
-          case HEAD -> ItemGenerator.fromTag(slot, armorSelector, ZItemTags.HEAD_ARMOR);
-          case CHEST -> ItemGenerator.fromTag(slot, armorSelector, ZItemTags.CHEST_ARMOR);
-          case LEGS -> ItemGenerator.fromTag(slot, armorSelector, ZItemTags.LEG_ARMOR);
-          case FEET -> ItemGenerator.fromTag(slot, armorSelector, ZItemTags.FEET_ARMOR);
-          case MAINHAND -> {
-            if (RandomUtils.nextBoolean(random, 0.01))
-              yield ItemGenerator.fromTag(
-                  slot, new ItemSelector.RecursiveChanceBased((d) -> 0.3), ZItemTags.RARE_WEAPONS);
-            yield ItemGenerator.fromTag(
-                slot,
-                basicWeaponSelector,
-                RandomUtils.nextBoolean(random, 0.7)
-                    ? ZItemTags.COMMON_WEAPONS
-                    : ZItemTags.UNCOMMON_WEAPONS);
-          }
-          case OFFHAND ->
-              ItemGenerator.fromTag(
-                  slot, new ItemSelector.RecursiveChanceBased((d) -> 0.3), ZItemTags.EXTRA_ITEMS);
+          case HEAD, CHEST, LEGS, FEET -> armorSelector;
+          case OFFHAND -> extraSelector;
           default -> null;
         };
-    if (generator == null) return null;
-    return generator.generate(random, difficulty);
+
+    if (selector == null) return null;
+
+    return ItemGenerator.fromTag(slot, selector, ZItemTags.fromSlot(slot))
+        .generate(random, difficulty);
   }
 
   public static Optional<Item> getEquipmentForSlot(
