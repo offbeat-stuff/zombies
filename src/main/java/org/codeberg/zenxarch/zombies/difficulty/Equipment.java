@@ -7,7 +7,6 @@ import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.random.Random;
-import net.minecraft.world.LocalDifficulty;
 import net.minecraft.world.ServerWorldAccess;
 import org.codeberg.zenxarch.zombies.data.ItemGenerator;
 import org.codeberg.zenxarch.zombies.data.ItemSelector;
@@ -54,25 +53,21 @@ public abstract class Equipment {
   }
 
   public static Optional<Item> getEquipmentForSlot(
-      Random random, double difficulty, EquipmentSlot slot) {
+      Random random, ExtendedDifficulty difficulty, EquipmentSlot slot) {
     var item =
-        ExtendedDifficulty.shouldSpawnWithEquipment(slot, difficulty)
-            ? Equipment.getItemForSlot(slot, random, difficulty)
+        difficulty.shouldSpawnWithEquipment(slot)
+            ? Equipment.getItemForSlot(slot, random, difficulty.getClampedLocalDifficulty())
             : null;
     return Optional.ofNullable(item);
   }
 
   public static ItemStack enchant(
-      ServerWorldAccess world, Random random, double difficulty, ItemStack input) {
-    if (!ExtendedDifficulty.shouldEnchantEquipment(difficulty)) return input;
+      ServerWorldAccess world, Random random, ExtendedDifficulty difficulty, ItemStack input) {
+    if (!difficulty.shouldEnchantEquipment()) return input;
 
     var registryManager = world.getRegistryManager();
     EnchantmentHelper.applyEnchantmentProvider(
-        input,
-        registryManager,
-        ZEnchantmentProviders.ZOMBIE_SPAWN_EQUIPMENT,
-        new LocalDifficulty(world.getDifficulty(), 0, 0, 0),
-        random);
+        input, registryManager, ZEnchantmentProviders.ZOMBIE_SPAWN_EQUIPMENT, difficulty, random);
     return input;
   }
 }

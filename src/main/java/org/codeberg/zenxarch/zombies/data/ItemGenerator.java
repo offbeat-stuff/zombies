@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Stream;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
@@ -25,7 +26,7 @@ public record ItemGenerator(List<Item> entries, EquipmentSlot slot, ItemSelector
   private static List<Item> getList(Stream<Item> stream, EquipmentSlot slot) {
     return stream
         .filter(f -> matchesSlot(f, slot))
-        .sorted(Comparator.comparingDouble(ItemGenerator::score))
+        .sorted(Comparator.comparingDouble(ItemGenerator::zombieScore))
         .distinct()
         .toList();
   }
@@ -40,24 +41,23 @@ public record ItemGenerator(List<Item> entries, EquipmentSlot slot, ItemSelector
     return item.getComponents().getOrDefault(DataComponentTypes.RARITY, Rarity.COMMON);
   }
 
-  public static double scoreWeapon(Item item) {
-    var damageBonus = ItemAttributeUtils.getZombieAttackDamage(item);
-    var rarityBonus = getRarity(item).ordinal() * 5.0;
-    var enchantabilityBonus = item.getEnchantability() / 15.0;
-    return damageBonus + rarityBonus + enchantabilityBonus;
+  private static double zombieScoreWeapon(Item item) {
+    return ItemAttributeUtils.getZombieAttribute(item, EntityAttributes.GENERIC_ATTACK_DAMAGE);
   }
 
-  public static double scoreArmor(ArmorItem armor) {
+  private static double zombieScoreArmor(ArmorItem armor) {
     var slot = armor.getSlotType();
-    return ItemAttributeUtils.getZombieArmor(armor, slot)
-        + ItemAttributeUtils.getZombieArmorToughness(armor, slot)
-        + ItemAttributeUtils.getZombieKnockbackResistance(armor, slot);
+    return ItemAttributeUtils.getZombieAttribute(armor, EntityAttributes.GENERIC_ARMOR, slot)
+        + ItemAttributeUtils.getZombieAttribute(
+            armor, EntityAttributes.GENERIC_ARMOR_TOUGHNESS, slot)
+        + ItemAttributeUtils.getZombieAttribute(
+            armor, EntityAttributes.GENERIC_KNOCKBACK_RESISTANCE, slot);
   }
 
-  public static double score(Item item) {
+  private static double zombieScore(Item item) {
     return switch (item) {
-      case ArmorItem armor -> scoreArmor(armor);
-      default -> scoreWeapon(item);
+      case ArmorItem armor -> zombieScoreArmor(armor);
+      default -> zombieScoreWeapon(item);
     };
   }
 

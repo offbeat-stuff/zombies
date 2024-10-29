@@ -1,95 +1,66 @@
 package org.codeberg.zenxarch.zombies.difficulty;
 
-import it.unimi.dsi.fastutil.doubles.DoubleDoublePair;
 import java.util.List;
 import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.predicate.entity.EntityPredicates;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.ChunkSectionPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.random.Random;
-import net.minecraft.world.World;
-import org.codeberg.zenxarch.zombies.data.ItemGenerator;
-import org.codeberg.zenxarch.zombies.datagen.ZItemTags;
+import net.minecraft.world.Difficulty;
+import net.minecraft.world.LocalDifficulty;
 import org.codeberg.zenxarch.zombies.random.LerpUtils;
 import org.codeberg.zenxarch.zombies.random.RandomUtils;
+import org.jetbrains.annotations.Unmodifiable;
 
-public class ExtendedDifficulty {
-  private static final int TICKS_PER_HOUR = 60 * 60 * 20;
-  private static final int TICKS_PER_DAY = 20 * 60 * 20;
-
-  private static DoubleDoublePair getTimeFactor(World world, BlockPos pos) {
-    double inhibitedHours = 0.0;
-    double moonSize = 0.0;
-    double days = 0.0;
-
-    if (world.isChunkLoaded(
-        ChunkSectionPos.getSectionCoord(pos.getX()), ChunkSectionPos.getSectionCoord(pos.getZ()))) {
-      moonSize = (double) world.getMoonSize();
-      inhibitedHours = (double) world.getWorldChunk(pos).getInhabitedTime() / TICKS_PER_HOUR;
-    }
-
-    days = (double) world.getTimeOfDay() / TICKS_PER_DAY;
-
-    return DoubleDoublePair.of(days, inhibitedHours * 1.5 * (1.0 + moonSize));
-  }
-
-  private static double getPlayerScore(PlayerEntity player) {
-    var totalScore = 0.0;
-    totalScore +=
-        player.getInventory().main.stream()
-            .filter(f -> f.isIn(ZItemTags.WEAPONS))
-            .map(ItemStack::getItem)
-            .mapToDouble(ItemGenerator::score)
-            .max()
-            .orElse(0.0);
-
-    for (var slot : EquipmentSlot.values()) {
-      if (!slot.getType().equals(EquipmentSlot.Type.HUMANOID_ARMOR)) continue;
-      var stack = player.getEquippedStack(slot);
-      if (!stack.isIn(ZItemTags.fromSlot(slot))) continue;
-      totalScore += ItemGenerator.score(stack.getItem());
-    }
-    return totalScore;
-  }
-
-  public static double getDifficulty(ServerWorld world, BlockPos pos) {
-    var time = getTimeFactor(world, pos);
-    var left = LerpUtils.clampedLerpProgress(time.leftDouble(), 0.0, 100.0);
-    var right = LerpUtils.clampedLerpProgress(time.rightDouble(), 0.0, 100.0);
-    var timeFactor = (left + right) / 2;
-    var playerPredicate =
-        EntityPredicates.EXCEPT_SPECTATOR.and(EntityPredicates.VALID_LIVING_ENTITY).negate();
-    var scoreSum = 0.0;
-    var players = 0;
-    for (var player : world.getPlayers()) {
-      if (playerPredicate.test(player)) continue;
-      if (player.squaredDistanceTo(pos.toCenterPos()) > 128.0 * 128.0) continue;
-      players++;
-      scoreSum += getPlayerScore(player);
-    }
-    return timeFactor * 0.25 + LerpUtils.clampedLerpProgress(scoreSum / players, 8.0, 64.0) * 0.75;
-  }
+@Unmodifiable
+public class ExtendedDifficulty extends LocalDifficulty {
 
   private static final Random random = Random.create();
+  private static final List<Double> enchantChance = List.of(0.0, 0.0, 0.025, 0.05);
 
-  public static int getMaxZombies(double difficulty) {
-    return (int) MathHelper.clampedLerp(50.0, 250.0, difficulty);
+  private final double difficulty;
+
+  public ExtendedDifficulty(ServerWorld world, BlockPos pos) {
+    super(world.getDifficulty(), 0, 0, 0);
+    this.difficulty = DifficultyCalculations.calculateDifficulty(world, pos);
   }
 
-  private static List<Double> enchantChance = List.of(0.0, 0.0, 0.025, 0.05);
-
-  public static boolean shouldEnchantEquipment(double difficulty) {
-    return RandomUtils.nextBoolean(random, LerpUtils.lerp(enchantChance, difficulty));
+  @Override
+  public float getLocalDifficulty() {
+    return (float) (this.difficulty * 6.75);
   }
 
-  public static boolean shouldSpawnWithEquipment(EquipmentSlot slot, double difficulty) {
+  @Override
+  public boolean isAtLeastHard() {
+    return getLocalDifficulty() >= (float) Difficulty.HARD.ordinal();
+  }
+
+  @Override
+  public boolean isHarderThan(float difficulty) {
+    return getLocalDifficulty() > difficulty;
+  }
+
+  @Override
+  public float getClampedLocalDifficulty() {
+    return (float) this.difficulty;
+  }
+
+  public int getMaxZombies() {
+    return (int) MathHelper.clampedLerp(50.0, 250.0, this.difficulty);
+  }
+
+  public boolean shouldEnchantEquipment() {
+    return RandomUtils.nextBoolean(random, LerpUtils.lerp(enchantChance, this.difficulty));
+  }
+
+  public boolean shouldSpawnWithEquipment(EquipmentSlot slot) {
     return switch (slot) {
-      case MAINHAND, OFFHAND -> RandomUtils.nextBoolean(random, difficulty);
-      default -> RandomUtils.nextBoolean(random, difficulty, 4);
+      case MAINHAND, OFFHAND -> RandomUtils.nextBoolean(random, this.difficulty);
+      default -> RandomUtils.nextBoolean(random, this.difficulty, 4);
     };
+  }
+
+  public boolean isDisabled() {
+    return this.difficulty <= 0.0;
   }
 }

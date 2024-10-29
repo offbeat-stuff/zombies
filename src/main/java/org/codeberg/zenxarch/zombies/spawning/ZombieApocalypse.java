@@ -45,10 +45,10 @@ public class ZombieApocalypse implements SpecialSpawner {
   }
 
   public int spawnZombiesAt(BlockPos playerPos) {
-    var difficulty = ExtendedDifficulty.getDifficulty(this.world, playerPos);
-    if (difficulty <= 0.0) return 0;
+    var difficulty = new ExtendedDifficulty(this.world, playerPos);
+    if (difficulty.isDisabled()) return 0;
 
-    var targetZombies = ExtendedDifficulty.getMaxZombies(difficulty);
+    var targetZombies = difficulty.getMaxZombies();
     var currentZombies = this.zombieCount.getOrDefault(playerPos, 0);
 
     if (currentZombies >= targetZombies) return 0;
@@ -84,7 +84,7 @@ public class ZombieApocalypse implements SpecialSpawner {
   private void debugCheck(Map<BlockPos, Integer> zombieCount) {
     for (var player : players()) {
       var pos = player.getBlockPos();
-      var difficulty = (int) (ExtendedDifficulty.getDifficulty(world, pos) * 100);
+      var difficulty = (int) (new ExtendedDifficulty(world, pos).getClampedLocalDifficulty() * 100);
       var zcount = zombieCount.getOrDefault(pos, 0);
       player.networkHandler.sendPacket(
           new OverlayMessageS2CPacket(Text.of(difficulty + " : " + zcount)));
