@@ -1,55 +1,43 @@
 package org.codeberg.zenxarch.zombies.difficulty;
 
-import java.util.List;
 import java.util.Optional;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.ServerWorldAccess;
 import org.codeberg.zenxarch.zombies.data.ItemGenerator;
-import org.codeberg.zenxarch.zombies.data.ItemSelector;
 import org.codeberg.zenxarch.zombies.datagen.ZEnchantmentProviders;
 import org.codeberg.zenxarch.zombies.datagen.ZItemTags;
 import org.codeberg.zenxarch.zombies.random.LerpUtils;
 import org.codeberg.zenxarch.zombies.random.RandomUtils;
 
 public abstract class Equipment {
-  private static final List<Double> ARMOR_SELECT_CHANCE = List.of(0.9, 0.3);
+  private static Item selectItemFromTag(
+      Random random, double difficulty, TagKey<Item> tag, EquipmentSlot slot) {
+    var list = ItemGenerator.getList(tag, slot);
+    return LerpUtils.recursiveSelect(random, difficulty, 0.3, list);
+  }
+
+  private static Item getWeapon(Random random, double difficulty) {
+    if (RandomUtils.nextBoolean(random, 0.01))
+      return selectItemFromTag(random, 1.0, ZItemTags.RARE_WEAPONS, EquipmentSlot.MAINHAND);
+    var tag =
+        RandomUtils.nextBoolean(random, 0.7)
+            ? ZItemTags.COMMON_WEAPONS
+            : ZItemTags.UNCOMMON_WEAPONS;
+    return selectItemFromTag(random, difficulty, tag, EquipmentSlot.MAINHAND);
+  }
 
   public static Item getItemForSlot(EquipmentSlot slot, Random random, double difficulty) {
-    var basicWeaponSelector =
-        new ItemSelector.WeightedSelector(
-            (d) -> LerpUtils.lerp(List.of(1000.0), 100.0), (d) -> 1.0);
-    var extraSelector = new ItemSelector.RecursiveChanceBased((d) -> 0.3);
-
-    if (slot.equals(EquipmentSlot.MAINHAND)) {
-      var rare = RandomUtils.nextBoolean(random, 0.01);
-      var selector = rare ? extraSelector : basicWeaponSelector;
-      var tag = ZItemTags.RARE_WEAPONS;
-      if (!rare) {
-        tag = ZItemTags.COMMON_WEAPONS;
-        if (RandomUtils.nextBoolean(random, 0.3)) tag = ZItemTags.UNCOMMON_WEAPONS;
-      }
-      return ItemGenerator.fromTag(slot, selector, tag).generate(random, difficulty);
-    }
-
-    var armorSelector =
-        new ItemSelector.RecursiveChanceBased(
-            (delta) -> LerpUtils.lerp(ARMOR_SELECT_CHANCE, delta));
-
-    var selector =
-        switch (slot) {
-          case HEAD, CHEST, LEGS, FEET -> armorSelector;
-          case OFFHAND -> extraSelector;
-          default -> null;
-        };
-
-    if (selector == null) return null;
-
-    return ItemGenerator.fromTag(slot, selector, ZItemTags.fromSlot(slot))
-        .generate(random, difficulty);
+    return switch (slot) {
+      case MAINHAND -> getWeapon(random, difficulty);
+      case HEAD, CHEST, LEGS, FEET, OFFHAND ->
+          selectItemFromTag(random, difficulty, ZItemTags.fromSlot(slot), slot);
+      default -> null;
+    };
   }
 
   public static Optional<Item> getEquipmentForSlot(

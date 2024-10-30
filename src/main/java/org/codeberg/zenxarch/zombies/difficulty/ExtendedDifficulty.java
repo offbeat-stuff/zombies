@@ -46,7 +46,8 @@ public class ExtendedDifficulty extends LocalDifficulty {
   }
 
   public int getMaxZombies() {
-    return (int) MathHelper.clampedLerp(25.0, 50.0 * this.getGlobalDifficulty().ordinal(), difficulty);
+    return (int)
+        MathHelper.clampedLerp(25.0, 50.0 * this.getGlobalDifficulty().ordinal(), difficulty);
   }
 
   public boolean shouldEnchantEquipment() {

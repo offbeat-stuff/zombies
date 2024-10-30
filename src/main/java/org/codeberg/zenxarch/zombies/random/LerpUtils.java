@@ -26,26 +26,15 @@ public abstract class LerpUtils {
     return MathHelper.clamp(MathHelper.getLerpProgress(value, min, max), 0.0, 1.0);
   }
 
-  /**
-   * @return the index to choose from list of size {@code n}
-   */
-  public static int lerpWeighted(Random random, double start, double end, int n) {
-    if (n == 0) return -1;
-    final var sum = n * (start + end) * 0.5;
-    final var inc = (end - start) / (n - 1);
-    var acc = start;
-    var rand = random.nextDouble() * sum;
-    for (int i = 0; i < (n - 1); i++) {
-      rand -= acc;
-      if (rand < 0) return i;
-      acc += inc;
-    }
-    return n - 1;
+  public static int recursiveSelect(Random random, double power, double chance, int size) {
+    if (size == 0) return -1;
+    for (int i = 0; i < size; i++) if (random.nextDouble() * power < chance) return i;
+    return 0;
   }
 
-  public static <T> T lerpWeighted(Random random, double start, double end, List<T> list) {
-    if (list.isEmpty()) return null;
-    var n = lerpWeighted(random, start, end, list.size());
-    return list.get(n);
+  public static <T> T recursiveSelect(Random random, double power, double chance, List<T> list) {
+    var index = recursiveSelect(random, power, chance, list.size());
+    if (index == -1) return null;
+    return list.get(index);
   }
 }
