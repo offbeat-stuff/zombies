@@ -19,7 +19,7 @@ public interface ZEnchantmentProviders {
     registry.register(
         ZOMBIE_SPAWN_EQUIPMENT,
         new ByCostWithDifficultyEnchantmentProvider(
-            registryEntryLookup.getOrThrow(EnchantmentTags.ON_MOB_SPAWN_EQUIPMENT), 1, 25));
+            registryEntryLookup.getOrThrow(EnchantmentTags.ON_MOB_SPAWN_EQUIPMENT), 5, 30));
   }
 
   static RegistryKey<EnchantmentProvider> of(String path) {

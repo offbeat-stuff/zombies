@@ -38,16 +38,16 @@ public final class ZItemTags extends FabricTagProvider.ItemTagProvider {
         .addTag(COMMON_WEAPONS)
         .addTag(UNCOMMON_WEAPONS)
         .addTag(RARE_WEAPONS);
-    getOrCreateTagBuilder(COMMON_WEAPONS).addTag(ItemTags.SWORDS);
-    getOrCreateTagBuilder(UNCOMMON_WEAPONS).addTag(ItemTags.AXES);
+    getOrCreateTagBuilder(COMMON_WEAPONS).addOptionalTag(ItemTags.SWORDS);
+    getOrCreateTagBuilder(UNCOMMON_WEAPONS).addOptionalTag(ItemTags.AXES);
     getOrCreateTagBuilder(RARE_WEAPONS)
-        .addTag(ItemTags.MACE_ENCHANTABLE)
-        .addTag(ItemTags.TRIDENT_ENCHANTABLE);
+        .addOptionalTag(ItemTags.MACE_ENCHANTABLE)
+        .addOptionalTag(ItemTags.TRIDENT_ENCHANTABLE);
     getOrCreateTagBuilder(EXTRA_ITEMS).add(Items.SHIELD);
-    getOrCreateTagBuilder(HEAD_ARMOR).addTag(ItemTags.HEAD_ARMOR_ENCHANTABLE);
-    getOrCreateTagBuilder(CHEST_ARMOR).addTag(ItemTags.CHEST_ARMOR_ENCHANTABLE);
-    getOrCreateTagBuilder(LEG_ARMOR).addTag(ItemTags.LEG_ARMOR_ENCHANTABLE);
-    getOrCreateTagBuilder(FEET_ARMOR).addTag(ItemTags.FOOT_ARMOR_ENCHANTABLE);
+    getOrCreateTagBuilder(HEAD_ARMOR).addOptionalTag(ItemTags.HEAD_ARMOR_ENCHANTABLE);
+    getOrCreateTagBuilder(CHEST_ARMOR).addOptionalTag(ItemTags.CHEST_ARMOR_ENCHANTABLE);
+    getOrCreateTagBuilder(LEG_ARMOR).addOptionalTag(ItemTags.LEG_ARMOR_ENCHANTABLE);
+    getOrCreateTagBuilder(FEET_ARMOR).addOptionalTag(ItemTags.FOOT_ARMOR_ENCHANTABLE);
   }
 
   public static TagKey<Item> fromSlot(EquipmentSlot slot) {

@@ -1,13 +1,10 @@
 package org.codeberg.zenxarch.zombies.difficulty;
 
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.attribute.EntityAttributes;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ArmorItem;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.predicate.entity.EntityPredicates;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkSectionPos;
@@ -15,7 +12,6 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.World;
 import org.codeberg.zenxarch.zombies.data.ItemAttributeUtils;
-import org.codeberg.zenxarch.zombies.datagen.ZItemTags;
 
 public abstract class DifficultyCalculations {
   private static final int TICKS_PER_HOUR = 60 * 60 * 20;
@@ -36,6 +32,7 @@ public abstract class DifficultyCalculations {
     }
 
     var playerScore = players == 0 ? 0.0 : scoreSum / players;
+    playerScore = MathHelper.clamp((playerScore - 4.0) / 40.0, 0.0, 1.0);
     var timeFactor =
         (mapTimeFactor(world.getDifficulty(), days) + mapTimeFactor(world.getDifficulty(), time))
             * 0.5;
@@ -69,50 +66,29 @@ public abstract class DifficultyCalculations {
     return inhibitedHours * 1.5 * (1.0 + moonSize);
   }
 
-  private static double getPlayerScore(PlayerEntity player) {
+  private static double getPlayerScore(ServerPlayerEntity player) {
     var totalScore =
         player.getInventory().main.stream()
-            .filter(f -> f.isIn(ZItemTags.WEAPONS))
-            .map(ItemStack::getItem)
-            .mapToDouble(DifficultyCalculations::score)
+            .mapToDouble(DifficultyCalculations::scoreWeapon)
             .max()
             .orElse(0.0);
 
-    for (var slot : EquipmentSlot.values()) {
-      if (!slot.getType().equals(EquipmentSlot.Type.HUMANOID_ARMOR)) continue;
-      var stack = player.getEquippedStack(slot);
-      if (!stack.isIn(ZItemTags.fromSlot(slot))) continue;
-      totalScore += score(stack.getItem());
-    }
+    totalScore +=
+        player.getAttributeValue(EntityAttributes.GENERIC_ARMOR)
+            + player.getAttributeValue(EntityAttributes.GENERIC_ARMOR_TOUGHNESS)
+            + player.getAttributeValue(EntityAttributes.GENERIC_KNOCKBACK_RESISTANCE);
     return totalScore;
   }
 
-  private static double scoreWeapon(Item item) {
+  private static double scoreWeapon(ItemStack stack) {
     var attackDamage =
         ItemAttributeUtils.getAttributeValue(
-            EntityType.PLAYER, item, EntityAttributes.GENERIC_ATTACK_DAMAGE);
+            EntityType.PLAYER, stack, EntityAttributes.GENERIC_ATTACK_DAMAGE);
 
     var attackSpeed =
         ItemAttributeUtils.getAttributeValue(
-            EntityType.PLAYER, item, EntityAttributes.GENERIC_ATTACK_SPEED);
+            EntityType.PLAYER, stack, EntityAttributes.GENERIC_ATTACK_SPEED);
 
     return attackDamage * attackSpeed;
-  }
-
-  private static double scoreArmor(ArmorItem armor) {
-    var slot = armor.getSlotType();
-    return ItemAttributeUtils.getAttributeValue(
-            EntityType.PLAYER, armor, EntityAttributes.GENERIC_ARMOR, slot)
-        + ItemAttributeUtils.getAttributeValue(
-            EntityType.PLAYER, armor, EntityAttributes.GENERIC_ARMOR_TOUGHNESS, slot)
-        + ItemAttributeUtils.getAttributeValue(
-            EntityType.PLAYER, armor, EntityAttributes.GENERIC_KNOCKBACK_RESISTANCE, slot);
-  }
-
-  private static double score(Item item) {
-    return switch (item) {
-      case ArmorItem armor -> scoreArmor(armor);
-      default -> scoreWeapon(item);
-    };
   }
 }

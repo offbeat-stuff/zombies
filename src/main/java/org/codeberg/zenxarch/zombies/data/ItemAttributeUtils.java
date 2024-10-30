@@ -12,6 +12,7 @@ import net.minecraft.entity.attribute.DefaultAttributeRegistry;
 import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributeInstance;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.registry.entry.RegistryEntry;
 
 public abstract class ItemAttributeUtils {
@@ -52,7 +53,31 @@ public abstract class ItemAttributeUtils {
 
   public static double getAttributeValue(
       EntityType<? extends LivingEntity> type,
+      ItemStack item,
+      RegistryEntry<EntityAttribute> attribute,
+      EquipmentSlot slot) {
+    var instance = getAttributeInstance(type, attribute);
+    item.applyAttributeModifiers(
+        slot,
+        (attributeEntry, modifier) -> {
+          if (attributeEntry.equals(attribute)) {
+            instance.removeModifier(modifier);
+            instance.addTemporaryModifier(modifier);
+          }
+        });
+    return instance.getValue();
+  }
+
+  public static double getAttributeValue(
+      EntityType<? extends LivingEntity> type,
       Item item,
+      RegistryEntry<EntityAttribute> attribute) {
+    return getAttributeValue(type, item, attribute, EquipmentSlot.MAINHAND);
+  }
+
+  public static double getAttributeValue(
+      EntityType<? extends LivingEntity> type,
+      ItemStack item,
       RegistryEntry<EntityAttribute> attribute) {
     return getAttributeValue(type, item, attribute, EquipmentSlot.MAINHAND);
   }

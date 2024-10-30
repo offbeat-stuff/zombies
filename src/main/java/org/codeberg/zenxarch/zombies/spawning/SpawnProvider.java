@@ -59,8 +59,8 @@ public class SpawnProvider {
   }
 
   private int getSpawnTries() {
-    if (success == 0) return 25;
-    return MathHelper.clamp(posChecks / success, 25, 100);
+    if (success == 0) return 20;
+    return MathHelper.clamp(posChecks / success, 5, 20);
   }
 
   public Optional<BlockPos> giveSpawnPositions(
