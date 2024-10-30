@@ -40,4 +40,4 @@ replay_*.log
 *.jfr
 
 .factorypath
-*/.cache/
+.cache/
