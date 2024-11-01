@@ -1,6 +1,5 @@
 package org.codeberg.zenxarch.zombies.difficulty;
 
-import java.util.List;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
@@ -8,7 +7,6 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.LocalDifficulty;
-import org.codeberg.zenxarch.zombies.random.LerpUtils;
 import org.codeberg.zenxarch.zombies.random.RandomUtils;
 import org.jetbrains.annotations.Unmodifiable;
 
@@ -16,7 +14,6 @@ import org.jetbrains.annotations.Unmodifiable;
 public class ExtendedDifficulty extends LocalDifficulty {
 
   private static final Random random = Random.create();
-  private static final List<Double> enchantChance = List.of(0.0, 0.0, 0.025, 0.05);
 
   private final double difficulty;
 
@@ -51,7 +48,7 @@ public class ExtendedDifficulty extends LocalDifficulty {
   }
 
   public boolean shouldEnchantEquipment() {
-    return RandomUtils.nextBoolean(random, LerpUtils.lerp(enchantChance, this.difficulty));
+    return RandomUtils.nextBoolean(random, MathHelper.lerp(this.difficulty, -0.5, 0.5));
   }
 
   public boolean shouldSpawnWithEquipment(EquipmentSlot slot) {

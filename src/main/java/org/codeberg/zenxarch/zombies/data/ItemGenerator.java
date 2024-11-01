@@ -10,6 +10,7 @@ import net.minecraft.registry.Registries;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Rarity;
+import net.minecraft.util.math.MathHelper;
 
 public abstract class ItemGenerator {
   public static List<Item> getList(TagKey<Item> tag, EquipmentSlot slot) {
@@ -27,7 +28,9 @@ public abstract class ItemGenerator {
   }
 
   private static double zombieScoreWeapon(Item item) {
-    return ItemAttributeUtils.getZombieAttribute(item, EntityAttributes.GENERIC_ATTACK_DAMAGE);
+    return ItemAttributeUtils.getZombieAttribute(item, EntityAttributes.GENERIC_ATTACK_DAMAGE)
+        * MathHelper.square(
+            ItemAttributeUtils.getZombieAttribute(item, EntityAttributes.GENERIC_ATTACK_SPEED));
   }
 
   private static double zombieScoreArmor(ArmorItem armor) {
