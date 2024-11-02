@@ -8,7 +8,6 @@ import java.util.stream.Stream;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.mob.ZombieEntity;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.network.packet.s2c.play.OverlayMessageS2CPacket;
 import net.minecraft.predicate.entity.EntityPredicates;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -24,12 +23,10 @@ import org.codeberg.zenxarch.zombies.difficulty.ExtendedZombieEntity;
 
 public class ZombieApocalypse implements SpecialSpawner {
   private ServerWorld world;
-  private SpawnProvider spawnProvider;
   private Map<BlockPos, Integer> zombieCount;
 
   public ZombieApocalypse(ServerWorld world) {
     this.world = world;
-    this.spawnProvider = new SpawnProvider();
   }
 
   private boolean canSpawnAtPosSpace(ZombieEntity zombie) {
@@ -53,8 +50,7 @@ public class ZombieApocalypse implements SpecialSpawner {
 
     if (currentZombies >= targetZombies) return 0;
 
-    return spawnProvider
-        .giveSpawnPositions(world, playerPos, targetZombies, currentZombies)
+    return SpawnProvider.giveSpawnPositions(world, playerPos)
         .map(u -> new ExtendedZombieEntity(this.world, u))
         .filter(this::canSpawnAtPosSpace)
         .map(this::spawnZombie)
@@ -86,8 +82,7 @@ public class ZombieApocalypse implements SpecialSpawner {
       var pos = player.getBlockPos();
       var difficulty = (int) (new ExtendedDifficulty(world, pos).getClampedLocalDifficulty() * 100);
       var zcount = zombieCount.getOrDefault(pos, 0);
-      player.networkHandler.sendPacket(
-          new OverlayMessageS2CPacket(Text.of(difficulty + " : " + zcount)));
+      player.sendMessage(Text.of(difficulty + " : " + zcount), true);
     }
   }
 

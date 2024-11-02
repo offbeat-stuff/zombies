@@ -7,6 +7,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.LocalDifficulty;
+import org.codeberg.zenxarch.zombies.random.RandomRange;
 import org.codeberg.zenxarch.zombies.random.RandomUtils;
 import org.jetbrains.annotations.Unmodifiable;
 
@@ -47,8 +48,10 @@ public class ExtendedDifficulty extends LocalDifficulty {
         MathHelper.clampedLerp(25.0, 50.0 * this.getGlobalDifficulty().ordinal(), difficulty);
   }
 
+  private static final RandomRange shouldEnchant = new RandomRange(-0.5, 0.5);
+
   public boolean shouldEnchantEquipment() {
-    return RandomUtils.nextBoolean(random, MathHelper.lerp(this.difficulty, -0.5, 0.5));
+    return shouldEnchant.nextBoolean(random, difficulty);
   }
 
   public boolean shouldSpawnWithEquipment(EquipmentSlot slot) {
