@@ -6,6 +6,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.predicate.entity.EntityPredicates;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.stat.Stats;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkSectionPos;
 import net.minecraft.util.math.MathHelper;
@@ -23,12 +24,15 @@ public abstract class DifficultyCalculations {
     var playerPredicate =
         EntityPredicates.EXCEPT_SPECTATOR.and(EntityPredicates.VALID_LIVING_ENTITY).negate();
     var scoreSum = 0.0;
+    var zombieKills = 0;
     var players = 0;
     for (var player : world.getPlayers()) {
       if (playerPredicate.test(player)) continue;
       if (player.squaredDistanceTo(pos.toCenterPos()) > 128.0 * 128.0) continue;
       players++;
       scoreSum += getPlayerScore(player);
+      zombieKills +=
+          player.getStatHandler().getStat(Stats.KILLED.getOrCreateStat(EntityType.ZOMBIE));
     }
 
     var playerScore = players == 0 ? 0.0 : scoreSum / players;
@@ -37,14 +41,20 @@ public abstract class DifficultyCalculations {
         (mapTimeFactor(world.getDifficulty(), days) + mapTimeFactor(world.getDifficulty(), time))
             * 0.5;
 
-    return (timeFactor * playerScore * 0.25) + (playerScore * 0.75);
+    var killScore = players == 0 ? 0.0 : zombieKills / players;
+    killScore = MathHelper.clamp(killScore / 2500, 0.0, 1.0);
+
+    return (timeFactor * 0.1)
+        + (timeFactor * playerScore * 0.2)
+        + (playerScore * 0.5)
+        + (killScore * 0.2);
   }
 
   private static double mapTimeFactor(Difficulty difficulty, double timeFactor) {
     return switch (difficulty) {
       case PEACEFUL -> 0.0;
-      case EASY -> MathHelper.clampedMap(timeFactor, 5.0, 500.0, 0.0, 1.0);
-      case NORMAL -> MathHelper.clampedMap(timeFactor, 2.0, 250.0, 0.0, 1.0);
+      case EASY -> MathHelper.clampedMap(timeFactor, 5.0, 250.0, 0.0, 1.0);
+      case NORMAL -> MathHelper.clampedMap(timeFactor, 2.0, 150.0, 0.0, 1.0);
       case HARD -> MathHelper.clampedMap(timeFactor, 0.0, 100.0, 0.0, 1.0);
     };
   }
