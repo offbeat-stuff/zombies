@@ -62,7 +62,13 @@ public class ExtendedZombieEntity extends ZombieEntity {
       if (!this.getEquippedStack(slot).isEmpty()) continue;
 
       var equipment = Equipment.getEquipmentForSlot(random, difficulty, slot);
-      equipment.map(Item::getDefaultStack).ifPresent(s -> this.equipStack(slot, s));
+      equipment
+          .map(Item::getDefaultStack)
+          .ifPresent(
+              s -> {
+                this.equipStack(slot, s);
+                this.setEquipmentDropChance(slot, 0.00075F);
+              });
     }
   }
 
