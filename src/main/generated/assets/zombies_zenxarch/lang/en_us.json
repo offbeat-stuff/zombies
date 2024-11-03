@@ -1,0 +1,4 @@
+{
+  "gamerule.maxNumberOfZombiesAdjustedByDifficulty": "Maximum (* difficulty) numbers of zombies to spawn",
+  "gamerule.startingNumberOfZombies": "Minimum numbers of zombies to spawn"
+}

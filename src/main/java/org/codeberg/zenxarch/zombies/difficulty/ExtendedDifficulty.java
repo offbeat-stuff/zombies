@@ -7,6 +7,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.LocalDifficulty;
+import org.codeberg.zenxarch.zombies.Zombies;
 import org.codeberg.zenxarch.zombies.random.RandomRange;
 import org.codeberg.zenxarch.zombies.random.RandomUtils;
 import org.jetbrains.annotations.Unmodifiable;
@@ -17,10 +18,17 @@ public class ExtendedDifficulty extends LocalDifficulty {
   private static final Random random = Random.create();
 
   private final double difficulty;
+  private final int maxZombies;
 
   public ExtendedDifficulty(ServerWorld world, BlockPos pos) {
     super(world.getDifficulty(), 0, 0, 0);
     this.difficulty = DifficultyCalculations.calculateDifficulty(world, pos);
+    this.maxZombies =
+        (int)
+            MathHelper.clampedLerp(
+                world.getGameRules().getInt(Zombies.BASE_ZOMBIES),
+                world.getGameRules().getInt(Zombies.MAX_ZOMBIES) * world.getDifficulty().ordinal(),
+                this.difficulty);
   }
 
   @Override
@@ -44,8 +52,7 @@ public class ExtendedDifficulty extends LocalDifficulty {
   }
 
   public int getMaxZombies() {
-    return (int)
-        MathHelper.clampedLerp(25.0, 50.0 * this.getGlobalDifficulty().ordinal(), difficulty);
+    return this.maxZombies;
   }
 
   private static final RandomRange shouldEnchant = new RandomRange(-0.5, 0.5);
