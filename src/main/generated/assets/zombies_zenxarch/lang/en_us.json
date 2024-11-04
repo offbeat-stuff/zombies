@@ -1,4 +1,8 @@
 {
+  "gamerule.fillZombieCapOverSeconds": "Fill zombie cap over seconds",
+  "gamerule.fillZombieCapOverSeconds.description": "The mod tries to spawn the target amount of zombies (difficulty dependent) over this many seconds assuming 1% of positions are spawnable",
   "gamerule.maxNumberOfZombiesAdjustedByDifficulty": "Maximum (* difficulty) numbers of zombies to spawn",
-  "gamerule.startingNumberOfZombies": "Minimum numbers of zombies to spawn"
+  "gamerule.maxNumberOfZombiesAdjustedByDifficulty.description": "This number * globalDifficulty (easy -> 1.0,normal -> 2.0,hard -> 3.0) is the maximum amount of zombies to spawned around a player",
+  "gamerule.startingNumberOfZombies": "Minimum number of zombies to spawn",
+  "gamerule.startingNumberOfZombies.description": "Zombies mod tries to spawn at least this many zombies (around a player)"
 }
