@@ -4,6 +4,7 @@ import java.util.Optional;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.random.Random;
+import org.codeberg.zenxarch.zombies.Zombies;
 import org.codeberg.zenxarch.zombies.random.IntRange;
 
 public abstract class SpawnProvider {
@@ -40,8 +41,11 @@ public abstract class SpawnProvider {
     return Optional.empty();
   }
 
-  public static Optional<BlockPos> giveSpawnPositions(ServerWorld world, BlockPos centerPos) {
-    for (var pos : BlockPos.iterateRandomly(random, 20, centerPos, SPAWN_RANGE)) {
+  public static Optional<BlockPos> giveSpawnPositions(
+      ServerWorld world, BlockPos centerPos, int toSpawn) {
+    var spawnTries = (toSpawn * 100) / (world.getGameRules().getInt(Zombies.SPAWN_SPEED) * 20);
+    spawnTries = Math.max(spawnTries, 5);
+    for (var pos : BlockPos.iterateRandomly(random, spawnTries, centerPos, SPAWN_RANGE)) {
       var range = SpawnUtils.getBounds(world, pos);
       var otherRange = IntRange.around(centerPos.getY(), SPAWN_RANGE);
 

@@ -23,5 +23,6 @@ public class ZEnglishLangProvider extends FabricLanguageProvider {
     translationBuilder.add(
         Zombies.MAX_ZOMBIES.getTranslationKey(),
         "Maximum (* difficulty) numbers of zombies to spawn");
+    translationBuilder.add(Zombies.SPAWN_SPEED.getTranslationKey(), "Fill zombie cap over seconds");
   }
 }

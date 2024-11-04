@@ -6,7 +6,7 @@ import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.item.ItemStack;
-import net.minecraft.predicate.entity.EntityPredicates;
+import net.minecraft.item.Items;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.stat.Stats;
@@ -16,6 +16,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.World;
 import org.codeberg.zenxarch.zombies.data.ItemAttributeUtils;
+import org.codeberg.zenxarch.zombies.spawning.ZombieApocalypse;
 
 public abstract class DifficultyCalculations {
   private static final int TICKS_PER_HOUR = 60 * 60 * 20;
@@ -24,13 +25,10 @@ public abstract class DifficultyCalculations {
   public static double calculateDifficulty(ServerWorld world, BlockPos pos) {
     var days = getDays(world, pos);
     var time = getTimeFactor(world, pos);
-    var playerPredicate =
-        EntityPredicates.EXCEPT_SPECTATOR.and(EntityPredicates.VALID_LIVING_ENTITY).negate();
     var scoreSum = 0.0;
     var zombieKills = 0;
     var players = 0;
-    for (var player : world.getPlayers()) {
-      if (playerPredicate.test(player)) continue;
+    for (var player : ZombieApocalypse.players(world)) {
       if (player.squaredDistanceTo(pos.toCenterPos()) > 128.0 * 128.0) continue;
       players++;
       scoreSum += getPlayerScore(player);
@@ -112,14 +110,26 @@ public abstract class DifficultyCalculations {
         EntityType.PLAYER, stack, EntityAttributes.GENERIC_ATTACK_SPEED);
   }
 
+  private static double getDamagePerSecond(ItemStack stack) {
+    return getAttackDamage(stack) * getAttackSpeed(stack);
+  }
+
   private static double scoreWeaponSpeed(ItemStack stack) {
-    var score = getAttackDamage(stack) * getAttackSpeed(stack);
-    return MathHelper.clamp(score / (8.0 * 1.6), 0.0, 1.0);
+    return MathHelper.clampedMap(
+        getDamagePerSecond(stack),
+        getDamagePerSecond(ItemStack.EMPTY),
+        getDamagePerSecond(Items.NETHERITE_SWORD.getDefaultStack()),
+        0.0,
+        1.0);
   }
 
   private static double scoreWeaponDamage(ItemStack stack) {
-    var score = getAttackDamage(stack);
-    return MathHelper.clamp(score / 10.0, 0.0, 1.0);
+    return MathHelper.clampedMap(
+        getAttackDamage(stack),
+        getAttackDamage(ItemStack.EMPTY),
+        getAttackDamage(Items.NETHERITE_AXE.getDefaultStack()),
+        0.0,
+        1.0);
   }
 
   private static double scoreFood(ItemStack stack) {

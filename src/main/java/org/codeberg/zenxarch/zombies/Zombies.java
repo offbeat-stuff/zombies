@@ -25,10 +25,13 @@ public class Zombies implements ModInitializer {
   }
 
   public static final GameRules.Key<GameRules.IntRule> BASE_ZOMBIES =
-      newGameRule("startingNumberOfZombies", 25);
+      newGameRule("startingNumberOfZombies", 10);
 
   public static final GameRules.Key<GameRules.IntRule> MAX_ZOMBIES =
       newGameRule("maxNumberOfZombiesAdjustedByDifficulty", 50);
+
+  public static final GameRules.Key<GameRules.IntRule> SPAWN_SPEED =
+      newGameRule("fillZombieCapOverSeconds", 30);
 
   public static Identifier id(String path) {
     return Identifier.of("zenxarch", path);

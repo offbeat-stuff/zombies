@@ -45,12 +45,11 @@ public class ZombieApocalypse implements SpecialSpawner {
     var difficulty = new ExtendedDifficulty(this.world, playerPos);
     if (difficulty.isDisabled()) return 0;
 
-    var targetZombies = difficulty.getMaxZombies();
-    var currentZombies = this.zombieCount.getOrDefault(playerPos, 0);
+    var toSpawn = difficulty.getMaxZombies() - this.zombieCount.getOrDefault(playerPos, 0);
 
-    if (currentZombies >= targetZombies) return 0;
+    if (toSpawn <= 0) return 0;
 
-    return SpawnProvider.giveSpawnPositions(world, playerPos)
+    return SpawnProvider.giveSpawnPositions(world, playerPos, toSpawn)
         .map(u -> new ExtendedZombieEntity(this.world, u))
         .filter(this::canSpawnAtPosSpace)
         .map(this::spawnZombie)
@@ -68,17 +67,17 @@ public class ZombieApocalypse implements SpecialSpawner {
     return result;
   }
 
-  private List<ServerPlayerEntity> players() {
-    return this.world.getPlayers(
+  public static List<ServerPlayerEntity> players(ServerWorld world) {
+    return world.getPlayers(
         EntityPredicates.VALID_LIVING_ENTITY.and(EntityPredicates.EXCEPT_SPECTATOR));
   }
 
   private Stream<BlockPos> spawnCenters() {
-    return players().stream().map(ServerPlayerEntity::getBlockPos);
+    return players(this.world).stream().map(ServerPlayerEntity::getBlockPos);
   }
 
   private void debugCheck(Map<BlockPos, Integer> zombieCount) {
-    for (var player : players()) {
+    for (var player : players(this.world)) {
       var pos = player.getBlockPos();
       var difficulty = (int) (new ExtendedDifficulty(world, pos).getClampedLocalDifficulty() * 100);
       var zcount = zombieCount.getOrDefault(pos, 0);
