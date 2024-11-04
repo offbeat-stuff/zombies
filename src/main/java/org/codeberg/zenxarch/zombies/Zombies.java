@@ -24,11 +24,7 @@ public class Zombies implements ModInitializer {
         name, ZOMBIES_GENERAL, GameRuleFactory.createIntRule(defaultValue));
   }
 
-  public static final GameRules.Key<GameRules.IntRule> BASE_ZOMBIES =
-      newGameRule("startingNumberOfZombies", 10);
-
-  public static final GameRules.Key<GameRules.IntRule> MAX_ZOMBIES =
-      newGameRule("maxNumberOfZombiesAdjustedByDifficulty", 50);
+  public static final GameRules.Key<GameRules.IntRule> MAX_ZOMBIES = newGameRule("maxZombies", 150);
 
   public static final GameRules.Key<GameRules.IntRule> SPAWN_SPEED =
       newGameRule("fillZombieCapOverSeconds", 30);

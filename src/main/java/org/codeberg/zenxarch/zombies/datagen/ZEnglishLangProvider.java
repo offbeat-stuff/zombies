@@ -21,15 +21,9 @@ public class ZEnglishLangProvider extends FabricLanguageProvider {
       WrapperLookup registryLookup, TranslationBuilder translationBuilder) {
     addGameruleTranslation(
         translationBuilder,
-        Zombies.BASE_ZOMBIES,
-        "Minimum number of zombies to spawn",
-        "Zombies mod tries to spawn at least this many zombies (around a player)");
-    addGameruleTranslation(
-        translationBuilder,
         Zombies.MAX_ZOMBIES,
-        "Maximum (* difficulty) numbers of zombies to spawn",
-        "This number * globalDifficulty (easy -> 1.0,normal -> 2.0,hard -> 3.0) is the maximum"
-            + " amount of zombies to spawned around a player");
+        "Maximum zombies per player",
+        "The max number of zombies that can spawn in a 80 block radius around player");
     addGameruleTranslation(
         translationBuilder,
         Zombies.SPAWN_SPEED,

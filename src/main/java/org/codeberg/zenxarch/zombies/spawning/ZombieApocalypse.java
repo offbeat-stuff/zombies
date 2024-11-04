@@ -43,11 +43,10 @@ public class ZombieApocalypse implements SpecialSpawner {
 
   public int spawnZombiesAt(BlockPos playerPos) {
     var difficulty = new ExtendedDifficulty(this.world, playerPos);
-    if (difficulty.isDisabled()) return 0;
 
-    var toSpawn = difficulty.getMaxZombies() - this.zombieCount.getOrDefault(playerPos, 0);
+    var toSpawn = difficulty.getMaxZombies();
 
-    if (toSpawn <= 0) return 0;
+    if (toSpawn <= this.zombieCount.getOrDefault(playerPos, 0)) return 0;
 
     return SpawnProvider.giveSpawnPositions(world, playerPos, toSpawn)
         .map(u -> new ExtendedZombieEntity(this.world, u))

@@ -76,7 +76,6 @@ public class ExtendedZombieEntity extends ZombieEntity {
   protected void updateEnchantments(
       ServerWorldAccess world, Random random, LocalDifficulty unused) {
     var difficulty = getExtentedDifficulty();
-    if (difficulty.isDisabled()) return;
 
     for (var slot : EquipmentSlot.values()) {
       var stack = this.getEquippedStack(slot);

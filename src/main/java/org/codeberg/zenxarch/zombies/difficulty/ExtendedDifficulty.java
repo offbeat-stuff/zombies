@@ -26,9 +26,7 @@ public class ExtendedDifficulty extends LocalDifficulty {
     this.maxZombies =
         (int)
             MathHelper.clampedLerp(
-                world.getGameRules().getInt(Zombies.BASE_ZOMBIES),
-                world.getGameRules().getInt(Zombies.MAX_ZOMBIES) * world.getDifficulty().ordinal(),
-                this.difficulty);
+                10.0, world.getGameRules().getInt(Zombies.MAX_ZOMBIES), this.difficulty);
   }
 
   @Override
@@ -66,9 +64,5 @@ public class ExtendedDifficulty extends LocalDifficulty {
       case MAINHAND, OFFHAND -> RandomUtils.nextBoolean(random, this.difficulty);
       default -> RandomUtils.nextBoolean(random, this.difficulty, 4);
     };
-  }
-
-  public boolean isDisabled() {
-    return this.difficulty <= 0.0;
   }
 }
