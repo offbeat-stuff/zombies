@@ -1,6 +1,12 @@
 package org.codeberg.zenxarch.zombies;
 
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.gamerule.v1.CustomGameRuleCategory;
+import net.fabricmc.fabric.api.gamerule.v1.GameRuleFactory;
+import net.fabricmc.fabric.api.gamerule.v1.GameRuleRegistry;
+import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
+import net.minecraft.world.GameRules;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,10 +16,22 @@ public class Zombies implements ModInitializer {
   // That way, it's clear which mod wrote info, warnings, and errors.
   public static final Logger LOGGER = LoggerFactory.getLogger("zombies_zenxarch");
 
-  // private static <T extends ReflectiveConfig> T config(String id, Class<T> clazz) {
-  //   return ReflectiveConfig.createToml(
-  //       FabricLoader.getInstance().getConfigDir(), "zenxarch_zombies", id, clazz);
-  // }
+  public static final CustomGameRuleCategory ZOMBIES_GENERAL =
+      new CustomGameRuleCategory(id("general"), Text.of("Zombies"));
+
+  public static GameRules.Key<GameRules.IntRule> newGameRule(String name, int defaultValue) {
+    return GameRuleRegistry.register(
+        name, ZOMBIES_GENERAL, GameRuleFactory.createIntRule(defaultValue));
+  }
+
+  public static final GameRules.Key<GameRules.IntRule> MAX_ZOMBIES = newGameRule("maxZombies", 150);
+
+  public static final GameRules.Key<GameRules.IntRule> SPAWN_SPEED =
+      newGameRule("fillZombieCapOverSeconds", 30);
+
+  public static Identifier id(String path) {
+    return Identifier.of("zenxarch", path);
+  }
 
   @Override
   public void onInitialize() {

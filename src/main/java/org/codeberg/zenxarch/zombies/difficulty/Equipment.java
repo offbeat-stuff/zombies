@@ -1,77 +1,61 @@
 package org.codeberg.zenxarch.zombies.difficulty;
 
-import java.util.List;
 import java.util.Optional;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.registry.tag.EnchantmentTags;
-import net.minecraft.registry.tag.ItemTags;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.ServerWorldAccess;
 import org.codeberg.zenxarch.zombies.data.ItemGenerator;
-import org.codeberg.zenxarch.zombies.data.ItemSelector;
-import org.codeberg.zenxarch.zombies.random.LerpUtils;
+import org.codeberg.zenxarch.zombies.datagen.ZEnchantmentProviders;
+import org.codeberg.zenxarch.zombies.datagen.ZItemTags;
 import org.codeberg.zenxarch.zombies.random.RandomUtils;
 
 public abstract class Equipment {
-  private static final List<Double> ARMOR_SELECT_CHANCE = List.of(0.9, 0.3);
+  private static Optional<Item> selectItemFromTag(
+      Random random, double difficulty, TagKey<Item> tag, EquipmentSlot slot) {
+    var list = ItemGenerator.getList(tag, slot);
+    return RandomUtils.sample(
+        list, () -> RandomUtils.logDist(random, 0.5 * difficulty, 0.75 / 6.0));
+  }
 
-  public static Item getItemForSlot(EquipmentSlot slot, Random random, double difficulty) {
-    var armorSelector =
-        new ItemSelector.RecursiveChanceBased(
-            (delta) -> LerpUtils.lerp(ARMOR_SELECT_CHANCE, delta));
-    var basicWeaponSelector =
-        new ItemSelector.WeightedSelector(
-            (d) -> LerpUtils.lerp(List.of(1000.0), 100.0), (d) -> 1.0);
-    var generator =
-        switch (slot) {
-          case HEAD -> ItemGenerator.fromTag(slot, armorSelector, ItemTags.HEAD_ARMOR_ENCHANTABLE);
-          case CHEST ->
-              ItemGenerator.fromTag(slot, armorSelector, ItemTags.CHEST_ARMOR_ENCHANTABLE);
-          case LEGS -> ItemGenerator.fromTag(slot, armorSelector, ItemTags.LEG_ARMOR_ENCHANTABLE);
-          case FEET -> ItemGenerator.fromTag(slot, armorSelector, ItemTags.FOOT_ARMOR_ENCHANTABLE);
-          case MAINHAND -> {
-            if (RandomUtils.nextBoolean(random, 0.01))
-              yield ItemGenerator.fromTag(
-                  slot,
-                  new ItemSelector.RecursiveChanceBased((d) -> 0.3),
-                  ItemTags.TRIDENT_ENCHANTABLE,
-                  ItemTags.MACE_ENCHANTABLE);
-            yield ItemGenerator.fromTag(
-                slot,
-                basicWeaponSelector,
-                RandomUtils.nextBoolean(random, 0.7) ? ItemTags.SWORDS : ItemTags.AXES);
-          }
-          case OFFHAND ->
-              ItemGenerator.fromItem(
-                  Items.SHIELD, slot, new ItemSelector.RecursiveChanceBased((d) -> 0.3));
-          default -> null;
-        };
-    if (generator == null) return null;
-    return generator.generate(random, difficulty);
+  private static Optional<Item> getWeapon(Random random, double difficulty) {
+    if (RandomUtils.nextBoolean(random, 0.001)) {
+      var list = ItemGenerator.getList(ZItemTags.RARE_WEAPONS, EquipmentSlot.MAINHAND);
+      return RandomUtils.sample(list, () -> random.nextDouble());
+    }
+    var tag =
+        RandomUtils.nextBoolean(random, 0.75)
+            ? ZItemTags.COMMON_WEAPONS
+            : ZItemTags.UNCOMMON_WEAPONS;
+    return selectItemFromTag(random, difficulty, tag, EquipmentSlot.MAINHAND);
+  }
+
+  public static Optional<Item> getItemForSlot(
+      EquipmentSlot slot, Random random, double difficulty) {
+    return switch (slot) {
+      case MAINHAND -> getWeapon(random, difficulty);
+      case HEAD, CHEST, LEGS, FEET, OFFHAND ->
+          selectItemFromTag(random, difficulty, ZItemTags.fromSlot(slot), slot);
+      default -> Optional.empty();
+    };
   }
 
   public static Optional<Item> getEquipmentForSlot(
-      Random random, double difficulty, EquipmentSlot slot) {
-    var item =
-        ExtendedDifficulty.shouldSpawnWithEquipment(slot, difficulty)
-            ? Equipment.getItemForSlot(slot, random, difficulty)
-            : null;
-    return Optional.ofNullable(item);
+      Random random, ExtendedDifficulty difficulty, EquipmentSlot slot) {
+    if (!difficulty.shouldSpawnWithEquipment(slot)) return Optional.empty();
+    return Equipment.getItemForSlot(slot, random, difficulty.getClampedLocalDifficulty());
   }
 
   public static ItemStack enchant(
-      ServerWorldAccess world, Random random, double difficulty, ItemStack input) {
-    var level = ExtendedDifficulty.getEnchantLevel(difficulty);
-    if (level == 0) return input;
+      ServerWorldAccess world, Random random, ExtendedDifficulty difficulty, ItemStack input) {
+    if (!difficulty.shouldEnchantEquipment()) return input;
 
-    var registry = world.getRegistryManager().get(RegistryKeys.ENCHANTMENT);
-    var enchantments =
-        registry.getOrCreateEntryList(EnchantmentTags.ON_MOB_SPAWN_EQUIPMENT).stream();
-    return EnchantmentHelper.enchant(random, input, level, enchantments);
+    var registryManager = world.getRegistryManager();
+    EnchantmentHelper.applyEnchantmentProvider(
+        input, registryManager, ZEnchantmentProviders.ZOMBIE_SPAWN_EQUIPMENT, difficulty, random);
+    return input;
   }
 }

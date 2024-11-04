@@ -8,7 +8,6 @@ import java.util.stream.Stream;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.mob.ZombieEntity;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.network.packet.s2c.play.OverlayMessageS2CPacket;
 import net.minecraft.predicate.entity.EntityPredicates;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -24,12 +23,10 @@ import org.codeberg.zenxarch.zombies.difficulty.ExtendedZombieEntity;
 
 public class ZombieApocalypse implements SpecialSpawner {
   private ServerWorld world;
-  private SpawnProvider spawnProvider;
   private Map<BlockPos, Integer> zombieCount;
 
   public ZombieApocalypse(ServerWorld world) {
     this.world = world;
-    this.spawnProvider = new SpawnProvider();
   }
 
   private boolean canSpawnAtPosSpace(ZombieEntity zombie) {
@@ -45,16 +42,13 @@ public class ZombieApocalypse implements SpecialSpawner {
   }
 
   public int spawnZombiesAt(BlockPos playerPos) {
-    var difficulty = ExtendedDifficulty.getDifficulty(this.world, playerPos);
-    if (difficulty <= 0.0) return 0;
+    var difficulty = new ExtendedDifficulty(this.world, playerPos);
 
-    var targetZombies = ExtendedDifficulty.getMaxZombies(difficulty);
-    var currentZombies = this.zombieCount.getOrDefault(playerPos, 0);
+    var toSpawn = difficulty.getMaxZombies();
 
-    if (currentZombies >= targetZombies) return 0;
+    if (toSpawn <= this.zombieCount.getOrDefault(playerPos, 0)) return 0;
 
-    return spawnProvider
-        .giveSpawnPositions(world, playerPos, targetZombies, currentZombies)
+    return SpawnProvider.giveSpawnPositions(world, playerPos, toSpawn)
         .map(u -> new ExtendedZombieEntity(this.world, u))
         .filter(this::canSpawnAtPosSpace)
         .map(this::spawnZombie)
@@ -72,22 +66,21 @@ public class ZombieApocalypse implements SpecialSpawner {
     return result;
   }
 
-  private List<ServerPlayerEntity> players() {
-    return this.world.getPlayers(
+  public static List<ServerPlayerEntity> players(ServerWorld world) {
+    return world.getPlayers(
         EntityPredicates.VALID_LIVING_ENTITY.and(EntityPredicates.EXCEPT_SPECTATOR));
   }
 
   private Stream<BlockPos> spawnCenters() {
-    return players().stream().map(ServerPlayerEntity::getBlockPos);
+    return players(this.world).stream().map(ServerPlayerEntity::getBlockPos);
   }
 
   private void debugCheck(Map<BlockPos, Integer> zombieCount) {
-    for (var player : players()) {
+    for (var player : players(this.world)) {
       var pos = player.getBlockPos();
-      var difficulty = (int) (ExtendedDifficulty.getDifficulty(world, pos) * 100);
+      var difficulty = (int) (new ExtendedDifficulty(world, pos).getClampedLocalDifficulty() * 100);
       var zcount = zombieCount.getOrDefault(pos, 0);
-      player.networkHandler.sendPacket(
-          new OverlayMessageS2CPacket(Text.of(difficulty + " : " + zcount)));
+      player.sendMessage(Text.of(difficulty + " : " + zcount), true);
     }
   }
 

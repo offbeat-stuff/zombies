@@ -17,6 +17,9 @@
 	"entrypoints": {
 		"main": [
 			"org.codeberg.zenxarch.zombies.Zombies"
+		],
+		"fabric-datagen": [
+			"org.codeberg.zenxarch.zombies.ZombiesDataGenerator"
 		]
 	},
 	"mixins": [
@@ -25,6 +28,7 @@
 	"depends": {
 		"fabricloader": ">=0.16.5",
 		"minecraft": "~1.21.1",
-		"java": ">=21"
+		"java": ">=21",
+		"fabric": "*"
 	}
 }

@@ -11,8 +11,8 @@ import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.DefaultAttributeRegistry;
 import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributeInstance;
-import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.registry.entry.RegistryEntry;
 
 public abstract class ItemAttributeUtils {
@@ -25,14 +25,12 @@ public abstract class ItemAttributeUtils {
     return container.getCustomInstance(attribute);
   }
 
-  @SuppressWarnings("deprecation")
   private static List<AttributeModifiersComponent.Entry> getAttributes(
       Item item, RegistryEntry<EntityAttribute> attribute, EquipmentSlot slot) {
     var attributes =
         item.getComponents()
             .getOrDefault(
                 DataComponentTypes.ATTRIBUTE_MODIFIERS, AttributeModifiersComponent.DEFAULT);
-    if (attributes.modifiers().isEmpty()) attributes = item.getAttributeModifiers();
     return attributes.modifiers().stream()
         .filter(f -> f.slot().matches(slot))
         .filter(f -> f.attribute().equals(attribute))
@@ -53,28 +51,43 @@ public abstract class ItemAttributeUtils {
     return instance.getValue();
   }
 
-  public static double getZombieAttackDamage(Item item) {
-    return ItemAttributeUtils.getAttributeValue(
-        EntityType.ZOMBIE, item, EntityAttributes.GENERIC_ATTACK_DAMAGE, EquipmentSlot.MAINHAND);
+  public static double getAttributeValue(
+      EntityType<? extends LivingEntity> type,
+      ItemStack item,
+      RegistryEntry<EntityAttribute> attribute,
+      EquipmentSlot slot) {
+    var instance = getAttributeInstance(type, attribute);
+    item.applyAttributeModifiers(
+        slot,
+        (attributeEntry, modifier) -> {
+          if (attributeEntry.equals(attribute)) {
+            instance.removeModifier(modifier);
+            instance.addTemporaryModifier(modifier);
+          }
+        });
+    return instance.getValue();
   }
 
-  public static double getZombieAttackSpeed(Item item) {
-    return ItemAttributeUtils.getAttributeValue(
-        EntityType.ZOMBIE, item, EntityAttributes.GENERIC_ATTACK_SPEED, EquipmentSlot.MAINHAND);
+  public static double getAttributeValue(
+      EntityType<? extends LivingEntity> type,
+      Item item,
+      RegistryEntry<EntityAttribute> attribute) {
+    return getAttributeValue(type, item, attribute, EquipmentSlot.MAINHAND);
   }
 
-  public static double getZombieArmor(Item item, EquipmentSlot slot) {
-    return ItemAttributeUtils.getAttributeValue(
-        EntityType.ZOMBIE, item, EntityAttributes.GENERIC_ARMOR, slot);
+  public static double getAttributeValue(
+      EntityType<? extends LivingEntity> type,
+      ItemStack item,
+      RegistryEntry<EntityAttribute> attribute) {
+    return getAttributeValue(type, item, attribute, EquipmentSlot.MAINHAND);
   }
 
-  public static double getZombieArmorToughness(Item item, EquipmentSlot slot) {
-    return ItemAttributeUtils.getAttributeValue(
-        EntityType.ZOMBIE, item, EntityAttributes.GENERIC_ARMOR_TOUGHNESS, slot);
+  public static double getZombieAttribute(Item item, RegistryEntry<EntityAttribute> attribute) {
+    return getAttributeValue(EntityType.ZOMBIE, item, attribute);
   }
 
-  public static double getZombieKnockbackResistance(Item item, EquipmentSlot slot) {
-    return ItemAttributeUtils.getAttributeValue(
-        EntityType.ZOMBIE, item, EntityAttributes.GENERIC_KNOCKBACK_RESISTANCE, slot);
+  public static double getZombieAttribute(
+      Item item, RegistryEntry<EntityAttribute> attribute, EquipmentSlot slot) {
+    return getAttributeValue(EntityType.ZOMBIE, item, attribute, slot);
   }
 }

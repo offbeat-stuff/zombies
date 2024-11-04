@@ -33,10 +33,10 @@ public class ExtendedZombieEntity extends ZombieEntity {
     return false;
   }
 
-  protected double getExtentedDifficulty() {
+  protected ExtendedDifficulty getExtentedDifficulty() {
     if (this.getWorld() instanceof ServerWorld serverWorld)
-      return ExtendedDifficulty.getDifficulty(serverWorld, this.getBlockPos());
-    return 0.0;
+      return new ExtendedDifficulty(serverWorld, this.getBlockPos());
+    return null;
   }
 
   public void initialize(ServerWorldAccess world) {
@@ -56,13 +56,19 @@ public class ExtendedZombieEntity extends ZombieEntity {
   @Override
   protected void initEquipment(Random random, LocalDifficulty unused) {
     var difficulty = getExtentedDifficulty();
-    if (difficulty <= 0.0) return;
+    if (!difficulty.isHarderThan(0.0f)) return;
 
     for (var slot : EquipmentSlot.values()) {
       if (!this.getEquippedStack(slot).isEmpty()) continue;
 
       var equipment = Equipment.getEquipmentForSlot(random, difficulty, slot);
-      equipment.map(Item::getDefaultStack).ifPresent(s -> this.equipStack(slot, s));
+      equipment
+          .map(Item::getDefaultStack)
+          .ifPresent(
+              s -> {
+                this.equipStack(slot, s);
+                this.setEquipmentDropChance(slot, 0.00075F);
+              });
     }
   }
 
@@ -70,7 +76,6 @@ public class ExtendedZombieEntity extends ZombieEntity {
   protected void updateEnchantments(
       ServerWorldAccess world, Random random, LocalDifficulty unused) {
     var difficulty = getExtentedDifficulty();
-    if (difficulty <= 0.0) return;
 
     for (var slot : EquipmentSlot.values()) {
       var stack = this.getEquippedStack(slot);
