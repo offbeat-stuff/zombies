@@ -1,5 +1,8 @@
 package org.codeberg.zenxarch.zombies.difficulty;
 
+import java.util.function.ToDoubleFunction;
+import java.util.stream.DoubleStream;
+import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.item.ItemStack;
@@ -36,7 +39,7 @@ public abstract class DifficultyCalculations {
     }
 
     var playerScore = players == 0 ? 0.0 : scoreSum / players;
-    playerScore = MathHelper.clamp((playerScore - 4.0) / 40.0, 0.0, 1.0);
+    playerScore = MathHelper.clamp(playerScore, 0.0, 1.0);
     var timeFactor =
         (mapTimeFactor(world.getDifficulty(), days) + mapTimeFactor(world.getDifficulty(), time))
             * 0.5;
@@ -76,29 +79,53 @@ public abstract class DifficultyCalculations {
     return inhibitedHours * 1.5 * (1.0 + moonSize);
   }
 
-  private static double getPlayerScore(ServerPlayerEntity player) {
-    var totalScore =
-        player.getInventory().main.stream()
-            .mapToDouble(DifficultyCalculations::scoreWeapon)
-            .max()
-            .orElse(0.0);
+  private static DoubleStream streamInventory(
+      ServerPlayerEntity player, ToDoubleFunction<ItemStack> func) {
+    return player.getInventory().main.stream().mapToDouble(func);
+  }
 
-    totalScore +=
+  private static double getPlayerScore(ServerPlayerEntity player) {
+
+    var weaponSpeedScore =
+        streamInventory(player, DifficultyCalculations::scoreWeaponSpeed).max().orElse(0.0);
+    var weaponDamageScore =
+        streamInventory(player, DifficultyCalculations::scoreWeaponDamage).max().orElse(0.0);
+    var foodScore = streamInventory(player, DifficultyCalculations::scoreFood).sum();
+    foodScore = MathHelper.clamp(foodScore, 0.0, 1.0);
+
+    var armor =
         player.getAttributeValue(EntityAttributes.GENERIC_ARMOR)
             + player.getAttributeValue(EntityAttributes.GENERIC_ARMOR_TOUGHNESS)
             + player.getAttributeValue(EntityAttributes.GENERIC_KNOCKBACK_RESISTANCE);
-    return totalScore;
+
+    armor = MathHelper.clamp(armor / (32.0), 0.0, 1.0);
+    return (armor + weaponSpeedScore + weaponDamageScore) * (0.75 / 3.0) + foodScore * 0.25;
   }
 
-  private static double scoreWeapon(ItemStack stack) {
-    var attackDamage =
-        ItemAttributeUtils.getAttributeValue(
-            EntityType.PLAYER, stack, EntityAttributes.GENERIC_ATTACK_DAMAGE);
+  private static double getAttackDamage(ItemStack stack) {
+    return ItemAttributeUtils.getAttributeValue(
+        EntityType.PLAYER, stack, EntityAttributes.GENERIC_ATTACK_DAMAGE);
+  }
 
-    var attackSpeed =
-        ItemAttributeUtils.getAttributeValue(
-            EntityType.PLAYER, stack, EntityAttributes.GENERIC_ATTACK_SPEED);
+  private static double getAttackSpeed(ItemStack stack) {
+    return ItemAttributeUtils.getAttributeValue(
+        EntityType.PLAYER, stack, EntityAttributes.GENERIC_ATTACK_SPEED);
+  }
 
-    return attackDamage * attackSpeed;
+  private static double scoreWeaponSpeed(ItemStack stack) {
+    var score = getAttackDamage(stack) * getAttackSpeed(stack);
+    return MathHelper.clamp(score / (8.0 * 1.6), 0.0, 1.0);
+  }
+
+  private static double scoreWeaponDamage(ItemStack stack) {
+    var score = getAttackDamage(stack);
+    return MathHelper.clamp(score / 10.0, 0.0, 1.0);
+  }
+
+  private static double scoreFood(ItemStack stack) {
+    var score = 0.0;
+    if (stack.getComponents().contains(DataComponentTypes.FOOD))
+      score = stack.get(DataComponentTypes.FOOD).nutrition() * stack.getCount();
+    return MathHelper.clamp(score / 400.0, 0.0, 1.0);
   }
 }
