@@ -1,4 +1,4 @@
-package org.codeberg.zenxarch.zombies.random;
+package org.codeberg.zenxarch.zombies.math;
 
 import java.util.List;
 import java.util.Optional;

@@ -3,7 +3,6 @@ package org.codeberg.zenxarch.zombies.mixin;
 import com.google.common.collect.ImmutableList;
 import java.util.List;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.world.spawner.SpecialSpawner;
 import org.codeberg.zenxarch.zombies.spawning.SpawnerProvider;
 import org.codeberg.zenxarch.zombies.spawning.ZombieApocalypse;
 import org.spongepowered.asm.mixin.Mixin;
@@ -14,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ServerWorld.class)
 public abstract class ServerWorldMixin implements SpawnerProvider {
-  @Unique private List<SpecialSpawner> zombieSpawners;
+  @Unique private List<ZombieApocalypse> zombieSpawners;
 
   @Inject(at = @At(value = "TAIL"), method = "<init>", cancellable = false)
   private void zenxarch$inject_init(CallbackInfo ci) {
@@ -29,12 +28,12 @@ public abstract class ServerWorldMixin implements SpawnerProvider {
   private void zenxarch$inject_tickSpawners(
       boolean spawnMonsters, boolean spawnAnimals, CallbackInfo ci) {
     for (var spawner : zombieSpawners) {
-      spawner.spawn((ServerWorld) (Object) this, spawnMonsters, spawnAnimals);
+      spawner.spawn((ServerWorld) (Object) this, spawnMonsters);
     }
   }
 
   @Override
-  public List<SpecialSpawner> getSpawners() {
+  public List<ZombieApocalypse> getSpawners() {
     return zombieSpawners;
   }
 }

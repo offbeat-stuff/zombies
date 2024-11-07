@@ -8,8 +8,8 @@ import net.minecraft.util.math.random.Random;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.LocalDifficulty;
 import org.codeberg.zenxarch.zombies.Zombies;
-import org.codeberg.zenxarch.zombies.random.RandomRange;
-import org.codeberg.zenxarch.zombies.random.RandomUtils;
+import org.codeberg.zenxarch.zombies.math.RandomRange;
+import org.codeberg.zenxarch.zombies.math.RandomUtils;
 import org.jetbrains.annotations.Unmodifiable;
 
 @Unmodifiable

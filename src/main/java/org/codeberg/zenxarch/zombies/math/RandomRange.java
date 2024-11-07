@@ -1,4 +1,4 @@
-package org.codeberg.zenxarch.zombies.random;
+package org.codeberg.zenxarch.zombies.math;
 
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.random.Random;

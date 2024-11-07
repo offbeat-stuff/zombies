@@ -16,12 +16,11 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
-import net.minecraft.world.spawner.SpecialSpawner;
 import org.codeberg.zenxarch.zombies.Zombies;
 import org.codeberg.zenxarch.zombies.difficulty.ExtendedDifficulty;
 import org.codeberg.zenxarch.zombies.difficulty.ExtendedZombieEntity;
 
-public class ZombieApocalypse implements SpecialSpawner {
+public class ZombieApocalypse {
   private ServerWorld world;
   private Map<BlockPos, Integer> zombieCount;
 
@@ -35,24 +34,23 @@ public class ZombieApocalypse implements SpecialSpawner {
         && !this.world.containsFluid(zombie.getBoundingBox());
   }
 
-  private int spawnZombie(ExtendedZombieEntity zombie) {
+  private void spawnZombie(ExtendedZombieEntity zombie) {
     zombie.initialize(this.world);
     this.world.spawnEntityAndPassengers(zombie);
-    return 1;
   }
 
-  public int spawnZombiesAt(BlockPos playerPos) {
+  public void spawnZombiesAt(BlockPos playerPos, List<BlockPos> positions) {
     var difficulty = new ExtendedDifficulty(this.world, playerPos);
-
     var toSpawn = difficulty.getMaxZombies();
+    if (toSpawn <= this.zombieCount.getOrDefault(playerPos, 0)) return;
 
-    if (toSpawn <= this.zombieCount.getOrDefault(playerPos, 0)) return 0;
+    var position = SpawnProvider.giveSpawnPositions(world, playerPos, positions, toSpawn);
+    if (!position.isPresent()) return;
 
-    return SpawnProvider.giveSpawnPositions(world, playerPos, toSpawn)
-        .map(u -> new ExtendedZombieEntity(this.world, u))
-        .filter(this::canSpawnAtPosSpace)
-        .map(this::spawnZombie)
-        .orElse(0);
+    var zombie = new ExtendedZombieEntity(world, position.get());
+    if (!canSpawnAtPosSpace(zombie)) return;
+
+    spawnZombie(zombie);
   }
 
   public Map<BlockPos, Integer> countZombies(List<BlockPos> positions) {
@@ -84,13 +82,12 @@ public class ZombieApocalypse implements SpecialSpawner {
     }
   }
 
-  @Override
-  public int spawn(ServerWorld world, boolean spawnMonsters, boolean spawnAnimals) {
+  public void spawn(ServerWorld world, boolean spawnMonsters) {
     this.world = world;
     if (!spawnMonsters
         || this.world.getDifficulty().equals(Difficulty.PEACEFUL)
         || !this.world.getGameRules().getBoolean(GameRules.DO_MOB_SPAWNING)) {
-      return 0;
+      return;
     }
 
     var positions = spawnCenters().toList();
@@ -98,7 +95,9 @@ public class ZombieApocalypse implements SpecialSpawner {
 
     debugCheck(this.zombieCount);
 
-    return positions.stream().mapToInt(this::spawnZombiesAt).sum();
+    for (var v : positions) {
+      spawnZombiesAt(v, positions);
+    }
   }
 
   public static boolean isApocalypticWorld(ServerWorld world) {

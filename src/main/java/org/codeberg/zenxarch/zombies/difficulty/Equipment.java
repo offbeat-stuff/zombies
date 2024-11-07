@@ -11,7 +11,7 @@ import net.minecraft.world.ServerWorldAccess;
 import org.codeberg.zenxarch.zombies.data.ItemGenerator;
 import org.codeberg.zenxarch.zombies.datagen.ZEnchantmentProviders;
 import org.codeberg.zenxarch.zombies.datagen.ZItemTags;
-import org.codeberg.zenxarch.zombies.random.RandomUtils;
+import org.codeberg.zenxarch.zombies.math.RandomUtils;
 
 public abstract class Equipment {
   private static Optional<Item> selectItemFromTag(

@@ -91,7 +91,7 @@ public class ExtendedZombieEntity extends ZombieEntity {
     if (!super.damage(source, amount)) return false;
     if (!(this.getWorld() instanceof ServerWorld serverWorld)) return false;
     if (!(serverWorld instanceof SpawnerProvider spawnerProvider)) return false;
-    for (var spawner : spawnerProvider.getSpawners()) spawner.spawn(serverWorld, true, true);
+    for (var spawner : spawnerProvider.getSpawners()) spawner.spawn(serverWorld, true);
     return true;
   }
 

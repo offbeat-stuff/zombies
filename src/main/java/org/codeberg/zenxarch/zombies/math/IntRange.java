@@ -1,16 +1,22 @@
-package org.codeberg.zenxarch.zombies.random;
+package org.codeberg.zenxarch.zombies.math;
 
 import com.google.common.collect.AbstractIterator;
 import net.minecraft.util.math.random.Random;
 
 public record IntRange(int min, int max) {
 
+  public static final IntRange INVALID = of(0, -1);
+
   public static IntRange of(int min, int max) {
     return new IntRange(min, max);
   }
 
+  public static IntRange of(int range) {
+    return new IntRange(-range, range);
+  }
+
   public static IntRange around(int center, int range) {
-    return new IntRange(center - range, center + range);
+    return of(range).shiftBy(center);
   }
 
   public boolean isValid() {
@@ -45,8 +51,7 @@ public record IntRange(int min, int max) {
 
           protected Integer computeNext() {
             if (value > max) return this.endOfData();
-            value++;
-            return value - 1;
+            return value++;
           }
         };
   }
