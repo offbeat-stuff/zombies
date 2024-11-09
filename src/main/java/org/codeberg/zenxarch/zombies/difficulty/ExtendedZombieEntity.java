@@ -31,7 +31,9 @@ public class ExtendedZombieEntity extends ZombieEntity {
 
   @Override
   protected boolean burnsInDaylight() {
-    return this.getWorld().getGameRules().getBoolean(ZombieGamerules.ZOMBIES_BURN_IN_DAYLIGHT);
+    if (this.getWorld() instanceof ServerWorld sw)
+      return sw.getGameRules().getBoolean(ZombieGamerules.ZOMBIES_BURN_IN_DAYLIGHT);
+    return false;
   }
 
   protected ExtendedDifficulty getExtentedDifficulty() {
@@ -88,18 +90,17 @@ public class ExtendedZombieEntity extends ZombieEntity {
   }
 
   @Override
-  public boolean damage(DamageSource source, float amount) {
-    if (!super.damage(source, amount)) return false;
-    if (!(this.getWorld() instanceof ServerWorld serverWorld)) return false;
-    if (!(serverWorld instanceof SpawnerProvider spawnerProvider)) return false;
-    for (var spawner : spawnerProvider.getSpawners()) spawner.spawn(serverWorld, true);
+  public boolean damage(ServerWorld world, DamageSource source, float amount) {
+    if (!super.damage(world, source, amount)) return false;
+    if (!(world instanceof SpawnerProvider spawnerProvider)) return false;
+    for (var spawner : spawnerProvider.getSpawners()) spawner.spawn(world, true);
     return true;
   }
 
   @Override
   protected void applyAttributeModifiers(float chanceMultiplier) {
     super.applyAttributeModifiers(chanceMultiplier);
-    var spawnAttribute = this.getAttributeInstance(EntityAttributes.ZOMBIE_SPAWN_REINFORCEMENTS);
+    var spawnAttribute = this.getAttributeInstance(EntityAttributes.SPAWN_REINFORCEMENTS);
     spawnAttribute.setBaseValue(0.0);
     spawnAttribute.removeModifier(Identifier.ofVanilla("leader_zombie_bonus"));
   }
