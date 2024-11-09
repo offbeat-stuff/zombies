@@ -18,5 +18,6 @@ public class Zombies implements ModInitializer {
   @Override
   public void onInitialize() {
     LOGGER.info("Hello Fabric world!");
+    ZombieGamerules.initialize();
   }
 }

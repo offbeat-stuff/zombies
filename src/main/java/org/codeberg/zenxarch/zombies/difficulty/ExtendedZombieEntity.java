@@ -15,6 +15,7 @@ import net.minecraft.util.math.random.Random;
 import net.minecraft.world.LocalDifficulty;
 import net.minecraft.world.ServerWorldAccess;
 import net.minecraft.world.World;
+import org.codeberg.zenxarch.zombies.ZombieGamerules;
 import org.codeberg.zenxarch.zombies.spawning.SpawnerProvider;
 import org.codeberg.zenxarch.zombies.spawning.ZombieApocalypse;
 
@@ -30,7 +31,7 @@ public class ExtendedZombieEntity extends ZombieEntity {
 
   @Override
   protected boolean burnsInDaylight() {
-    return false;
+    return this.getWorld().getGameRules().getBoolean(ZombieGamerules.ZOMBIES_BURN_IN_DAYLIGHT);
   }
 
   protected ExtendedDifficulty getExtentedDifficulty() {

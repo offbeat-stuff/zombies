@@ -9,6 +9,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.LightType;
+import org.codeberg.zenxarch.zombies.ZombieGamerules;
 import org.codeberg.zenxarch.zombies.math.IntRange;
 
 public abstract class SpawnUtils {
@@ -23,6 +24,9 @@ public abstract class SpawnUtils {
   }
 
   private static boolean doesPosAllowSpawning(ServerWorld world, BlockPos pos) {
+    if (world.getGameRules().getBoolean(ZombieGamerules.ZOMBIES_BURN_IN_DAYLIGHT)
+        && world.isDay()
+        && world.isSkyVisible(pos)) return false;
     if (world.getLightLevel(LightType.BLOCK, pos) > 0) return false;
     if (world.getBiome(pos).isIn(BiomeTags.WITHOUT_ZOMBIE_SIEGES)) return false;
     if (!SpawnRestriction.isSpawnPosAllowed(EntityType.ZOMBIE, world, pos)) return false;
