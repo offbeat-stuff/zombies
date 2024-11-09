@@ -14,8 +14,8 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Difficulty;
-import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
+import org.codeberg.zenxarch.zombies.ZombieGamerules;
 import org.codeberg.zenxarch.zombies.Zombies;
 import org.codeberg.zenxarch.zombies.difficulty.ExtendedDifficulty;
 import org.codeberg.zenxarch.zombies.difficulty.ExtendedZombieEntity;
@@ -86,7 +86,7 @@ public class ZombieApocalypse {
     this.world = world;
     if (!spawnMonsters
         || this.world.getDifficulty().equals(Difficulty.PEACEFUL)
-        || !this.world.getGameRules().getBoolean(GameRules.DO_MOB_SPAWNING)) {
+        || !this.world.getGameRules().getBoolean(ZombieGamerules.DO_ZOMBIE_SPAWNING)) {
       return;
     }
 

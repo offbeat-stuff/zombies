@@ -36,5 +36,8 @@ public class ZombieGamerules {
   public static final GameRules.Key<GameRules.BooleanRule> ZOMBIES_BURN_IN_DAYLIGHT =
       ZombieGamerules.newGameRule("zombiesBurnInDaylight", false);
 
+  public static final GameRules.Key<GameRules.BooleanRule> DO_ZOMBIE_SPAWNING =
+      ZombieGamerules.newGameRule("doZombieSpawning", true);
+
   public static void initialize() {}
 }

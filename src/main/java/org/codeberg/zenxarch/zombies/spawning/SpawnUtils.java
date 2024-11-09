@@ -14,6 +14,12 @@ import org.codeberg.zenxarch.zombies.math.IntRange;
 
 public abstract class SpawnUtils {
 
+  public static boolean burnsZombie(ServerWorld world, BlockPos pos) {
+    return world.getGameRules().getBoolean(ZombieGamerules.ZOMBIES_BURN_IN_DAYLIGHT)
+        && world.isDay()
+        && world.isSkyVisible(pos);
+  }
+
   public static IntRange getBounds(ServerWorld world, int x, int z) {
     return IntRange.of(
         world.getBottomY(), world.getTopY(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, x, z));
@@ -24,9 +30,7 @@ public abstract class SpawnUtils {
   }
 
   private static boolean doesPosAllowSpawning(ServerWorld world, BlockPos pos) {
-    if (world.getGameRules().getBoolean(ZombieGamerules.ZOMBIES_BURN_IN_DAYLIGHT)
-        && world.isDay()
-        && world.isSkyVisible(pos)) return false;
+    if (burnsZombie(world, pos)) return false;
     if (world.getLightLevel(LightType.BLOCK, pos) > 0) return false;
     if (world.getBiome(pos).isIn(BiomeTags.WITHOUT_ZOMBIE_SIEGES)) return false;
     if (!SpawnRestriction.isSpawnPosAllowed(EntityType.ZOMBIE, world, pos)) return false;

@@ -24,14 +24,6 @@ public abstract class ServerWorldMixin implements SpawnerProvider {
             : ImmutableList.of();
   }
 
-  @Inject(at = @At(value = "HEAD"), method = "tickSpawners")
-  private void zenxarch$inject_tickSpawners(
-      boolean spawnMonsters, boolean spawnAnimals, CallbackInfo ci) {
-    for (var spawner : zombieSpawners) {
-      spawner.spawn((ServerWorld) (Object) this, spawnMonsters);
-    }
-  }
-
   @Override
   public List<ZombieApocalypse> getSpawners() {
     return zombieSpawners;
