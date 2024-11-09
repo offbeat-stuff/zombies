@@ -6,7 +6,7 @@ import net.fabricmc.fabric.api.datagen.v1.provider.FabricLanguageProvider;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.registry.RegistryWrapper.WrapperLookup;
 import net.minecraft.world.GameRules;
-import org.codeberg.zenxarch.zombies.Zombies;
+import org.codeberg.zenxarch.zombies.ZombieGamerules;
 
 public class ZEnglishLangProvider extends FabricLanguageProvider {
 
@@ -21,15 +21,20 @@ public class ZEnglishLangProvider extends FabricLanguageProvider {
       WrapperLookup registryLookup, TranslationBuilder translationBuilder) {
     addGameruleTranslation(
         translationBuilder,
-        Zombies.MAX_ZOMBIES,
+        ZombieGamerules.MAX_ZOMBIES,
         "Maximum zombies per player",
         "The max number of zombies that can spawn in a 80 block radius around player");
     addGameruleTranslation(
         translationBuilder,
-        Zombies.SPAWN_SPEED,
+        ZombieGamerules.SPAWN_SPEED,
         "Fill zombie cap over seconds",
         "The mod tries to spawn the target amount of zombies (difficulty dependent) over this many"
             + " seconds assuming 1% of positions are spawnable");
+    addGameruleTranslation(
+        translationBuilder,
+        ZombieGamerules.ZOMBIES_BURN_IN_DAYLIGHT,
+        "Zombies burn in daylight",
+        "Should zombies burn in (and not spawn in) daylight. (only affects mod's zombies).");
   }
 
   public static void addGameruleTranslation(

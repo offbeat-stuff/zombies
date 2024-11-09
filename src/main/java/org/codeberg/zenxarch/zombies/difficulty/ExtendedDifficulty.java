@@ -7,7 +7,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.LocalDifficulty;
-import org.codeberg.zenxarch.zombies.Zombies;
+import org.codeberg.zenxarch.zombies.ZombieGamerules;
 import org.codeberg.zenxarch.zombies.math.RandomRange;
 import org.codeberg.zenxarch.zombies.math.RandomUtils;
 import org.jetbrains.annotations.Unmodifiable;
@@ -26,7 +26,7 @@ public class ExtendedDifficulty extends LocalDifficulty {
     this.maxZombies =
         (int)
             MathHelper.clampedLerp(
-                10.0, world.getGameRules().getInt(Zombies.MAX_ZOMBIES), this.difficulty);
+                10.0, world.getGameRules().getInt(ZombieGamerules.MAX_ZOMBIES), this.difficulty);
   }
 
   @Override
