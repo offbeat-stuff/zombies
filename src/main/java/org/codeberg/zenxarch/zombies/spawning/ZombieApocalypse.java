@@ -93,7 +93,7 @@ public class ZombieApocalypse {
     var positions = spawnCenters().toList();
     this.zombieCount = countZombies(positions);
 
-    debugCheck(this.zombieCount);
+    // debugCheck(this.zombieCount);
 
     for (var v : positions) {
       spawnZombiesAt(v, positions);
