@@ -3,13 +3,14 @@
 	"id": "zombies_zenxarch",
 	"version": "${version}",
 	"name": "Zombies",
-	"description": "A mod for the people who likes zombies",
+	"description": "A very likely zombie apocalypse mod",
 	"authors": [
 		"ZenXArch"
 	],
 	"contact": {
-		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
+		"mastodon": "https://mastodon.social/@ZenXArch",
+		"discord": "https://discord.gg/QyH76sEx",
+		"sources": "https://codeberg.org/ZenXArch/zombies"
 	},
 	"license": "Mozilla Public License 2.0",
 	"icon": "assets/zombies_zenxarch/icon.png",
@@ -26,8 +27,8 @@
 		"zombies_zenxarch.mixins.json"
 	],
 	"depends": {
-		"fabricloader": ">=0.16.8",
-		"minecraft": "~1.21.3",
+		"fabricloader": ">=${loader_version}",
+		"minecraft": "~${minecraft_version}",
 		"java": ">=21",
 		"fabric": "*"
 	}
