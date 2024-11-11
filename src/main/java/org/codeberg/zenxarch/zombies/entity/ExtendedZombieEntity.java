@@ -1,4 +1,4 @@
-package org.codeberg.zenxarch.zombies.difficulty;
+package org.codeberg.zenxarch.zombies.entity;
 
 import net.minecraft.entity.EntityData;
 import net.minecraft.entity.EquipmentSlot;
@@ -6,7 +6,6 @@ import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.mob.ZombieEntity;
-import net.minecraft.item.Item;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
@@ -16,16 +15,21 @@ import net.minecraft.world.LocalDifficulty;
 import net.minecraft.world.ServerWorldAccess;
 import net.minecraft.world.World;
 import org.codeberg.zenxarch.zombies.ZombieGamerules;
+import org.codeberg.zenxarch.zombies.difficulty.ExtendedDifficulty;
 import org.codeberg.zenxarch.zombies.spawning.SpawnerProvider;
 import org.codeberg.zenxarch.zombies.spawning.ZombieApocalypse;
 
 public class ExtendedZombieEntity extends ZombieEntity {
-  public ExtendedZombieEntity(World world) {
+
+  private final ZombieTemplate template;
+
+  public ExtendedZombieEntity(World world, ZombieTemplate template) {
     super(world);
+    this.template = template;
   }
 
-  public ExtendedZombieEntity(World world, BlockPos pos) {
-    super(world);
+  public ExtendedZombieEntity(World world, ZombieTemplate template, BlockPos pos) {
+    this(world, template);
     this.refreshPositionAndAngles(pos, this.random.nextFloat() * 360.0F, 0.0F);
   }
 
@@ -36,10 +40,8 @@ public class ExtendedZombieEntity extends ZombieEntity {
     return false;
   }
 
-  protected ExtendedDifficulty getExtentedDifficulty() {
-    if (this.getWorld() instanceof ServerWorld serverWorld)
-      return new ExtendedDifficulty(serverWorld, this.getBlockPos());
-    return null;
+  protected ExtendedDifficulty getExtentedDifficulty(ServerWorldAccess serverWorld) {
+    return new ExtendedDifficulty(serverWorld.toServerWorld(), this.getBlockPos());
   }
 
   public void initialize(ServerWorldAccess world) {
@@ -57,34 +59,22 @@ public class ExtendedZombieEntity extends ZombieEntity {
   }
 
   @Override
-  protected void initEquipment(Random random, LocalDifficulty unused) {
-    var difficulty = getExtentedDifficulty();
-    if (!difficulty.isHarderThan(0.0f)) return;
-
-    for (var slot : EquipmentSlot.values()) {
-      if (!this.getEquippedStack(slot).isEmpty()) continue;
-
-      var equipment = Equipment.getEquipmentForSlot(random, difficulty, slot);
-      equipment
-          .map(Item::getDefaultStack)
-          .ifPresent(
-              s -> {
-                this.equipStack(slot, s);
-                this.setEquipmentDropChance(slot, 0.00075F);
-              });
-    }
-  }
+  protected void initEquipment(Random random, LocalDifficulty unused) {}
 
   @Override
   protected void updateEnchantments(
       ServerWorldAccess world, Random random, LocalDifficulty unused) {
-    var difficulty = getExtentedDifficulty();
+    var difficulty = getExtentedDifficulty(world);
 
     for (var slot : EquipmentSlot.values()) {
-      var stack = this.getEquippedStack(slot);
-      if (stack.isEmpty()) continue;
+      if (!this.getEquippedStack(slot).isEmpty()) continue;
 
-      stack = Equipment.enchant(world, random, difficulty, stack);
+      var stack =
+          this.template.getEquipmentForSlot(world.toServerWorld(), difficulty, this, random, slot);
+      if (stack.isEmpty()) continue;
+      stack =
+          this.template.updateEnchantments(
+              world.toServerWorld(), difficulty, this, random, slot, stack);
       this.equipStack(slot, stack);
     }
   }

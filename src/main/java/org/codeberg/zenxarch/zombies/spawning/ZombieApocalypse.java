@@ -18,7 +18,8 @@ import net.minecraft.world.World;
 import org.codeberg.zenxarch.zombies.ZombieGamerules;
 import org.codeberg.zenxarch.zombies.Zombies;
 import org.codeberg.zenxarch.zombies.difficulty.ExtendedDifficulty;
-import org.codeberg.zenxarch.zombies.difficulty.ExtendedZombieEntity;
+import org.codeberg.zenxarch.zombies.entity.CommonZombie;
+import org.codeberg.zenxarch.zombies.entity.ExtendedZombieEntity;
 
 public class ZombieApocalypse {
   private ServerWorld world;
@@ -47,7 +48,7 @@ public class ZombieApocalypse {
     var position = SpawnProvider.giveSpawnPositions(world, playerPos, positions, toSpawn);
     if (!position.isPresent()) return;
 
-    var zombie = new ExtendedZombieEntity(world, position.get());
+    var zombie = new ExtendedZombieEntity(world, new CommonZombie(), position.get());
     if (!canSpawnAtPosSpace(zombie)) return;
 
     spawnZombie(zombie);
@@ -93,7 +94,7 @@ public class ZombieApocalypse {
     var positions = spawnCenters().toList();
     this.zombieCount = countZombies(positions);
 
-    // debugCheck(this.zombieCount);
+    debugCheck(this.zombieCount);
 
     for (var v : positions) {
       spawnZombiesAt(v, positions);
@@ -114,7 +115,7 @@ public class ZombieApocalypse {
     return switch (nbt.getString(ZOMBIE_ID_KEY)) {
       case "" -> Optional.empty();
       case BASE_ZOMBIE_ID -> {
-        var zombie = new ExtendedZombieEntity(world);
+        var zombie = new ExtendedZombieEntity(world, new CommonZombie());
         zombie.readNbt(nbt);
         yield Optional.of(zombie);
       }
