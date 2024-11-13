@@ -9,11 +9,11 @@ import net.minecraft.entity.mob.ZombieEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.LocalDifficulty;
 import net.minecraft.world.ServerWorldAccess;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldView;
 import org.codeberg.zenxarch.zombies.ZombieGamerules;
 import org.codeberg.zenxarch.zombies.difficulty.ExtendedDifficulty;
 import org.codeberg.zenxarch.zombies.spawning.SpawnerProvider;
@@ -26,11 +26,6 @@ public class ExtendedZombieEntity extends ZombieEntity {
   public ExtendedZombieEntity(World world, ZombieTemplate template) {
     super(world);
     this.template = template;
-  }
-
-  public ExtendedZombieEntity(World world, ZombieTemplate template, BlockPos pos) {
-    this(world, template);
-    this.refreshPositionAndAngles(pos, this.random.nextFloat() * 360.0F, 0.0F);
   }
 
   @Override
@@ -98,6 +93,13 @@ public class ExtendedZombieEntity extends ZombieEntity {
   @Override
   public void writeCustomDataToNbt(NbtCompound nbt) {
     super.writeCustomDataToNbt(nbt);
-    nbt.putString(ZombieApocalypse.ZOMBIE_ID_KEY, ZombieApocalypse.BASE_ZOMBIE_ID);
+    nbt.putString(ZombieApocalypse.ZOMBIE_ID_KEY, ZombieRegistry.getId(this.template));
+  }
+
+  @Override
+  public boolean canSpawn(WorldView world) {
+    return world.doesNotIntersectEntities(this)
+        && world.isSpaceEmpty(this)
+        && (this.canSpawnAsReinforcementInFluid() || !world.containsFluid(this.getBoundingBox()));
   }
 }

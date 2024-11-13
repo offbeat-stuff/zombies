@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.mob.ZombieEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.predicate.entity.EntityPredicates;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -16,10 +15,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.World;
 import org.codeberg.zenxarch.zombies.ZombieGamerules;
-import org.codeberg.zenxarch.zombies.Zombies;
 import org.codeberg.zenxarch.zombies.difficulty.ExtendedDifficulty;
-import org.codeberg.zenxarch.zombies.entity.CommonZombie;
 import org.codeberg.zenxarch.zombies.entity.ExtendedZombieEntity;
+import org.codeberg.zenxarch.zombies.entity.ZombieRegistry;
 
 public class ZombieApocalypse {
   private ServerWorld world;
@@ -27,12 +25,6 @@ public class ZombieApocalypse {
 
   public ZombieApocalypse(ServerWorld world) {
     this.world = world;
-  }
-
-  private boolean canSpawnAtPosSpace(ZombieEntity zombie) {
-    return this.world.doesNotIntersectEntities(zombie)
-        && this.world.isSpaceEmpty(zombie)
-        && !this.world.containsFluid(zombie.getBoundingBox());
   }
 
   private void spawnZombie(ExtendedZombieEntity zombie) {
@@ -48,10 +40,10 @@ public class ZombieApocalypse {
     var position = SpawnProvider.giveSpawnPositions(world, playerPos, positions, toSpawn);
     if (!position.isPresent()) return;
 
-    var zombie = new ExtendedZombieEntity(world, new CommonZombie(), position.get());
-    if (!canSpawnAtPosSpace(zombie)) return;
+    var zombie = ZombieRegistry.newZombie(world, ZombieRegistry.COMMON_ZOMBIE, position.get());
+    if (!zombie.isEmpty()) return;
 
-    spawnZombie(zombie);
+    spawnZombie(zombie.get());
   }
 
   public Map<BlockPos, Integer> countZombies(List<BlockPos> positions) {
@@ -109,19 +101,14 @@ public class ZombieApocalypse {
   }
 
   public static final String ZOMBIE_ID_KEY = "zenxarch_zombie_id";
-  public static final String BASE_ZOMBIE_ID = "BaseZombie";
 
   public static Optional<Entity> loadFromNbt(NbtCompound nbt, World world) {
     return switch (nbt.getString(ZOMBIE_ID_KEY)) {
       case "" -> Optional.empty();
-      case BASE_ZOMBIE_ID -> {
-        var zombie = new ExtendedZombieEntity(world, new CommonZombie());
+      case String id -> {
+        var zombie = new ExtendedZombieEntity(world, ZombieRegistry.getTemplate(id));
         zombie.readNbt(nbt);
         yield Optional.of(zombie);
-      }
-      case String id -> {
-        Zombies.LOGGER.warn("Skipping Zombie Apocalypse Entity with id {}", id);
-        yield Optional.empty();
       }
     };
   }
