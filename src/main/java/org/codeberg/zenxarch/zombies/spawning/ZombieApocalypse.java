@@ -41,7 +41,7 @@ public class ZombieApocalypse {
     if (!position.isPresent()) return;
 
     var zombie = ZombieRegistry.newZombie(world, ZombieRegistry.COMMON_ZOMBIE, position.get());
-    if (!zombie.isEmpty()) return;
+    if (zombie.isEmpty()) return;
 
     spawnZombie(zombie.get());
   }

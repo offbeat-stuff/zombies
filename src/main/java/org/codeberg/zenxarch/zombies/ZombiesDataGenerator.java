@@ -5,6 +5,7 @@ import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
 import org.codeberg.zenxarch.zombies.datagen.ZDynamicRegistryProvider;
 import org.codeberg.zenxarch.zombies.datagen.ZEnglishLangProvider;
 import org.codeberg.zenxarch.zombies.datagen.ZItemTags;
+import org.codeberg.zenxarch.zombies.datagen.ZLootTableProvider;
 
 public class ZombiesDataGenerator implements DataGeneratorEntrypoint {
 
@@ -14,5 +15,6 @@ public class ZombiesDataGenerator implements DataGeneratorEntrypoint {
     pack.addProvider(ZItemTags::new);
     pack.addProvider(ZDynamicRegistryProvider::new);
     pack.addProvider(ZEnglishLangProvider::new);
+    pack.addProvider(ZLootTableProvider::new);
   }
 }

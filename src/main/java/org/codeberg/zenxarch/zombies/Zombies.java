@@ -19,5 +19,6 @@ public class Zombies implements ModInitializer {
   public void onInitialize() {
     LOGGER.info("Hello Fabric world!");
     ZombieGamerules.initialize();
+    ZombieLootNumberProviderTypes.initialize();
   }
 }

@@ -1,7 +1,6 @@
 package org.codeberg.zenxarch.zombies.entity;
 
 import net.minecraft.entity.EntityData;
-import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
@@ -15,6 +14,7 @@ import net.minecraft.world.ServerWorldAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldView;
 import org.codeberg.zenxarch.zombies.ZombieGamerules;
+import org.codeberg.zenxarch.zombies.datagen.ZLootTableProvider;
 import org.codeberg.zenxarch.zombies.difficulty.ExtendedDifficulty;
 import org.codeberg.zenxarch.zombies.spawning.SpawnerProvider;
 import org.codeberg.zenxarch.zombies.spawning.ZombieApocalypse;
@@ -61,17 +61,21 @@ public class ExtendedZombieEntity extends ZombieEntity {
       ServerWorldAccess world, Random random, LocalDifficulty unused) {
     var difficulty = getExtentedDifficulty(world);
 
-    for (var slot : EquipmentSlot.values()) {
-      if (!this.getEquippedStack(slot).isEmpty()) continue;
+    ZLootTableProvider.addEquipmentTo(
+        world.toServerWorld(), this, difficulty, ZLootTableProvider.COMMON_ZOMBIE_EQUIPMENT);
 
-      var stack =
-          this.template.getEquipmentForSlot(world.toServerWorld(), difficulty, this, random, slot);
-      if (stack.isEmpty()) continue;
-      stack =
-          this.template.updateEnchantments(
-              world.toServerWorld(), difficulty, this, random, slot, stack);
-      this.equipStack(slot, stack);
-    }
+    // for (var slot : EquipmentSlot.values()) {
+    //   if (!this.getEquippedStack(slot).isEmpty()) continue;
+
+    //   var stack =
+    //       this.template.getEquipmentForSlot(world.toServerWorld(), difficulty, this, random,
+    // slot);
+    //   if (stack.isEmpty()) continue;
+    //   stack =
+    //       this.template.updateEnchantments(
+    //           world.toServerWorld(), difficulty, this, random, slot, stack);
+    //   this.equipStack(slot, stack);
+    // }
   }
 
   @Override
