@@ -3,6 +3,14 @@
   "pools": [
     {
       "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "chance": {
+            "type": "zenxarch:luck"
+          },
+          "condition": "minecraft:random_chance"
+        }
+      ],
       "entries": [
         {
           "type": "minecraft:loot_table",
@@ -13,6 +21,14 @@
     },
     {
       "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "chance": {
+            "type": "zenxarch:luck"
+          },
+          "condition": "minecraft:random_chance"
+        }
+      ],
       "entries": [
         {
           "type": "minecraft:loot_table",
@@ -23,6 +39,14 @@
     },
     {
       "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "chance": {
+            "type": "zenxarch:luck"
+          },
+          "condition": "minecraft:random_chance"
+        }
+      ],
       "entries": [
         {
           "type": "minecraft:loot_table",
@@ -33,6 +57,14 @@
     },
     {
       "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "chance": {
+            "type": "zenxarch:luck"
+          },
+          "condition": "minecraft:random_chance"
+        }
+      ],
       "entries": [
         {
           "type": "minecraft:loot_table",

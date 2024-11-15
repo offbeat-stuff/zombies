@@ -3,46 +3,40 @@
   "pools": [
     {
       "bonus_rolls": 0.0,
-      "conditions": [
-        {
-          "chance": {
-            "type": "zenxarch:luck"
-          },
-          "condition": "minecraft:random_chance"
-        }
-      ],
       "entries": [
         {
           "type": "minecraft:item",
           "name": "minecraft:leather_boots",
-          "quality": -25,
+          "quality": -1000,
           "weight": 1000
         },
         {
           "type": "minecraft:item",
           "name": "minecraft:chainmail_boots",
-          "quality": 10,
-          "weight": 100
+          "quality": -250,
+          "weight": 250
         },
         {
           "type": "minecraft:item",
           "name": "minecraft:golden_boots",
-          "weight": 0
+          "quality": 200,
+          "weight": 50
         },
         {
           "type": "minecraft:item",
           "name": "minecraft:iron_boots",
-          "weight": 0
+          "quality": 200,
+          "weight": 50
         },
         {
           "type": "minecraft:item",
           "name": "minecraft:diamond_boots",
-          "weight": 0
+          "quality": 5,
+          "weight": 5
         },
         {
           "type": "minecraft:item",
-          "name": "minecraft:netherite_boots",
-          "weight": 0
+          "name": "minecraft:netherite_boots"
         }
       ],
       "rolls": 1.0

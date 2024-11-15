@@ -14,8 +14,8 @@ import net.minecraft.world.ServerWorldAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldView;
 import org.codeberg.zenxarch.zombies.ZombieGamerules;
-import org.codeberg.zenxarch.zombies.datagen.ZLootTableProvider;
 import org.codeberg.zenxarch.zombies.difficulty.ExtendedDifficulty;
+import org.codeberg.zenxarch.zombies.loot_table.ZombieLootTables;
 import org.codeberg.zenxarch.zombies.spawning.SpawnerProvider;
 import org.codeberg.zenxarch.zombies.spawning.ZombieApocalypse;
 
@@ -61,8 +61,8 @@ public class ExtendedZombieEntity extends ZombieEntity {
       ServerWorldAccess world, Random random, LocalDifficulty unused) {
     var difficulty = getExtentedDifficulty(world);
 
-    ZLootTableProvider.addEquipmentTo(
-        world.toServerWorld(), this, difficulty, ZLootTableProvider.COMMON_ZOMBIE_EQUIPMENT);
+    ZombieLootTables.addEquipmentTo(
+        world.toServerWorld(), this, difficulty, ZombieLootTables.COMMON_ZOMBIE_EQUIPMENT);
 
     // for (var slot : EquipmentSlot.values()) {
     //   if (!this.getEquippedStack(slot).isEmpty()) continue;
