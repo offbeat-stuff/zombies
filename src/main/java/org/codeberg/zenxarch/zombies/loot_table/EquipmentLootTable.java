@@ -42,6 +42,22 @@ public abstract class EquipmentLootTable {
           Items.IRON_BOOTS,
           Items.DIAMOND_BOOTS,
           Items.NETHERITE_BOOTS);
+  private static final List<Item> swords =
+      List.of(
+          Items.WOODEN_SWORD,
+          Items.STONE_SWORD,
+          Items.GOLDEN_SWORD,
+          Items.IRON_SWORD,
+          Items.DIAMOND_SWORD,
+          Items.NETHERITE_SWORD);
+  private static final List<Item> axes =
+      List.of(
+          Items.WOODEN_AXE,
+          Items.STONE_AXE,
+          Items.GOLDEN_AXE,
+          Items.IRON_AXE,
+          Items.DIAMOND_AXE,
+          Items.NETHERITE_AXE);
 
   private static final List<Integer> weights = List.of(1000, 250, 50, 50, 5, 1, 100);
   private static final List<Integer> qualities = List.of(-1000, -250, 200, 200, 5, 0, 50);
@@ -51,6 +67,8 @@ public abstract class EquipmentLootTable {
     if (chestplates.contains(item)) return weights.get(chestplates.indexOf(item));
     if (leggings.contains(item)) return weights.get(leggings.indexOf(item));
     if (boots.contains(item)) return weights.get(boots.indexOf(item));
+    if (swords.contains(item)) return weights.get(swords.indexOf(item));
+    if (axes.contains(item)) return weights.get(axes.indexOf(item));
     return weights.getLast();
   }
 
@@ -59,10 +77,12 @@ public abstract class EquipmentLootTable {
     if (chestplates.contains(item)) return qualities.get(chestplates.indexOf(item));
     if (leggings.contains(item)) return qualities.get(leggings.indexOf(item));
     if (boots.contains(item)) return qualities.get(boots.indexOf(item));
+    if (swords.contains(item)) return qualities.get(swords.indexOf(item));
+    if (axes.contains(item)) return qualities.get(axes.indexOf(item));
     return qualities.getLast();
   }
 
-  public static LootPool.Builder getHelmetLootPool() {
+  public static LootPool.Builder getHelmetPool() {
     return push(getPoolFromList(helmets), Items.TURTLE_HELMET);
   }
 
@@ -76,6 +96,14 @@ public abstract class EquipmentLootTable {
 
   public static LootPool.Builder getBootsPool() {
     return getPoolFromList(boots);
+  }
+
+  public static LootPool.Builder getSwordsPool() {
+    return getPoolFromList(swords);
+  }
+
+  public static LootPool.Builder getAxesPool() {
+    return getPoolFromList(axes);
   }
 
   private static LootPool.Builder getPoolFromList(List<Item> items) {

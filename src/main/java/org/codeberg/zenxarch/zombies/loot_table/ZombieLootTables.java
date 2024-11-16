@@ -22,6 +22,8 @@ public abstract class ZombieLootTables {
       key("common_zombie_equipment_leggings");
   public static final RegistryKey<LootTable> COMMON_ZOMBIE_BOOTS =
       key("common_zombie_equipment_boots");
+  public static final RegistryKey<LootTable> COMMON_ZOMBIE_WEAPONS =
+      key("common_zombie_equipment_weapons");
 
   public static final EquipmentTable COMMON_ZOMBIE_EQUIPMENT =
       equipmentTable("common_zombie_equipment", 0.00075F);
