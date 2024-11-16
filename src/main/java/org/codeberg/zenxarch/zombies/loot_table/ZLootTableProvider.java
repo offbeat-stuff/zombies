@@ -35,16 +35,18 @@ public class ZLootTableProvider extends SimpleFabricLootTableProvider {
 
   @Override
   public void accept(BiConsumer<RegistryKey<LootTable>, Builder> registry) {
-    var condition = RandomChanceLootCondition.builder(LuckLootNumberProvider.create());
+    var weaponCondition = RandomChanceLootCondition.builder(LuckLootNumberProvider.create());
+    var armorCondition = weaponCondition.and(RandomChanceLootCondition.builder(0.5F));
 
     addLootTable(
         registry,
         ZombieLootTables.COMMON_ZOMBIE_EQUIPMENT.lootTable(),
-        singleLootTable(ZombieLootTables.COMMON_ZOMBIE_HELMET).conditionally(condition),
-        singleLootTable(ZombieLootTables.COMMON_ZOMBIE_CHESTPLATE).conditionally(condition),
-        singleLootTable(ZombieLootTables.COMMON_ZOMBIE_LEGGINGS).conditionally(condition),
-        singleLootTable(ZombieLootTables.COMMON_ZOMBIE_BOOTS).conditionally(condition),
-        singleLootTable(ZombieLootTables.COMMON_ZOMBIE_WEAPONS).conditionally(condition));
+        singleLootTable(ZombieLootTables.COMMON_ZOMBIE_HELMET).conditionally(armorCondition),
+        singleLootTable(ZombieLootTables.COMMON_ZOMBIE_CHESTPLATE).conditionally(armorCondition),
+        singleLootTable(ZombieLootTables.COMMON_ZOMBIE_LEGGINGS).conditionally(armorCondition),
+        singleLootTable(ZombieLootTables.COMMON_ZOMBIE_BOOTS).conditionally(armorCondition),
+        singleLootTable(ZombieLootTables.COMMON_ZOMBIE_WEAPONS).conditionally(weaponCondition),
+        singleRollLootPool(ItemEntry.builder(Items.SHIELD)).conditionally(weaponCondition));
 
     var specialWeaponsPool =
         singleRollLootPool(

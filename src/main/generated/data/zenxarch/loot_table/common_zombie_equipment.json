@@ -5,10 +5,19 @@
       "bonus_rolls": 0.0,
       "conditions": [
         {
-          "chance": {
-            "type": "zenxarch:luck"
-          },
-          "condition": "minecraft:random_chance"
+          "condition": "minecraft:all_of",
+          "terms": [
+            {
+              "chance": {
+                "type": "zenxarch:luck"
+              },
+              "condition": "minecraft:random_chance"
+            },
+            {
+              "chance": 0.5,
+              "condition": "minecraft:random_chance"
+            }
+          ]
         }
       ],
       "entries": [
@@ -23,10 +32,19 @@
       "bonus_rolls": 0.0,
       "conditions": [
         {
-          "chance": {
-            "type": "zenxarch:luck"
-          },
-          "condition": "minecraft:random_chance"
+          "condition": "minecraft:all_of",
+          "terms": [
+            {
+              "chance": {
+                "type": "zenxarch:luck"
+              },
+              "condition": "minecraft:random_chance"
+            },
+            {
+              "chance": 0.5,
+              "condition": "minecraft:random_chance"
+            }
+          ]
         }
       ],
       "entries": [
@@ -41,16 +59,52 @@
       "bonus_rolls": 0.0,
       "conditions": [
         {
-          "chance": {
-            "type": "zenxarch:luck"
-          },
-          "condition": "minecraft:random_chance"
+          "condition": "minecraft:all_of",
+          "terms": [
+            {
+              "chance": {
+                "type": "zenxarch:luck"
+              },
+              "condition": "minecraft:random_chance"
+            },
+            {
+              "chance": 0.5,
+              "condition": "minecraft:random_chance"
+            }
+          ]
         }
       ],
       "entries": [
         {
           "type": "minecraft:loot_table",
           "value": "zenxarch:common_zombie_equipment_leggings"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "minecraft:all_of",
+          "terms": [
+            {
+              "chance": {
+                "type": "zenxarch:luck"
+              },
+              "condition": "minecraft:random_chance"
+            },
+            {
+              "chance": 0.5,
+              "condition": "minecraft:random_chance"
+            }
+          ]
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:loot_table",
+          "value": "zenxarch:common_zombie_equipment_boots"
         }
       ],
       "rolls": 1.0
@@ -68,7 +122,25 @@
       "entries": [
         {
           "type": "minecraft:loot_table",
-          "value": "zenxarch:common_zombie_equipment_boots"
+          "value": "zenxarch:common_zombie_equipment_weapons"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "chance": {
+            "type": "zenxarch:luck"
+          },
+          "condition": "minecraft:random_chance"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:shield"
         }
       ],
       "rolls": 1.0
