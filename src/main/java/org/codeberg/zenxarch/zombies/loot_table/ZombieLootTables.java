@@ -3,15 +3,9 @@ package org.codeberg.zenxarch.zombies.loot_table;
 import static org.codeberg.zenxarch.zombies.Zombies.id;
 
 import net.minecraft.entity.EquipmentTable;
-import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.loot.LootTable;
-import net.minecraft.loot.context.LootContextParameters;
-import net.minecraft.loot.context.LootContextTypes;
-import net.minecraft.loot.context.LootWorldContext;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
-import net.minecraft.server.world.ServerWorld;
-import org.codeberg.zenxarch.zombies.difficulty.ExtendedDifficulty;
 
 public abstract class ZombieLootTables {
   public static final RegistryKey<LootTable> COMMON_ZOMBIE_HELMET =
@@ -34,20 +28,5 @@ public abstract class ZombieLootTables {
 
   private static EquipmentTable equipmentTable(String id, float slotDropChances) {
     return new EquipmentTable(key(id), slotDropChances);
-  }
-
-  public static void addEquipmentTo(
-      ServerWorld world,
-      MobEntity mob,
-      ExtendedDifficulty difficulty,
-      EquipmentTable equipmentTable) {
-    mob.setEquipmentFromTable(
-        equipmentTable.lootTable(),
-        new LootWorldContext.Builder(world)
-            .add(LootContextParameters.ORIGIN, mob.getPos())
-            .add(LootContextParameters.THIS_ENTITY, mob)
-            .luck(difficulty.getClampedLocalDifficulty())
-            .build(LootContextTypes.EQUIPMENT),
-        equipmentTable.slotDropChances());
   }
 }

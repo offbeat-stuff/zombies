@@ -26,6 +26,12 @@
           "value": "zenxarch:common_zombie_equipment_helmet"
         }
       ],
+      "functions": [
+        {
+          "function": "zenxarch:enchantment_provider",
+          "provider": "zenxarch:zombie_spawn_equipment"
+        }
+      ],
       "rolls": 1.0
     },
     {
@@ -51,6 +57,12 @@
         {
           "type": "minecraft:loot_table",
           "value": "zenxarch:common_zombie_equipment_chestplate"
+        }
+      ],
+      "functions": [
+        {
+          "function": "zenxarch:enchantment_provider",
+          "provider": "zenxarch:zombie_spawn_equipment"
         }
       ],
       "rolls": 1.0
@@ -80,6 +92,12 @@
           "value": "zenxarch:common_zombie_equipment_leggings"
         }
       ],
+      "functions": [
+        {
+          "function": "zenxarch:enchantment_provider",
+          "provider": "zenxarch:zombie_spawn_equipment"
+        }
+      ],
       "rolls": 1.0
     },
     {
@@ -107,6 +125,12 @@
           "value": "zenxarch:common_zombie_equipment_boots"
         }
       ],
+      "functions": [
+        {
+          "function": "zenxarch:enchantment_provider",
+          "provider": "zenxarch:zombie_spawn_equipment"
+        }
+      ],
       "rolls": 1.0
     },
     {
@@ -125,6 +149,12 @@
           "value": "zenxarch:common_zombie_equipment_weapons"
         }
       ],
+      "functions": [
+        {
+          "function": "zenxarch:enchantment_provider",
+          "provider": "zenxarch:zombie_spawn_equipment"
+        }
+      ],
       "rolls": 1.0
     },
     {
@@ -141,6 +171,12 @@
         {
           "type": "minecraft:item",
           "name": "minecraft:shield"
+        }
+      ],
+      "functions": [
+        {
+          "function": "zenxarch:enchantment_provider",
+          "provider": "zenxarch:zombie_spawn_equipment"
         }
       ],
       "rolls": 1.0

@@ -20,6 +20,12 @@ public class ExtendedDifficulty extends LocalDifficulty {
   private final double difficulty;
   private final int maxZombies;
 
+  public ExtendedDifficulty(ServerWorld world, double difficulty, int maxZombies) {
+    super(world.getDifficulty(), 0, 0, 0);
+    this.difficulty = difficulty;
+    this.maxZombies = maxZombies;
+  }
+
   public ExtendedDifficulty(ServerWorld world, BlockPos pos) {
     super(world.getDifficulty(), 0, 0, 0);
     this.difficulty = DifficultyCalculations.calculateDifficulty(world, pos);

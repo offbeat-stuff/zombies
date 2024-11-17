@@ -7,7 +7,7 @@ import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import org.codeberg.zenxarch.zombies.Zombies;
 
-public class ZombieLootNumberProviderTypes {
+public interface ZombieLootNumberProviderTypes {
 
   public static final LootNumberProviderType LUCK = register("luck", LuckLootNumberProvider.CODEC);
 

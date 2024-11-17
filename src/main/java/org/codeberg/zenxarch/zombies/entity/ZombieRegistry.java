@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Optional;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
+import org.codeberg.zenxarch.zombies.loot_table.ZombieLootTables;
 
 public class ZombieRegistry {
 
@@ -14,7 +15,9 @@ public class ZombieRegistry {
   }
 
   private static Map<String, ZombieTemplate> registry = new HashMap<>();
-  public static final ZombieTemplate COMMON_ZOMBIE = register(getDefaultId(), new CommonZombie());
+  public static final ZombieTemplate COMMON_ZOMBIE =
+      register(
+          getDefaultId(), new LootTableBasedTemplate(ZombieLootTables.COMMON_ZOMBIE_EQUIPMENT));
 
   private static ZombieTemplate register(String id, ZombieTemplate template) {
     registry.put(id, template);
