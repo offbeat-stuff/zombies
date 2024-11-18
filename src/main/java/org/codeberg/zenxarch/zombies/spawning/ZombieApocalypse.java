@@ -28,6 +28,13 @@ public class ZombieApocalypse {
   }
 
   private void spawnZombie(ExtendedZombieEntity zombie) {
+    zombie.setTarget(
+        world.getClosestPlayer(
+            zombie.getX(),
+            zombie.getY(),
+            zombie.getZ(),
+            64.0,
+            EntityPredicates.VALID_LIVING_ENTITY.and(EntityPredicates.EXCEPT_SPECTATOR)));
     zombie.initialize(this.world);
     this.world.spawnEntityAndPassengers(zombie);
   }
