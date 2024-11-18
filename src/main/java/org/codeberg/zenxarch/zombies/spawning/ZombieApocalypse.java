@@ -15,6 +15,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.World;
 import org.codeberg.zenxarch.zombies.ZombieGamerules;
+import org.codeberg.zenxarch.zombies.Zombies;
 import org.codeberg.zenxarch.zombies.difficulty.ExtendedDifficulty;
 import org.codeberg.zenxarch.zombies.entity.ExtendedZombieEntity;
 import org.codeberg.zenxarch.zombies.entity.ZombieRegistry;
@@ -93,7 +94,7 @@ public class ZombieApocalypse {
     var positions = spawnCenters().toList();
     this.zombieCount = countZombies(positions);
 
-    debugCheck(this.zombieCount);
+    if (Zombies.DEBUG) debugCheck(this.zombieCount);
 
     for (var v : positions) {
       spawnZombiesAt(v, positions);
