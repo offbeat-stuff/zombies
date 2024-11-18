@@ -1,0 +1,12 @@
+{
+  "values": [
+    {
+      "id": "#minecraft:without_zombie_sieges",
+      "required": false
+    },
+    {
+      "id": "#minecraft:has_structure/ancient_city",
+      "required": false
+    }
+  ]
+}
