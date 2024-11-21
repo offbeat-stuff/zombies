@@ -1,6 +1,8 @@
 package org.codeberg.zenxarch.zombies.entity;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityData;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
@@ -69,6 +71,15 @@ public class ExtendedZombieEntity extends ZombieEntity {
     if (!(world instanceof SpawnerProvider spawnerProvider)) return false;
     for (var spawner : spawnerProvider.getSpawners()) spawner.spawn(world, true);
     return true;
+  }
+
+  @Override
+  public boolean tryAttack(ServerWorld world, Entity target) {
+    var result = super.tryAttack(world, target);
+    if (result && target instanceof LivingEntity living) {
+      this.template.onAttack(world, this, living);
+    }
+    return result;
   }
 
   @Override

@@ -40,18 +40,19 @@ public class ZombieApocalypse {
     this.world.spawnEntityAndPassengers(zombie);
   }
 
+  private void spawnZombie(BlockPos pos) {
+    ZombieRegistry.selectTemplate(world.getRandom(), world.getBiome(pos))
+        .flatMap(t -> ZombieRegistry.newZombie(world, t, pos))
+        .ifPresent(this::spawnZombie);
+  }
+
   public void spawnZombiesAt(BlockPos playerPos, List<BlockPos> positions) {
     var difficulty = new ExtendedDifficulty(this.world, playerPos);
     var toSpawn = difficulty.getMaxZombies();
     if (toSpawn <= this.zombieCount.getOrDefault(playerPos, 0)) return;
 
-    var position = SpawnProvider.giveSpawnPositions(world, playerPos, positions, toSpawn);
-    if (!position.isPresent()) return;
-
-    var zombie = ZombieRegistry.newZombie(world, ZombieRegistry.COMMON_ZOMBIE, position.get());
-    if (zombie.isEmpty()) return;
-
-    spawnZombie(zombie.get());
+    SpawnProvider.giveSpawnPositions(world, playerPos, positions, toSpawn)
+        .ifPresent(this::spawnZombie);
   }
 
   public Map<BlockPos, Integer> countZombies(List<BlockPos> positions) {
