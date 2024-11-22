@@ -1,10 +1,9 @@
 package org.codeberg.zenxarch.zombies.entity;
 
+import static org.codeberg.zenxarch.zombies.entity.effect.ZombieEffect.*;
+
+import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.tag.BiomeTags;
-import org.codeberg.zenxarch.zombies.entity.effect.SingleTargetZombieEffect;
-import org.codeberg.zenxarch.zombies.entity.effect.SwapPositionZombieEffect;
-import org.codeberg.zenxarch.zombies.entity.effect.single.FreezeEffect;
-import org.codeberg.zenxarch.zombies.entity.effect.single.IgniteEffect;
 import org.codeberg.zenxarch.zombies.loot_table.ZombieLootTables;
 
 public interface ZombieTemplates {
@@ -17,31 +16,34 @@ public interface ZombieTemplates {
         .withWeight(weight);
   }
 
-  public static final ZombieTemplate COMMON_ZOMBIE =
-      register(ZombieRegistry.getDefaultId(), defaultBuilder(100));
-
-  public static final ZombieTemplate SWAPPING_ZOMBIE =
-      register("SwapperZombie", defaultBuilder().addEffect(new SwapPositionZombieEffect()));
-
-  public static final ZombieTemplate FIRE_ZOMBIE =
-      register(
-          "FireZombie",
-          defaultBuilder(10)
-              .addEffect(new SingleTargetZombieEffect(new IgniteEffect(1.0F), false))
-              .spawnIn(BiomeTags.SPAWNS_WARM_VARIANT_FROGS));
-
-  public static final ZombieTemplate FREEZE_ZOMBIE =
-      register(
-          "FreezeZombie",
-          defaultBuilder(10)
-              .addEffect(new SingleTargetZombieEffect(FreezeEffect.create(), false))
-              .spawnIn(BiomeTags.SPAWNS_COLD_VARIANT_FROGS));
+  public static final String COMMON_ZOMBIE = ZombieRegistry.getDefaultId();
+  public static final String SWAPPING_ZOMBIE = "SwappingZombie";
+  public static final String FIRE_ZOMBIE = "FireZombie";
+  public static final String FREEZE_ZOMBIE = "FreezeZombie";
 
   public static void initialize() {
+    register(COMMON_ZOMBIE, defaultBuilder(512));
+    register(
+        SWAPPING_ZOMBIE,
+        defaultBuilder()
+            .withOnAttack(swapPositions())
+            .withOnTick(spawnParticles(ParticleTypes.PORTAL, 0.2F)));
+    register(
+        FIRE_ZOMBIE,
+        defaultBuilder(16)
+            .withOnAttack(ignite(1.0F))
+            .withOnTick(spawnParticles(ParticleTypes.FLAME, 0.2F))
+            .spawnIn(BiomeTags.SPAWNS_WARM_VARIANT_FROGS));
+    register(
+        FREEZE_ZOMBIE,
+        defaultBuilder(16)
+            .withOnAttack(freeze())
+            .withOnTick(spawnParticles(ParticleTypes.SNOWFLAKE, 0.2F))
+            .spawnIn(BiomeTags.SPAWNS_COLD_VARIANT_FROGS));
     ZombieRegistry.freezeRegistry();
   }
 
-  public static ZombieTemplate register(String id, LootTableBasedTemplate.Builder builder) {
-    return ZombieRegistry.register(id, builder.build());
+  public static void register(String id, LootTableBasedTemplate.Builder builder) {
+    ZombieRegistry.register(id, builder.build());
   }
 }

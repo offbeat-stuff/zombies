@@ -1,7 +1,5 @@
 package org.codeberg.zenxarch.zombies.entity;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.function.Predicate;
 import net.minecraft.entity.EquipmentTable;
 import net.minecraft.entity.mob.ZombieEntity;
@@ -48,6 +46,16 @@ public record LootTableBasedTemplate(
   }
 
   @Override
+  public ZombieEffect onKillEffect() {
+    return onDeath;
+  }
+
+  @Override
+  public ZombieEffect onTickEffect() {
+    return onTick;
+  }
+
+  @Override
   public int getWeight() {
     return weight;
   }
@@ -67,18 +75,32 @@ public record LootTableBasedTemplate(
 
   public static class Builder {
     private static final Predicate<RegistryEntry<Biome>> DEFAULT_BIOME_PREDICATE = (b) -> true;
-    private final List<ZombieEffect> effects;
+    private ZombieEffect onAttack;
+    private ZombieEffect onDeath;
+    private ZombieEffect onTick;
     private final EquipmentTable table;
     private int weight = 1;
     private Predicate<RegistryEntry<Biome>> biomePredicate = DEFAULT_BIOME_PREDICATE;
 
     public Builder(EquipmentTable table) {
-      this.effects = new ArrayList<>();
+      this.onAttack = DefaultZombieEffect.create();
+      this.onDeath = DefaultZombieEffect.create();
+      this.onTick = DefaultZombieEffect.create();
       this.table = table;
     }
 
-    public Builder addEffect(ZombieEffect effect) {
-      this.effects.add(effect);
+    public Builder withOnAttack(ZombieEffect... effects) {
+      this.onAttack = AllOfZombieEffect.create(effects);
+      return this;
+    }
+
+    public Builder withOnDeath(ZombieEffect... effects) {
+      this.onDeath = AllOfZombieEffect.create(effects);
+      return this;
+    }
+
+    public Builder withOnTick(ZombieEffect... effects) {
+      this.onTick = AllOfZombieEffect.create(effects);
       return this;
     }
 
@@ -104,10 +126,7 @@ public record LootTableBasedTemplate(
     }
 
     public LootTableBasedTemplate build() {
-      ZombieEffect effect = new DefaultZombieEffect();
-      if (effects.size() == 1) effect = effects.getFirst();
-      else effect = new AllOfZombieEffect(List.copyOf(effects));
-      return new LootTableBasedTemplate(table, effect, effect, effect, biomePredicate, weight);
+      return new LootTableBasedTemplate(table, onAttack, onDeath, onTick, biomePredicate, weight);
     }
   }
 }

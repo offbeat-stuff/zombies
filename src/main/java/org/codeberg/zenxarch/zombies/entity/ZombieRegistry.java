@@ -19,9 +19,8 @@ public class ZombieRegistry {
 
   private static Map<String, ZombieTemplate> registry = new HashMap<>();
 
-  public static ZombieTemplate register(String id, ZombieTemplate template) {
+  public static void register(String id, ZombieTemplate template) {
     registry.put(id, template);
-    return template;
   }
 
   public static void freezeRegistry() {
@@ -45,7 +44,7 @@ public class ZombieRegistry {
   }
 
   public static ZombieTemplate getDefault() {
-    return ZombieTemplates.COMMON_ZOMBIE;
+    return registry.get(getDefaultId());
   }
 
   public static Optional<ExtendedZombieEntity> newZombie(
