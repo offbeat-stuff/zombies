@@ -1,29 +1,27 @@
-package org.codeberg.zenxarch.zombies.entity.effect;
+package org.codeberg.zenxarch.zombies.entity.effect.single;
 
 import net.minecraft.enchantment.effect.entity.SpawnParticlesEnchantmentEffect;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.particle.ParticleEffect;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.floatprovider.FloatProvider;
-import org.codeberg.zenxarch.zombies.entity.ExtendedZombieEntity;
-import org.jetbrains.annotations.Nullable;
 
-public record SpawnParticlesZombieEffect(
+public record SpawnParticleEffect(
     ParticleEffect particle,
     SpawnParticlesEnchantmentEffect.PositionSource horizontalPosition,
     SpawnParticlesEnchantmentEffect.PositionSource verticalPosition,
     SpawnParticlesEnchantmentEffect.VelocitySource horizontalVelocity,
     SpawnParticlesEnchantmentEffect.VelocitySource verticalVelocity,
     FloatProvider speed)
-    implements ZombieEffect {
+    implements SingleLivingEffect {
+
   @Override
-  public void run(
-      ServerWorld world, ExtendedZombieEntity zombie, @Nullable LivingEntity adversery) {
-    var random = zombie.getRandom();
-    var movement = zombie.getMovement();
-    var width = zombie.getWidth();
-    var height = zombie.getHeight();
-    var pos = zombie.getPos();
+  public void run(ServerWorld world, LivingEntity target) {
+    var random = target.getRandom();
+    var movement = target.getMovement();
+    var width = target.getWidth();
+    var height = target.getHeight();
+    var pos = target.getPos();
     world.spawnParticles(
         this.particle,
         this.horizontalPosition.getPosition(pos.getX(), pos.getX(), width, random),

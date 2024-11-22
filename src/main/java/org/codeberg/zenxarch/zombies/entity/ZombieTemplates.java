@@ -1,9 +1,10 @@
 package org.codeberg.zenxarch.zombies.entity;
 
 import net.minecraft.registry.tag.BiomeTags;
-import org.codeberg.zenxarch.zombies.entity.effect.FreezeZombieEffect;
-import org.codeberg.zenxarch.zombies.entity.effect.IgniteZombieEffect;
+import org.codeberg.zenxarch.zombies.entity.effect.SingleTargetZombieEffect;
 import org.codeberg.zenxarch.zombies.entity.effect.SwapPositionZombieEffect;
+import org.codeberg.zenxarch.zombies.entity.effect.single.FreezeEffect;
+import org.codeberg.zenxarch.zombies.entity.effect.single.IgniteEffect;
 import org.codeberg.zenxarch.zombies.loot_table.ZombieLootTables;
 
 public interface ZombieTemplates {
@@ -26,14 +27,14 @@ public interface ZombieTemplates {
       register(
           "FireZombie",
           defaultBuilder(10)
-              .addEffect(new IgniteZombieEffect(1.0F))
+              .addEffect(new SingleTargetZombieEffect(new IgniteEffect(1.0F), false))
               .spawnIn(BiomeTags.SPAWNS_WARM_VARIANT_FROGS));
 
   public static final ZombieTemplate FREEZE_ZOMBIE =
       register(
           "FreezeZombie",
           defaultBuilder(10)
-              .addEffect(new FreezeZombieEffect())
+              .addEffect(new SingleTargetZombieEffect(FreezeEffect.create(), false))
               .spawnIn(BiomeTags.SPAWNS_COLD_VARIANT_FROGS));
 
   public static void initialize() {
