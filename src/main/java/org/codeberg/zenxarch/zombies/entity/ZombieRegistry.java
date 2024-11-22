@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableMap;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.world.ServerWorld;
@@ -60,17 +59,15 @@ public class ZombieRegistry {
   public static Optional<ZombieTemplate> selectTemplate(Random random, RegistryEntry<Biome> biome) {
     var templates =
         templates().stream()
-            .map(t -> t instanceof LootTableBasedTemplate def ? def : null)
-            .filter(Objects::nonNull)
-            .filter(t -> t.weight() > 0)
-            .filter(t -> t.biomePredicate().test(biome))
+            .filter(t -> t.getWeight() > 0)
+            .filter(t -> t.canSpawnIn(biome))
             .toList();
     if (templates.isEmpty()) return Optional.empty();
-    var totalWeight = templates.stream().mapToInt(LootTableBasedTemplate::weight).sum();
+    var totalWeight = templates.stream().mapToInt(ZombieTemplate::getWeight).sum();
     var selection = random.nextInt(totalWeight);
     for (var t : templates) {
-      if (selection < t.weight()) return Optional.of(t);
-      selection -= t.weight();
+      if (selection < t.getWeight()) return Optional.of(t);
+      selection -= t.getWeight();
     }
     return Optional.of(templates.getLast());
   }

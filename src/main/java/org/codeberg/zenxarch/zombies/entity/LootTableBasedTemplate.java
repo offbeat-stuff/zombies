@@ -43,6 +43,16 @@ public record LootTableBasedTemplate(
     for (var effect : attackEffects) effect.onAttack(world, zombie, attacked);
   }
 
+  @Override
+  public int getWeight() {
+    return weight;
+  }
+
+  @Override
+  public boolean canSpawnIn(RegistryEntry<Biome> biome) {
+    return biomePredicate.test(biome);
+  }
+
   public static Builder builder(EquipmentTable table) {
     return new Builder(table);
   }
