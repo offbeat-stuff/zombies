@@ -19,6 +19,7 @@ import org.codeberg.zenxarch.zombies.ZombieGamerules;
 import org.codeberg.zenxarch.zombies.difficulty.ExtendedDifficulty;
 import org.codeberg.zenxarch.zombies.spawning.SpawnerProvider;
 import org.codeberg.zenxarch.zombies.spawning.ZombieApocalypse;
+import org.jetbrains.annotations.Nullable;
 
 public class ExtendedZombieEntity extends ZombieEntity {
 
@@ -77,9 +78,23 @@ public class ExtendedZombieEntity extends ZombieEntity {
   public boolean tryAttack(ServerWorld world, Entity target) {
     var result = super.tryAttack(world, target);
     if (result && target instanceof LivingEntity living) {
-      this.template.onAttack(world, this, living);
+      this.template.onAttackEffect().run(world, this, living);
     }
     return result;
+  }
+
+  @Override
+  protected void onKilledBy(@Nullable LivingEntity adversary) {
+    if (this.getWorld() instanceof ServerWorld world)
+      this.template.onKillEffect().run(world, this, adversary);
+    super.onKilledBy(adversary);
+  }
+
+  @Override
+  public void tick() {
+    if (this.getWorld() instanceof ServerWorld world)
+      this.template.onTickEffect().run(world, this, null);
+    super.tick();
   }
 
   @Override

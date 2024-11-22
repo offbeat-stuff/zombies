@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 import net.minecraft.entity.EquipmentTable;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.ZombieEntity;
 import net.minecraft.loot.LootTable;
 import net.minecraft.loot.context.LootContextParameters;
@@ -17,10 +16,15 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.biome.Biome;
 import org.codeberg.zenxarch.zombies.difficulty.ExtendedDifficulty;
+import org.codeberg.zenxarch.zombies.entity.effect.AllOfZombieEffect;
+import org.codeberg.zenxarch.zombies.entity.effect.DefaultZombieEffect;
+import org.codeberg.zenxarch.zombies.entity.effect.ZombieEffect;
 
 public record LootTableBasedTemplate(
     EquipmentTable equipmentTable,
-    List<AttackEffect> attackEffects,
+    ZombieEffect onAttack,
+    ZombieEffect onDeath,
+    ZombieEffect onTick,
     Predicate<RegistryEntry<Biome>> biomePredicate,
     int weight)
     implements ZombieTemplate {
@@ -39,8 +43,8 @@ public record LootTableBasedTemplate(
   }
 
   @Override
-  public void onAttack(ServerWorld world, ExtendedZombieEntity zombie, LivingEntity attacked) {
-    for (var effect : attackEffects) effect.onAttack(world, zombie, attacked);
+  public ZombieEffect onAttackEffect() {
+    return onAttack;
   }
 
   @Override
@@ -63,7 +67,7 @@ public record LootTableBasedTemplate(
 
   public static class Builder {
     private static final Predicate<RegistryEntry<Biome>> DEFAULT_BIOME_PREDICATE = (b) -> true;
-    private final List<AttackEffect> effects;
+    private final List<ZombieEffect> effects;
     private final EquipmentTable table;
     private int weight = 1;
     private Predicate<RegistryEntry<Biome>> biomePredicate = DEFAULT_BIOME_PREDICATE;
@@ -73,7 +77,7 @@ public record LootTableBasedTemplate(
       this.table = table;
     }
 
-    public Builder addEffect(AttackEffect effect) {
+    public Builder addEffect(ZombieEffect effect) {
       this.effects.add(effect);
       return this;
     }
@@ -100,7 +104,10 @@ public record LootTableBasedTemplate(
     }
 
     public LootTableBasedTemplate build() {
-      return new LootTableBasedTemplate(table, List.copyOf(effects), biomePredicate, weight);
+      ZombieEffect effect = new DefaultZombieEffect();
+      if (effects.size() == 1) effect = effects.getFirst();
+      else effect = new AllOfZombieEffect(List.copyOf(effects));
+      return new LootTableBasedTemplate(table, effect, effect, effect, biomePredicate, weight);
     }
   }
 }
