@@ -17,7 +17,10 @@
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"org.codeberg.zenxarch.zombies.Zombies"
+			{
+				"adapter": "kotlin",
+				"value" : "org.codeberg.zenxarch.zombies.ZombiesKt::init"
+			}
 		],
 		"fabric-datagen": [
 			"org.codeberg.zenxarch.zombies.ZombiesDataGenerator"
@@ -30,6 +33,7 @@
 		"fabricloader": ">=${loader_version}",
 		"minecraft": "~${minecraft_version}",
 		"java": ">=21",
-		"fabric": "*"
+		"fabric": "*",
+		"fabric-language-kotlin": ">=1.12.3+kotlin.2.0.21"
 	}
 }

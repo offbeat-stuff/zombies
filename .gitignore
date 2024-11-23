@@ -42,3 +42,4 @@ replay_*.log
 .factorypath
 .cache/
 .metals/
+.kotlin/
