@@ -85,7 +85,7 @@ public abstract class SpawnProvider {
         (toSpawn * 100) / (world.getGameRules().getInt(ZombieGamerules.SPAWN_SPEED) * 20);
     spawnTries = Math.max(spawnTries, 5);
     for (var pos : BlockPos.iterateRandomly(random, spawnTries, centerPos, SPAWN_RANGE)) {
-      if (SpawnUtils.burnsZombie(world, centerPos)) continue;
+      if (SpawnUtils.burnsZombie(world, pos)) continue;
 
       var range = getYRange(world, centerPos, pos);
       if (!range.isValid()) continue;
