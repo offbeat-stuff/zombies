@@ -39,7 +39,8 @@ public abstract class DifficultyCalculations {
 
     var playerScore = players == 0 ? 0.0 : scoreSum / players;
     playerScore = MathHelper.clamp(playerScore, 0.0, 1.0);
-    var timeFactor = (dayFactor * inhabitedTimeFactor) * 0.5 * (1.0 + moonSize);
+    var timeFactor =
+        MathHelper.clamp((dayFactor * inhabitedTimeFactor) * (1.0 + moonSize), 0.0, 1.0);
 
     var killScore = players == 0 ? 0.0 : zombieKills / players;
     killScore = MathHelper.clamp(killScore / 2500, 0.0, 1.0);
