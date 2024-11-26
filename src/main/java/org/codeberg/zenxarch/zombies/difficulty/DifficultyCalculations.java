@@ -23,8 +23,9 @@ public abstract class DifficultyCalculations {
   private static final int TICKS_PER_DAY = 20 * 60 * 20;
 
   public static double calculateDifficulty(ServerWorld world, BlockPos pos) {
-    var days = getDays(world, pos);
-    var time = getTimeFactor(world, pos);
+    var dayFactor = mapDays(world.getDifficulty(), getDays(world, pos));
+    var inhabitedTimeFactor = mapHours(world.getDifficulty(), getHoursInhabited(world, pos));
+    var moonSize = (double) world.getMoonSize();
     var scoreSum = 0.0;
     var zombieKills = 0;
     var players = 0;
@@ -38,9 +39,7 @@ public abstract class DifficultyCalculations {
 
     var playerScore = players == 0 ? 0.0 : scoreSum / players;
     playerScore = MathHelper.clamp(playerScore, 0.0, 1.0);
-    var timeFactor =
-        (mapTimeFactor(world.getDifficulty(), days) + mapTimeFactor(world.getDifficulty(), time))
-            * 0.5;
+    var timeFactor = (dayFactor * inhabitedTimeFactor) * 0.5 * (1.0 + moonSize);
 
     var killScore = players == 0 ? 0.0 : zombieKills / players;
     killScore = MathHelper.clamp(killScore / 2500, 0.0, 1.0);
@@ -51,12 +50,25 @@ public abstract class DifficultyCalculations {
         + (killScore * 0.2);
   }
 
-  private static double mapTimeFactor(Difficulty difficulty, double timeFactor) {
+  private static double normalize(double value, double start, double end) {
+    return MathHelper.clampedMap(value, start, end, 0.0, 1.0);
+  }
+
+  private static double mapDays(Difficulty difficulty, double days) {
     return switch (difficulty) {
       case PEACEFUL -> 0.0;
-      case EASY -> MathHelper.clampedMap(timeFactor, 5.0, 250.0, 0.0, 1.0);
-      case NORMAL -> MathHelper.clampedMap(timeFactor, 2.0, 150.0, 0.0, 1.0);
-      case HARD -> MathHelper.clampedMap(timeFactor, 0.0, 100.0, 0.0, 1.0);
+      case EASY -> normalize(days, 5.0, 250.0);
+      case NORMAL -> normalize(days, 2.0, 150.0);
+      case HARD -> normalize(days, 0.0, 100.0);
+    };
+  }
+
+  private static double mapHours(Difficulty difficulty, double hours) {
+    return switch (difficulty) {
+      case PEACEFUL -> 0.0;
+      case EASY -> normalize(hours, 8.0, 1.5);
+      case NORMAL -> normalize(hours, 20.0, 1.5);
+      case HARD -> normalize(hours, 35.0, 1.5);
     };
   }
 
@@ -64,17 +76,13 @@ public abstract class DifficultyCalculations {
     return (double) world.getTimeOfDay() / TICKS_PER_DAY;
   }
 
-  private static double getTimeFactor(World world, BlockPos pos) {
-    double inhibitedHours = 0.0;
-    double moonSize = 0.0;
-
+  private static double getHoursInhabited(World world, BlockPos pos) {
     if (world.isChunkLoaded(
         ChunkSectionPos.getSectionCoord(pos.getX()), ChunkSectionPos.getSectionCoord(pos.getZ()))) {
-      moonSize = (double) world.getMoonSize();
-      inhibitedHours = (double) world.getWorldChunk(pos).getInhabitedTime() / TICKS_PER_HOUR;
+      return (double) world.getWorldChunk(pos).getInhabitedTime() / TICKS_PER_HOUR;
     }
 
-    return inhibitedHours * 1.5 * (1.0 + moonSize);
+    return 0.0;
   }
 
   private static DoubleStream streamInventory(
@@ -96,7 +104,7 @@ public abstract class DifficultyCalculations {
             + player.getAttributeValue(EntityAttributes.ARMOR_TOUGHNESS)
             + player.getAttributeValue(EntityAttributes.KNOCKBACK_RESISTANCE);
 
-    armor = MathHelper.clamp(armor / (32.0), 0.0, 1.0);
+    armor = normalize(armor, 0.0, 32.0);
     return (armor + weaponSpeedScore + weaponDamageScore) * (0.75 / 3.0) + foodScore * 0.25;
   }
 
@@ -115,27 +123,23 @@ public abstract class DifficultyCalculations {
   }
 
   private static double scoreWeaponSpeed(ItemStack stack) {
-    return MathHelper.clampedMap(
+    return normalize(
         getDamagePerSecond(stack),
-        getDamagePerSecond(ItemStack.EMPTY),
-        getDamagePerSecond(Items.NETHERITE_SWORD.getDefaultStack()),
-        0.0,
-        1.0);
+        getDamagePerSecond(Items.WOODEN_SWORD.getDefaultStack()),
+        getDamagePerSecond(Items.NETHERITE_SWORD.getDefaultStack()));
   }
 
   private static double scoreWeaponDamage(ItemStack stack) {
-    return MathHelper.clampedMap(
+    return normalize(
         getAttackDamage(stack),
-        getAttackDamage(ItemStack.EMPTY),
-        getAttackDamage(Items.NETHERITE_AXE.getDefaultStack()),
-        0.0,
-        1.0);
+        getAttackDamage(Items.WOODEN_AXE.getDefaultStack()),
+        getAttackDamage(Items.NETHERITE_AXE.getDefaultStack()));
   }
 
   private static double scoreFood(ItemStack stack) {
     var score = 0.0;
     if (stack.getComponents().contains(DataComponentTypes.FOOD))
       score = stack.get(DataComponentTypes.FOOD).nutrition() * stack.getCount();
-    return MathHelper.clamp(score / 400.0, 0.0, 1.0);
+    return normalize(score, 0.0, 400.0);
   }
 }
