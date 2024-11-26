@@ -35,7 +35,8 @@ public class ZombieApocalypse {
             zombie.getY(),
             zombie.getZ(),
             64.0,
-            EntityPredicates.VALID_LIVING_ENTITY.and(EntityPredicates.EXCEPT_SPECTATOR)));
+            EntityPredicates.VALID_LIVING_ENTITY.and(
+                EntityPredicates.EXCEPT_CREATIVE_OR_SPECTATOR)));
     zombie.initialize(this.world);
     this.world.spawnEntityAndPassengers(zombie);
   }
