@@ -2,7 +2,7 @@ package org.codeberg.zenxarch.zombies.datagen;
 
 import java.util.concurrent.CompletableFuture;
 import net.minecraft.data.DataOutput;
-import net.minecraft.data.server.tag.TagProvider;
+import net.minecraft.data.tag.TagProvider;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.registry.RegistryWrapper.WrapperLookup;
