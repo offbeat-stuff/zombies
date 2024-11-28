@@ -22,33 +22,41 @@ public abstract class DifficultyCalculations {
   private static final int TICKS_PER_HOUR = 60 * 60 * 20;
   private static final int TICKS_PER_DAY = 20 * 60 * 20;
 
-  public static double calculateDifficulty(ServerWorld world, BlockPos pos) {
-    var dayFactor = mapDays(world.getDifficulty(), getDays(world, pos));
-    var inhabitedTimeFactor = mapHours(world.getDifficulty(), getHoursInhabited(world, pos));
-    var moonSize = (double) world.getMoonSize();
-    var scoreSum = 0.0;
-    var zombieKills = 0;
+  private static double normalize(double value) {
+    return Math.min(1.0, Math.max(value, 0.0));
+  }
+
+  private static double[] getPlayerScore(ServerWorld world, BlockPos pos) {
     var players = 0;
-    for (var player : ZombieApocalypse.players(world)) {
+    var result = new double[] {0.0, 0.0};
+    for (ServerPlayerEntity player : ZombieApocalypse.players(world)) {
       if (player.squaredDistanceTo(pos.toCenterPos()) > 128.0 * 128.0) continue;
       players++;
-      scoreSum += getPlayerScore(player);
-      zombieKills +=
-          player.getStatHandler().getStat(Stats.KILLED.getOrCreateStat(EntityType.ZOMBIE));
+      result[0] += getPlayerScore(player);
+      result[1] += player.getStatHandler().getStat(Stats.KILLED.getOrCreateStat(EntityType.ZOMBIE));
     }
+    if (players == 0) return result;
+    result[0] = normalize(result[0] / players);
+    result[1] = normalize(result[1] / (players * 2500));
+    return result;
+  }
 
-    var playerScore = players == 0 ? 0.0 : scoreSum / players;
-    playerScore = MathHelper.clamp(playerScore, 0.0, 1.0);
-    var timeFactor = MathHelper.clamp(dayFactor * (1.0 + moonSize), 0.0, 1.0);
+  private static double baseDifficulty(ServerWorld world, BlockPos pos) {
+    var dayFactor = mapDays(world.getDifficulty(), getDays(world, pos));
+    var moonSize = (double) world.getMoonSize();
+    var timeFactor = normalize(dayFactor * (1.0 + moonSize));
+    var playerScore = getPlayerScore(world, pos);
+    return timeFactor * 0.1
+        + timeFactor * playerScore[0] * 0.5
+        + playerScore[0] * 0.3
+        + playerScore[1] * 0.1;
+  }
 
-    var killScore = players == 0 ? 0.0 : zombieKills / players;
-    killScore = MathHelper.clamp(killScore / 2500, 0.0, 1.0);
+  public static double calculateDifficulty(ServerWorld world, BlockPos pos) {
+    var inhabitedTimeFactor = mapHours(world.getDifficulty(), getHoursInhabited(world, pos));
+    if (inhabitedTimeFactor < 0.0) return 0.0;
 
-    return inhabitedTimeFactor
-        * ((timeFactor * 0.1)
-            + (timeFactor * playerScore * 0.5)
-            + (playerScore * 0.3)
-            + (killScore * 0.1));
+    return inhabitedTimeFactor * baseDifficulty(world, pos);
   }
 
   private static double normalize(double value, double start, double end) {
@@ -98,7 +106,7 @@ public abstract class DifficultyCalculations {
     var weaponDamageScore =
         streamInventory(player, DifficultyCalculations::scoreWeaponDamage).max().orElse(0.0);
     var foodScore = streamInventory(player, DifficultyCalculations::scoreFood).sum();
-    foodScore = MathHelper.clamp(foodScore, 0.0, 1.0);
+    foodScore = normalize(foodScore);
 
     var armor =
         player.getAttributeValue(EntityAttributes.ARMOR)

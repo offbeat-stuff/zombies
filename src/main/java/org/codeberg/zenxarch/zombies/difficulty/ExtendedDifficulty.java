@@ -3,7 +3,6 @@ package org.codeberg.zenxarch.zombies.difficulty;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.LocalDifficulty;
@@ -29,10 +28,9 @@ public class ExtendedDifficulty extends LocalDifficulty {
   public ExtendedDifficulty(ServerWorld world, BlockPos pos) {
     super(world.getDifficulty(), 0, 0, 0);
     this.difficulty = DifficultyCalculations.calculateDifficulty(world, pos);
+    final var maxPossibleZombies = world.getGameRules().getInt(ZombieGamerules.MAX_ZOMBIES);
     this.maxZombies =
-        (int)
-            MathHelper.clampedLerp(
-                10.0, world.getGameRules().getInt(ZombieGamerules.MAX_ZOMBIES), this.difficulty);
+        this.difficulty >= 1.0 ? maxPossibleZombies : (int) (this.difficulty * maxPossibleZombies);
   }
 
   @Override
