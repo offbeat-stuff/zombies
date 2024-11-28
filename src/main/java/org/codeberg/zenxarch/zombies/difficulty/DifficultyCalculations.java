@@ -1,7 +1,7 @@
 package org.codeberg.zenxarch.zombies.difficulty;
 
 import java.util.function.ToDoubleFunction;
-import java.util.stream.DoubleStream;
+import java.util.stream.Stream;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.attribute.EntityAttributes;
@@ -94,18 +94,26 @@ public abstract class DifficultyCalculations {
     return 0.0;
   }
 
-  private static DoubleStream streamInventory(
+  private static Stream<ItemStack> items(ServerPlayerEntity player) {
+    return player.getInventory().main.stream();
+  }
+
+  private static double foldWeaponScore(
       ServerPlayerEntity player, ToDoubleFunction<ItemStack> func) {
-    return player.getInventory().main.stream().mapToDouble(func);
+    return items(player)
+        .filter(
+            stack ->
+                stack.hasEnchantments()
+                    || stack.getComponents().contains(DataComponentTypes.ATTRIBUTE_MODIFIERS))
+        .mapToDouble(func)
+        .max()
+        .orElse(0.0);
   }
 
   private static double getPlayerScore(ServerPlayerEntity player) {
-
-    var weaponSpeedScore =
-        streamInventory(player, DifficultyCalculations::scoreWeaponSpeed).max().orElse(0.0);
-    var weaponDamageScore =
-        streamInventory(player, DifficultyCalculations::scoreWeaponDamage).max().orElse(0.0);
-    var foodScore = streamInventory(player, DifficultyCalculations::scoreFood).sum();
+    var weaponSpeedScore = foldWeaponScore(player, DifficultyCalculations::scoreWeaponSpeed);
+    var weaponDamageScore = foldWeaponScore(player, DifficultyCalculations::scoreWeaponDamage);
+    var foodScore = items(player).mapToDouble(DifficultyCalculations::scoreFood).sum();
     foodScore = normalize(foodScore);
 
     var armor =
