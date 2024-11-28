@@ -5,6 +5,7 @@ import java.util.stream.Stream;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.attribute.EntityAttributes;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -98,21 +99,16 @@ public abstract class DifficultyCalculations {
     return player.getInventory().main.stream();
   }
 
-  private static double foldWeaponScore(
-      ServerPlayerEntity player, ToDoubleFunction<ItemStack> func) {
-    return items(player)
-        .filter(
-            stack ->
-                stack.hasEnchantments()
-                    || stack.getComponents().contains(DataComponentTypes.ATTRIBUTE_MODIFIERS))
-        .mapToDouble(func)
-        .max()
-        .orElse(0.0);
-  }
-
   private static double getPlayerScore(ServerPlayerEntity player) {
-    var weaponSpeedScore = foldWeaponScore(player, DifficultyCalculations::scoreWeaponSpeed);
-    var weaponDamageScore = foldWeaponScore(player, DifficultyCalculations::scoreWeaponDamage);
+    var weaponSpeedScore =
+        scoreWeapon(
+            player,
+            DifficultyCalculations::getDamagePerSecond,
+            Items.WOODEN_SWORD,
+            Items.NETHERITE_SWORD);
+    var weaponDamageScore =
+        scoreWeapon(
+            player, DifficultyCalculations::getAttackDamage, Items.WOODEN_AXE, Items.NETHERITE_AXE);
     var foodScore = items(player).mapToDouble(DifficultyCalculations::scoreFood).sum();
     foodScore = normalize(foodScore);
 
@@ -139,24 +135,29 @@ public abstract class DifficultyCalculations {
     return getAttackDamage(stack) * getAttackSpeed(stack);
   }
 
-  private static double scoreWeaponSpeed(ItemStack stack) {
-    return normalize(
-        getDamagePerSecond(stack),
-        getDamagePerSecond(Items.WOODEN_SWORD.getDefaultStack()),
-        getDamagePerSecond(Items.NETHERITE_SWORD.getDefaultStack()));
-  }
-
-  private static double scoreWeaponDamage(ItemStack stack) {
-    return normalize(
-        getAttackDamage(stack),
-        getAttackDamage(Items.WOODEN_AXE.getDefaultStack()),
-        getAttackDamage(Items.NETHERITE_AXE.getDefaultStack()));
-  }
-
   private static double scoreFood(ItemStack stack) {
     var score = 0.0;
     if (stack.getComponents().contains(DataComponentTypes.FOOD))
       score = stack.get(DataComponentTypes.FOOD).nutrition() * stack.getCount();
     return normalize(score, 0.0, 400.0);
+  }
+
+  private static boolean isAWeapon(ItemStack stack) {
+    if (stack.isEmpty()) return false;
+    if (stack.getComponents().contains(DataComponentTypes.ATTRIBUTE_MODIFIERS)) return true;
+    return stack.hasEnchantments();
+  }
+
+  private static double scoreWeapon(
+      ServerPlayerEntity player, ToDoubleFunction<ItemStack> scorer, Item minItem, Item maxItem) {
+    var baseMin = scorer.applyAsDouble(minItem.getDefaultStack());
+    var baseMax = scorer.applyAsDouble(maxItem.getDefaultStack());
+    var bestScore =
+        items(player)
+            .filter(DifficultyCalculations::isAWeapon)
+            .mapToDouble(scorer)
+            .max()
+            .orElse(0.0);
+    return normalize(bestScore, baseMin, baseMax);
   }
 }
