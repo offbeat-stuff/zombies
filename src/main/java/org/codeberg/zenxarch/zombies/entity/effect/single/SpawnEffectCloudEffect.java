@@ -1,10 +1,14 @@
 package org.codeberg.zenxarch.zombies.entity.effect.single;
 
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.List;
 import net.minecraft.entity.AreaEffectCloudEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.particle.ParticleEffect;
+import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.dynamic.Codecs;
 import org.codeberg.zenxarch.zombies.entity.effect.util.StatusEffectInstanceBuilder;
 
 public record SpawnEffectCloudEffect(
@@ -13,6 +17,27 @@ public record SpawnEffectCloudEffect(
     float radius,
     float radiusOnUse)
     implements SingleLivingEffect {
+
+  public static final MapCodec<SpawnEffectCloudEffect> CODEC =
+      RecordCodecBuilder.mapCodec(
+          instance ->
+              instance
+                  .group(
+                      StatusEffectInstanceBuilder.CODEC
+                          .codec()
+                          .listOf(1, Integer.MAX_VALUE)
+                          .fieldOf("effects")
+                          .forGetter(SpawnEffectCloudEffect::effects),
+                      ParticleTypes.TYPE_CODEC
+                          .fieldOf("particleEffect")
+                          .forGetter(SpawnEffectCloudEffect::particleEffect),
+                      Codecs.NON_NEGATIVE_FLOAT
+                          .fieldOf("radius")
+                          .forGetter(SpawnEffectCloudEffect::radius),
+                      Codecs.NON_NEGATIVE_FLOAT
+                          .fieldOf("radiusOnUse")
+                          .forGetter(SpawnEffectCloudEffect::radiusOnUse))
+                  .apply(instance, SpawnEffectCloudEffect::new));
 
   @Override
   public void run(ServerWorld world, LivingEntity target) {
@@ -29,5 +54,10 @@ public record SpawnEffectCloudEffect(
     for (var effect : effects) cloud.addEffect(effect.build());
 
     world.spawnEntity(cloud);
+  }
+
+  @Override
+  public MapCodec<? extends SingleLivingEffect> getCodec() {
+    return CODEC;
   }
 }

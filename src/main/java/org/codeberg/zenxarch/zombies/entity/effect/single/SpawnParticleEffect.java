@@ -1,9 +1,13 @@
 package org.codeberg.zenxarch.zombies.entity.effect.single;
 
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.enchantment.effect.entity.SpawnParticlesEnchantmentEffect;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.particle.ParticleEffect;
+import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.math.floatprovider.ConstantFloatProvider;
 import net.minecraft.util.math.floatprovider.FloatProvider;
 
 public record SpawnParticleEffect(
@@ -14,6 +18,31 @@ public record SpawnParticleEffect(
     SpawnParticlesEnchantmentEffect.VelocitySource verticalVelocity,
     FloatProvider speed)
     implements SingleLivingEffect {
+
+  public static final MapCodec<SpawnParticleEffect> CODEC =
+      RecordCodecBuilder.mapCodec(
+          instance ->
+              instance
+                  .group(
+                      ParticleTypes.TYPE_CODEC
+                          .fieldOf("particle")
+                          .forGetter(SpawnParticleEffect::particle),
+                      SpawnParticlesEnchantmentEffect.PositionSource.CODEC
+                          .fieldOf("horizontal_position")
+                          .forGetter(SpawnParticleEffect::horizontalPosition),
+                      SpawnParticlesEnchantmentEffect.PositionSource.CODEC
+                          .fieldOf("vertical_position")
+                          .forGetter(SpawnParticleEffect::verticalPosition),
+                      SpawnParticlesEnchantmentEffect.VelocitySource.CODEC
+                          .fieldOf("horizontal_velocity")
+                          .forGetter(SpawnParticleEffect::horizontalVelocity),
+                      SpawnParticlesEnchantmentEffect.VelocitySource.CODEC
+                          .fieldOf("vertical_velocity")
+                          .forGetter(SpawnParticleEffect::verticalVelocity),
+                      FloatProvider.VALUE_CODEC
+                          .optionalFieldOf("speed", ConstantFloatProvider.ZERO)
+                          .forGetter(SpawnParticleEffect::speed))
+                  .apply(instance, SpawnParticleEffect::new));
 
   @Override
   public void run(ServerWorld world, LivingEntity target) {
@@ -33,5 +62,10 @@ public record SpawnParticleEffect(
         this.verticalVelocity.getVelocity(movement.getY(), random),
         this.horizontalVelocity.getVelocity(movement.getZ(), random),
         (double) this.speed.get(random));
+  }
+
+  @Override
+  public MapCodec<? extends SingleLivingEffect> getCodec() {
+    return CODEC;
   }
 }

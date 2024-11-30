@@ -1,5 +1,6 @@
 package org.codeberg.zenxarch.zombies.entity.effect;
 
+import com.mojang.serialization.MapCodec;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.world.TeleportTarget;
@@ -8,6 +9,7 @@ import org.jetbrains.annotations.Nullable;
 
 public record SwapPositionZombieEffect() implements ZombieEffect {
   private static final SwapPositionZombieEffect INSTANCE = new SwapPositionZombieEffect();
+  public static final MapCodec<SwapPositionZombieEffect> CODEC = MapCodec.unit(INSTANCE);
 
   private static TeleportTarget getTeleportTarget(ServerWorld world, LivingEntity living) {
     return new TeleportTarget(
@@ -29,6 +31,11 @@ public record SwapPositionZombieEffect() implements ZombieEffect {
 
     zombie.teleportTo(toAdversary);
     adversery.teleportTo(toZombie);
+  }
+
+  @Override
+  public MapCodec<SwapPositionZombieEffect> getCodec() {
+    return CODEC;
   }
 
   public static SwapPositionZombieEffect create() {

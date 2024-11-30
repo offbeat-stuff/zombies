@@ -2,25 +2,51 @@ package org.codeberg.zenxarch.zombies.entity.effect;
 
 import static net.minecraft.enchantment.effect.entity.SpawnParticlesEnchantmentEffect.*;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import java.util.List;
+import java.util.function.Function;
 import net.minecraft.enchantment.effect.entity.SpawnParticlesEnchantmentEffect;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.particle.ParticleEffect;
+import net.minecraft.registry.Registry;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.floatprovider.ConstantFloatProvider;
 import net.minecraft.util.math.floatprovider.FloatProvider;
+import org.codeberg.zenxarch.zombies.Zombies;
 import org.codeberg.zenxarch.zombies.entity.ExtendedZombieEntity;
 import org.codeberg.zenxarch.zombies.entity.effect.single.FreezeEffect;
 import org.codeberg.zenxarch.zombies.entity.effect.single.IgniteEffect;
 import org.codeberg.zenxarch.zombies.entity.effect.single.SingleLivingEffect;
 import org.codeberg.zenxarch.zombies.entity.effect.single.SpawnParticleEffect;
 import org.codeberg.zenxarch.zombies.entity.effect.util.StatusEffectInstanceBuilder;
+import org.codeberg.zenxarch.zombies.registry.RegistryInit;
 import org.jetbrains.annotations.Nullable;
 
 public interface ZombieEffect {
+  public static final Codec<ZombieEffect> CODEC =
+      RegistryInit.ZOMBIE_EFFECT_REGISTRY
+          .getCodec()
+          .dispatch(ZombieEffect::getCodec, Function.identity());
+
   public void run(ServerWorld world, ExtendedZombieEntity zombie, @Nullable LivingEntity adversery);
+
+  public MapCodec<? extends ZombieEffect> getCodec();
+
+  public static void init() {
+    register("default", DefaultZombieEffect.CODEC);
+    register("all_of", AllOfZombieEffect.CODEC);
+    register("random", RandomZombieEffect.CODEC);
+    register("single_target", SingleTargetZombieEffect.CODEC);
+    register("status_effect", StatusEffectZombieEffect.CODEC);
+    register("swap_position", SwapPositionZombieEffect.CODEC);
+  }
+
+  private static void register(String id, MapCodec<? extends ZombieEffect> codec) {
+    Registry.register(RegistryInit.ZOMBIE_EFFECT_REGISTRY, Zombies.id(id), codec);
+  }
 
   public static SwapPositionZombieEffect swapPositions() {
     return SwapPositionZombieEffect.create();

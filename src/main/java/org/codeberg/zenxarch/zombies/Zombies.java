@@ -5,6 +5,7 @@ import net.minecraft.util.Identifier;
 import org.codeberg.zenxarch.zombies.entity.ZombieTemplates;
 import org.codeberg.zenxarch.zombies.loot_table.ZombieLootFunctionTypes;
 import org.codeberg.zenxarch.zombies.loot_table.ZombieLootNumberProviderTypes;
+import org.codeberg.zenxarch.zombies.registry.RegistryInit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,6 +23,7 @@ public class Zombies implements ModInitializer {
   @Override
   public void onInitialize() {
     LOGGER.info("Hello Fabric world!");
+    RegistryInit.init();
     ZombieGamerules.initialize();
     ZombieLootNumberProviderTypes.initialize();
     ZombieLootFunctionTypes.initialize();
