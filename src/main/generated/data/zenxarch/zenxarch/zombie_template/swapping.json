@@ -1,0 +1,39 @@
+{
+  "biomePredicate": {
+    "tags": []
+  },
+  "equipmentTable": {
+    "loot_table": "zenxarch:common_zombie_equipment",
+    "slot_drop_chances": 7.5E-4
+  },
+  "onAttack": {
+    "type": "zenxarch:swap_position"
+  },
+  "onDeath": {
+    "type": "zenxarch:default"
+  },
+  "onTick": {
+    "type": "zenxarch:single_target",
+    "effect": {
+      "type": "zenxarch:spawn_particle_effect",
+      "horizontal_position": {
+        "type": "in_bounding_box"
+      },
+      "horizontal_velocity": {
+        "base": 0.2
+      },
+      "particle": {
+        "type": "minecraft:portal"
+      },
+      "speed": 0.2,
+      "vertical_position": {
+        "type": "in_bounding_box"
+      },
+      "vertical_velocity": {
+        "base": 0.2
+      }
+    },
+    "targetZombie": true
+  },
+  "weight": 1
+}

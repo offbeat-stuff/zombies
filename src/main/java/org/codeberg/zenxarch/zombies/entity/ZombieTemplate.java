@@ -40,8 +40,8 @@ public record ZombieTemplate(
                           .fieldOf("equipmentTable")
                           .forGetter(ZombieTemplate::equipmentTable),
                       ZombieEffect.CODEC.fieldOf("onAttack").forGetter(ZombieTemplate::onAttack),
-                      ZombieEffect.CODEC.fieldOf("onAttack").forGetter(ZombieTemplate::onAttack),
-                      ZombieEffect.CODEC.fieldOf("onAttack").forGetter(ZombieTemplate::onAttack),
+                      ZombieEffect.CODEC.fieldOf("onDeath").forGetter(ZombieTemplate::onDeath),
+                      ZombieEffect.CODEC.fieldOf("onTick").forGetter(ZombieTemplate::onTick),
                       BiomePredicate.CODEC
                           .fieldOf("biomePredicate")
                           .forGetter(ZombieTemplate::biomePredicate),

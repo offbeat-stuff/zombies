@@ -26,6 +26,7 @@ public class ZDynamicRegistryProvider extends FabricDynamicRegistryProvider {
   @Override
   protected void configure(WrapperLookup registries, Entries entries) {
     ZEnchantmentProviders.bootstrap(createRegisterable(registries, entries));
+    ZombieTemplates.bootstrap(createRegisterable(registries, entries));
   }
 
   private static <T> Registerable<T> createRegisterable(

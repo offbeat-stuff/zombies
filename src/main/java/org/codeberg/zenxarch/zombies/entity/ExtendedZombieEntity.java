@@ -17,6 +17,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldView;
 import org.codeberg.zenxarch.zombies.ZombieGamerules;
 import org.codeberg.zenxarch.zombies.difficulty.ExtendedDifficulty;
+import org.codeberg.zenxarch.zombies.registry.ZombieRegistries;
 import org.codeberg.zenxarch.zombies.spawning.SpawnerProvider;
 import org.codeberg.zenxarch.zombies.spawning.ZombieApocalypse;
 import org.jetbrains.annotations.Nullable;
@@ -108,7 +109,10 @@ public class ExtendedZombieEntity extends ZombieEntity {
   @Override
   public void writeCustomDataToNbt(NbtCompound nbt) {
     super.writeCustomDataToNbt(nbt);
-    nbt.putString(ZombieApocalypse.ZOMBIE_ID_KEY, ZombieRegistry.getId(this.template));
+    var registry =
+        getWorld().getRegistryManager().getOptional(ZombieRegistries.TEMPLATE_REGISTRY_KEY);
+    if (registry.isEmpty()) return;
+    nbt.putString(ZombieApocalypse.ZOMBIE_ID_KEY, registry.get().getId(this.template).toString());
   }
 
   @Override

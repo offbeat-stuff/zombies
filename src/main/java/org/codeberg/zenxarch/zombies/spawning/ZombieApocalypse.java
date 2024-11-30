@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Stream;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NbtCompound;
@@ -11,6 +12,7 @@ import net.minecraft.predicate.entity.EntityPredicates;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.World;
@@ -18,7 +20,9 @@ import org.codeberg.zenxarch.zombies.ZombieGamerules;
 import org.codeberg.zenxarch.zombies.Zombies;
 import org.codeberg.zenxarch.zombies.difficulty.ExtendedDifficulty;
 import org.codeberg.zenxarch.zombies.entity.ExtendedZombieEntity;
-import org.codeberg.zenxarch.zombies.entity.ZombieRegistry;
+import org.codeberg.zenxarch.zombies.entity.ZombieTemplate;
+import org.codeberg.zenxarch.zombies.entity.ZombieTemplateRegistryHelper;
+import org.codeberg.zenxarch.zombies.registry.ZombieRegistries;
 
 public class ZombieApocalypse {
   private ServerWorld world;
@@ -42,8 +46,8 @@ public class ZombieApocalypse {
   }
 
   private void spawnZombie(BlockPos pos) {
-    ZombieRegistry.selectTemplate(world.getRandom(), world.getBiome(pos))
-        .flatMap(t -> ZombieRegistry.newZombie(world, t, pos))
+    ZombieTemplateRegistryHelper.selectTemplate(world, world.getRandom(), world.getBiome(pos))
+        .flatMap(t -> ZombieTemplateRegistryHelper.newZombie(world, t, pos))
         .ifPresent(this::spawnZombie);
   }
 
@@ -112,13 +116,40 @@ public class ZombieApocalypse {
 
   public static final String ZOMBIE_ID_KEY = "zenxarch_zombie_id";
 
+  private static Identifier toId(String id) {
+    int i = id.indexOf(":");
+    if (i >= 0) {
+      String string = id.substring(i + 1);
+      if (i != 0) {
+        String string2 = id.substring(0, i);
+        return Identifier.of(string2, string);
+      } else {
+        return Zombies.id(string);
+      }
+    } else {
+      return Zombies.id(id);
+    }
+  }
+
+  private static Optional<ZombieTemplate> fromId(World world, Identifier id) {
+    var registry = world.getRegistryManager().getOptional(ZombieRegistries.TEMPLATE_REGISTRY_KEY);
+    if (registry.isEmpty()) return Optional.empty();
+    return Optional.ofNullable(registry.get().get(id));
+  }
+
   public static Optional<Entity> loadFromNbt(NbtCompound nbt, World world) {
     return switch (nbt.getString(ZOMBIE_ID_KEY)) {
       case "" -> Optional.empty();
       case String id -> {
-        var zombie = new ExtendedZombieEntity(world, ZombieRegistry.getTemplate(id));
-        zombie.readNbt(nbt);
-        yield Optional.of(zombie);
+        try {
+          var result =
+              fromId(world, toId(id)).map(template -> new ExtendedZombieEntity(world, template));
+          result.ifPresent(zombie -> zombie.readNbt(nbt));
+          yield result.map(Function.identity());
+        } catch (Exception e) {
+          Zombies.LOGGER.info("Exception caught: ", e.getMessage());
+          yield Optional.empty();
+        }
       }
     };
   }

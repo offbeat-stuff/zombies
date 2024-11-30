@@ -37,6 +37,6 @@ public record SingleTargetZombieEffect(SingleLivingEffect effect, boolean target
 
   @Override
   public MapCodec<SingleTargetZombieEffect> getCodec() {
-    return null;
+    return CODEC;
   }
 }
