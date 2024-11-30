@@ -1,6 +1,6 @@
 package org.codeberg.zenxarch.zombies.entity.effect.util;
 
-import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
@@ -9,8 +9,8 @@ import net.minecraft.util.dynamic.Codecs;
 
 public record StatusEffectInstanceBuilder(
     RegistryEntry<StatusEffect> effect, int duration, int amplifier) {
-  public static final MapCodec<StatusEffectInstanceBuilder> CODEC =
-      RecordCodecBuilder.mapCodec(
+  public static final Codec<StatusEffectInstanceBuilder> CODEC =
+      RecordCodecBuilder.create(
           instance ->
               instance
                   .group(

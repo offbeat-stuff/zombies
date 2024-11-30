@@ -7,11 +7,11 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.registry.Registry;
 import net.minecraft.server.world.ServerWorld;
 import org.codeberg.zenxarch.zombies.Zombies;
-import org.codeberg.zenxarch.zombies.registry.RegistryInit;
+import org.codeberg.zenxarch.zombies.registry.ZombieRegistries;
 
 public interface SingleLivingEffect {
   public static final Codec<SingleLivingEffect> CODEC =
-      RegistryInit.SINGLE_LIVING_EFFECT_REGISTRY
+      ZombieRegistries.SINGLE_LIVING_EFFECT_REGISTRY
           .getCodec()
           .dispatch(SingleLivingEffect::getCodec, Function.identity());
 
@@ -28,6 +28,6 @@ public interface SingleLivingEffect {
   }
 
   private static void register(String id, MapCodec<? extends SingleLivingEffect> codec) {
-    Registry.register(RegistryInit.SINGLE_LIVING_EFFECT_REGISTRY, Zombies.id(id), codec);
+    Registry.register(ZombieRegistries.SINGLE_LIVING_EFFECT_REGISTRY, Zombies.id(id), codec);
   }
 }

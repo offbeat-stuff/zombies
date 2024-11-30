@@ -22,12 +22,12 @@ import org.codeberg.zenxarch.zombies.entity.effect.single.IgniteEffect;
 import org.codeberg.zenxarch.zombies.entity.effect.single.SingleLivingEffect;
 import org.codeberg.zenxarch.zombies.entity.effect.single.SpawnParticleEffect;
 import org.codeberg.zenxarch.zombies.entity.effect.util.StatusEffectInstanceBuilder;
-import org.codeberg.zenxarch.zombies.registry.RegistryInit;
+import org.codeberg.zenxarch.zombies.registry.ZombieRegistries;
 import org.jetbrains.annotations.Nullable;
 
 public interface ZombieEffect {
   public static final Codec<ZombieEffect> CODEC =
-      RegistryInit.ZOMBIE_EFFECT_REGISTRY
+      ZombieRegistries.ZOMBIE_EFFECT_REGISTRY
           .getCodec()
           .dispatch(ZombieEffect::getCodec, Function.identity());
 
@@ -45,7 +45,7 @@ public interface ZombieEffect {
   }
 
   private static void register(String id, MapCodec<? extends ZombieEffect> codec) {
-    Registry.register(RegistryInit.ZOMBIE_EFFECT_REGISTRY, Zombies.id(id), codec);
+    Registry.register(ZombieRegistries.ZOMBIE_EFFECT_REGISTRY, Zombies.id(id), codec);
   }
 
   public static SwapPositionZombieEffect swapPositions() {

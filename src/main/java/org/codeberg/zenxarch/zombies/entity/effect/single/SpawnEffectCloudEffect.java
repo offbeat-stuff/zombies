@@ -24,7 +24,6 @@ public record SpawnEffectCloudEffect(
               instance
                   .group(
                       StatusEffectInstanceBuilder.CODEC
-                          .codec()
                           .listOf(1, Integer.MAX_VALUE)
                           .fieldOf("effects")
                           .forGetter(SpawnEffectCloudEffect::effects),

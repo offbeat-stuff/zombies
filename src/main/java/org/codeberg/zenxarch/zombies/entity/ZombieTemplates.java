@@ -7,13 +7,12 @@ import net.minecraft.registry.tag.BiomeTags;
 import org.codeberg.zenxarch.zombies.loot_table.ZombieLootTables;
 
 public interface ZombieTemplates {
-  private static LootTableBasedTemplate.Builder defaultBuilder() {
-    return LootTableBasedTemplate.builder(ZombieLootTables.COMMON_ZOMBIE_EQUIPMENT);
+  private static ZombieTemplate.Builder defaultBuilder() {
+    return ZombieTemplate.builder(ZombieLootTables.COMMON_ZOMBIE_EQUIPMENT);
   }
 
-  private static LootTableBasedTemplate.Builder defaultBuilder(int weight) {
-    return LootTableBasedTemplate.builder(ZombieLootTables.COMMON_ZOMBIE_EQUIPMENT)
-        .withWeight(weight);
+  private static ZombieTemplate.Builder defaultBuilder(int weight) {
+    return ZombieTemplate.builder(ZombieLootTables.COMMON_ZOMBIE_EQUIPMENT).withWeight(weight);
   }
 
   public static final String COMMON_ZOMBIE = ZombieRegistry.getDefaultId();
@@ -43,7 +42,7 @@ public interface ZombieTemplates {
     ZombieRegistry.freezeRegistry();
   }
 
-  public static void register(String id, LootTableBasedTemplate.Builder builder) {
+  public static void register(String id, ZombieTemplate.Builder builder) {
     ZombieRegistry.register(id, builder.build());
   }
 }

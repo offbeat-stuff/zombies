@@ -19,7 +19,6 @@ public record StatusEffectZombieEffect(List<StatusEffectInstanceBuilder> effects
               instance
                   .group(
                       StatusEffectInstanceBuilder.CODEC
-                          .codec()
                           .listOf(1, Integer.MAX_VALUE)
                           .fieldOf("effects")
                           .forGetter(StatusEffectZombieEffect::effects))
