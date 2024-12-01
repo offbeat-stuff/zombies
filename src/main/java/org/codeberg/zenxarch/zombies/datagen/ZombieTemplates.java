@@ -5,8 +5,8 @@ import static org.codeberg.zenxarch.zombies.entity.effect.ZombieEffect.*;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.Registerable;
 import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.tag.BiomeTags;
 import org.codeberg.zenxarch.zombies.Zombies;
+import org.codeberg.zenxarch.zombies.data.ZBiomeTags;
 import org.codeberg.zenxarch.zombies.entity.ZombieTemplate;
 import org.codeberg.zenxarch.zombies.loot_table.ZombieLootTables;
 import org.codeberg.zenxarch.zombies.registry.ZombieRegistries;
@@ -43,14 +43,14 @@ public interface ZombieTemplates {
         defaultBuilder(16)
             .withOnAttack(ignite(1.0F))
             .withOnTick(spawnParticles(ParticleTypes.FLAME, 0.2F))
-            .spawnIn(BiomeTags.SPAWNS_WARM_VARIANT_FROGS));
+            .spawnIn(ZBiomeTags.WITH_FLAME_ZOMBIES));
     register(
         registry,
         FREEZE_ZOMBIE,
         defaultBuilder(16)
             .withOnAttack(freeze())
             .withOnTick(spawnParticles(ParticleTypes.SNOWFLAKE, 0.2F))
-            .spawnIn(BiomeTags.SPAWNS_COLD_VARIANT_FROGS));
+            .spawnIn(ZBiomeTags.WITH_FROST_ZOMBIES));
   }
 
   public static void register(

@@ -1,25 +1,28 @@
 package org.codeberg.zenxarch.zombies.datagen;
 
 import java.util.concurrent.CompletableFuture;
-import net.minecraft.data.DataOutput;
-import net.minecraft.data.tag.TagProvider;
+import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
+import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagProvider;
+import net.fabricmc.fabric.api.tag.convention.v2.ConventionalBiomeTags;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.registry.RegistryWrapper.WrapperLookup;
-import net.minecraft.registry.tag.BiomeTags;
 import net.minecraft.world.biome.Biome;
 import org.codeberg.zenxarch.zombies.data.ZBiomeTags;
 
-public class ZBiomeTagProvider extends TagProvider<Biome> {
+public class ZBiomeTagProvider extends FabricTagProvider<Biome> {
   public ZBiomeTagProvider(
-      DataOutput output, CompletableFuture<RegistryWrapper.WrapperLookup> registriesFuture) {
+      FabricDataOutput output, CompletableFuture<RegistryWrapper.WrapperLookup> registriesFuture) {
     super(output, RegistryKeys.BIOME, registriesFuture);
   }
 
   @Override
   protected void configure(WrapperLookup registries) {
     this.getOrCreateTagBuilder(ZBiomeTags.WITHOUT_ZOMBIE_APOCALYPSE)
-        .addOptionalTag(BiomeTags.WITHOUT_ZOMBIE_SIEGES.id())
-        .addOptionalTag(BiomeTags.ANCIENT_CITY_HAS_STRUCTURE.id());
+        .addOptionalTag(ConventionalBiomeTags.NO_DEFAULT_MONSTERS);
+    this.getOrCreateTagBuilder(ZBiomeTags.WITH_FLAME_ZOMBIES)
+        .addOptionalTag(ConventionalBiomeTags.IS_HOT_OVERWORLD);
+    this.getOrCreateTagBuilder(ZBiomeTags.WITH_FROST_ZOMBIES)
+        .addOptionalTag(ConventionalBiomeTags.IS_COLD_OVERWORLD);
   }
 }

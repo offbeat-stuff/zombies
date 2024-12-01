@@ -2,7 +2,7 @@
   "biomePredicate": {
     "tags": [
       {
-        "biomeTag": "#minecraft:spawns_warm_variant_frogs",
+        "biomeTag": "#zenxarch:with_flame_zombies",
         "spawnIn": true
       }
     ]

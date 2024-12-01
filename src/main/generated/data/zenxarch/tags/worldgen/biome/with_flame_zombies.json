@@ -1,7 +1,7 @@
 {
   "values": [
     {
-      "id": "#c:no_default_monsters",
+      "id": "#c:is_hot/overworld",
       "required": false
     }
   ]
