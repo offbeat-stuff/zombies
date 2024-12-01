@@ -1,7 +1,6 @@
 package org.codeberg.zenxarch.zombies.entity;
 
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.List;
 import java.util.function.Predicate;
@@ -12,11 +11,21 @@ import net.minecraft.world.biome.Biome;
 
 public record BiomePredicate(List<TagSetEntry> tags) implements Predicate<RegistryEntry<Biome>> {
 
-  public static final MapCodec<BiomePredicate> CODEC =
-      RecordCodecBuilder.mapCodec(
+  private static final BiomePredicate DEFAULT = new BiomePredicate(List.of());
+
+  public static BiomePredicate create() {
+    return DEFAULT;
+  }
+
+  public static final Codec<BiomePredicate> CODEC =
+      RecordCodecBuilder.create(
           instance ->
               instance
-                  .group(TagSetEntry.CODEC.listOf().fieldOf("tags").forGetter(BiomePredicate::tags))
+                  .group(
+                      TagSetEntry.CODEC
+                          .listOf()
+                          .optionalFieldOf("tags", List.of())
+                          .forGetter(BiomePredicate::tags))
                   .apply(instance, BiomePredicate::new));
 
   static record TagSetEntry(boolean spawnIn, TagKey<Biome> biomeTag)

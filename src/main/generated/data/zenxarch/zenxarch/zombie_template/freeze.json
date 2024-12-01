@@ -18,9 +18,6 @@
     },
     "targetZombie": false
   },
-  "onDeath": {
-    "type": "zenxarch:default"
-  },
   "onTick": {
     "type": "zenxarch:single_target",
     "effect": {

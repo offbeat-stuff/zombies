@@ -4,6 +4,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 import net.minecraft.entity.EquipmentTable;
 import net.minecraft.entity.mob.ZombieEntity;
 import net.minecraft.loot.LootTable;
@@ -31,6 +32,11 @@ public record ZombieTemplate(
     BiomePredicate biomePredicate,
     int weight) {
 
+  private static RecordCodecBuilder<ZombieTemplate, ZombieEffect> effect(
+      String name, Function<ZombieTemplate, ZombieEffect> getter) {
+    return ZombieEffect.CODEC.optionalFieldOf(name, DefaultZombieEffect.create()).forGetter(getter);
+  }
+
   public static final Codec<ZombieTemplate> CODEC =
       RecordCodecBuilder.create(
           instance ->
@@ -39,11 +45,11 @@ public record ZombieTemplate(
                       EquipmentTable.CODEC
                           .fieldOf("equipmentTable")
                           .forGetter(ZombieTemplate::equipmentTable),
-                      ZombieEffect.CODEC.fieldOf("onAttack").forGetter(ZombieTemplate::onAttack),
-                      ZombieEffect.CODEC.fieldOf("onDeath").forGetter(ZombieTemplate::onDeath),
-                      ZombieEffect.CODEC.fieldOf("onTick").forGetter(ZombieTemplate::onTick),
+                      effect("onAttack", ZombieTemplate::onAttack),
+                      effect("onDeath", ZombieTemplate::onDeath),
+                      effect("onTick", ZombieTemplate::onTick),
                       BiomePredicate.CODEC
-                          .fieldOf("biomePredicate")
+                          .optionalFieldOf("biomePredicate", BiomePredicate.create())
                           .forGetter(ZombieTemplate::biomePredicate),
                       Codecs.NON_NEGATIVE_INT.fieldOf("weight").forGetter(ZombieTemplate::weight))
                   .apply(instance, ZombieTemplate::new));

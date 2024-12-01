@@ -1,19 +1,7 @@
 {
-  "biomePredicate": {
-    "tags": []
-  },
   "equipmentTable": {
     "loot_table": "zenxarch:common_zombie_equipment",
     "slot_drop_chances": 7.5E-4
-  },
-  "onAttack": {
-    "type": "zenxarch:default"
-  },
-  "onDeath": {
-    "type": "zenxarch:default"
-  },
-  "onTick": {
-    "type": "zenxarch:default"
   },
   "weight": 512
 }
