@@ -4,7 +4,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
+import java.util.function.Consumer;
 import net.minecraft.entity.EquipmentTable;
 import net.minecraft.loot.LootTable;
 import net.minecraft.registry.RegistryKey;
@@ -15,23 +15,10 @@ import net.minecraft.util.dynamic.Codecs;
 import net.minecraft.world.biome.Biome;
 import org.codeberg.zenxarch.zombies.difficulty.ExtendedDifficulty;
 import org.codeberg.zenxarch.zombies.entity.BiomePredicate.TagSetEntry;
-import org.codeberg.zenxarch.zombies.entity.effect.AllOfZombieEffect;
-import org.codeberg.zenxarch.zombies.entity.effect.DefaultZombieEffect;
-import org.codeberg.zenxarch.zombies.entity.effect.ZombieEffect;
 import org.codeberg.zenxarch.zombies.loot_table.ZombieLootTables;
 
 public record ZombieTemplate(
-    LootTableInfo lootTableInfo,
-    ZombieEffect onAttack,
-    ZombieEffect onDeath,
-    ZombieEffect onTick,
-    BiomePredicate biomePredicate,
-    int weight) {
-
-  private static RecordCodecBuilder<ZombieTemplate, ZombieEffect> effect(
-      String name, Function<ZombieTemplate, ZombieEffect> getter) {
-    return ZombieEffect.CODEC.optionalFieldOf(name, DefaultZombieEffect.create()).forGetter(getter);
-  }
+    LootTableInfo lootTableInfo, ZombieEvents events, BiomePredicate biomePredicate, int weight) {
 
   public static final Codec<ZombieTemplate> CODEC =
       RecordCodecBuilder.create(
@@ -41,11 +28,11 @@ public record ZombieTemplate(
                       LootTableInfo.CODEC
                           .optionalFieldOf("lootTableInfo", LootTableInfo.DEFAULT)
                           .forGetter(ZombieTemplate::lootTableInfo),
-                      effect("onAttack", ZombieTemplate::onAttack),
-                      effect("onDeath", ZombieTemplate::onDeath),
-                      effect("onTick", ZombieTemplate::onTick),
+                      ZombieEvents.CODEC
+                          .optionalFieldOf("events", ZombieEvents.DEFAULT)
+                          .forGetter(ZombieTemplate::events),
                       BiomePredicate.CODEC
-                          .optionalFieldOf("biomePredicate", BiomePredicate.create())
+                          .optionalFieldOf("biomePredicate", BiomePredicate.DEFAULT)
                           .forGetter(ZombieTemplate::biomePredicate),
                       Codecs.NON_NEGATIVE_INT
                           .optionalFieldOf("weight", 1)
@@ -57,18 +44,6 @@ public record ZombieTemplate(
     lootTableInfo.initEquipment(world, zombie, difficulty);
   }
 
-  public ZombieEffect onAttackEffect() {
-    return onAttack;
-  }
-
-  public ZombieEffect onKillEffect() {
-    return onDeath;
-  }
-
-  public ZombieEffect onTickEffect() {
-    return onTick;
-  }
-
   public int getWeight() {
     return weight;
   }
@@ -77,47 +52,30 @@ public record ZombieTemplate(
     return biomePredicate.test(biome);
   }
 
-  public static Builder builder(EquipmentTable table) {
-    return new Builder(table);
+  public static Builder builder() {
+    return new Builder(builder -> {});
   }
 
-  public static Builder builder(RegistryKey<LootTable> table, float slotDropChances) {
-    return new Builder(new EquipmentTable(table, slotDropChances));
+  public static Builder builder(Consumer<ZombieEvents.Builder> builderFunc) {
+    return new Builder(builderFunc);
   }
 
   public static class Builder {
-    private ZombieEffect onAttack;
-    private ZombieEffect onDeath;
-    private ZombieEffect onTick;
     private final EquipmentTable table;
+    private final ZombieEvents events;
     private RegistryKey<LootTable> onDrop = LootTableInfo.DEFAULT.onDrop();
     private int weight = 1;
     private List<BiomePredicate.TagSetEntry> biomePredicate = new ArrayList<>();
 
-    public Builder(EquipmentTable table) {
-      this.onAttack = DefaultZombieEffect.create();
-      this.onDeath = DefaultZombieEffect.create();
-      this.onTick = DefaultZombieEffect.create();
+    public Builder(EquipmentTable table, Consumer<ZombieEvents.Builder> builderFunc) {
       this.table = table;
+      var builder = new ZombieEvents.Builder();
+      builderFunc.accept(builder);
+      this.events = builder.build();
     }
 
-    public Builder() {
-      this(ZombieLootTables.COMMON_ZOMBIE_EQUIPMENT);
-    }
-
-    public Builder withOnAttack(ZombieEffect... effects) {
-      this.onAttack = AllOfZombieEffect.create(effects);
-      return this;
-    }
-
-    public Builder withOnDeath(ZombieEffect... effects) {
-      this.onDeath = AllOfZombieEffect.create(effects);
-      return this;
-    }
-
-    public Builder withOnTick(ZombieEffect... effects) {
-      this.onTick = AllOfZombieEffect.create(effects);
-      return this;
+    public Builder(Consumer<ZombieEvents.Builder> builderFunc) {
+      this(ZombieLootTables.COMMON_ZOMBIE_EQUIPMENT, builderFunc);
     }
 
     public Builder withWeight(int weight) {
@@ -138,9 +96,7 @@ public record ZombieTemplate(
     public ZombieTemplate build() {
       return new ZombieTemplate(
           new LootTableInfo(table, onDrop),
-          onAttack,
-          onDeath,
-          onTick,
+          events,
           new BiomePredicate(List.copyOf(this.biomePredicate)),
           weight);
     }

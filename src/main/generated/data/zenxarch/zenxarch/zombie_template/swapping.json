@@ -1,28 +1,30 @@
 {
-  "onAttack": {
-    "type": "zenxarch:swap_position"
-  },
-  "onTick": {
-    "type": "zenxarch:single_target",
-    "effect": {
-      "type": "zenxarch:spawn_particle_effect",
-      "horizontal_position": {
-        "type": "in_bounding_box"
-      },
-      "horizontal_velocity": {
-        "base": 0.2
-      },
-      "particle": {
-        "type": "minecraft:portal"
-      },
-      "speed": 0.2,
-      "vertical_position": {
-        "type": "in_bounding_box"
-      },
-      "vertical_velocity": {
-        "base": 0.2
-      }
+  "events": {
+    "attack": {
+      "type": "zenxarch:swap_position"
     },
-    "targetZombie": true
+    "tick": {
+      "type": "zenxarch:single_target",
+      "effect": {
+        "type": "zenxarch:spawn_particle_effect",
+        "horizontal_position": {
+          "type": "in_bounding_box"
+        },
+        "horizontal_velocity": {
+          "base": 0.2
+        },
+        "particle": {
+          "type": "minecraft:portal"
+        },
+        "speed": 0.2,
+        "vertical_position": {
+          "type": "in_bounding_box"
+        },
+        "vertical_velocity": {
+          "base": 0.2
+        }
+      },
+      "targetZombie": true
+    }
   }
 }

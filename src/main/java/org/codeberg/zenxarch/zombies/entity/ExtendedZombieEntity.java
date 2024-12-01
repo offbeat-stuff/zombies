@@ -82,7 +82,7 @@ public class ExtendedZombieEntity extends ZombieEntity {
   public boolean tryAttack(ServerWorld world, Entity target) {
     var result = super.tryAttack(world, target);
     if (result && target instanceof LivingEntity living) {
-      this.template.onAttackEffect().run(world, this, living);
+      this.template.events().attack().run(world, this, living);
     }
     return result;
   }
@@ -90,14 +90,14 @@ public class ExtendedZombieEntity extends ZombieEntity {
   @Override
   protected void onKilledBy(@Nullable LivingEntity adversary) {
     if (this.getWorld() instanceof ServerWorld world)
-      this.template.onKillEffect().run(world, this, adversary);
+      this.template.events().killed().run(world, this, adversary);
     super.onKilledBy(adversary);
   }
 
   @Override
   public void tick() {
     if (this.getWorld() instanceof ServerWorld world)
-      this.template.onTickEffect().run(world, this, null);
+      this.template.events().tick().run(world, this, null);
     super.tick();
   }
 

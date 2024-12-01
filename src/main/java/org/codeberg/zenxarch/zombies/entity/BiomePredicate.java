@@ -11,11 +11,7 @@ import net.minecraft.world.biome.Biome;
 
 public record BiomePredicate(List<TagSetEntry> tags) implements Predicate<RegistryEntry<Biome>> {
 
-  private static final BiomePredicate DEFAULT = new BiomePredicate(List.of());
-
-  public static BiomePredicate create() {
-    return DEFAULT;
-  }
+  public static final BiomePredicate DEFAULT = new BiomePredicate(List.of());
 
   public static final Codec<BiomePredicate> CODEC =
       RecordCodecBuilder.create(
@@ -36,7 +32,7 @@ public record BiomePredicate(List<TagSetEntry> tags) implements Predicate<Regist
             instance ->
                 instance
                     .group(
-                        Codec.BOOL.fieldOf("spawnIn").forGetter(TagSetEntry::spawnIn),
+                        Codec.BOOL.optionalFieldOf("spawnIn", true).forGetter(TagSetEntry::spawnIn),
                         TagKey.codec(RegistryKeys.BIOME)
                             .fieldOf("biomeTag")
                             .forGetter(TagSetEntry::biomeTag))

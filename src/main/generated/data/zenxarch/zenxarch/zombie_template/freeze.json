@@ -2,40 +2,41 @@
   "biomePredicate": {
     "tags": [
       {
-        "biomeTag": "#zenxarch:with_frost_zombies",
-        "spawnIn": true
+        "biomeTag": "#zenxarch:with_frost_zombies"
       }
     ]
   },
-  "onAttack": {
-    "type": "zenxarch:single_target",
-    "effect": {
-      "type": "zenxarch:freeze"
+  "events": {
+    "attack": {
+      "type": "zenxarch:single_target",
+      "effect": {
+        "type": "zenxarch:freeze"
+      },
+      "targetZombie": false
     },
-    "targetZombie": false
-  },
-  "onTick": {
-    "type": "zenxarch:single_target",
-    "effect": {
-      "type": "zenxarch:spawn_particle_effect",
-      "horizontal_position": {
-        "type": "in_bounding_box"
+    "tick": {
+      "type": "zenxarch:single_target",
+      "effect": {
+        "type": "zenxarch:spawn_particle_effect",
+        "horizontal_position": {
+          "type": "in_bounding_box"
+        },
+        "horizontal_velocity": {
+          "base": 0.2
+        },
+        "particle": {
+          "type": "minecraft:snowflake"
+        },
+        "speed": 0.2,
+        "vertical_position": {
+          "type": "in_bounding_box"
+        },
+        "vertical_velocity": {
+          "base": 0.2
+        }
       },
-      "horizontal_velocity": {
-        "base": 0.2
-      },
-      "particle": {
-        "type": "minecraft:snowflake"
-      },
-      "speed": 0.2,
-      "vertical_position": {
-        "type": "in_bounding_box"
-      },
-      "vertical_velocity": {
-        "base": 0.2
-      }
-    },
-    "targetZombie": true
+      "targetZombie": true
+    }
   },
   "weight": 16
 }

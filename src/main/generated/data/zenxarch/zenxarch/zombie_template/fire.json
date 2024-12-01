@@ -2,41 +2,42 @@
   "biomePredicate": {
     "tags": [
       {
-        "biomeTag": "#zenxarch:with_flame_zombies",
-        "spawnIn": true
+        "biomeTag": "#zenxarch:with_flame_zombies"
       }
     ]
   },
-  "onAttack": {
-    "type": "zenxarch:single_target",
-    "effect": {
-      "type": "zenxarch:ignite",
-      "seconds": 1.0
+  "events": {
+    "attack": {
+      "type": "zenxarch:single_target",
+      "effect": {
+        "type": "zenxarch:ignite",
+        "seconds": 1.0
+      },
+      "targetZombie": false
     },
-    "targetZombie": false
-  },
-  "onTick": {
-    "type": "zenxarch:single_target",
-    "effect": {
-      "type": "zenxarch:spawn_particle_effect",
-      "horizontal_position": {
-        "type": "in_bounding_box"
+    "tick": {
+      "type": "zenxarch:single_target",
+      "effect": {
+        "type": "zenxarch:spawn_particle_effect",
+        "horizontal_position": {
+          "type": "in_bounding_box"
+        },
+        "horizontal_velocity": {
+          "base": 0.2
+        },
+        "particle": {
+          "type": "minecraft:flame"
+        },
+        "speed": 0.2,
+        "vertical_position": {
+          "type": "in_bounding_box"
+        },
+        "vertical_velocity": {
+          "base": 0.2
+        }
       },
-      "horizontal_velocity": {
-        "base": 0.2
-      },
-      "particle": {
-        "type": "minecraft:flame"
-      },
-      "speed": 0.2,
-      "vertical_position": {
-        "type": "in_bounding_box"
-      },
-      "vertical_velocity": {
-        "base": 0.2
-      }
-    },
-    "targetZombie": true
+      "targetZombie": true
+    }
   },
   "weight": 16
 }
