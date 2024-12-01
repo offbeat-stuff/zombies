@@ -1,1 +1,4 @@
 theme = "fleet_dark"
+
+[editor.lsp]
+display-messages=true
