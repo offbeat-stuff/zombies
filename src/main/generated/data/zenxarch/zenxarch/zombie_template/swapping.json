@@ -1,8 +1,4 @@
 {
-  "equipmentTable": {
-    "loot_table": "zenxarch:common_zombie_equipment",
-    "slot_drop_chances": 7.5E-4
-  },
   "onAttack": {
     "type": "zenxarch:swap_position"
   },
@@ -28,6 +24,5 @@
       }
     },
     "targetZombie": true
-  },
-  "weight": 1
+  }
 }

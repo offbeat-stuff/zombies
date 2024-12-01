@@ -1,5 +1,6 @@
 package org.codeberg.zenxarch.zombies.entity;
 
+import java.util.Optional;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityData;
 import net.minecraft.entity.LivingEntity;
@@ -17,6 +18,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldView;
 import org.codeberg.zenxarch.zombies.ZombieGamerules;
 import org.codeberg.zenxarch.zombies.difficulty.ExtendedDifficulty;
+import org.codeberg.zenxarch.zombies.mixin.MobEntityAccessor;
 import org.codeberg.zenxarch.zombies.registry.ZombieRegistries;
 import org.codeberg.zenxarch.zombies.spawning.SpawnerProvider;
 import org.codeberg.zenxarch.zombies.spawning.ZombieApocalypse;
@@ -52,6 +54,7 @@ public class ExtendedZombieEntity extends ZombieEntity {
       LocalDifficulty difficulty,
       SpawnReason spawnReason,
       EntityData entityData) {
+    ((MobEntityAccessor) this).setLootTable(Optional.of(this.template.lootTableInfo().onDrop()));
     entityData = new ZombieData(false, false);
     return super.initialize(world, difficulty, spawnReason, entityData);
   }
@@ -64,7 +67,7 @@ public class ExtendedZombieEntity extends ZombieEntity {
       ServerWorldAccess world, Random random, LocalDifficulty unused) {
     var difficulty = getExtentedDifficulty(world);
 
-    this.template.initEquipment(world.toServerWorld(), this, difficulty, random);
+    this.template.initEquipment(world.toServerWorld(), this, difficulty);
   }
 
   @Override

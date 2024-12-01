@@ -7,10 +7,6 @@
       }
     ]
   },
-  "equipmentTable": {
-    "loot_table": "zenxarch:common_zombie_equipment",
-    "slot_drop_chances": 7.5E-4
-  },
   "onAttack": {
     "type": "zenxarch:single_target",
     "effect": {

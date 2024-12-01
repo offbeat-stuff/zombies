@@ -6,26 +6,22 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 import net.minecraft.entity.EquipmentTable;
-import net.minecraft.entity.mob.ZombieEntity;
 import net.minecraft.loot.LootTable;
-import net.minecraft.loot.context.LootContextParameters;
-import net.minecraft.loot.context.LootContextTypes;
-import net.minecraft.loot.context.LootWorldContext;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.dynamic.Codecs;
-import net.minecraft.util.math.random.Random;
 import net.minecraft.world.biome.Biome;
 import org.codeberg.zenxarch.zombies.difficulty.ExtendedDifficulty;
 import org.codeberg.zenxarch.zombies.entity.BiomePredicate.TagSetEntry;
 import org.codeberg.zenxarch.zombies.entity.effect.AllOfZombieEffect;
 import org.codeberg.zenxarch.zombies.entity.effect.DefaultZombieEffect;
 import org.codeberg.zenxarch.zombies.entity.effect.ZombieEffect;
+import org.codeberg.zenxarch.zombies.loot_table.ZombieLootTables;
 
 public record ZombieTemplate(
-    EquipmentTable equipmentTable,
+    LootTableInfo lootTableInfo,
     ZombieEffect onAttack,
     ZombieEffect onDeath,
     ZombieEffect onTick,
@@ -42,28 +38,23 @@ public record ZombieTemplate(
           instance ->
               instance
                   .group(
-                      EquipmentTable.CODEC
-                          .fieldOf("equipmentTable")
-                          .forGetter(ZombieTemplate::equipmentTable),
+                      LootTableInfo.CODEC
+                          .optionalFieldOf("lootTableInfo", LootTableInfo.DEFAULT)
+                          .forGetter(ZombieTemplate::lootTableInfo),
                       effect("onAttack", ZombieTemplate::onAttack),
                       effect("onDeath", ZombieTemplate::onDeath),
                       effect("onTick", ZombieTemplate::onTick),
                       BiomePredicate.CODEC
                           .optionalFieldOf("biomePredicate", BiomePredicate.create())
                           .forGetter(ZombieTemplate::biomePredicate),
-                      Codecs.NON_NEGATIVE_INT.fieldOf("weight").forGetter(ZombieTemplate::weight))
+                      Codecs.NON_NEGATIVE_INT
+                          .optionalFieldOf("weight", 1)
+                          .forGetter(ZombieTemplate::weight))
                   .apply(instance, ZombieTemplate::new));
 
   public void initEquipment(
-      ServerWorld world, ZombieEntity zombie, ExtendedDifficulty difficulty, Random random) {
-    zombie.setEquipmentFromTable(
-        equipmentTable.lootTable(),
-        new LootWorldContext.Builder(world)
-            .add(LootContextParameters.ORIGIN, zombie.getPos())
-            .add(LootContextParameters.THIS_ENTITY, zombie)
-            .luck(difficulty.getClampedLocalDifficulty())
-            .build(LootContextTypes.EQUIPMENT),
-        equipmentTable.slotDropChances());
+      ServerWorld world, ExtendedZombieEntity zombie, ExtendedDifficulty difficulty) {
+    lootTableInfo.initEquipment(world, zombie, difficulty);
   }
 
   public ZombieEffect onAttackEffect() {
@@ -99,6 +90,7 @@ public record ZombieTemplate(
     private ZombieEffect onDeath;
     private ZombieEffect onTick;
     private final EquipmentTable table;
+    private RegistryKey<LootTable> onDrop = LootTableInfo.DEFAULT.onDrop();
     private int weight = 1;
     private List<BiomePredicate.TagSetEntry> biomePredicate = new ArrayList<>();
 
@@ -107,6 +99,10 @@ public record ZombieTemplate(
       this.onDeath = DefaultZombieEffect.create();
       this.onTick = DefaultZombieEffect.create();
       this.table = table;
+    }
+
+    public Builder() {
+      this(ZombieLootTables.COMMON_ZOMBIE_EQUIPMENT);
     }
 
     public Builder withOnAttack(ZombieEffect... effects) {
@@ -141,7 +137,7 @@ public record ZombieTemplate(
 
     public ZombieTemplate build() {
       return new ZombieTemplate(
-          table,
+          new LootTableInfo(table, onDrop),
           onAttack,
           onDeath,
           onTick,
