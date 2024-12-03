@@ -1,6 +1,7 @@
 package org.codeberg.zenxarch.zombies.entity;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.List;
 import java.util.function.Predicate;
@@ -14,15 +15,23 @@ public record BiomePredicate(List<TagSetEntry> tags) implements Predicate<Regist
   public static final BiomePredicate DEFAULT = new BiomePredicate(List.of());
 
   public static final Codec<BiomePredicate> CODEC =
-      RecordCodecBuilder.create(
-          instance ->
-              instance
-                  .group(
-                      TagSetEntry.CODEC
-                          .listOf()
-                          .optionalFieldOf("tags", List.of())
-                          .forGetter(BiomePredicate::tags))
-                  .apply(instance, BiomePredicate::new));
+      Codec.withAlternative(
+          TagKey.codec(RegistryKeys.BIOME)
+              .flatComapMap(
+                  tag -> new BiomePredicate(List.of(new TagSetEntry(true, tag))),
+                  pred ->
+                      pred.tags.size() == 1 && pred.tags.getFirst().spawnIn
+                          ? DataResult.success(pred.tags.getFirst().biomeTag)
+                          : DataResult.error(() -> "cannot be a string")),
+          RecordCodecBuilder.create(
+              instance ->
+                  instance
+                      .group(
+                          TagSetEntry.CODEC
+                              .listOf()
+                              .optionalFieldOf("tags", List.of())
+                              .forGetter(BiomePredicate::tags))
+                      .apply(instance, BiomePredicate::new)));
 
   static record TagSetEntry(boolean spawnIn, TagKey<Biome> biomeTag)
       implements Predicate<RegistryEntry<Biome>> {

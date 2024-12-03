@@ -1,11 +1,5 @@
 {
-  "biomePredicate": {
-    "tags": [
-      {
-        "biomeTag": "#zenxarch:with_flame_zombies"
-      }
-    ]
-  },
+  "biomePredicate": "#zenxarch:with_flame_zombies",
   "events": {
     "attack": {
       "type": "zenxarch:single_target",

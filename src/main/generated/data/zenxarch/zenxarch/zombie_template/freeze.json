@@ -1,11 +1,5 @@
 {
-  "biomePredicate": {
-    "tags": [
-      {
-        "biomeTag": "#zenxarch:with_frost_zombies"
-      }
-    ]
-  },
+  "biomePredicate": "#zenxarch:with_frost_zombies",
   "events": {
     "attack": {
       "type": "zenxarch:single_target",
