@@ -8,10 +8,9 @@ import java.util.List;
 import java.util.function.Function;
 import net.minecraft.enchantment.effect.entity.SpawnParticlesEnchantmentEffect;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.effect.StatusEffect;
+import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.particle.ParticleEffect;
 import net.minecraft.registry.Registry;
-import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.floatprovider.ConstantFloatProvider;
 import net.minecraft.util.math.floatprovider.FloatProvider;
@@ -21,7 +20,6 @@ import org.codeberg.zenxarch.zombies.entity.effect.single.FreezeEffect;
 import org.codeberg.zenxarch.zombies.entity.effect.single.IgniteEffect;
 import org.codeberg.zenxarch.zombies.entity.effect.single.SingleLivingEffect;
 import org.codeberg.zenxarch.zombies.entity.effect.single.SpawnParticleEffect;
-import org.codeberg.zenxarch.zombies.entity.effect.util.StatusEffectInstanceBuilder;
 import org.codeberg.zenxarch.zombies.registry.ZombieRegistries;
 import org.jetbrains.annotations.Nullable;
 
@@ -72,19 +70,9 @@ public interface ZombieEffect {
     return RandomZombieEffect.create(effect);
   }
 
-  public static ZombieEffect statusEffect(StatusEffectInstanceBuilder... builders) {
+  public static ZombieEffect statusEffect(StatusEffectInstance... builders) {
     if (builders.length == 0) return DefaultZombieEffect.create();
     return new StatusEffectZombieEffect(List.of(builders));
-  }
-
-  public static StatusEffectInstanceBuilder infiniteStatusEffectBuilder(
-      RegistryEntry<StatusEffect> entry) {
-    return StatusEffectInstanceBuilder.createInfinite(entry);
-  }
-
-  public static StatusEffectInstanceBuilder statusEffectBuilder(
-      RegistryEntry<StatusEffect> entry, int duration) {
-    return StatusEffectInstanceBuilder.create(entry, duration);
   }
 
   public static SingleTargetZombieEffect spawnParticles(

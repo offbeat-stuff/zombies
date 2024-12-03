@@ -5,14 +5,14 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.List;
 import net.minecraft.entity.AreaEffectCloudEntity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.particle.ParticleEffect;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.dynamic.Codecs;
-import org.codeberg.zenxarch.zombies.entity.effect.util.StatusEffectInstanceBuilder;
 
 public record SpawnEffectCloudEffect(
-    List<StatusEffectInstanceBuilder> effects,
+    List<StatusEffectInstance> effects,
     ParticleEffect particleEffect,
     float radius,
     float radiusOnUse)
@@ -23,7 +23,7 @@ public record SpawnEffectCloudEffect(
           instance ->
               instance
                   .group(
-                      StatusEffectInstanceBuilder.CODEC
+                      StatusEffectInstance.CODEC
                           .listOf(1, Integer.MAX_VALUE)
                           .fieldOf("effects")
                           .forGetter(SpawnEffectCloudEffect::effects),
@@ -50,7 +50,7 @@ public record SpawnEffectCloudEffect(
 
     cloud.setParticleType(particleEffect);
 
-    for (var effect : effects) cloud.addEffect(effect.build());
+    for (var effect : effects) cloud.addEffect(effect);
 
     world.spawnEntity(cloud);
   }
