@@ -23,8 +23,9 @@ public record SpawnEffectCloudEffect(
           instance ->
               instance
                   .group(
-                      StatusEffectInstance.CODEC
-                          .listOf(1, Integer.MAX_VALUE)
+                      Codecs.listOrSingle(
+                              StatusEffectInstance.CODEC,
+                              StatusEffectInstance.CODEC.listOf(1, Integer.MAX_VALUE))
                           .fieldOf("effects")
                           .forGetter(SpawnEffectCloudEffect::effects),
                       ParticleTypes.TYPE_CODEC

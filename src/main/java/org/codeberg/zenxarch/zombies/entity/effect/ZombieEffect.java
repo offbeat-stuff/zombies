@@ -25,9 +25,11 @@ import org.jetbrains.annotations.Nullable;
 
 public interface ZombieEffect {
   public static final Codec<ZombieEffect> CODEC =
-      ZombieRegistries.ZOMBIE_EFFECT_REGISTRY
-          .getCodec()
-          .dispatch(ZombieEffect::getCodec, Function.identity());
+      Codec.withAlternative(
+          ZombieRegistries.ZOMBIE_EFFECT_REGISTRY
+              .getCodec()
+              .dispatch(ZombieEffect::getCodec, Function.identity()),
+          DefaultZombieEffect.CODEC.codec());
 
   public void run(ServerWorld world, ExtendedZombieEntity zombie, @Nullable LivingEntity adversery);
 

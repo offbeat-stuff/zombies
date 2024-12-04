@@ -1,5 +1,5 @@
 {
-  "biomePredicate": "#zenxarch:with_frost_zombies",
+  "biomePredicate": "zenxarch:with_frost_zombies",
   "events": {
     "attack": {
       "type": "zenxarch:single_target",
@@ -28,8 +28,7 @@
         "vertical_velocity": {
           "base": 0.2
         }
-      },
-      "targetZombie": true
+      }
     }
   },
   "weight": 16

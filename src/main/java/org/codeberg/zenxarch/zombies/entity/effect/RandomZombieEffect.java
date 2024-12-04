@@ -1,25 +1,19 @@
 package org.codeberg.zenxarch.zombies.entity.effect;
 
 import com.mojang.serialization.MapCodec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.List;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Util;
+import net.minecraft.util.dynamic.Codecs;
 import org.codeberg.zenxarch.zombies.entity.ExtendedZombieEntity;
 import org.jetbrains.annotations.Nullable;
 
 public record RandomZombieEffect(List<ZombieEffect> effects) implements ZombieEffect {
   public static final MapCodec<RandomZombieEffect> CODEC =
-      RecordCodecBuilder.mapCodec(
-          instance ->
-              instance
-                  .group(
-                      ZombieEffect.CODEC
-                          .listOf()
-                          .fieldOf("effects")
-                          .forGetter(RandomZombieEffect::effects))
-                  .apply(instance, RandomZombieEffect::new));
+      Codecs.listOrSingle(ZombieEffect.CODEC)
+          .xmap(RandomZombieEffect::new, RandomZombieEffect::effects)
+          .fieldOf("effects");
 
   @Override
   public void run(

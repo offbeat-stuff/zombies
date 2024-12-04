@@ -21,7 +21,7 @@ public record SingleTargetZombieEffect(SingleLivingEffect effect, boolean target
                           .fieldOf("effect")
                           .forGetter(SingleTargetZombieEffect::effect),
                       Codec.BOOL
-                          .fieldOf("targetZombie")
+                          .optionalFieldOf("targetZombie", true)
                           .forGetter(SingleTargetZombieEffect::targetZombie))
                   .apply(instance, SingleTargetZombieEffect::new));
 
