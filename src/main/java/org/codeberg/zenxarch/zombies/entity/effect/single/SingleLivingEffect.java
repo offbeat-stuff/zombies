@@ -25,6 +25,7 @@ public interface SingleLivingEffect {
     register("ignite", IgniteEffect.CODEC);
     register("spawn_effect_cloud", SpawnEffectCloudEffect.CODEC);
     register("spawn_particle_effect", SpawnParticleEffect.CODEC);
+    register("apply_status_effect", StatusEffectLivingEffect.CODEC);
   }
 
   private static void register(String id, MapCodec<? extends SingleLivingEffect> codec) {
