@@ -55,6 +55,7 @@ public class ExtendedZombieEntity extends ZombieEntity {
       SpawnReason spawnReason,
       EntityData entityData) {
     ((MobEntityAccessor) this).setLootTable(Optional.of(this.template.lootTableInfo().onDrop()));
+    this.template.events().spawn().run(world.toServerWorld(), this, this.getTarget());
     entityData = new ZombieData(false, false);
     return super.initialize(world, difficulty, spawnReason, entityData);
   }
@@ -75,6 +76,10 @@ public class ExtendedZombieEntity extends ZombieEntity {
     if (!super.damage(world, source, amount)) return false;
     if (!(world instanceof SpawnerProvider spawnerProvider)) return false;
     for (var spawner : spawnerProvider.getSpawners()) spawner.spawn(world, true);
+    this.template
+        .events()
+        .damage()
+        .run(world, this, source.getAttacker() instanceof LivingEntity living ? living : null);
     return true;
   }
 
@@ -92,6 +97,27 @@ public class ExtendedZombieEntity extends ZombieEntity {
     if (this.getWorld() instanceof ServerWorld world)
       this.template.events().killed().run(world, this, adversary);
     super.onKilledBy(adversary);
+  }
+
+  @Override
+  public boolean onKilledOther(ServerWorld world, LivingEntity other) {
+    var result = super.onKilledOther(world, other);
+    this.template.events().kill().run(world, this, other);
+    return result;
+  }
+
+  @Override
+  public void onDeath(DamageSource damageSource) {
+    if (!this.isRemoved() && !this.dead && this.getWorld() instanceof ServerWorld world) {
+      this.template
+          .events()
+          .death()
+          .run(
+              world,
+              this,
+              damageSource.getAttacker() instanceof LivingEntity adversery ? adversery : null);
+    }
+    super.onDeath(damageSource);
   }
 
   @Override
