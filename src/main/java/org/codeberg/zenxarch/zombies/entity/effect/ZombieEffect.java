@@ -86,12 +86,13 @@ public interface ZombieEffect {
       FloatProvider speed) {
     return toZombie(
         new SpawnParticleEffect(
-            particle,
-            horizontalPosition,
-            verticalPosition,
-            horizontalVelocity,
-            verticalVelocity,
-            speed));
+            new SpawnParticlesEnchantmentEffect(
+                particle,
+                horizontalPosition,
+                verticalPosition,
+                horizontalVelocity,
+                verticalVelocity,
+                speed)));
   }
 
   public static SingleTargetZombieEffect spawnParticles(ParticleEffect particle, float speed) {
