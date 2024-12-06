@@ -5,6 +5,8 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityData;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SpawnReason;
+import net.minecraft.entity.attribute.EntityAttributeModifier;
+import net.minecraft.entity.attribute.EntityAttributeModifier.Operation;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.mob.ZombieEntity;
@@ -17,6 +19,7 @@ import net.minecraft.world.ServerWorldAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldView;
 import org.codeberg.zenxarch.zombies.ZombieGamerules;
+import org.codeberg.zenxarch.zombies.Zombies;
 import org.codeberg.zenxarch.zombies.difficulty.ExtendedDifficulty;
 import org.codeberg.zenxarch.zombies.mixin.MobEntityAccessor;
 import org.codeberg.zenxarch.zombies.registry.ZombieRegistries;
@@ -132,7 +135,8 @@ public class ExtendedZombieEntity extends ZombieEntity {
     this.getAttributeInstance(EntityAttributes.SPAWN_REINFORCEMENTS).setBaseValue(0.0);
     var random = this.random.nextDouble() - this.random.nextDouble();
     if (random < 0.0) random *= 0.5;
-    this.getAttributeInstance(EntityAttributes.FOLLOW_RANGE).setBaseValue(12.0 + 8.0 * random);
+    this.getAttributeInstance(EntityAttributes.FOLLOW_RANGE)
+        .setBaseValue((getWorld().isDay() ? 12.0 : 24.0) + 8.0 * random);
   }
 
   @Override
@@ -140,6 +144,12 @@ public class ExtendedZombieEntity extends ZombieEntity {
     super.applyAttributeModifiers(chanceMultiplier);
     this.getAttributeInstance(EntityAttributes.SPAWN_REINFORCEMENTS)
         .removeModifier(Identifier.ofVanilla("leader_zombie_bonus"));
+    this.getAttributeInstance(EntityAttributes.MOVEMENT_SPEED)
+        .addPersistentModifier(
+            new EntityAttributeModifier(
+                Zombies.id("zombie_night_speed_bonus"),
+                random.nextTriangular(0.5, 0.25),
+                Operation.ADD_MULTIPLIED_BASE));
   }
 
   @Override
