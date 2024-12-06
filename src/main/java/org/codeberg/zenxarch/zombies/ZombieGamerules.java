@@ -27,17 +27,19 @@ public class ZombieGamerules {
         name, ZOMBIES_GENERAL, GameRuleFactory.createBooleanRule(defaultValue));
   }
 
-  public static final GameRules.Key<GameRules.IntRule> MAX_ZOMBIES =
-      ZombieGamerules.newGameRule("maxZombies", 150);
+  public static final GameRules.Key<GameRules.IntRule> MAX_ZOMBIES = newGameRule("maxZombies", 150);
 
   public static final GameRules.Key<GameRules.IntRule> SPAWN_SPEED =
-      ZombieGamerules.newGameRule("fillZombieCapOverSeconds", 30);
+      newGameRule("fillZombieCapOverSeconds", 30);
 
   public static final GameRules.Key<GameRules.BooleanRule> ZOMBIES_BURN_IN_DAYLIGHT =
-      ZombieGamerules.newGameRule("zombiesBurnInDaylight", false);
+      newGameRule("zombiesBurnInDaylight", false);
 
   public static final GameRules.Key<GameRules.BooleanRule> DO_ZOMBIE_SPAWNING =
-      ZombieGamerules.newGameRule("doZombieSpawning", true);
+      newGameRule("doZombieSpawning", true);
+
+  public static final GameRules.Key<GameRules.BooleanRule> ZOMBIE_TARGET_PLAYER_ON_SPAWN =
+      newGameRule("zombieTargetPlayerOnSpawn", false);
 
   public static void initialize() {}
 }

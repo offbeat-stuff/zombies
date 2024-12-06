@@ -40,6 +40,11 @@ public class ZEnglishLangProvider extends FabricLanguageProvider {
         ZombieGamerules.DO_ZOMBIE_SPAWNING,
         "Spawn zombies",
         "Controls whether to spawn zombies (modded) or not");
+    addGameruleTranslation(
+        translationBuilder,
+        ZombieGamerules.ZOMBIE_TARGET_PLAYER_ON_SPAWN,
+        "Zombie target player on spawn",
+        "Should a zombie target the nearest player within 64 blocks on spawn");
   }
 
   public static void addGameruleTranslation(

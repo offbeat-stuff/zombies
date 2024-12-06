@@ -5,6 +5,8 @@
   "gamerule.fillZombieCapOverSeconds.description": "The mod tries to spawn the target amount of zombies (difficulty dependent) over this many seconds assuming 1% of positions are spawnable",
   "gamerule.maxZombies": "Maximum zombies per player",
   "gamerule.maxZombies.description": "The max number of zombies that can spawn in a 80 block radius around player",
+  "gamerule.zombieTargetPlayerOnSpawn": "Zombie target player on spawn",
+  "gamerule.zombieTargetPlayerOnSpawn.description": "Should a zombie target the nearest player within 64 blocks on spawn",
   "gamerule.zombiesBurnInDaylight": "Zombies burn in daylight",
   "gamerule.zombiesBurnInDaylight.description": "Should zombies burn in (and not spawn in) daylight. (only affects mod's zombies)"
 }
