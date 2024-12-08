@@ -136,7 +136,7 @@ public class ExtendedZombieEntity extends ZombieEntity {
     var random = this.random.nextDouble() - this.random.nextDouble();
     if (random < 0.0) random *= 0.5;
     this.getAttributeInstance(EntityAttributes.FOLLOW_RANGE)
-        .setBaseValue((getWorld().isDay() ? 12.0 : 24.0) + 8.0 * random);
+        .setBaseValue((getWorld().isDay() ? 18.0 : 30.0) + 8.0 * random);
   }
 
   @Override
