@@ -1,8 +1,8 @@
 package org.codeberg.zenxarch.zombies.spawning;
 
-import java.util.HashMap;
+import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -14,6 +14,7 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.World;
 import org.codeberg.zenxarch.zombies.ZombieGamerules;
@@ -26,7 +27,7 @@ import org.codeberg.zenxarch.zombies.registry.ZombieRegistries;
 
 public class ZombieApocalypse {
   private ServerWorld world;
-  private Map<BlockPos, Integer> zombieCount;
+  private Object2IntMap<Vec3i> zombieCount;
 
   public ZombieApocalypse(ServerWorld world) {
     this.world = world;
@@ -56,19 +57,20 @@ public class ZombieApocalypse {
   public void spawnZombiesAt(BlockPos playerPos, List<BlockPos> positions) {
     var difficulty = new ExtendedDifficulty(this.world, playerPos);
     var toSpawn = difficulty.getMaxZombies();
-    if (toSpawn <= this.zombieCount.getOrDefault(playerPos, 0)) return;
 
-    SpawnProvider.giveSpawnPositions(world, playerPos, positions, toSpawn)
+    var subMap = ZombieDensityMap.getSubMap(zombieCount, playerPos);
+    var total = subMap.values().intStream().sum();
+    if (toSpawn <= total) return;
+
+    SpawnProvider.giveSpawnPositions(world, playerPos, positions, subMap, toSpawn)
         .ifPresent(this::spawnZombie);
   }
 
-  public Map<BlockPos, Integer> countZombies(List<BlockPos> positions) {
-    var result = new HashMap<BlockPos, Integer>();
-    for (var pos : positions) result.put(pos, 0);
+  public Object2IntMap<Vec3i> countZombies(List<BlockPos> positions) {
+    var result = new Object2IntArrayMap<Vec3i>();
     for (var entity : world.iterateEntities()) {
       if (!(entity instanceof ExtendedZombieEntity zombie)) continue;
-      for (var pos : positions)
-        if (zombie.getBlockPos().isWithinDistance(pos, 128)) result.put(pos, result.get(pos) + 1);
+      ZombieDensityMap.push(result, zombie.getBlockPos());
     }
     return result;
   }
@@ -82,7 +84,7 @@ public class ZombieApocalypse {
     return players(this.world).stream().map(ServerPlayerEntity::getBlockPos);
   }
 
-  private void debugCheck(Map<BlockPos, Integer> zombieCount) {
+  private void debugCheck(Object2IntMap<Vec3i> zombieCount) {
     for (var player : players(this.world)) {
       var pos = player.getBlockPos();
       var difficulty = (int) (new ExtendedDifficulty(world, pos).getClampedLocalDifficulty() * 100);

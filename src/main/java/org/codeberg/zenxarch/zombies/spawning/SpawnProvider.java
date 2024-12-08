@@ -1,10 +1,12 @@
 package org.codeberg.zenxarch.zombies.spawning;
 
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import java.util.List;
 import java.util.Optional;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3i;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.LightType;
 import org.codeberg.zenxarch.zombies.ZombieGamerules;
@@ -80,12 +82,20 @@ public abstract class SpawnProvider {
   }
 
   public static Optional<BlockPos> giveSpawnPositions(
-      ServerWorld world, BlockPos centerPos, List<BlockPos> positions, int toSpawn) {
+      ServerWorld world,
+      BlockPos centerPos,
+      List<BlockPos> positions,
+      Object2IntMap<Vec3i> densityMap,
+      int toSpawn) {
     var spawnTries =
         (toSpawn * 100) / (world.getGameRules().getInt(ZombieGamerules.SPAWN_SPEED) * 20);
     spawnTries = Math.max(spawnTries, 1);
+
+    var maxDensity = ZombieDensityMap.getMaxDensity(toSpawn);
+
     for (var pos : BlockPos.iterateRandomly(random, spawnTries, centerPos, SPAWN_RANGE)) {
       if (SpawnUtils.burnsZombie(world, pos)) continue;
+      if (ZombieDensityMap.get(densityMap, pos) > maxDensity) continue;
 
       var range = getYRange(world, centerPos, pos);
       if (!range.isValid()) continue;
