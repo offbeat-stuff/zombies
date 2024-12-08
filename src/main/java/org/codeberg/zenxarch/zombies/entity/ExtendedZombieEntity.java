@@ -9,8 +9,10 @@ import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.mob.ZombieEntity;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.predicate.entity.EntityPredicates;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.Box;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.LocalDifficulty;
 import net.minecraft.world.ServerWorldAccess;
@@ -20,7 +22,6 @@ import org.codeberg.zenxarch.zombies.ZombieGamerules;
 import org.codeberg.zenxarch.zombies.difficulty.ExtendedDifficulty;
 import org.codeberg.zenxarch.zombies.mixin.MobEntityAccessor;
 import org.codeberg.zenxarch.zombies.registry.ZombieRegistries;
-import org.codeberg.zenxarch.zombies.spawning.SpawnerProvider;
 import org.codeberg.zenxarch.zombies.spawning.ZombieApocalypse;
 import org.jetbrains.annotations.Nullable;
 
@@ -71,11 +72,22 @@ public class ExtendedZombieEntity extends ZombieEntity {
     this.template.initEquipment(world.toServerWorld(), this, difficulty);
   }
 
+  private void angryNearbyZombies() {
+    var followRange = this.getAttributeValue(EntityAttributes.FOLLOW_RANGE);
+    var targetBox = Box.from(this.getPos()).expand(followRange, 10.0, followRange);
+    for (var zombie :
+        this.getWorld()
+            .getEntitiesByClass(ZombieEntity.class, targetBox, EntityPredicates.EXCEPT_SPECTATOR)) {
+      if (zombie == this || zombie.getTarget() != null) continue;
+      if (zombie.isTeammate(this.getTarget())) continue;
+      zombie.setTarget(this.getTarget());
+    }
+  }
+
   @Override
   public boolean damage(ServerWorld world, DamageSource source, float amount) {
     if (!super.damage(world, source, amount)) return false;
-    if (!(world instanceof SpawnerProvider spawnerProvider)) return false;
-    for (var spawner : spawnerProvider.getSpawners()) spawner.spawn(world, true);
+    angryNearbyZombies();
     this.template
         .events()
         .damage()
