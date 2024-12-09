@@ -16,10 +16,8 @@ import net.minecraft.entity.passive.MerchantEntity;
 import net.minecraft.entity.passive.TurtleEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.predicate.entity.EntityPredicates;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.Box;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.LocalDifficulty;
 import net.minecraft.world.ServerWorldAccess;
@@ -178,22 +176,9 @@ public class ExtendedZombieEntity extends ZombieEntity
     this.template.initEquipment(world.toServerWorld(), this, difficulty);
   }
 
-  private void angryNearbyZombies() {
-    var followRange = this.getAttributeValue(EntityAttributes.FOLLOW_RANGE);
-    var targetBox = Box.from(this.getPos()).expand(followRange, 10.0, followRange);
-    for (var zombie :
-        this.getWorld()
-            .getEntitiesByClass(ZombieEntity.class, targetBox, EntityPredicates.EXCEPT_SPECTATOR)) {
-      if (zombie == this || zombie.getTarget() != null) continue;
-      if (zombie.isTeammate(this.getTarget())) continue;
-      zombie.setTarget(this.getTarget());
-    }
-  }
-
   @Override
   public boolean damage(ServerWorld world, DamageSource source, float amount) {
     if (!super.damage(world, source, amount)) return false;
-    angryNearbyZombies();
     this.template
         .events()
         .damage()
