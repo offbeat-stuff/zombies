@@ -96,7 +96,7 @@ public class ExtendedZombieEntity extends ZombieEntity
         new EscapeSun<ExtendedZombieEntity>()
             .startCondition(ExtendedZombieEntity::burnsInDaylight)
             .cooldownFor(zombie -> 20),
-        new LookAtAttackTarget<>(),
+        new LookAtAttackTarget<>().runFor(zombie -> zombie.getRandom().nextBetween(40, 300)),
         new MoveToWalkTarget<>());
   }
 
@@ -123,7 +123,9 @@ public class ExtendedZombieEntity extends ZombieEntity
             .alertAlliesWhen((a, b) -> b instanceof PlayerEntity)
             .cooldownFor(z -> 20),
         new SetWalkTargetToAttackTarget<>(),
-        new AnimatableMeleeAttack<>(0));
+        new AnimatableMeleeAttack<>(0)
+            .whenStarting(zombie -> zombie.setAttacking(true))
+            .whenStopping(zombie -> zombie.setAttacking(false)));
   }
 
   @Override
