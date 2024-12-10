@@ -26,7 +26,7 @@ import org.jetbrains.annotations.Nullable;
 public interface ZombieEffect {
   public static final Codec<ZombieEffect> CODEC =
       Codec.withAlternative(
-          ZombieRegistries.ZOMBIE_EFFECT_REGISTRY
+          ZombieRegistries.ZOMBIE_EFFECT
               .getCodec()
               .dispatch(ZombieEffect::getCodec, Function.identity()),
           DefaultZombieEffect.CODEC.codec());
@@ -45,7 +45,7 @@ public interface ZombieEffect {
   }
 
   private static void register(String id, MapCodec<? extends ZombieEffect> codec) {
-    Registry.register(ZombieRegistries.ZOMBIE_EFFECT_REGISTRY, Zombies.id(id), codec);
+    Registry.register(ZombieRegistries.ZOMBIE_EFFECT, Zombies.id(id), codec);
   }
 
   public static SwapPositionZombieEffect swapPositions() {

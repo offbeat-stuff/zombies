@@ -48,18 +48,18 @@ import net.tslat.smartbrainlib.api.core.sensor.vanilla.NearbyPlayersSensor;
 import org.codeberg.zenxarch.zombies.ZombieGamerules;
 import org.codeberg.zenxarch.zombies.difficulty.ExtendedDifficulty;
 import org.codeberg.zenxarch.zombies.mixin.MobEntityAccessor;
-import org.codeberg.zenxarch.zombies.registry.ZombieRegistries;
+import org.codeberg.zenxarch.zombies.registry.ZombieRegistryKeys;
 import org.codeberg.zenxarch.zombies.spawning.ZombieApocalypse;
 import org.jetbrains.annotations.Nullable;
 
 public class ExtendedZombieEntity extends ZombieEntity
     implements SmartBrainOwner<ExtendedZombieEntity> {
 
-  private final ZombieTemplate template;
+  private final ZombieVariant variant;
 
-  public ExtendedZombieEntity(World world, ZombieTemplate template) {
+  public ExtendedZombieEntity(World world, ZombieVariant variant) {
     super(world);
-    this.template = template;
+    this.variant = variant;
   }
 
   @Override
@@ -161,8 +161,8 @@ public class ExtendedZombieEntity extends ZombieEntity
       LocalDifficulty difficulty,
       SpawnReason spawnReason,
       EntityData entityData) {
-    ((MobEntityAccessor) this).setLootTable(Optional.of(this.template.lootTableInfo().onDrop()));
-    this.template.events().spawn().run(world.toServerWorld(), this, this.getTarget());
+    ((MobEntityAccessor) this).setLootTable(Optional.of(this.variant.lootTableInfo().onDrop()));
+    this.variant.events().spawn().run(world.toServerWorld(), this, this.getTarget());
     entityData = new ZombieData(false, false);
     return super.initialize(world, difficulty, spawnReason, entityData);
   }
@@ -175,13 +175,13 @@ public class ExtendedZombieEntity extends ZombieEntity
       ServerWorldAccess world, Random random, LocalDifficulty unused) {
     var difficulty = getExtentedDifficulty(world);
 
-    this.template.initEquipment(world.toServerWorld(), this, difficulty);
+    this.variant.initEquipment(world.toServerWorld(), this, difficulty);
   }
 
   @Override
   public boolean damage(ServerWorld world, DamageSource source, float amount) {
     if (!super.damage(world, source, amount)) return false;
-    this.template
+    this.variant
         .events()
         .damage()
         .run(world, this, source.getAttacker() instanceof LivingEntity living ? living : null);
@@ -192,7 +192,7 @@ public class ExtendedZombieEntity extends ZombieEntity
   public boolean tryAttack(ServerWorld world, Entity target) {
     var result = super.tryAttack(world, target);
     if (result && target instanceof LivingEntity living) {
-      this.template.events().attack().run(world, this, living);
+      this.variant.events().attack().run(world, this, living);
     }
     return result;
   }
@@ -200,21 +200,21 @@ public class ExtendedZombieEntity extends ZombieEntity
   @Override
   protected void onKilledBy(@Nullable LivingEntity adversary) {
     if (this.getWorld() instanceof ServerWorld world)
-      this.template.events().killed().run(world, this, adversary);
+      this.variant.events().killed().run(world, this, adversary);
     super.onKilledBy(adversary);
   }
 
   @Override
   public boolean onKilledOther(ServerWorld world, LivingEntity other) {
     var result = super.onKilledOther(world, other);
-    this.template.events().kill().run(world, this, other);
+    this.variant.events().kill().run(world, this, other);
     return result;
   }
 
   @Override
   public void onDeath(DamageSource damageSource) {
     if (!this.isRemoved() && !this.dead && this.getWorld() instanceof ServerWorld world) {
-      this.template
+      this.variant
           .events()
           .death()
           .run(
@@ -228,7 +228,7 @@ public class ExtendedZombieEntity extends ZombieEntity
   @Override
   public void tick() {
     if (this.getWorld() instanceof ServerWorld world)
-      this.template.events().tick().run(world, this, null);
+      this.variant.events().tick().run(world, this, null);
     super.tick();
   }
 
@@ -256,10 +256,9 @@ public class ExtendedZombieEntity extends ZombieEntity
   @Override
   public void writeCustomDataToNbt(NbtCompound nbt) {
     super.writeCustomDataToNbt(nbt);
-    var registry =
-        getWorld().getRegistryManager().getOptional(ZombieRegistries.TEMPLATE_REGISTRY_KEY);
+    var registry = getWorld().getRegistryManager().getOptional(ZombieRegistryKeys.ZOMBIE_VARIANT);
     if (registry.isEmpty()) return;
-    nbt.putString(ZombieApocalypse.ZOMBIE_ID_KEY, registry.get().getId(this.template).toString());
+    nbt.putString(ZombieApocalypse.ZOMBIE_ID_KEY, registry.get().getId(this.variant).toString());
   }
 
   @Override

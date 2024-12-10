@@ -7,38 +7,38 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.biome.Biome;
-import org.codeberg.zenxarch.zombies.registry.ZombieRegistries;
+import org.codeberg.zenxarch.zombies.registry.ZombieRegistryKeys;
 
-public class ZombieTemplateRegistryHelper {
+public class ZombieVariantRegistryHelper {
 
-  private static Optional<Registry<ZombieTemplate>> getRegistry(ServerWorld world) {
-    return world.getRegistryManager().getOptional(ZombieRegistries.TEMPLATE_REGISTRY_KEY);
+  private static Optional<Registry<ZombieVariant>> getRegistry(ServerWorld world) {
+    return world.getRegistryManager().getOptional(ZombieRegistryKeys.ZOMBIE_VARIANT);
   }
 
   public static Optional<ExtendedZombieEntity> newZombie(
-      ServerWorld world, ZombieTemplate template, BlockPos pos) {
-    var zombie = new ExtendedZombieEntity(world, template);
+      ServerWorld world, ZombieVariant variant, BlockPos pos) {
+    var zombie = new ExtendedZombieEntity(world, variant);
     zombie.refreshPositionAndAngles(pos, world.random.nextFloat() * 360.0F, 0.0F);
     if (zombie.canSpawn(world)) return Optional.of(zombie);
     return Optional.empty();
   }
 
-  public static Optional<ZombieTemplate> selectTemplate(
+  public static Optional<ZombieVariant> getRandomVariantFromBiome(
       ServerWorld world, Random random, RegistryEntry<Biome> biome) {
     var registry = getRegistry(world);
     if (registry.isEmpty()) return Optional.empty();
-    var templates =
+    var variants =
         registry.get().stream()
             .filter(t -> t.getWeight() > 0)
             .filter(t -> t.canSpawnIn(biome))
             .toList();
-    if (templates.isEmpty()) return Optional.empty();
-    var totalWeight = templates.stream().mapToInt(ZombieTemplate::getWeight).sum();
+    if (variants.isEmpty()) return Optional.empty();
+    var totalWeight = variants.stream().mapToInt(ZombieVariant::getWeight).sum();
     var selection = random.nextInt(totalWeight);
-    for (var t : templates) {
+    for (var t : variants) {
       if (selection < t.getWeight()) return Optional.of(t);
       selection -= t.getWeight();
     }
-    return Optional.of(templates.getLast());
+    return Optional.of(variants.getLast());
   }
 }

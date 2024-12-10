@@ -9,21 +9,20 @@ import net.minecraft.registry.RegistryKey;
 import org.codeberg.zenxarch.zombies.Zombies;
 import org.codeberg.zenxarch.zombies.data.ZBiomeTags;
 import org.codeberg.zenxarch.zombies.entity.ZombieEvents;
-import org.codeberg.zenxarch.zombies.entity.ZombieTemplate;
-import org.codeberg.zenxarch.zombies.registry.ZombieRegistries;
+import org.codeberg.zenxarch.zombies.entity.ZombieVariant;
+import org.codeberg.zenxarch.zombies.registry.ZombieRegistryKeys;
 
-public interface ZombieTemplates {
-  public static RegistryKey<ZombieTemplate> of(String path) {
-    return RegistryKey.of(ZombieRegistries.TEMPLATE_REGISTRY_KEY, Zombies.id(path));
+public interface ZombieVariants {
+  public static RegistryKey<ZombieVariant> of(String path) {
+    return RegistryKey.of(ZombieRegistryKeys.ZOMBIE_VARIANT, Zombies.id(path));
   }
 
-  private static ZombieTemplate.Builder builder(Consumer<ZombieEvents.Builder> builder) {
-    return ZombieTemplate.builder(builder);
+  private static ZombieVariant.Builder builder(Consumer<ZombieEvents.Builder> builder) {
+    return ZombieVariant.builder(builder);
   }
 
-  private static ZombieTemplate.Builder builder(
-      Consumer<ZombieEvents.Builder> builder, int weight) {
-    return ZombieTemplate.builder(builder).withWeight(weight);
+  private static ZombieVariant.Builder builder(Consumer<ZombieEvents.Builder> builder, int weight) {
+    return ZombieVariant.builder(builder).withWeight(weight);
   }
 
   public static final String COMMON_ZOMBIE = "default";
@@ -31,7 +30,7 @@ public interface ZombieTemplates {
   public static final String FIRE_ZOMBIE = "fire";
   public static final String FREEZE_ZOMBIE = "freeze";
 
-  static void bootstrap(Registerable<ZombieTemplate> registry) {
+  static void bootstrap(Registerable<ZombieVariant> registry) {
     register(registry, COMMON_ZOMBIE, builder(builder -> {}, 512));
     register(
         registry,
@@ -64,7 +63,7 @@ public interface ZombieTemplates {
   }
 
   public static void register(
-      Registerable<ZombieTemplate> registry, String id, ZombieTemplate.Builder builder) {
+      Registerable<ZombieVariant> registry, String id, ZombieVariant.Builder builder) {
     registry.register(of(id), builder.build());
   }
 }

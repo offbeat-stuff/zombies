@@ -17,27 +17,27 @@ import org.codeberg.zenxarch.zombies.difficulty.ExtendedDifficulty;
 import org.codeberg.zenxarch.zombies.entity.BiomePredicate.TagSetEntry;
 import org.codeberg.zenxarch.zombies.loot_table.ZombieLootTables;
 
-public record ZombieTemplate(
+public record ZombieVariant(
     LootTableInfo lootTableInfo, ZombieEvents events, BiomePredicate biomePredicate, int weight) {
 
-  public static final Codec<ZombieTemplate> CODEC =
+  public static final Codec<ZombieVariant> CODEC =
       RecordCodecBuilder.create(
           instance ->
               instance
                   .group(
                       LootTableInfo.CODEC
                           .optionalFieldOf("lootTableInfo", LootTableInfo.DEFAULT)
-                          .forGetter(ZombieTemplate::lootTableInfo),
+                          .forGetter(ZombieVariant::lootTableInfo),
                       ZombieEvents.CODEC
                           .optionalFieldOf("events", ZombieEvents.DEFAULT)
-                          .forGetter(ZombieTemplate::events),
+                          .forGetter(ZombieVariant::events),
                       BiomePredicate.CODEC
                           .optionalFieldOf("biomePredicate", BiomePredicate.DEFAULT)
-                          .forGetter(ZombieTemplate::biomePredicate),
+                          .forGetter(ZombieVariant::biomePredicate),
                       Codecs.NON_NEGATIVE_INT
                           .optionalFieldOf("weight", 1)
-                          .forGetter(ZombieTemplate::weight))
-                  .apply(instance, ZombieTemplate::new));
+                          .forGetter(ZombieVariant::weight))
+                  .apply(instance, ZombieVariant::new));
 
   public void initEquipment(
       ServerWorld world, ExtendedZombieEntity zombie, ExtendedDifficulty difficulty) {
@@ -93,8 +93,8 @@ public record ZombieTemplate(
       return this;
     }
 
-    public ZombieTemplate build() {
-      return new ZombieTemplate(
+    public ZombieVariant build() {
+      return new ZombieVariant(
           new LootTableInfo(table, onDrop),
           events,
           new BiomePredicate(List.copyOf(this.biomePredicate)),

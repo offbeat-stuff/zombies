@@ -21,9 +21,9 @@ import org.codeberg.zenxarch.zombies.ZombieGamerules;
 import org.codeberg.zenxarch.zombies.Zombies;
 import org.codeberg.zenxarch.zombies.difficulty.ExtendedDifficulty;
 import org.codeberg.zenxarch.zombies.entity.ExtendedZombieEntity;
-import org.codeberg.zenxarch.zombies.entity.ZombieTemplate;
-import org.codeberg.zenxarch.zombies.entity.ZombieTemplateRegistryHelper;
-import org.codeberg.zenxarch.zombies.registry.ZombieRegistries;
+import org.codeberg.zenxarch.zombies.entity.ZombieVariant;
+import org.codeberg.zenxarch.zombies.entity.ZombieVariantRegistryHelper;
+import org.codeberg.zenxarch.zombies.registry.ZombieRegistryKeys;
 
 public class ZombieApocalypse {
   private ServerWorld world;
@@ -49,8 +49,9 @@ public class ZombieApocalypse {
   }
 
   private void spawnZombie(BlockPos pos) {
-    ZombieTemplateRegistryHelper.selectTemplate(world, world.getRandom(), world.getBiome(pos))
-        .flatMap(t -> ZombieTemplateRegistryHelper.newZombie(world, t, pos))
+    ZombieVariantRegistryHelper.getRandomVariantFromBiome(
+            world, world.getRandom(), world.getBiome(pos))
+        .flatMap(t -> ZombieVariantRegistryHelper.newZombie(world, t, pos))
         .ifPresent(this::spawnZombie);
   }
 
@@ -135,8 +136,8 @@ public class ZombieApocalypse {
     }
   }
 
-  private static Optional<ZombieTemplate> fromId(World world, Identifier id) {
-    var registry = world.getRegistryManager().getOptional(ZombieRegistries.TEMPLATE_REGISTRY_KEY);
+  private static Optional<ZombieVariant> fromId(World world, Identifier id) {
+    var registry = world.getRegistryManager().getOptional(ZombieRegistryKeys.ZOMBIE_VARIANT);
     if (registry.isEmpty()) return Optional.empty();
     return Optional.ofNullable(registry.get().get(id));
   }
@@ -147,7 +148,7 @@ public class ZombieApocalypse {
       case String id -> {
         try {
           var result =
-              fromId(world, toId(id)).map(template -> new ExtendedZombieEntity(world, template));
+              fromId(world, toId(id)).map(variant -> new ExtendedZombieEntity(world, variant));
           result.ifPresent(zombie -> zombie.readNbt(nbt));
           yield result.map(Function.identity());
         } catch (Exception e) {
