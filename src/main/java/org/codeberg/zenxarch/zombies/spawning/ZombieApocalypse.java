@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Stream;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.predicate.entity.EntityPredicates;
@@ -105,7 +106,7 @@ public class ZombieApocalypse {
     var positions = spawnCenters().toList();
     this.zombieCount = countZombies(positions);
 
-    if (Zombies.DEBUG) debugCheck(this.zombieCount);
+    if (FabricLoader.getInstance().isDevelopmentEnvironment()) debugCheck(this.zombieCount);
 
     for (var v : positions) {
       spawnZombiesAt(v, positions);
