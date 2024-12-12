@@ -11,6 +11,7 @@ import net.minecraft.entity.VariantHolder;
 import net.minecraft.entity.ai.brain.Brain.Profile;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.mob.ZombieEntity;
 import net.minecraft.entity.passive.IronGolemEntity;
 import net.minecraft.entity.passive.MerchantEntity;
@@ -30,6 +31,7 @@ import net.tslat.smartbrainlib.api.core.SmartBrainProvider;
 import net.tslat.smartbrainlib.api.core.behaviour.FirstApplicableBehaviour;
 import net.tslat.smartbrainlib.api.core.behaviour.OneRandomBehaviour;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.attack.AnimatableMeleeAttack;
+import net.tslat.smartbrainlib.api.core.behaviour.custom.attack.LeapAtTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.look.LookAtAttackTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.misc.AvoidSun;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.misc.Idle;
@@ -46,6 +48,8 @@ import net.tslat.smartbrainlib.api.core.sensor.custom.GenericAttackTargetSensor;
 import net.tslat.smartbrainlib.api.core.sensor.vanilla.HurtBySensor;
 import net.tslat.smartbrainlib.api.core.sensor.vanilla.NearbyLivingEntitySensor;
 import net.tslat.smartbrainlib.api.core.sensor.vanilla.NearbyPlayersSensor;
+import net.tslat.smartbrainlib.util.BrainUtil;
+import net.tslat.smartbrainlib.util.SensoryUtil;
 import org.codeberg.zenxarch.zombies.ZombieGamerules;
 import org.codeberg.zenxarch.zombies.difficulty.ExtendedDifficulty;
 import org.codeberg.zenxarch.zombies.mixin.MobEntityAccessor;
@@ -125,6 +129,19 @@ public class ExtendedZombieEntity extends ZombieEntity
             .cooldownFor(z -> 20),
         new SetWalkTargetToAttackTarget<>(),
         new AnimatableMeleeAttack<>(0)
+            .whenStarting(zombie -> zombie.setAttacking(true))
+            .whenStopping(zombie -> zombie.setAttacking(false)),
+        new LeapAtTarget<>(0) {
+          @Override
+          protected boolean checkExtraStartConditions(ServerWorld level, MobEntity entity) {
+            this.target = BrainUtil.getTargetOfEntity(entity);
+            return this.target != null && this.leapPredicate.test(entity, this.target);
+          }
+        }.leapIf(
+                (self, target) ->
+                    self.isOnGround()
+                        && SensoryUtil.hasLineOfSight(self, target)
+                        && self.squaredDistanceTo(target) < 16)
             .whenStarting(zombie -> zombie.setAttacking(true))
             .whenStopping(zombie -> zombie.setAttacking(false)));
   }
