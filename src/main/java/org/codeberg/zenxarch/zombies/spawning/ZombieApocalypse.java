@@ -90,7 +90,7 @@ public class ZombieApocalypse {
     for (var player : players(this.world)) {
       var pos = player.getBlockPos();
       var difficulty = (int) (new ExtendedDifficulty(world, pos).getClampedLocalDifficulty() * 100);
-      var zcount = zombieCount.getOrDefault(pos, 0);
+      var zcount = ZombieDensityMap.getSubMap(zombieCount, pos).values().intStream().sum();
       player.sendMessage(Text.of(difficulty + " : " + zcount), true);
     }
   }
