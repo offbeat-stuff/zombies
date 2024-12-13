@@ -5,13 +5,22 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
+import net.minecraft.enchantment.effect.EnchantmentEffectEntry;
 import net.minecraft.entity.EquipmentTable;
 import net.minecraft.loot.LootTable;
+import net.minecraft.loot.condition.LootCondition;
+import net.minecraft.loot.context.LootContext;
+import net.minecraft.loot.context.LootContextParameters;
+import net.minecraft.loot.context.LootContextTypes;
+import net.minecraft.loot.context.LootWorldContext;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.tag.TagKey;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.biome.Biome;
 import org.codeberg.zenxarch.zombies.difficulty.ExtendedDifficulty;
 import org.codeberg.zenxarch.zombies.entity.BiomePredicate.TagSetEntry;
@@ -21,6 +30,7 @@ public record ZombieVariant(
     LootTableInfo lootTableInfo,
     ZombieEvents events,
     BiomePredicate biomePredicate,
+    Optional<LootCondition> requirements,
     ZombieAttributes attributes,
     SpawnWeight weight) {
 
@@ -38,6 +48,9 @@ public record ZombieVariant(
                       BiomePredicate.CODEC
                           .optionalFieldOf("biomePredicate", BiomePredicate.DEFAULT)
                           .forGetter(ZombieVariant::biomePredicate),
+                      EnchantmentEffectEntry.createRequirementsCodec(LootContextTypes.EQUIPMENT)
+                          .optionalFieldOf("requirements")
+                          .forGetter(ZombieVariant::requirements),
                       ZombieAttributes.CODEC
                           .optionalFieldOf("attributes", ZombieAttributes.DEFAULT)
                           .forGetter(ZombieVariant::attributes),
@@ -59,6 +72,26 @@ public record ZombieVariant(
     return biomePredicate.test(biome);
   }
 
+  public boolean canSpawnAt(
+      ServerWorld world, BlockPos pos, ServerPlayerEntity player, ExtendedDifficulty difficulty) {
+    return requirements.map(r -> canSpawnAt(r, world, pos, player, difficulty)).orElse(true);
+  }
+
+  private static boolean canSpawnAt(
+      LootCondition requirements,
+      ServerWorld world,
+      BlockPos pos,
+      ServerPlayerEntity player,
+      ExtendedDifficulty difficulty) {
+    var lootContext =
+        new LootWorldContext.Builder(world)
+            .add(LootContextParameters.ORIGIN, pos.toBottomCenterPos())
+            .add(LootContextParameters.THIS_ENTITY, player)
+            .luck(difficulty.getClampedLocalDifficulty())
+            .build(LootContextTypes.EQUIPMENT);
+    return requirements.test(new LootContext.Builder(lootContext).build(Optional.empty()));
+  }
+
   public static Builder builder() {
     return new Builder(builder -> {});
   }
@@ -78,6 +111,8 @@ public record ZombieVariant(
         ObjectArrayList.of();
     private ObjectArrayList<ZombieAttributes.AttributeModifier> attributeModifiers =
         ObjectArrayList.of();
+
+    private Optional<LootCondition> lootCondition = Optional.empty();
 
     public Builder(EquipmentTable table, Consumer<ZombieEvents.Builder> builderFunc) {
       this.table = table;
@@ -120,11 +155,17 @@ public record ZombieVariant(
       return this;
     }
 
+    public Builder withLootCondition(LootCondition condition) {
+      this.lootCondition = Optional.of(condition);
+      return this;
+    }
+
     public ZombieVariant build() {
       return new ZombieVariant(
           new LootTableInfo(table, onDrop),
           events,
           new BiomePredicate(List.copyOf(this.biomePredicate)),
+          lootCondition,
           new ZombieAttributes(defaultAttributes, attributeModifiers),
           new SpawnWeight(weight, quality));
     }

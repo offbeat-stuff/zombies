@@ -5,7 +5,6 @@ import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
-import java.util.stream.Stream;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NbtCompound;
@@ -49,26 +48,25 @@ public class ZombieApocalypse {
     this.world.spawnEntityAndPassengers(zombie);
   }
 
-  private void spawnZombie(BlockPos pos) {
-    ZombieVariantRegistryHelper.getRandomVariantFromBiome(
-            world, world.getRandom(), world.getBiome(pos), new ExtendedDifficulty(world, pos))
+  private void spawnZombie(ServerPlayerEntity player, BlockPos pos, ExtendedDifficulty difficulty) {
+    ZombieVariantRegistryHelper.getRandomVariantFromPos(world, pos, player, difficulty)
         .flatMap(t -> ZombieVariantRegistryHelper.newZombie(world, t, pos))
         .ifPresent(this::spawnZombie);
   }
 
-  public void spawnZombiesAt(BlockPos playerPos, List<BlockPos> positions) {
-    var difficulty = new ExtendedDifficulty(this.world, playerPos);
+  public void spawnZombiesNear(ServerPlayerEntity player, List<BlockPos> positions) {
+    var difficulty = new ExtendedDifficulty(this.world, player.getBlockPos());
     var toSpawn = difficulty.getMaxZombies();
 
-    var subMap = ZombieDensityMap.getSubMap(zombieCount, playerPos);
+    var subMap = ZombieDensityMap.getSubMap(zombieCount, player.getBlockPos());
     var total = subMap.values().intStream().sum();
     if (toSpawn <= total) return;
 
-    SpawnProvider.giveSpawnPositions(world, playerPos, positions, subMap, toSpawn)
-        .ifPresent(this::spawnZombie);
+    SpawnProvider.giveSpawnPositions(world, player.getBlockPos(), positions, subMap, toSpawn)
+        .ifPresent(pos -> this.spawnZombie(player, pos, difficulty));
   }
 
-  public Object2IntMap<Vec3i> countZombies(List<BlockPos> positions) {
+  public Object2IntMap<Vec3i> countZombies() {
     var result = new Object2IntArrayMap<Vec3i>();
     for (var entity : world.iterateEntities()) {
       if (!(entity instanceof ExtendedZombieEntity zombie)) continue;
@@ -80,10 +78,6 @@ public class ZombieApocalypse {
   public static List<ServerPlayerEntity> players(ServerWorld world) {
     return world.getPlayers(
         EntityPredicates.VALID_LIVING_ENTITY.and(EntityPredicates.EXCEPT_SPECTATOR));
-  }
-
-  private Stream<BlockPos> spawnCenters() {
-    return players(this.world).stream().map(ServerPlayerEntity::getBlockPos);
   }
 
   private void debugCheck(Object2IntMap<Vec3i> zombieCount) {
@@ -103,13 +97,14 @@ public class ZombieApocalypse {
       return;
     }
 
-    var positions = spawnCenters().toList();
-    this.zombieCount = countZombies(positions);
+    var players = players(world);
+    var positions = players.stream().map(ServerPlayerEntity::getBlockPos).toList();
+    this.zombieCount = countZombies();
 
     if (FabricLoader.getInstance().isDevelopmentEnvironment()) debugCheck(this.zombieCount);
 
-    for (var v : positions) {
-      spawnZombiesAt(v, positions);
+    for (var player : players) {
+      spawnZombiesNear(player, positions);
     }
   }
 

@@ -2,6 +2,7 @@ package org.codeberg.zenxarch.zombies;
 
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.util.Identifier;
+import org.codeberg.zenxarch.zombies.loot_table.ZombieLootConditionTypes;
 import org.codeberg.zenxarch.zombies.loot_table.ZombieLootFunctionTypes;
 import org.codeberg.zenxarch.zombies.loot_table.ZombieLootNumberProviderTypes;
 import org.codeberg.zenxarch.zombies.registry.ZombieRegistries;
@@ -25,5 +26,6 @@ public class Zombies implements ModInitializer {
     ZombieGamerules.initialize();
     ZombieLootNumberProviderTypes.initialize();
     ZombieLootFunctionTypes.initialize();
+    ZombieLootConditionTypes.initialize();
   }
 }
