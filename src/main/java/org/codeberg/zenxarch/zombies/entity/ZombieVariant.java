@@ -11,14 +11,16 @@ import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.dynamic.Codecs;
 import net.minecraft.world.biome.Biome;
 import org.codeberg.zenxarch.zombies.difficulty.ExtendedDifficulty;
 import org.codeberg.zenxarch.zombies.entity.BiomePredicate.TagSetEntry;
 import org.codeberg.zenxarch.zombies.loot_table.ZombieLootTables;
 
 public record ZombieVariant(
-    LootTableInfo lootTableInfo, ZombieEvents events, BiomePredicate biomePredicate, int weight) {
+    LootTableInfo lootTableInfo,
+    ZombieEvents events,
+    BiomePredicate biomePredicate,
+    SpawnWeight weight) {
 
   public static final Codec<ZombieVariant> CODEC =
       RecordCodecBuilder.create(
@@ -34,8 +36,8 @@ public record ZombieVariant(
                       BiomePredicate.CODEC
                           .optionalFieldOf("biomePredicate", BiomePredicate.DEFAULT)
                           .forGetter(ZombieVariant::biomePredicate),
-                      Codecs.NON_NEGATIVE_INT
-                          .optionalFieldOf("weight", 1)
+                      SpawnWeight.CODEC
+                          .optionalFieldOf("weight", SpawnWeight.DEFAULT)
                           .forGetter(ZombieVariant::weight))
                   .apply(instance, ZombieVariant::new));
 
@@ -44,8 +46,8 @@ public record ZombieVariant(
     lootTableInfo.initEquipment(world, zombie, difficulty);
   }
 
-  public int getWeight() {
-    return weight;
+  public int getWeight(ExtendedDifficulty difficulty) {
+    return weight.get(difficulty);
   }
 
   public boolean canSpawnIn(RegistryEntry<Biome> biome) {
@@ -65,6 +67,7 @@ public record ZombieVariant(
     private final ZombieEvents events;
     private RegistryKey<LootTable> onDrop = LootTableInfo.DEFAULT.onDrop();
     private int weight = 1;
+    private int quality = 0;
     private List<BiomePredicate.TagSetEntry> biomePredicate = new ArrayList<>();
 
     public Builder(EquipmentTable table, Consumer<ZombieEvents.Builder> builderFunc) {
@@ -83,6 +86,11 @@ public record ZombieVariant(
       return this;
     }
 
+    public Builder withQuality(int quality) {
+      this.quality = quality;
+      return this;
+    }
+
     public Builder spawnIn(TagKey<Biome> tag) {
       this.biomePredicate.add(new TagSetEntry(true, tag));
       return this;
@@ -98,7 +106,7 @@ public record ZombieVariant(
           new LootTableInfo(table, onDrop),
           events,
           new BiomePredicate(List.copyOf(this.biomePredicate)),
-          weight);
+          new SpawnWeight(weight, quality));
     }
   }
 }

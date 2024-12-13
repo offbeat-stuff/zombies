@@ -7,6 +7,7 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.biome.Biome;
+import org.codeberg.zenxarch.zombies.difficulty.ExtendedDifficulty;
 import org.codeberg.zenxarch.zombies.registry.ZombieRegistryKeys;
 
 public class ZombieVariantRegistryHelper {
@@ -24,20 +25,21 @@ public class ZombieVariantRegistryHelper {
   }
 
   public static Optional<ZombieVariant> getRandomVariantFromBiome(
-      ServerWorld world, Random random, RegistryEntry<Biome> biome) {
+      ServerWorld world, Random random, RegistryEntry<Biome> biome, ExtendedDifficulty difficulty) {
     var registry = getRegistry(world);
     if (registry.isEmpty()) return Optional.empty();
     var variants =
         registry.get().stream()
-            .filter(t -> t.getWeight() > 0)
+            .filter(t -> t.getWeight(difficulty) > 0)
             .filter(t -> t.canSpawnIn(biome))
             .toList();
     if (variants.isEmpty()) return Optional.empty();
-    var totalWeight = variants.stream().mapToInt(ZombieVariant::getWeight).sum();
+    var totalWeight = variants.stream().mapToInt(v -> v.getWeight(difficulty)).sum();
     var selection = random.nextInt(totalWeight);
-    for (var t : variants) {
-      if (selection < t.getWeight()) return Optional.of(t);
-      selection -= t.getWeight();
+    for (var variant : variants) {
+      var weight = variant.getWeight(difficulty);
+      if (selection < weight) return Optional.of(variant);
+      selection -= weight;
     }
     return Optional.of(variants.getLast());
   }

@@ -31,5 +31,7 @@
       }
     }
   },
-  "weight": 16
+  "weight": {
+    "weight": 16
+  }
 }

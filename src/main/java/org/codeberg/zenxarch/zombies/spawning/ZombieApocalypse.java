@@ -51,7 +51,7 @@ public class ZombieApocalypse {
 
   private void spawnZombie(BlockPos pos) {
     ZombieVariantRegistryHelper.getRandomVariantFromBiome(
-            world, world.getRandom(), world.getBiome(pos))
+            world, world.getRandom(), world.getBiome(pos), new ExtendedDifficulty(world, pos))
         .flatMap(t -> ZombieVariantRegistryHelper.newZombie(world, t, pos))
         .ifPresent(this::spawnZombie);
   }

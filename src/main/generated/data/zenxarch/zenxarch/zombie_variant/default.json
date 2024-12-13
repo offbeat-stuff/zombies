@@ -1,3 +1,5 @@
 {
-  "weight": 512
+  "weight": {
+    "weight": 512
+  }
 }
