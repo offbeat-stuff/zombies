@@ -2,6 +2,7 @@ package org.codeberg.zenxarch.zombies.entity;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -20,6 +21,7 @@ public record ZombieVariant(
     LootTableInfo lootTableInfo,
     ZombieEvents events,
     BiomePredicate biomePredicate,
+    ZombieAttributes attributes,
     SpawnWeight weight) {
 
   public static final Codec<ZombieVariant> CODEC =
@@ -36,6 +38,9 @@ public record ZombieVariant(
                       BiomePredicate.CODEC
                           .optionalFieldOf("biomePredicate", BiomePredicate.DEFAULT)
                           .forGetter(ZombieVariant::biomePredicate),
+                      ZombieAttributes.CODEC
+                          .optionalFieldOf("attributes", ZombieAttributes.DEFAULT)
+                          .forGetter(ZombieVariant::attributes),
                       SpawnWeight.CODEC
                           .optionalFieldOf("weight", SpawnWeight.DEFAULT)
                           .forGetter(ZombieVariant::weight))
@@ -69,6 +74,10 @@ public record ZombieVariant(
     private int weight = 1;
     private int quality = 0;
     private List<BiomePredicate.TagSetEntry> biomePredicate = new ArrayList<>();
+    private ObjectArrayList<ZombieAttributes.DefaultAttribute> defaultAttributes =
+        ObjectArrayList.of();
+    private ObjectArrayList<ZombieAttributes.AttributeModifier> attributeModifiers =
+        ObjectArrayList.of();
 
     public Builder(EquipmentTable table, Consumer<ZombieEvents.Builder> builderFunc) {
       this.table = table;
@@ -101,11 +110,22 @@ public record ZombieVariant(
       return this;
     }
 
+    public Builder withDefaultAttributes(ZombieAttributes.DefaultAttribute... attributes) {
+      for (var attribute : attributes) this.defaultAttributes.add(attribute);
+      return this;
+    }
+
+    public Builder withAttributeModififers(ZombieAttributes.AttributeModifier... attributes) {
+      for (var attribute : attributes) this.attributeModifiers.add(attribute);
+      return this;
+    }
+
     public ZombieVariant build() {
       return new ZombieVariant(
           new LootTableInfo(table, onDrop),
           events,
           new BiomePredicate(List.copyOf(this.biomePredicate)),
+          new ZombieAttributes(defaultAttributes, attributeModifiers),
           new SpawnWeight(weight, quality));
     }
   }

@@ -253,6 +253,7 @@ public class ExtendedZombieEntity extends ZombieEntity
   @Override
   protected void initAttributes() {
     this.getAttributeInstance(EntityAttributes.SPAWN_REINFORCEMENTS).setBaseValue(0.0);
+    getVariant().attributes().applyDefaults(this);
     var random = this.random.nextDouble() - this.random.nextDouble();
     if (random < 0.0) random *= 0.5;
     this.getAttributeInstance(EntityAttributes.FOLLOW_RANGE)
@@ -269,6 +270,7 @@ public class ExtendedZombieEntity extends ZombieEntity
     super.applyAttributeModifiers(chanceMultiplier);
     this.getAttributeInstance(EntityAttributes.SPAWN_REINFORCEMENTS)
         .removeModifier(Identifier.ofVanilla("leader_zombie_bonus"));
+    getVariant().attributes().applyModifiers(this);
   }
 
   @Override
