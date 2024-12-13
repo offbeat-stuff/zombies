@@ -7,7 +7,9 @@ import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.dynamic.Codecs;
+import net.minecraft.util.math.floatprovider.ConstantFloatProvider;
 import net.minecraft.util.math.floatprovider.FloatProvider;
+import org.codeberg.zenxarch.zombies.Zombies;
 
 public record ZombieAttributes(List<DefaultAttribute> defaults, List<AttributeModifier> modifiers) {
 
@@ -25,6 +27,18 @@ public record ZombieAttributes(List<DefaultAttribute> defaults, List<AttributeMo
                   .apply(instance, ZombieAttributes::new));
 
   public static final ZombieAttributes DEFAULT = new ZombieAttributes(List.of(), List.of());
+
+  public static DefaultAttribute baseValue(RegistryEntry<EntityAttribute> attribute, float value) {
+    return new DefaultAttribute(attribute, ConstantFloatProvider.create(value));
+  }
+
+  public static AttributeModifier modifierValue(
+      RegistryEntry<EntityAttribute> attribute,
+      String id,
+      float value,
+      EntityAttributeModifier.Operation op) {
+    return new AttributeModifier(attribute, new EntityAttributeModifier(Zombies.id(id), value, op));
+  }
 
   public void applyDefaults(ExtendedZombieEntity zombie) {
     for (var def : defaults)
