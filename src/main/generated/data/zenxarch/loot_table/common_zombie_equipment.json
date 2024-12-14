@@ -5,140 +5,9 @@
       "bonus_rolls": 0.0,
       "conditions": [
         {
-          "condition": "minecraft:all_of",
-          "terms": [
-            {
-              "chance": {
-                "type": "zenxarch:luck"
-              },
-              "condition": "minecraft:random_chance"
-            },
-            {
-              "chance": 0.5,
-              "condition": "minecraft:random_chance"
-            }
-          ]
-        }
-      ],
-      "entries": [
-        {
-          "type": "minecraft:loot_table",
-          "value": "zenxarch:common_zombie_equipment_helmet"
-        }
-      ],
-      "functions": [
-        {
-          "function": "zenxarch:enchantment_provider",
-          "provider": "zenxarch:zombie_spawn_equipment"
-        }
-      ],
-      "rolls": 1.0
-    },
-    {
-      "bonus_rolls": 0.0,
-      "conditions": [
-        {
-          "condition": "minecraft:all_of",
-          "terms": [
-            {
-              "chance": {
-                "type": "zenxarch:luck"
-              },
-              "condition": "minecraft:random_chance"
-            },
-            {
-              "chance": 0.5,
-              "condition": "minecraft:random_chance"
-            }
-          ]
-        }
-      ],
-      "entries": [
-        {
-          "type": "minecraft:loot_table",
-          "value": "zenxarch:common_zombie_equipment_chestplate"
-        }
-      ],
-      "functions": [
-        {
-          "function": "zenxarch:enchantment_provider",
-          "provider": "zenxarch:zombie_spawn_equipment"
-        }
-      ],
-      "rolls": 1.0
-    },
-    {
-      "bonus_rolls": 0.0,
-      "conditions": [
-        {
-          "condition": "minecraft:all_of",
-          "terms": [
-            {
-              "chance": {
-                "type": "zenxarch:luck"
-              },
-              "condition": "minecraft:random_chance"
-            },
-            {
-              "chance": 0.5,
-              "condition": "minecraft:random_chance"
-            }
-          ]
-        }
-      ],
-      "entries": [
-        {
-          "type": "minecraft:loot_table",
-          "value": "zenxarch:common_zombie_equipment_leggings"
-        }
-      ],
-      "functions": [
-        {
-          "function": "zenxarch:enchantment_provider",
-          "provider": "zenxarch:zombie_spawn_equipment"
-        }
-      ],
-      "rolls": 1.0
-    },
-    {
-      "bonus_rolls": 0.0,
-      "conditions": [
-        {
-          "condition": "minecraft:all_of",
-          "terms": [
-            {
-              "chance": {
-                "type": "zenxarch:luck"
-              },
-              "condition": "minecraft:random_chance"
-            },
-            {
-              "chance": 0.5,
-              "condition": "minecraft:random_chance"
-            }
-          ]
-        }
-      ],
-      "entries": [
-        {
-          "type": "minecraft:loot_table",
-          "value": "zenxarch:common_zombie_equipment_boots"
-        }
-      ],
-      "functions": [
-        {
-          "function": "zenxarch:enchantment_provider",
-          "provider": "zenxarch:zombie_spawn_equipment"
-        }
-      ],
-      "rolls": 1.0
-    },
-    {
-      "bonus_rolls": 0.0,
-      "conditions": [
-        {
           "chance": {
-            "type": "zenxarch:luck"
+            "type": "zenxarch:luck",
+            "max": 0.15
           },
           "condition": "minecraft:random_chance"
         }
@@ -146,13 +15,1158 @@
       "entries": [
         {
           "type": "minecraft:loot_table",
-          "value": "zenxarch:common_zombie_equipment_weapons"
-        }
-      ],
-      "functions": [
+          "value": {
+            "pools": [
+              {
+                "bonus_rolls": 0.0,
+                "entries": [
+                  {
+                    "type": "minecraft:loot_table",
+                    "value": {
+                      "pools": [
+                        {
+                          "bonus_rolls": 0.0,
+                          "entries": [
+                            {
+                              "type": "minecraft:item",
+                              "name": "minecraft:leather_helmet"
+                            }
+                          ],
+                          "rolls": 1.0
+                        },
+                        {
+                          "bonus_rolls": 0.0,
+                          "entries": [
+                            {
+                              "type": "minecraft:loot_table",
+                              "conditions": [
+                                {
+                                  "chance": 0.009,
+                                  "condition": "minecraft:random_chance"
+                                }
+                              ],
+                              "value": {
+                                "pools": [
+                                  {
+                                    "bonus_rolls": 0.0,
+                                    "entries": [
+                                      {
+                                        "type": "minecraft:item",
+                                        "name": "minecraft:leather_chestplate"
+                                      }
+                                    ],
+                                    "rolls": 1.0
+                                  },
+                                  {
+                                    "bonus_rolls": 0.0,
+                                    "entries": [
+                                      {
+                                        "type": "minecraft:loot_table",
+                                        "conditions": [
+                                          {
+                                            "chance": 0.009,
+                                            "condition": "minecraft:random_chance"
+                                          }
+                                        ],
+                                        "value": {
+                                          "pools": [
+                                            {
+                                              "bonus_rolls": 0.0,
+                                              "entries": [
+                                                {
+                                                  "type": "minecraft:item",
+                                                  "name": "minecraft:leather_leggings"
+                                                }
+                                              ],
+                                              "rolls": 1.0
+                                            },
+                                            {
+                                              "bonus_rolls": 0.0,
+                                              "entries": [
+                                                {
+                                                  "type": "minecraft:loot_table",
+                                                  "conditions": [
+                                                    {
+                                                      "chance": 0.009,
+                                                      "condition": "minecraft:random_chance"
+                                                    }
+                                                  ],
+                                                  "value": {
+                                                    "pools": [
+                                                      {
+                                                        "bonus_rolls": 0.0,
+                                                        "entries": [
+                                                          {
+                                                            "type": "minecraft:item",
+                                                            "name": "minecraft:leather_boots"
+                                                          }
+                                                        ],
+                                                        "rolls": 1.0
+                                                      }
+                                                    ]
+                                                  }
+                                                }
+                                              ],
+                                              "rolls": 1.0
+                                            }
+                                          ]
+                                        }
+                                      }
+                                    ],
+                                    "rolls": 1.0
+                                  }
+                                ]
+                              }
+                            }
+                          ],
+                          "rolls": 1.0
+                        }
+                      ]
+                    },
+                    "weight": 200000
+                  },
+                  {
+                    "type": "minecraft:loot_table",
+                    "quality": 1000,
+                    "value": {
+                      "functions": [
+                        {
+                          "function": "zenxarch:enchantment_provider",
+                          "provider": "zenxarch:zombie_spawn_equipment"
+                        }
+                      ],
+                      "pools": [
+                        {
+                          "bonus_rolls": 0.0,
+                          "entries": [
+                            {
+                              "type": "minecraft:item",
+                              "name": "minecraft:leather_helmet"
+                            }
+                          ],
+                          "rolls": 1.0
+                        },
+                        {
+                          "bonus_rolls": 0.0,
+                          "entries": [
+                            {
+                              "type": "minecraft:loot_table",
+                              "conditions": [
+                                {
+                                  "chance": 0.009,
+                                  "condition": "minecraft:random_chance"
+                                }
+                              ],
+                              "value": {
+                                "pools": [
+                                  {
+                                    "bonus_rolls": 0.0,
+                                    "entries": [
+                                      {
+                                        "type": "minecraft:item",
+                                        "name": "minecraft:leather_chestplate"
+                                      }
+                                    ],
+                                    "rolls": 1.0
+                                  },
+                                  {
+                                    "bonus_rolls": 0.0,
+                                    "entries": [
+                                      {
+                                        "type": "minecraft:loot_table",
+                                        "conditions": [
+                                          {
+                                            "chance": 0.009,
+                                            "condition": "minecraft:random_chance"
+                                          }
+                                        ],
+                                        "value": {
+                                          "pools": [
+                                            {
+                                              "bonus_rolls": 0.0,
+                                              "entries": [
+                                                {
+                                                  "type": "minecraft:item",
+                                                  "name": "minecraft:leather_leggings"
+                                                }
+                                              ],
+                                              "rolls": 1.0
+                                            },
+                                            {
+                                              "bonus_rolls": 0.0,
+                                              "entries": [
+                                                {
+                                                  "type": "minecraft:loot_table",
+                                                  "conditions": [
+                                                    {
+                                                      "chance": 0.009,
+                                                      "condition": "minecraft:random_chance"
+                                                    }
+                                                  ],
+                                                  "value": {
+                                                    "pools": [
+                                                      {
+                                                        "bonus_rolls": 0.0,
+                                                        "entries": [
+                                                          {
+                                                            "type": "minecraft:item",
+                                                            "name": "minecraft:leather_boots"
+                                                          }
+                                                        ],
+                                                        "rolls": 1.0
+                                                      }
+                                                    ]
+                                                  }
+                                                }
+                                              ],
+                                              "rolls": 1.0
+                                            }
+                                          ]
+                                        }
+                                      }
+                                    ],
+                                    "rolls": 1.0
+                                  }
+                                ]
+                              }
+                            }
+                          ],
+                          "rolls": 1.0
+                        }
+                      ]
+                    },
+                    "weight": 0
+                  }
+                ],
+                "rolls": 1.0
+              }
+            ]
+          },
+          "weight": 3706
+        },
         {
-          "function": "zenxarch:enchantment_provider",
-          "provider": "zenxarch:zombie_spawn_equipment"
+          "type": "minecraft:loot_table",
+          "value": {
+            "pools": [
+              {
+                "bonus_rolls": 0.0,
+                "entries": [
+                  {
+                    "type": "minecraft:loot_table",
+                    "value": {
+                      "pools": [
+                        {
+                          "bonus_rolls": 0.0,
+                          "entries": [
+                            {
+                              "type": "minecraft:item",
+                              "name": "minecraft:golden_helmet"
+                            }
+                          ],
+                          "rolls": 1.0
+                        },
+                        {
+                          "bonus_rolls": 0.0,
+                          "entries": [
+                            {
+                              "type": "minecraft:loot_table",
+                              "conditions": [
+                                {
+                                  "chance": 0.009,
+                                  "condition": "minecraft:random_chance"
+                                }
+                              ],
+                              "value": {
+                                "pools": [
+                                  {
+                                    "bonus_rolls": 0.0,
+                                    "entries": [
+                                      {
+                                        "type": "minecraft:item",
+                                        "name": "minecraft:golden_chestplate"
+                                      }
+                                    ],
+                                    "rolls": 1.0
+                                  },
+                                  {
+                                    "bonus_rolls": 0.0,
+                                    "entries": [
+                                      {
+                                        "type": "minecraft:loot_table",
+                                        "conditions": [
+                                          {
+                                            "chance": 0.009,
+                                            "condition": "minecraft:random_chance"
+                                          }
+                                        ],
+                                        "value": {
+                                          "pools": [
+                                            {
+                                              "bonus_rolls": 0.0,
+                                              "entries": [
+                                                {
+                                                  "type": "minecraft:item",
+                                                  "name": "minecraft:golden_leggings"
+                                                }
+                                              ],
+                                              "rolls": 1.0
+                                            },
+                                            {
+                                              "bonus_rolls": 0.0,
+                                              "entries": [
+                                                {
+                                                  "type": "minecraft:loot_table",
+                                                  "conditions": [
+                                                    {
+                                                      "chance": 0.009,
+                                                      "condition": "minecraft:random_chance"
+                                                    }
+                                                  ],
+                                                  "value": {
+                                                    "pools": [
+                                                      {
+                                                        "bonus_rolls": 0.0,
+                                                        "entries": [
+                                                          {
+                                                            "type": "minecraft:item",
+                                                            "name": "minecraft:golden_boots"
+                                                          }
+                                                        ],
+                                                        "rolls": 1.0
+                                                      }
+                                                    ]
+                                                  }
+                                                }
+                                              ],
+                                              "rolls": 1.0
+                                            }
+                                          ]
+                                        }
+                                      }
+                                    ],
+                                    "rolls": 1.0
+                                  }
+                                ]
+                              }
+                            }
+                          ],
+                          "rolls": 1.0
+                        }
+                      ]
+                    },
+                    "weight": 200000
+                  },
+                  {
+                    "type": "minecraft:loot_table",
+                    "quality": 1000,
+                    "value": {
+                      "functions": [
+                        {
+                          "function": "zenxarch:enchantment_provider",
+                          "provider": "zenxarch:zombie_spawn_equipment"
+                        }
+                      ],
+                      "pools": [
+                        {
+                          "bonus_rolls": 0.0,
+                          "entries": [
+                            {
+                              "type": "minecraft:item",
+                              "name": "minecraft:golden_helmet"
+                            }
+                          ],
+                          "rolls": 1.0
+                        },
+                        {
+                          "bonus_rolls": 0.0,
+                          "entries": [
+                            {
+                              "type": "minecraft:loot_table",
+                              "conditions": [
+                                {
+                                  "chance": 0.009,
+                                  "condition": "minecraft:random_chance"
+                                }
+                              ],
+                              "value": {
+                                "pools": [
+                                  {
+                                    "bonus_rolls": 0.0,
+                                    "entries": [
+                                      {
+                                        "type": "minecraft:item",
+                                        "name": "minecraft:golden_chestplate"
+                                      }
+                                    ],
+                                    "rolls": 1.0
+                                  },
+                                  {
+                                    "bonus_rolls": 0.0,
+                                    "entries": [
+                                      {
+                                        "type": "minecraft:loot_table",
+                                        "conditions": [
+                                          {
+                                            "chance": 0.009,
+                                            "condition": "minecraft:random_chance"
+                                          }
+                                        ],
+                                        "value": {
+                                          "pools": [
+                                            {
+                                              "bonus_rolls": 0.0,
+                                              "entries": [
+                                                {
+                                                  "type": "minecraft:item",
+                                                  "name": "minecraft:golden_leggings"
+                                                }
+                                              ],
+                                              "rolls": 1.0
+                                            },
+                                            {
+                                              "bonus_rolls": 0.0,
+                                              "entries": [
+                                                {
+                                                  "type": "minecraft:loot_table",
+                                                  "conditions": [
+                                                    {
+                                                      "chance": 0.009,
+                                                      "condition": "minecraft:random_chance"
+                                                    }
+                                                  ],
+                                                  "value": {
+                                                    "pools": [
+                                                      {
+                                                        "bonus_rolls": 0.0,
+                                                        "entries": [
+                                                          {
+                                                            "type": "minecraft:item",
+                                                            "name": "minecraft:golden_boots"
+                                                          }
+                                                        ],
+                                                        "rolls": 1.0
+                                                      }
+                                                    ]
+                                                  }
+                                                }
+                                              ],
+                                              "rolls": 1.0
+                                            }
+                                          ]
+                                        }
+                                      }
+                                    ],
+                                    "rolls": 1.0
+                                  }
+                                ]
+                              }
+                            }
+                          ],
+                          "rolls": 1.0
+                        }
+                      ]
+                    },
+                    "weight": 0
+                  }
+                ],
+                "rolls": 1.0
+              }
+            ]
+          },
+          "weight": 4873
+        },
+        {
+          "type": "minecraft:loot_table",
+          "value": {
+            "pools": [
+              {
+                "bonus_rolls": 0.0,
+                "entries": [
+                  {
+                    "type": "minecraft:loot_table",
+                    "value": {
+                      "pools": [
+                        {
+                          "bonus_rolls": 0.0,
+                          "entries": [
+                            {
+                              "type": "minecraft:item",
+                              "name": "minecraft:chainmail_helmet"
+                            }
+                          ],
+                          "rolls": 1.0
+                        },
+                        {
+                          "bonus_rolls": 0.0,
+                          "entries": [
+                            {
+                              "type": "minecraft:loot_table",
+                              "conditions": [
+                                {
+                                  "chance": 0.009,
+                                  "condition": "minecraft:random_chance"
+                                }
+                              ],
+                              "value": {
+                                "pools": [
+                                  {
+                                    "bonus_rolls": 0.0,
+                                    "entries": [
+                                      {
+                                        "type": "minecraft:item",
+                                        "name": "minecraft:chainmail_chestplate"
+                                      }
+                                    ],
+                                    "rolls": 1.0
+                                  },
+                                  {
+                                    "bonus_rolls": 0.0,
+                                    "entries": [
+                                      {
+                                        "type": "minecraft:loot_table",
+                                        "conditions": [
+                                          {
+                                            "chance": 0.009,
+                                            "condition": "minecraft:random_chance"
+                                          }
+                                        ],
+                                        "value": {
+                                          "pools": [
+                                            {
+                                              "bonus_rolls": 0.0,
+                                              "entries": [
+                                                {
+                                                  "type": "minecraft:item",
+                                                  "name": "minecraft:chainmail_leggings"
+                                                }
+                                              ],
+                                              "rolls": 1.0
+                                            },
+                                            {
+                                              "bonus_rolls": 0.0,
+                                              "entries": [
+                                                {
+                                                  "type": "minecraft:loot_table",
+                                                  "conditions": [
+                                                    {
+                                                      "chance": 0.009,
+                                                      "condition": "minecraft:random_chance"
+                                                    }
+                                                  ],
+                                                  "value": {
+                                                    "pools": [
+                                                      {
+                                                        "bonus_rolls": 0.0,
+                                                        "entries": [
+                                                          {
+                                                            "type": "minecraft:item",
+                                                            "name": "minecraft:chainmail_boots"
+                                                          }
+                                                        ],
+                                                        "rolls": 1.0
+                                                      }
+                                                    ]
+                                                  }
+                                                }
+                                              ],
+                                              "rolls": 1.0
+                                            }
+                                          ]
+                                        }
+                                      }
+                                    ],
+                                    "rolls": 1.0
+                                  }
+                                ]
+                              }
+                            }
+                          ],
+                          "rolls": 1.0
+                        }
+                      ]
+                    },
+                    "weight": 200000
+                  },
+                  {
+                    "type": "minecraft:loot_table",
+                    "quality": 1000,
+                    "value": {
+                      "functions": [
+                        {
+                          "function": "zenxarch:enchantment_provider",
+                          "provider": "zenxarch:zombie_spawn_equipment"
+                        }
+                      ],
+                      "pools": [
+                        {
+                          "bonus_rolls": 0.0,
+                          "entries": [
+                            {
+                              "type": "minecraft:item",
+                              "name": "minecraft:chainmail_helmet"
+                            }
+                          ],
+                          "rolls": 1.0
+                        },
+                        {
+                          "bonus_rolls": 0.0,
+                          "entries": [
+                            {
+                              "type": "minecraft:loot_table",
+                              "conditions": [
+                                {
+                                  "chance": 0.009,
+                                  "condition": "minecraft:random_chance"
+                                }
+                              ],
+                              "value": {
+                                "pools": [
+                                  {
+                                    "bonus_rolls": 0.0,
+                                    "entries": [
+                                      {
+                                        "type": "minecraft:item",
+                                        "name": "minecraft:chainmail_chestplate"
+                                      }
+                                    ],
+                                    "rolls": 1.0
+                                  },
+                                  {
+                                    "bonus_rolls": 0.0,
+                                    "entries": [
+                                      {
+                                        "type": "minecraft:loot_table",
+                                        "conditions": [
+                                          {
+                                            "chance": 0.009,
+                                            "condition": "minecraft:random_chance"
+                                          }
+                                        ],
+                                        "value": {
+                                          "pools": [
+                                            {
+                                              "bonus_rolls": 0.0,
+                                              "entries": [
+                                                {
+                                                  "type": "minecraft:item",
+                                                  "name": "minecraft:chainmail_leggings"
+                                                }
+                                              ],
+                                              "rolls": 1.0
+                                            },
+                                            {
+                                              "bonus_rolls": 0.0,
+                                              "entries": [
+                                                {
+                                                  "type": "minecraft:loot_table",
+                                                  "conditions": [
+                                                    {
+                                                      "chance": 0.009,
+                                                      "condition": "minecraft:random_chance"
+                                                    }
+                                                  ],
+                                                  "value": {
+                                                    "pools": [
+                                                      {
+                                                        "bonus_rolls": 0.0,
+                                                        "entries": [
+                                                          {
+                                                            "type": "minecraft:item",
+                                                            "name": "minecraft:chainmail_boots"
+                                                          }
+                                                        ],
+                                                        "rolls": 1.0
+                                                      }
+                                                    ]
+                                                  }
+                                                }
+                                              ],
+                                              "rolls": 1.0
+                                            }
+                                          ]
+                                        }
+                                      }
+                                    ],
+                                    "rolls": 1.0
+                                  }
+                                ]
+                              }
+                            }
+                          ],
+                          "rolls": 1.0
+                        }
+                      ]
+                    },
+                    "weight": 0
+                  }
+                ],
+                "rolls": 1.0
+              }
+            ]
+          },
+          "weight": 1290
+        },
+        {
+          "type": "minecraft:loot_table",
+          "value": {
+            "pools": [
+              {
+                "bonus_rolls": 0.0,
+                "entries": [
+                  {
+                    "type": "minecraft:loot_table",
+                    "value": {
+                      "pools": [
+                        {
+                          "bonus_rolls": 0.0,
+                          "entries": [
+                            {
+                              "type": "minecraft:item",
+                              "name": "minecraft:iron_helmet"
+                            }
+                          ],
+                          "rolls": 1.0
+                        },
+                        {
+                          "bonus_rolls": 0.0,
+                          "entries": [
+                            {
+                              "type": "minecraft:loot_table",
+                              "conditions": [
+                                {
+                                  "chance": 0.009,
+                                  "condition": "minecraft:random_chance"
+                                }
+                              ],
+                              "value": {
+                                "pools": [
+                                  {
+                                    "bonus_rolls": 0.0,
+                                    "entries": [
+                                      {
+                                        "type": "minecraft:item",
+                                        "name": "minecraft:iron_chestplate"
+                                      }
+                                    ],
+                                    "rolls": 1.0
+                                  },
+                                  {
+                                    "bonus_rolls": 0.0,
+                                    "entries": [
+                                      {
+                                        "type": "minecraft:loot_table",
+                                        "conditions": [
+                                          {
+                                            "chance": 0.009,
+                                            "condition": "minecraft:random_chance"
+                                          }
+                                        ],
+                                        "value": {
+                                          "pools": [
+                                            {
+                                              "bonus_rolls": 0.0,
+                                              "entries": [
+                                                {
+                                                  "type": "minecraft:item",
+                                                  "name": "minecraft:iron_leggings"
+                                                }
+                                              ],
+                                              "rolls": 1.0
+                                            },
+                                            {
+                                              "bonus_rolls": 0.0,
+                                              "entries": [
+                                                {
+                                                  "type": "minecraft:loot_table",
+                                                  "conditions": [
+                                                    {
+                                                      "chance": 0.009,
+                                                      "condition": "minecraft:random_chance"
+                                                    }
+                                                  ],
+                                                  "value": {
+                                                    "pools": [
+                                                      {
+                                                        "bonus_rolls": 0.0,
+                                                        "entries": [
+                                                          {
+                                                            "type": "minecraft:item",
+                                                            "name": "minecraft:iron_boots"
+                                                          }
+                                                        ],
+                                                        "rolls": 1.0
+                                                      }
+                                                    ]
+                                                  }
+                                                }
+                                              ],
+                                              "rolls": 1.0
+                                            }
+                                          ]
+                                        }
+                                      }
+                                    ],
+                                    "rolls": 1.0
+                                  }
+                                ]
+                              }
+                            }
+                          ],
+                          "rolls": 1.0
+                        }
+                      ]
+                    },
+                    "weight": 200000
+                  },
+                  {
+                    "type": "minecraft:loot_table",
+                    "quality": 1000,
+                    "value": {
+                      "functions": [
+                        {
+                          "function": "zenxarch:enchantment_provider",
+                          "provider": "zenxarch:zombie_spawn_equipment"
+                        }
+                      ],
+                      "pools": [
+                        {
+                          "bonus_rolls": 0.0,
+                          "entries": [
+                            {
+                              "type": "minecraft:item",
+                              "name": "minecraft:iron_helmet"
+                            }
+                          ],
+                          "rolls": 1.0
+                        },
+                        {
+                          "bonus_rolls": 0.0,
+                          "entries": [
+                            {
+                              "type": "minecraft:loot_table",
+                              "conditions": [
+                                {
+                                  "chance": 0.009,
+                                  "condition": "minecraft:random_chance"
+                                }
+                              ],
+                              "value": {
+                                "pools": [
+                                  {
+                                    "bonus_rolls": 0.0,
+                                    "entries": [
+                                      {
+                                        "type": "minecraft:item",
+                                        "name": "minecraft:iron_chestplate"
+                                      }
+                                    ],
+                                    "rolls": 1.0
+                                  },
+                                  {
+                                    "bonus_rolls": 0.0,
+                                    "entries": [
+                                      {
+                                        "type": "minecraft:loot_table",
+                                        "conditions": [
+                                          {
+                                            "chance": 0.009,
+                                            "condition": "minecraft:random_chance"
+                                          }
+                                        ],
+                                        "value": {
+                                          "pools": [
+                                            {
+                                              "bonus_rolls": 0.0,
+                                              "entries": [
+                                                {
+                                                  "type": "minecraft:item",
+                                                  "name": "minecraft:iron_leggings"
+                                                }
+                                              ],
+                                              "rolls": 1.0
+                                            },
+                                            {
+                                              "bonus_rolls": 0.0,
+                                              "entries": [
+                                                {
+                                                  "type": "minecraft:loot_table",
+                                                  "conditions": [
+                                                    {
+                                                      "chance": 0.009,
+                                                      "condition": "minecraft:random_chance"
+                                                    }
+                                                  ],
+                                                  "value": {
+                                                    "pools": [
+                                                      {
+                                                        "bonus_rolls": 0.0,
+                                                        "entries": [
+                                                          {
+                                                            "type": "minecraft:item",
+                                                            "name": "minecraft:iron_boots"
+                                                          }
+                                                        ],
+                                                        "rolls": 1.0
+                                                      }
+                                                    ]
+                                                  }
+                                                }
+                                              ],
+                                              "rolls": 1.0
+                                            }
+                                          ]
+                                        }
+                                      }
+                                    ],
+                                    "rolls": 1.0
+                                  }
+                                ]
+                              }
+                            }
+                          ],
+                          "rolls": 1.0
+                        }
+                      ]
+                    },
+                    "weight": 0
+                  }
+                ],
+                "rolls": 1.0
+              }
+            ]
+          },
+          "weight": 127
+        },
+        {
+          "type": "minecraft:loot_table",
+          "value": {
+            "pools": [
+              {
+                "bonus_rolls": 0.0,
+                "entries": [
+                  {
+                    "type": "minecraft:loot_table",
+                    "value": {
+                      "pools": [
+                        {
+                          "bonus_rolls": 0.0,
+                          "entries": [
+                            {
+                              "type": "minecraft:item",
+                              "name": "minecraft:diamond_helmet"
+                            }
+                          ],
+                          "rolls": 1.0
+                        },
+                        {
+                          "bonus_rolls": 0.0,
+                          "entries": [
+                            {
+                              "type": "minecraft:loot_table",
+                              "conditions": [
+                                {
+                                  "chance": 0.009,
+                                  "condition": "minecraft:random_chance"
+                                }
+                              ],
+                              "value": {
+                                "pools": [
+                                  {
+                                    "bonus_rolls": 0.0,
+                                    "entries": [
+                                      {
+                                        "type": "minecraft:item",
+                                        "name": "minecraft:diamond_chestplate"
+                                      }
+                                    ],
+                                    "rolls": 1.0
+                                  },
+                                  {
+                                    "bonus_rolls": 0.0,
+                                    "entries": [
+                                      {
+                                        "type": "minecraft:loot_table",
+                                        "conditions": [
+                                          {
+                                            "chance": 0.009,
+                                            "condition": "minecraft:random_chance"
+                                          }
+                                        ],
+                                        "value": {
+                                          "pools": [
+                                            {
+                                              "bonus_rolls": 0.0,
+                                              "entries": [
+                                                {
+                                                  "type": "minecraft:item",
+                                                  "name": "minecraft:diamond_leggings"
+                                                }
+                                              ],
+                                              "rolls": 1.0
+                                            },
+                                            {
+                                              "bonus_rolls": 0.0,
+                                              "entries": [
+                                                {
+                                                  "type": "minecraft:loot_table",
+                                                  "conditions": [
+                                                    {
+                                                      "chance": 0.009,
+                                                      "condition": "minecraft:random_chance"
+                                                    }
+                                                  ],
+                                                  "value": {
+                                                    "pools": [
+                                                      {
+                                                        "bonus_rolls": 0.0,
+                                                        "entries": [
+                                                          {
+                                                            "type": "minecraft:item",
+                                                            "name": "minecraft:diamond_boots"
+                                                          }
+                                                        ],
+                                                        "rolls": 1.0
+                                                      }
+                                                    ]
+                                                  }
+                                                }
+                                              ],
+                                              "rolls": 1.0
+                                            }
+                                          ]
+                                        }
+                                      }
+                                    ],
+                                    "rolls": 1.0
+                                  }
+                                ]
+                              }
+                            }
+                          ],
+                          "rolls": 1.0
+                        }
+                      ]
+                    },
+                    "weight": 200000
+                  },
+                  {
+                    "type": "minecraft:loot_table",
+                    "quality": 1000,
+                    "value": {
+                      "functions": [
+                        {
+                          "function": "zenxarch:enchantment_provider",
+                          "provider": "zenxarch:zombie_spawn_equipment"
+                        }
+                      ],
+                      "pools": [
+                        {
+                          "bonus_rolls": 0.0,
+                          "entries": [
+                            {
+                              "type": "minecraft:item",
+                              "name": "minecraft:diamond_helmet"
+                            }
+                          ],
+                          "rolls": 1.0
+                        },
+                        {
+                          "bonus_rolls": 0.0,
+                          "entries": [
+                            {
+                              "type": "minecraft:loot_table",
+                              "conditions": [
+                                {
+                                  "chance": 0.009,
+                                  "condition": "minecraft:random_chance"
+                                }
+                              ],
+                              "value": {
+                                "pools": [
+                                  {
+                                    "bonus_rolls": 0.0,
+                                    "entries": [
+                                      {
+                                        "type": "minecraft:item",
+                                        "name": "minecraft:diamond_chestplate"
+                                      }
+                                    ],
+                                    "rolls": 1.0
+                                  },
+                                  {
+                                    "bonus_rolls": 0.0,
+                                    "entries": [
+                                      {
+                                        "type": "minecraft:loot_table",
+                                        "conditions": [
+                                          {
+                                            "chance": 0.009,
+                                            "condition": "minecraft:random_chance"
+                                          }
+                                        ],
+                                        "value": {
+                                          "pools": [
+                                            {
+                                              "bonus_rolls": 0.0,
+                                              "entries": [
+                                                {
+                                                  "type": "minecraft:item",
+                                                  "name": "minecraft:diamond_leggings"
+                                                }
+                                              ],
+                                              "rolls": 1.0
+                                            },
+                                            {
+                                              "bonus_rolls": 0.0,
+                                              "entries": [
+                                                {
+                                                  "type": "minecraft:loot_table",
+                                                  "conditions": [
+                                                    {
+                                                      "chance": 0.009,
+                                                      "condition": "minecraft:random_chance"
+                                                    }
+                                                  ],
+                                                  "value": {
+                                                    "pools": [
+                                                      {
+                                                        "bonus_rolls": 0.0,
+                                                        "entries": [
+                                                          {
+                                                            "type": "minecraft:item",
+                                                            "name": "minecraft:diamond_boots"
+                                                          }
+                                                        ],
+                                                        "rolls": 1.0
+                                                      }
+                                                    ]
+                                                  }
+                                                }
+                                              ],
+                                              "rolls": 1.0
+                                            }
+                                          ]
+                                        }
+                                      }
+                                    ],
+                                    "rolls": 1.0
+                                  }
+                                ]
+                              }
+                            }
+                          ],
+                          "rolls": 1.0
+                        }
+                      ]
+                    },
+                    "weight": 0
+                  }
+                ],
+                "rolls": 1.0
+              }
+            ]
+          },
+          "weight": 4
         }
       ],
       "rolls": 1.0
@@ -161,22 +1175,19 @@
       "bonus_rolls": 0.0,
       "conditions": [
         {
-          "chance": {
-            "type": "zenxarch:luck"
-          },
+          "chance": 0.05,
           "condition": "minecraft:random_chance"
         }
       ],
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "minecraft:shield"
-        }
-      ],
-      "functions": [
+          "name": "minecraft:iron_sword"
+        },
         {
-          "function": "zenxarch:enchantment_provider",
-          "provider": "zenxarch:zombie_spawn_equipment"
+          "type": "minecraft:item",
+          "name": "minecraft:iron_shovel",
+          "weight": 2
         }
       ],
       "rolls": 1.0
