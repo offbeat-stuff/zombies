@@ -109,9 +109,7 @@ public class ZombieApocalypse {
   }
 
   public static boolean isApocalypticWorld(ServerWorld world) {
-    if (world.getRegistryKey().equals(World.OVERWORLD)) {
-      return true;
-    }
+    if (world.getRegistryKey().equals(World.OVERWORLD)) return true;
     return false;
   }
 
@@ -148,7 +146,7 @@ public class ZombieApocalypse {
           result.ifPresent(zombie -> zombie.readNbt(nbt));
           yield result.map(Function.identity());
         } catch (Exception e) {
-          Zombies.LOGGER.info("Exception caught: ", e.getMessage());
+          Zombies.LOGGER.info("Exception caught: {}", e.getMessage());
           yield Optional.empty();
         }
       }

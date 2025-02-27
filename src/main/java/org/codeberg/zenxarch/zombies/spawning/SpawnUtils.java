@@ -12,7 +12,11 @@ import org.codeberg.zenxarch.zombies.ZombieGamerules;
 import org.codeberg.zenxarch.zombies.data.ZBiomeTags;
 import org.codeberg.zenxarch.zombies.math.IntRange;
 
-public abstract class SpawnUtils {
+public final class SpawnUtils {
+
+  private SpawnUtils() {
+    throw new IllegalStateException("Utility class");
+  }
 
   public static boolean burnsZombie(ServerWorld world, BlockPos pos) {
     return world.getGameRules().getBoolean(ZombieGamerules.ZOMBIES_BURN_IN_DAYLIGHT)

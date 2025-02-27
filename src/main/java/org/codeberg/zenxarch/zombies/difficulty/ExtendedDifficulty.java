@@ -40,7 +40,7 @@ public class ExtendedDifficulty extends LocalDifficulty {
 
   @Override
   public boolean isAtLeastHard() {
-    return getLocalDifficulty() >= (float) Difficulty.HARD.ordinal();
+    return getLocalDifficulty() >= Difficulty.HARD.ordinal();
   }
 
   @Override

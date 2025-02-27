@@ -7,7 +7,7 @@ import net.minecraft.loot.LootTable;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 
-public abstract class ZombieLootTables {
+public interface ZombieLootTables {
   public static final EquipmentTable COMMON_ZOMBIE_EQUIPMENT =
       equipmentTable("common_zombie_equipment", 0.00075F);
 

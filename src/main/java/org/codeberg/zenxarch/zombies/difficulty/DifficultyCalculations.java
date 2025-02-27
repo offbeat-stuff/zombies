@@ -23,8 +23,12 @@ public abstract class DifficultyCalculations {
   private static final int TICKS_PER_HOUR = 60 * 60 * 20;
   private static final int TICKS_PER_DAY = 20 * 60 * 20;
 
+  private DifficultyCalculations() {
+    throw new IllegalStateException("Utility class");
+  }
+
   private static double normalize(double value) {
-    return Math.min(1.0, Math.max(value, 0.0));
+    return Math.clamp(value, 0.0, 1.0);
   }
 
   private static double[] getPlayerScore(ServerWorld world, BlockPos pos) {
@@ -43,7 +47,7 @@ public abstract class DifficultyCalculations {
   }
 
   private static double baseDifficulty(ServerWorld world, BlockPos pos) {
-    var dayFactor = mapDays(world.getDifficulty(), getDays(world, pos));
+    var dayFactor = mapDays(world.getDifficulty(), getDays(world));
     var moonSize = (double) world.getMoonSize();
     var timeFactor = normalize(dayFactor * (1.0 + moonSize));
     var playerScore = getPlayerScore(world, pos);
@@ -82,7 +86,7 @@ public abstract class DifficultyCalculations {
     };
   }
 
-  private static double getDays(ServerWorld world, BlockPos pos) {
+  private static double getDays(ServerWorld world) {
     return (double) world.getTimeOfDay() / TICKS_PER_DAY;
   }
 
@@ -138,7 +142,7 @@ public abstract class DifficultyCalculations {
   private static double scoreFood(ItemStack stack) {
     var score = 0.0;
     if (stack.getComponents().contains(DataComponentTypes.FOOD))
-      score = stack.get(DataComponentTypes.FOOD).nutrition() * stack.getCount();
+      score = (double) stack.get(DataComponentTypes.FOOD).nutrition() * stack.getCount();
     return normalize(score, 0.0, 400.0);
   }
 

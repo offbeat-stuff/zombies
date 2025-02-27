@@ -18,7 +18,7 @@ public record SpawnParticleEffect(SpawnParticlesEnchantmentEffect effect)
   }
 
   @Override
-  public MapCodec<? extends SingleLivingEffect> getCodec() {
+  public MapCodec<SpawnParticleEffect> getCodec() {
     return CODEC;
   }
 }

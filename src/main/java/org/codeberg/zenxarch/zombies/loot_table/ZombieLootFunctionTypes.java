@@ -17,5 +17,7 @@ public interface ZombieLootFunctionTypes {
         Registries.LOOT_FUNCTION_TYPE, Zombies.id(id), new LootFunctionType<>(codec));
   }
 
-  public static void initialize() {}
+  public static void initialize() {
+    // force load class
+  }
 }

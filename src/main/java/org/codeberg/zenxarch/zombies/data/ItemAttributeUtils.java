@@ -15,7 +15,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.entry.RegistryEntry;
 
-public abstract class ItemAttributeUtils {
+public interface ItemAttributeUtils {
   private static EntityAttributeInstance getAttributeInstance(
       EntityType<? extends LivingEntity> type, RegistryEntry<EntityAttribute> attribute) {
     var base = DefaultAttributeRegistry.get(type);

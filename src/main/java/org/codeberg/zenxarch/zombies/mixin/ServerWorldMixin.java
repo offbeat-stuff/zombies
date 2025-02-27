@@ -1,6 +1,5 @@
 package org.codeberg.zenxarch.zombies.mixin;
 
-import com.google.common.collect.ImmutableList;
 import java.util.List;
 import net.minecraft.server.world.ServerWorld;
 import org.codeberg.zenxarch.zombies.spawning.SpawnerProvider;
@@ -20,8 +19,8 @@ public abstract class ServerWorldMixin implements SpawnerProvider {
     var world = (ServerWorld) (Object) this;
     zombieSpawners =
         ZombieApocalypse.isApocalypticWorld(world)
-            ? ImmutableList.of(new ZombieApocalypse(world))
-            : ImmutableList.of();
+            ? List.of(new ZombieApocalypse(world))
+            : List.of();
   }
 
   @Override

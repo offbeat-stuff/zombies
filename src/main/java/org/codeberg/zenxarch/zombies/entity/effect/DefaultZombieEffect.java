@@ -12,7 +12,9 @@ public record DefaultZombieEffect() implements ZombieEffect {
 
   @Override
   public void run(
-      ServerWorld world, ExtendedZombieEntity zombie, @Nullable LivingEntity adversery) {}
+      ServerWorld world, ExtendedZombieEntity zombie, @Nullable LivingEntity adversery) {
+    /* No op */
+  }
 
   @Override
   public MapCodec<DefaultZombieEffect> getCodec() {

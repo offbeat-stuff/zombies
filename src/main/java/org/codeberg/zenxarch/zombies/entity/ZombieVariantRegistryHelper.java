@@ -8,7 +8,7 @@ import net.minecraft.util.math.BlockPos;
 import org.codeberg.zenxarch.zombies.difficulty.ExtendedDifficulty;
 import org.codeberg.zenxarch.zombies.registry.ZombieRegistryKeys;
 
-public class ZombieVariantRegistryHelper {
+public interface ZombieVariantRegistryHelper {
 
   private static Optional<Registry<ZombieVariant>> getRegistry(ServerWorld world) {
     return world.getRegistryManager().getOptional(ZombieRegistryKeys.ZOMBIE_VARIANT);

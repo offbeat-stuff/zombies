@@ -27,7 +27,7 @@ public record StatusEffectLivingEffect(List<StatusEffectInstance> effects)
   }
 
   @Override
-  public MapCodec<? extends SingleLivingEffect> getCodec() {
+  public MapCodec<StatusEffectLivingEffect> getCodec() {
     return CODEC;
   }
 }

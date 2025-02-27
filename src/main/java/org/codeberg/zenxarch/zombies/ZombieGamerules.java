@@ -9,19 +9,24 @@ import net.minecraft.text.Style;
 import net.minecraft.util.Formatting;
 import net.minecraft.world.GameRules;
 
-public class ZombieGamerules {
+public final class ZombieGamerules {
+
+  private ZombieGamerules() {
+    throw new IllegalStateException("Utility class");
+  }
+
   public static final CustomGameRuleCategory ZOMBIES_GENERAL =
       new CustomGameRuleCategory(
           Zombies.id("general"),
           MutableText.of(PlainTextContent.of("Zombies"))
               .setStyle(Style.EMPTY.withColor(Formatting.YELLOW)));
 
-  public static GameRules.Key<GameRules.IntRule> newGameRule(String name, int defaultValue) {
+  private static GameRules.Key<GameRules.IntRule> newGameRule(String name, int defaultValue) {
     return GameRuleRegistry.register(
         name, ZOMBIES_GENERAL, GameRuleFactory.createIntRule(defaultValue));
   }
 
-  public static GameRules.Key<GameRules.BooleanRule> newGameRule(
+  private static GameRules.Key<GameRules.BooleanRule> newGameRule(
       String name, boolean defaultValue) {
     return GameRuleRegistry.register(
         name, ZOMBIES_GENERAL, GameRuleFactory.createBooleanRule(defaultValue));
@@ -41,5 +46,7 @@ public class ZombieGamerules {
   public static final GameRules.Key<GameRules.BooleanRule> ZOMBIE_TARGET_PLAYER_ON_SPAWN =
       newGameRule("zombieTargetPlayerOnSpawn", false);
 
-  public static void initialize() {}
+  public static void initialize() {
+    /* force load class */
+  }
 }

@@ -14,7 +14,7 @@ import net.minecraft.loot.entry.LootTableEntry;
 import net.minecraft.loot.provider.number.ConstantLootNumberProvider;
 import org.codeberg.zenxarch.zombies.datagen.ZEnchantmentProviders;
 
-public abstract class EquipmentLootTable {
+public interface EquipmentLootTable {
 
   private static LootPool.Builder pool() {
     return LootPool.builder().rolls(ConstantLootNumberProvider.create(1.0f));
@@ -43,7 +43,7 @@ public abstract class EquipmentLootTable {
   }
 
   private static LootTable.Builder getLootTableForLevel(int level) {
-    final EquipmentSlot slots[] = {
+    final EquipmentSlot[] slots = {
       EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET
     };
 
@@ -66,8 +66,8 @@ public abstract class EquipmentLootTable {
   }
 
   public static LootPool.Builder vanillaEquipmentTable() {
-    final int equipmentLevel[] = {0, 1, 2, 3, 4};
-    final int weights[] = {3706, 4873, 1290, 127, 4};
+    final int[] equipmentLevel = {0, 1, 2, 3, 4};
+    final int[] weights = {3706, 4873, 1290, 127, 4};
     var pool = LootPool.builder().rolls(ConstantLootNumberProvider.create(1.0f));
     for (var index : equipmentLevel)
       pool = pool.with(applyEnchantment(getLootTableForLevel(index), weights[index]));

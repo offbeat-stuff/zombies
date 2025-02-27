@@ -17,5 +17,7 @@ public interface ZombieLootConditionTypes {
         Registries.LOOT_CONDITION_TYPE, Zombies.id(id), new LootConditionType(codec));
   }
 
-  public static void initialize() {}
+  public static void initialize() {
+    // force load class
+  }
 }

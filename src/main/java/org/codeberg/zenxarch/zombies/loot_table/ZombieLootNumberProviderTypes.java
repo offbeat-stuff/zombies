@@ -17,5 +17,7 @@ public interface ZombieLootNumberProviderTypes {
         Registries.LOOT_NUMBER_PROVIDER_TYPE, Zombies.id(id), new LootNumberProviderType(codec));
   }
 
-  public static void initialize() {}
+  public static void initialize() {
+    // force load class
+  }
 }

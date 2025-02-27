@@ -134,10 +134,14 @@ public class ExtendedZombieEntity extends ZombieEntity
   }
 
   @Override
-  protected void initGoals() {}
+  protected void initGoals() {
+    /* use smartbrainlib for ai */
+  }
 
   @Override
-  public void setCanBreakDoors(boolean canBreakDoors) {}
+  public void setCanBreakDoors(boolean canBreakDoors) {
+    /* no griefing */
+  }
 
   @Override
   protected void mobTick(ServerWorld world) {
@@ -168,12 +172,13 @@ public class ExtendedZombieEntity extends ZombieEntity
       EntityData entityData) {
     ((MobEntityAccessor) this).setLootTable(Optional.of(getVariant().lootTableInfo().onDrop()));
     getVariant().events().spawn().run(world.toServerWorld(), this, this.getTarget());
-    entityData = new ZombieData(false, false);
-    return super.initialize(world, difficulty, spawnReason, entityData);
+    return super.initialize(world, difficulty, spawnReason, new ZombieData(false, false));
   }
 
   @Override
-  protected void initEquipment(Random random, LocalDifficulty unused) {}
+  protected void initEquipment(Random random, LocalDifficulty unused) {
+    /* equipment is initialized in updateEnchantments */
+  }
 
   @Override
   protected void updateEnchantments(

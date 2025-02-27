@@ -20,7 +20,7 @@ public record FreezeEffect() implements SingleLivingEffect {
   }
 
   @Override
-  public MapCodec<? extends SingleLivingEffect> getCodec() {
+  public MapCodec<FreezeEffect> getCodec() {
     return CODEC;
   }
 }

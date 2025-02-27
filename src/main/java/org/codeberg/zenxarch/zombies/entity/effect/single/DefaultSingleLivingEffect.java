@@ -10,7 +10,9 @@ public record DefaultSingleLivingEffect() implements SingleLivingEffect {
   public static final MapCodec<DefaultSingleLivingEffect> CODEC = MapCodec.unit(INSTANCE);
 
   @Override
-  public void run(ServerWorld world, LivingEntity target) {}
+  public void run(ServerWorld world, LivingEntity target) {
+    /* No op */
+  }
 
   @Override
   public MapCodec<DefaultSingleLivingEffect> getCodec() {

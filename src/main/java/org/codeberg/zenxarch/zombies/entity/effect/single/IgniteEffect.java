@@ -16,7 +16,7 @@ public record IgniteEffect(float seconds) implements SingleLivingEffect {
   }
 
   @Override
-  public MapCodec<? extends SingleLivingEffect> getCodec() {
+  public MapCodec<IgniteEffect> getCodec() {
     return CODEC;
   }
 }

@@ -41,13 +41,13 @@ public record SpawnEffectCloudEffect(
 
   @Override
   public void run(ServerWorld world, LivingEntity target) {
-    if (effects.size() == 0) return;
+    if (effects.isEmpty()) return;
     var cloud = new AreaEffectCloudEntity(world, target.getX(), target.getY(), target.getZ());
     cloud.setRadius(radius);
     cloud.setRadiusOnUse(radiusOnUse);
     cloud.setWaitTime(10);
     cloud.setDuration(cloud.getDuration() / 2);
-    cloud.setRadiusGrowth(-cloud.getRadius() / (float) cloud.getDuration());
+    cloud.setRadiusGrowth(-cloud.getRadius() / cloud.getDuration());
 
     cloud.setParticleType(particleEffect);
 
@@ -57,7 +57,7 @@ public record SpawnEffectCloudEffect(
   }
 
   @Override
-  public MapCodec<? extends SingleLivingEffect> getCodec() {
+  public MapCodec<SpawnEffectCloudEffect> getCodec() {
     return CODEC;
   }
 }

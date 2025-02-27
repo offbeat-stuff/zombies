@@ -7,6 +7,10 @@ import net.minecraft.util.math.Vec3i;
 
 public final class ZombieDensityMap {
 
+  private ZombieDensityMap() {
+    throw new IllegalStateException("Utility class");
+  }
+
   private static final int BOX_SIZE = 24;
   private static final int MAX_DISTANCE_FROM_CENTER = 3;
 

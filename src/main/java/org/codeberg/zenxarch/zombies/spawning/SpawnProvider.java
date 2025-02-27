@@ -12,10 +12,14 @@ import net.minecraft.world.LightType;
 import org.codeberg.zenxarch.zombies.ZombieGamerules;
 import org.codeberg.zenxarch.zombies.math.IntRange;
 
-public abstract class SpawnProvider {
+public final class SpawnProvider {
   private static final Random random = Random.create();
   private static final int SPAWN_RANGE = 80;
   private static final int SQ_NEARBY_RANGE = 16 * 16;
+
+  private SpawnProvider() {
+    throw new IllegalStateException("Utility class");
+  }
 
   private static boolean isTooCloseToAny(BlockPos b, List<BlockPos> positions) {
     for (var pos : positions) {
@@ -62,7 +66,7 @@ public abstract class SpawnProvider {
     int radSq = SPAWN_RANGE * SPAWN_RANGE;
     if (sqDist >= radSq) return IntRange.INVALID;
 
-    int y = MathHelper.ceil(Math.sqrt(radSq - sqDist));
+    int y = MathHelper.ceil(Math.sqrt((double) radSq - sqDist));
     return IntRange.of(y);
   }
 
@@ -94,16 +98,21 @@ public abstract class SpawnProvider {
     var maxDensity = ZombieDensityMap.getMaxDensity(toSpawn);
 
     for (var pos : BlockPos.iterateRandomly(random, spawnTries, centerPos, SPAWN_RANGE)) {
-      if (SpawnUtils.burnsZombie(world, pos)) continue;
-      if (ZombieDensityMap.get(densityMap, pos) > maxDensity) continue;
+      if (SpawnUtils.burnsZombie(world, pos) || ZombieDensityMap.get(densityMap, pos) > maxDensity)
+        continue;
 
-      var range = getYRange(world, centerPos, pos);
-      if (!range.isValid()) continue;
-
-      var nextPos = adjustPos(world, pos, range);
-      nextPos = validate(world, positions, nextPos);
-      if (nextPos.isPresent()) return nextPos;
+      var adjustedPos = tryAdjustRandomPos(world, centerPos, pos);
+      adjustedPos = validate(world, positions, adjustedPos);
+      if (adjustedPos.isPresent()) return adjustedPos;
     }
     return Optional.empty();
+  }
+
+  private static Optional<BlockPos> tryAdjustRandomPos(
+      ServerWorld world, BlockPos origin, BlockPos pos) {
+    var range = getYRange(world, origin, pos);
+    if (!range.isValid()) return Optional.empty();
+
+    return adjustPos(world, pos, range);
   }
 }

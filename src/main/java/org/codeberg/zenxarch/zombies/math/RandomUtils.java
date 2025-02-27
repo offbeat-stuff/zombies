@@ -6,7 +6,7 @@ import java.util.function.DoubleSupplier;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.random.Random;
 
-public abstract class RandomUtils {
+public interface RandomUtils {
   public static boolean nextBoolean(Random random, double chance) {
     return random.nextDouble() < chance;
   }
