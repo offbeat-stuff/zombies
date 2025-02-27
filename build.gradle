@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version '1.9-SNAPSHOT'
+	id 'fabric-loom' version '1.10-SNAPSHOT'
 }
 
 version = project.mod_version
@@ -33,14 +33,19 @@ dependencies {
 }
 
 fabricApi {
-	configureDataGeneration()
+	configureDataGeneration {
+		client = true
+	}
 }
 
 processResources {
 	inputs.property "version", project.version
+	inputs.property "loader_version", project.loader_version
+	inputs.property "minecraft_version", project.minecraft_version
+	inputs.property "sbl_version", project.sbl_version
 
 	filesMatching("fabric.mod.json") {
-		expand(project.properties)
+		expand(inputs.properties)
 	}
 }
 
@@ -59,7 +64,8 @@ java {
 }
 
 jar {
+	inputs.property "archivesBaseName", project.base.archivesName
 	from("LICENSE") {
-		rename { "${it}_${project.base.archivesName.get()}"}
+		rename { "${it}_${inputs.properties.archivesName}"}
 	}
 }
