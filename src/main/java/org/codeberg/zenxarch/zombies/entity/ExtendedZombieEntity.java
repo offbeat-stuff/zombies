@@ -17,6 +17,7 @@ import net.minecraft.entity.passive.MerchantEntity;
 import net.minecraft.entity.passive.TurtleEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.random.Random;
@@ -55,11 +56,11 @@ import org.codeberg.zenxarch.zombies.spawning.ZombieApocalypse;
 import org.jetbrains.annotations.Nullable;
 
 public class ExtendedZombieEntity extends ZombieEntity
-    implements SmartBrainOwner<ExtendedZombieEntity>, VariantHolder<ZombieVariant> {
+    implements SmartBrainOwner<ExtendedZombieEntity>, VariantHolder<RegistryEntry<ZombieVariant>> {
 
-  private ZombieVariant variant;
+  private RegistryEntry<ZombieVariant> variant;
 
-  public ExtendedZombieEntity(World world, ZombieVariant variant) {
+  public ExtendedZombieEntity(World world, RegistryEntry<ZombieVariant> variant) {
     super(world);
     this.setVariant(variant);
   }
@@ -170,8 +171,9 @@ public class ExtendedZombieEntity extends ZombieEntity
       LocalDifficulty difficulty,
       SpawnReason spawnReason,
       EntityData entityData) {
-    ((MobEntityAccessor) this).setLootTable(Optional.of(getVariant().lootTableInfo().onDrop()));
-    getVariant().events().spawn().run(world.toServerWorld(), this, this.getTarget());
+    ((MobEntityAccessor) this)
+        .setLootTable(Optional.of(getVariant().value().lootTableInfo().onDrop()));
+    getVariant().value().events().spawn().run(world.toServerWorld(), this, this.getTarget());
     return super.initialize(world, difficulty, spawnReason, new ZombieData(false, false));
   }
 
@@ -185,13 +187,14 @@ public class ExtendedZombieEntity extends ZombieEntity
       ServerWorldAccess world, Random random, LocalDifficulty unused) {
     var difficulty = getExtentedDifficulty(world);
 
-    getVariant().initEquipment(world.toServerWorld(), this, difficulty);
+    getVariant().value().initEquipment(world.toServerWorld(), this, difficulty);
   }
 
   @Override
   public boolean damage(ServerWorld world, DamageSource source, float amount) {
     if (!super.damage(world, source, amount)) return false;
     getVariant()
+        .value()
         .events()
         .damage()
         .run(world, this, source.getAttacker() instanceof LivingEntity living ? living : null);
@@ -202,7 +205,7 @@ public class ExtendedZombieEntity extends ZombieEntity
   public boolean tryAttack(ServerWorld world, Entity target) {
     var result = super.tryAttack(world, target);
     if (result && target instanceof LivingEntity living) {
-      getVariant().events().attack().run(world, this, living);
+      getVariant().value().events().attack().run(world, this, living);
     }
     return result;
   }
@@ -210,14 +213,14 @@ public class ExtendedZombieEntity extends ZombieEntity
   @Override
   protected void onKilledBy(@Nullable LivingEntity adversary) {
     if (this.getWorld() instanceof ServerWorld world)
-      getVariant().events().killed().run(world, this, adversary);
+      getVariant().value().events().killed().run(world, this, adversary);
     super.onKilledBy(adversary);
   }
 
   @Override
   public boolean onKilledOther(ServerWorld world, LivingEntity other) {
     var result = super.onKilledOther(world, other);
-    getVariant().events().kill().run(world, this, other);
+    getVariant().value().events().kill().run(world, this, other);
     return result;
   }
 
@@ -225,6 +228,7 @@ public class ExtendedZombieEntity extends ZombieEntity
   public void onDeath(DamageSource damageSource) {
     if (!this.isRemoved() && !this.dead && this.getWorld() instanceof ServerWorld world) {
       getVariant()
+          .value()
           .events()
           .death()
           .run(
@@ -238,14 +242,14 @@ public class ExtendedZombieEntity extends ZombieEntity
   @Override
   public void tick() {
     if (this.getWorld() instanceof ServerWorld world)
-      getVariant().events().tick().run(world, this, null);
+      getVariant().value().events().tick().run(world, this, null);
     super.tick();
   }
 
   @Override
   protected void initAttributes() {
     this.getAttributeInstance(EntityAttributes.SPAWN_REINFORCEMENTS).setBaseValue(0.0);
-    getVariant().attributes().applyDefaults(this);
+    getVariant().value().attributes().applyDefaults(this);
     var random = this.random.nextDouble() - this.random.nextDouble();
     if (random < 0.0) random *= 0.5;
     this.getAttributeInstance(EntityAttributes.FOLLOW_RANGE)
@@ -262,7 +266,7 @@ public class ExtendedZombieEntity extends ZombieEntity
     super.applyAttributeModifiers(chanceMultiplier);
     this.getAttributeInstance(EntityAttributes.SPAWN_REINFORCEMENTS)
         .removeModifier(Identifier.ofVanilla("leader_zombie_bonus"));
-    getVariant().attributes().applyModifiers(this);
+    getVariant().value().attributes().applyModifiers(this);
   }
 
   @Override
@@ -270,7 +274,7 @@ public class ExtendedZombieEntity extends ZombieEntity
     super.writeCustomDataToNbt(nbt);
     var registry = getWorld().getRegistryManager().getOptional(ZombieRegistryKeys.ZOMBIE_VARIANT);
     if (registry.isEmpty()) return;
-    nbt.putString(ZombieApocalypse.ZOMBIE_ID_KEY, registry.get().getId(getVariant()).toString());
+    nbt.putString(ZombieApocalypse.ZOMBIE_ID_KEY, getVariant().getIdAsString());
   }
 
   @Override
@@ -281,12 +285,12 @@ public class ExtendedZombieEntity extends ZombieEntity
   }
 
   @Override
-  public void setVariant(ZombieVariant variant) {
+  public void setVariant(RegistryEntry<ZombieVariant> variant) {
     this.variant = variant;
   }
 
   @Override
-  public ZombieVariant getVariant() {
+  public RegistryEntry<ZombieVariant> getVariant() {
     return this.variant;
   }
 }
