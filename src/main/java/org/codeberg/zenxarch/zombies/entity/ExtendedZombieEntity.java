@@ -61,7 +61,7 @@ public class ExtendedZombieEntity extends ZombieEntity
 
   public ExtendedZombieEntity(World world, ZombieVariant variant) {
     super(world);
-    this.variant = variant;
+    this.setVariant(variant);
   }
 
   @Override
