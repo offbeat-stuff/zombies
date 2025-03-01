@@ -48,6 +48,7 @@ import net.tslat.smartbrainlib.api.core.sensor.custom.GenericAttackTargetSensor;
 import net.tslat.smartbrainlib.api.core.sensor.vanilla.HurtBySensor;
 import net.tslat.smartbrainlib.api.core.sensor.vanilla.NearbyLivingEntitySensor;
 import net.tslat.smartbrainlib.api.core.sensor.vanilla.NearbyPlayersSensor;
+import org.codeberg.zenxarch.zombies.ZombieEntityAttachments;
 import org.codeberg.zenxarch.zombies.ZombieGamerules;
 import org.codeberg.zenxarch.zombies.difficulty.ExtendedDifficulty;
 import org.codeberg.zenxarch.zombies.mixin.MobEntityAccessor;
@@ -287,6 +288,11 @@ public class ExtendedZombieEntity extends ZombieEntity
   @Override
   public void setVariant(RegistryEntry<ZombieVariant> variant) {
     this.variant = variant;
+    var key = this.variant.getKey();
+    if (key.isEmpty()) return;
+    this.setAttached(
+        ZombieEntityAttachments.ZOMBIE_VARIANT_TEXTURE_OVERRIDE,
+        key.get().getValue().withPrefixedPath("textures/entity/zombie/").withSuffixedPath(".png"));
   }
 
   @Override
