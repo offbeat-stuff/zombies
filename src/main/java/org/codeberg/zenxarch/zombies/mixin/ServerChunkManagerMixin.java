@@ -25,6 +25,6 @@ public abstract class ServerChunkManagerMixin {
     if (!(getWorld() instanceof ServerWorld sw)) return;
     if (!(getWorld() instanceof SpawnerProvider sp)) return;
 
-    for (var spawner : sp.getSpawners()) spawner.spawn(sw, spawnMonsters);
+    for (var spawner : sp.zenxarch$getZombieSpawners()) spawner.spawn(sw, spawnMonsters);
   }
 }

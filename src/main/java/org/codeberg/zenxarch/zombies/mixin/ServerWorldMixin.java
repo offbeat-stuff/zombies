@@ -12,19 +12,20 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ServerWorld.class)
 public abstract class ServerWorldMixin implements SpawnerProvider {
-  @Unique private List<ZombieApocalypse> zombieSpawners;
+  @Unique private List<ZombieApocalypse> zenxarch$zombieSpawners;
 
   @Inject(at = @At(value = "TAIL"), method = "<init>", cancellable = false)
   private void zenxarch$inject_init(CallbackInfo ci) {
     var world = (ServerWorld) (Object) this;
-    zombieSpawners =
+    zenxarch$zombieSpawners =
         ZombieApocalypse.isApocalypticWorld(world)
             ? List.of(new ZombieApocalypse(world))
             : List.of();
   }
 
+  @Unique
   @Override
-  public List<ZombieApocalypse> getSpawners() {
-    return zombieSpawners;
+  public List<ZombieApocalypse> zenxarch$getZombieSpawners() {
+    return zenxarch$zombieSpawners;
   }
 }
