@@ -1,5 +1,6 @@
 package org.codeberg.zenxarch.zombies.entity;
 
+import com.mojang.datafixers.util.Pair;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -9,8 +10,11 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.VariantHolder;
 import net.minecraft.entity.ai.brain.Brain.Profile;
+import net.minecraft.entity.ai.brain.MemoryModuleState;
+import net.minecraft.entity.ai.brain.MemoryModuleType;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.mob.ZombieEntity;
 import net.minecraft.entity.passive.IronGolemEntity;
 import net.minecraft.entity.passive.MerchantEntity;
@@ -45,9 +49,14 @@ import net.tslat.smartbrainlib.api.core.behaviour.custom.target.SetRandomLookTar
 import net.tslat.smartbrainlib.api.core.behaviour.custom.target.TargetOrRetaliate;
 import net.tslat.smartbrainlib.api.core.sensor.ExtendedSensor;
 import net.tslat.smartbrainlib.api.core.sensor.custom.GenericAttackTargetSensor;
+import net.tslat.smartbrainlib.api.core.sensor.custom.UnreachableTargetSensor;
 import net.tslat.smartbrainlib.api.core.sensor.vanilla.HurtBySensor;
 import net.tslat.smartbrainlib.api.core.sensor.vanilla.NearbyLivingEntitySensor;
 import net.tslat.smartbrainlib.api.core.sensor.vanilla.NearbyPlayersSensor;
+import net.tslat.smartbrainlib.object.MemoryTest;
+import net.tslat.smartbrainlib.registry.SBLMemoryTypes;
+import net.tslat.smartbrainlib.util.BrainUtil;
+import net.tslat.smartbrainlib.util.SensoryUtil;
 import org.codeberg.zenxarch.zombies.ZombieEntityAttachments;
 import org.codeberg.zenxarch.zombies.ZombieGamerules;
 import org.codeberg.zenxarch.zombies.difficulty.ExtendedDifficulty;
@@ -90,7 +99,8 @@ public class ExtendedZombieEntity extends ZombieEntity
             .setPredicate(ExtendedZombieEntity::shouldTargetEntity),
         new HurtBySensor<ExtendedZombieEntity>()
             .setPredicate((source, living) -> !(living instanceof ExtendedZombieEntity)),
-        new GenericAttackTargetSensor<>());
+        new GenericAttackTargetSensor<>(),
+        new UnreachableTargetSensor<>());
   }
 
   @Override
@@ -130,9 +140,29 @@ public class ExtendedZombieEntity extends ZombieEntity
         new AnimatableMeleeAttack<>(0)
             .whenStarting(zombie -> zombie.setAttacking(true))
             .whenStopping(zombie -> zombie.setAttacking(false)),
-        new LeapAtTarget<>(0)
+        new LeapAtTarget<>(0) {
+          private static final MemoryTest MEMORY_REQUIREMENTS =
+              MemoryTest.builder(4)
+                  .hasMemories(
+                      MemoryModuleType.ATTACK_TARGET,
+                      MemoryModuleType.CANT_REACH_WALK_TARGET_SINCE,
+                      SBLMemoryTypes.TARGET_UNREACHABLE.get())
+                  .noMemory(MemoryModuleType.ATTACK_COOLING_DOWN);
+
+          @Override
+          protected List<Pair<MemoryModuleType<?>, MemoryModuleState>> getMemoryRequirements() {
+            return MEMORY_REQUIREMENTS;
+          }
+        }.leapIf(ExtendedZombieEntity::shouldTryLeaping)
             .whenStarting(zombie -> zombie.setAttacking(true))
             .whenStopping(zombie -> zombie.setAttacking(false)));
+  }
+
+  private static boolean shouldTryLeaping(MobEntity self, LivingEntity target) {
+    return self.isOnGround()
+        && BrainUtil.getMemory(self, MemoryModuleType.CANT_REACH_WALK_TARGET_SINCE) > 100
+        && SensoryUtil.hasLineOfSight(self, target)
+        && self.squaredDistanceTo(target) < 4 * 4;
   }
 
   @Override
