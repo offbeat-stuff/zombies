@@ -8,7 +8,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityData;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SpawnReason;
-import net.minecraft.entity.VariantHolder;
 import net.minecraft.entity.ai.brain.Brain.Profile;
 import net.minecraft.entity.ai.brain.MemoryModuleState;
 import net.minecraft.entity.ai.brain.MemoryModuleType;
@@ -66,7 +65,7 @@ import org.codeberg.zenxarch.zombies.spawning.ZombieApocalypse;
 import org.jetbrains.annotations.Nullable;
 
 public class ExtendedZombieEntity extends ZombieEntity
-    implements SmartBrainOwner<ExtendedZombieEntity>, VariantHolder<RegistryEntry<ZombieVariant>> {
+    implements SmartBrainOwner<ExtendedZombieEntity> {
 
   private RegistryEntry<ZombieVariant> variant;
 
@@ -153,12 +152,13 @@ public class ExtendedZombieEntity extends ZombieEntity
           protected List<Pair<MemoryModuleType<?>, MemoryModuleState>> getMemoryRequirements() {
             return MEMORY_REQUIREMENTS;
           }
-        }.leapIf(ExtendedZombieEntity::shouldTryLeaping)
+        }.startCondition(ExtendedZombieEntity::shouldTryLeaping)
             .whenStarting(zombie -> zombie.setAttacking(true))
             .whenStopping(zombie -> zombie.setAttacking(false)));
   }
 
-  private static boolean shouldTryLeaping(MobEntity self, LivingEntity target) {
+  private static boolean shouldTryLeaping(MobEntity self) {
+    var target = BrainUtil.getTargetOfEntity(self);
     return self.isOnGround()
         && BrainUtil.getMemory(self, MemoryModuleType.CANT_REACH_WALK_TARGET_SINCE) > 100
         && SensoryUtil.hasLineOfSight(self, target)
@@ -315,7 +315,6 @@ public class ExtendedZombieEntity extends ZombieEntity
         && (this.canSpawnAsReinforcementInFluid() || !world.containsFluid(this.getBoundingBox()));
   }
 
-  @Override
   public void setVariant(RegistryEntry<ZombieVariant> variant) {
     this.variant = variant;
     var key = this.variant.getKey();
@@ -325,7 +324,6 @@ public class ExtendedZombieEntity extends ZombieEntity
         key.get().getValue().withPrefixedPath("textures/entity/zombie/").withSuffixedPath(".png"));
   }
 
-  @Override
   public RegistryEntry<ZombieVariant> getVariant() {
     return this.variant;
   }

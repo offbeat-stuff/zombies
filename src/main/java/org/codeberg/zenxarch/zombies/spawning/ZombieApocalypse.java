@@ -138,7 +138,11 @@ public class ZombieApocalypse {
   }
 
   public static Optional<Entity> loadFromNbt(NbtCompound nbt, World world) {
-    return switch (nbt.getString(ZOMBIE_ID_KEY)) {
+    return nbt.getString(ZOMBIE_ID_KEY).flatMap(id -> loadFromNbt(nbt, id, world));
+  }
+
+  public static Optional<Entity> loadFromNbt(NbtCompound nbt, String idKey, World world) {
+    return switch (idKey) {
       case "" -> Optional.empty();
       case String id -> {
         try {
