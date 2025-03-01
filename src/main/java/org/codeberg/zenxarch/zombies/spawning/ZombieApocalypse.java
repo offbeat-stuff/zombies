@@ -132,9 +132,9 @@ public class ZombieApocalypse {
   }
 
   private static Optional<Reference<ZombieVariant>> fromId(World world, Identifier id) {
-    var registry = world.getRegistryManager().getOptional(ZombieRegistryKeys.ZOMBIE_VARIANT);
+    var registry = world.getRegistryManager().getOptionalWrapper(ZombieRegistryKeys.ZOMBIE_VARIANT);
     if (registry.isEmpty()) return Optional.empty();
-    return registry.get().getEntry(id);
+    return registry.get().get(id);
   }
 
   public static Optional<Entity> loadFromNbt(NbtCompound nbt, World world) {

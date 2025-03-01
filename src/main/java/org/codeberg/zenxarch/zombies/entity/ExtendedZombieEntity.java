@@ -279,23 +279,23 @@ public class ExtendedZombieEntity extends ZombieEntity
 
   @Override
   protected void initAttributes() {
-    this.getAttributeInstance(EntityAttributes.SPAWN_REINFORCEMENTS).setBaseValue(0.0);
+    this.getAttributeInstance(EntityAttributes.ZOMBIE_SPAWN_REINFORCEMENTS).setBaseValue(0.0);
     getVariant().value().attributes().applyDefaults(this);
     var random = this.random.nextDouble() - this.random.nextDouble();
     if (random < 0.0) random *= 0.5;
-    this.getAttributeInstance(EntityAttributes.FOLLOW_RANGE)
+    this.getAttributeInstance(EntityAttributes.GENERIC_FOLLOW_RANGE)
         .setBaseValue((getWorld().isDay() ? 18.0 : 30.0) + 8.0 * random);
     if (this.random.nextDouble() < 0.8) {
-      this.getAttributeInstance(EntityAttributes.MAX_HEALTH).setBaseValue(10.0);
+      this.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH).setBaseValue(10.0);
       if (getWorld().isNight())
-        this.getAttributeInstance(EntityAttributes.MOVEMENT_SPEED).setBaseValue(0.46);
+        this.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).setBaseValue(0.46);
     }
   }
 
   @Override
   protected void applyAttributeModifiers(float chanceMultiplier) {
     super.applyAttributeModifiers(chanceMultiplier);
-    this.getAttributeInstance(EntityAttributes.SPAWN_REINFORCEMENTS)
+    this.getAttributeInstance(EntityAttributes.ZOMBIE_SPAWN_REINFORCEMENTS)
         .removeModifier(Identifier.ofVanilla("leader_zombie_bonus"));
     getVariant().value().attributes().applyModifiers(this);
   }
@@ -303,7 +303,7 @@ public class ExtendedZombieEntity extends ZombieEntity
   @Override
   public void writeCustomDataToNbt(NbtCompound nbt) {
     super.writeCustomDataToNbt(nbt);
-    var registry = getWorld().getRegistryManager().getOptional(ZombieRegistryKeys.ZOMBIE_VARIANT);
+    var registry = getWorld().getRegistryManager().getOptionalWrapper(ZombieRegistryKeys.ZOMBIE_VARIANT);
     if (registry.isEmpty()) return;
     nbt.putString(ZombieApocalypse.ZOMBIE_ID_KEY, getVariant().getIdAsString());
   }

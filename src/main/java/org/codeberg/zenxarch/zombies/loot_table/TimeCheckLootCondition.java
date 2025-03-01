@@ -34,20 +34,20 @@ public record TimeCheckLootCondition(Optional<Boolean> isDay, Optional<Boolean> 
     return ZombieLootConditionTypes.TIME_CHECK;
   }
 
-  public static Builder create() {
-    return new Builder();
+  public static org.codeberg.zenxarch.zombies.loot_table.TimeCheckLootCondition.Builder create() {
+    return new org.codeberg.zenxarch.zombies.loot_table.TimeCheckLootCondition.Builder();
   }
 
   public static class Builder implements LootCondition.Builder {
     private Optional<Boolean> day = Optional.empty();
     private Optional<Boolean> night = Optional.empty();
 
-    public Builder day(boolean day) {
+    public org.codeberg.zenxarch.zombies.loot_table.TimeCheckLootCondition.Builder day(boolean day) {
       this.day = Optional.of(day);
       return this;
     }
 
-    public Builder night(boolean night) {
+    public org.codeberg.zenxarch.zombies.loot_table.TimeCheckLootCondition.Builder night(boolean night) {
       this.night = Optional.of(night);
       return this;
     }

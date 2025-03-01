@@ -117,9 +117,9 @@ public abstract class DifficultyCalculations {
     foodScore = normalize(foodScore);
 
     var armor =
-        player.getAttributeValue(EntityAttributes.ARMOR)
-            + player.getAttributeValue(EntityAttributes.ARMOR_TOUGHNESS)
-            + player.getAttributeValue(EntityAttributes.KNOCKBACK_RESISTANCE);
+        player.getAttributeValue(EntityAttributes.GENERIC_ARMOR)
+            + player.getAttributeValue(EntityAttributes.GENERIC_ARMOR_TOUGHNESS)
+            + player.getAttributeValue(EntityAttributes.GENERIC_KNOCKBACK_RESISTANCE);
 
     armor = normalize(armor, 0.0, 32.0);
     return (armor + weaponSpeedScore + weaponDamageScore) * (0.75 / 3.0) + foodScore * 0.25;
@@ -127,12 +127,12 @@ public abstract class DifficultyCalculations {
 
   private static double getAttackDamage(ItemStack stack) {
     return ItemAttributeUtils.getAttributeValue(
-        EntityType.PLAYER, stack, EntityAttributes.ATTACK_DAMAGE);
+        EntityType.PLAYER, stack, EntityAttributes.GENERIC_ATTACK_DAMAGE);
   }
 
   private static double getAttackSpeed(ItemStack stack) {
     return ItemAttributeUtils.getAttributeValue(
-        EntityType.PLAYER, stack, EntityAttributes.ATTACK_SPEED);
+        EntityType.PLAYER, stack, EntityAttributes.GENERIC_ATTACK_SPEED);
   }
 
   private static double getDamagePerSecond(ItemStack stack) {

@@ -5,9 +5,9 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentTable;
 import net.minecraft.loot.LootTable;
+import net.minecraft.loot.context.LootContextParameterSet;
 import net.minecraft.loot.context.LootContextParameters;
 import net.minecraft.loot.context.LootContextTypes;
-import net.minecraft.loot.context.LootWorldContext;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.server.world.ServerWorld;
@@ -40,7 +40,7 @@ public record LootTableInfo(EquipmentTable table, RegistryKey<LootTable> onDrop)
       ServerWorld world, ExtendedZombieEntity zombie, ExtendedDifficulty difficulty) {
     zombie.setEquipmentFromTable(
         table.lootTable(),
-        new LootWorldContext.Builder(world)
+        new LootContextParameterSet.Builder(world)
             .add(LootContextParameters.ORIGIN, zombie.getPos())
             .add(LootContextParameters.THIS_ENTITY, zombie)
             .luck(difficulty.getClampedLocalDifficulty())

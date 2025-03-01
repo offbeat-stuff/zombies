@@ -12,9 +12,9 @@ import net.minecraft.entity.EquipmentTable;
 import net.minecraft.loot.LootTable;
 import net.minecraft.loot.condition.LootCondition;
 import net.minecraft.loot.context.LootContext;
+import net.minecraft.loot.context.LootContextParameterSet;
 import net.minecraft.loot.context.LootContextParameters;
 import net.minecraft.loot.context.LootContextTypes;
-import net.minecraft.loot.context.LootWorldContext;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.tag.TagKey;
@@ -84,7 +84,7 @@ public record ZombieVariant(
       ServerPlayerEntity player,
       ExtendedDifficulty difficulty) {
     var lootContext =
-        new LootWorldContext.Builder(world)
+        new LootContextParameterSet.Builder(world)
             .add(LootContextParameters.ORIGIN, pos.toBottomCenterPos())
             .add(LootContextParameters.THIS_ENTITY, player)
             .luck(difficulty.getClampedLocalDifficulty())

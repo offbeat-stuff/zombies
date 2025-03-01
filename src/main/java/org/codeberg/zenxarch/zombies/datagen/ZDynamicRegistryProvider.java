@@ -40,7 +40,7 @@ public class ZDynamicRegistryProvider extends FabricDynamicRegistryProvider {
       @Override
       public <S> RegistryEntryLookup<S> getRegistryLookup(
           RegistryKey<? extends Registry<? extends S>> registryRef) {
-        return registries.getOrThrow(registryRef);
+        return registries.getWrapperOrThrow(registryRef);
       }
     };
   }
