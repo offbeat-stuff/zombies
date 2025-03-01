@@ -5,13 +5,13 @@ import java.util.List;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Util;
-import net.minecraft.util.dynamic.Codecs;
 import org.codeberg.zenxarch.zombies.entity.ExtendedZombieEntity;
 import org.jetbrains.annotations.Nullable;
 
 public record RandomZombieEffect(List<ZombieEffect> effects) implements ZombieEffect {
   public static final MapCodec<RandomZombieEffect> CODEC =
-      Codecs.listOrSingle(ZombieEffect.CODEC)
+      ZombieEffect.CODEC
+          .listOf()
           .xmap(RandomZombieEffect::new, RandomZombieEffect::effects)
           .fieldOf("effects");
 

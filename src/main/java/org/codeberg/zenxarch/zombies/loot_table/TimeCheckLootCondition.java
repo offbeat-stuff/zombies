@@ -42,12 +42,14 @@ public record TimeCheckLootCondition(Optional<Boolean> isDay, Optional<Boolean> 
     private Optional<Boolean> day = Optional.empty();
     private Optional<Boolean> night = Optional.empty();
 
-    public org.codeberg.zenxarch.zombies.loot_table.TimeCheckLootCondition.Builder day(boolean day) {
+    public org.codeberg.zenxarch.zombies.loot_table.TimeCheckLootCondition.Builder day(
+        boolean day) {
       this.day = Optional.of(day);
       return this;
     }
 
-    public org.codeberg.zenxarch.zombies.loot_table.TimeCheckLootCondition.Builder night(boolean night) {
+    public org.codeberg.zenxarch.zombies.loot_table.TimeCheckLootCondition.Builder night(
+        boolean night) {
       this.night = Optional.of(night);
       return this;
     }

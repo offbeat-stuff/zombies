@@ -2,6 +2,9 @@ package org.codeberg.zenxarch.zombies.loot_table;
 
 import static org.codeberg.zenxarch.zombies.Zombies.id;
 
+import com.google.common.collect.Maps;
+import java.util.Map;
+import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.EquipmentTable;
 import net.minecraft.loot.LootTable;
 import net.minecraft.registry.RegistryKey;
@@ -16,6 +19,11 @@ public interface ZombieLootTables {
   }
 
   private static EquipmentTable equipmentTable(String id, float slotDropChances) {
-    return new EquipmentTable(key(id), slotDropChances);
+    Map<EquipmentSlot, Float> map = Maps.newHashMap();
+
+    for (EquipmentSlot equipmentSlot : EquipmentSlot.values())
+      map.put(equipmentSlot, slotDropChances);
+
+    return new EquipmentTable(key(id), map);
   }
 }

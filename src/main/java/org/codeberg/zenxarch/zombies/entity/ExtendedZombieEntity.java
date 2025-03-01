@@ -55,8 +55,8 @@ import net.tslat.smartbrainlib.api.core.sensor.vanilla.NearbyLivingEntitySensor;
 import net.tslat.smartbrainlib.api.core.sensor.vanilla.NearbyPlayersSensor;
 import net.tslat.smartbrainlib.object.MemoryTest;
 import net.tslat.smartbrainlib.registry.SBLMemoryTypes;
-import net.tslat.smartbrainlib.util.BrainUtil;
-import net.tslat.smartbrainlib.util.SensoryUtil;
+import net.tslat.smartbrainlib.util.BrainUtils;
+import net.tslat.smartbrainlib.util.SensoryUtils;
 import org.codeberg.zenxarch.zombies.ZombieEntityAttachments;
 import org.codeberg.zenxarch.zombies.ZombieGamerules;
 import org.codeberg.zenxarch.zombies.difficulty.ExtendedDifficulty;
@@ -160,8 +160,8 @@ public class ExtendedZombieEntity extends ZombieEntity
 
   private static boolean shouldTryLeaping(MobEntity self, LivingEntity target) {
     return self.isOnGround()
-        && BrainUtil.getMemory(self, MemoryModuleType.CANT_REACH_WALK_TARGET_SINCE) > 100
-        && SensoryUtil.hasLineOfSight(self, target)
+        && BrainUtils.getMemory(self, MemoryModuleType.CANT_REACH_WALK_TARGET_SINCE) > 100
+        && SensoryUtils.hasLineOfSight(self, target)
         && self.squaredDistanceTo(target) < 4 * 4;
   }
 
@@ -176,8 +176,8 @@ public class ExtendedZombieEntity extends ZombieEntity
   }
 
   @Override
-  protected void mobTick(ServerWorld world) {
-    super.mobTick(world);
+  protected void mobTick() {
+    super.mobTick();
     tickBrain(this);
   }
 
@@ -222,20 +222,23 @@ public class ExtendedZombieEntity extends ZombieEntity
   }
 
   @Override
-  public boolean damage(ServerWorld world, DamageSource source, float amount) {
-    if (!super.damage(world, source, amount)) return false;
+  public boolean damage(DamageSource source, float amount) {
+    if (!(this.getWorld() instanceof ServerWorld sw)) return super.damage(source, amount);
+    if (!super.damage(source, amount)) return false;
     getVariant()
         .value()
         .events()
         .damage()
-        .run(world, this, source.getAttacker() instanceof LivingEntity living ? living : null);
+        .run(sw, this, source.getAttacker() instanceof LivingEntity living ? living : null);
     return true;
   }
 
   @Override
-  public boolean tryAttack(ServerWorld world, Entity target) {
-    var result = super.tryAttack(world, target);
-    if (result && target instanceof LivingEntity living) {
+  public boolean tryAttack(Entity target) {
+    var result = super.tryAttack(target);
+    if (result
+        && getWorld() instanceof ServerWorld world
+        && target instanceof LivingEntity living) {
       getVariant().value().events().attack().run(world, this, living);
     }
     return result;
@@ -303,7 +306,8 @@ public class ExtendedZombieEntity extends ZombieEntity
   @Override
   public void writeCustomDataToNbt(NbtCompound nbt) {
     super.writeCustomDataToNbt(nbt);
-    var registry = getWorld().getRegistryManager().getOptionalWrapper(ZombieRegistryKeys.ZOMBIE_VARIANT);
+    var registry =
+        getWorld().getRegistryManager().getOptionalWrapper(ZombieRegistryKeys.ZOMBIE_VARIANT);
     if (registry.isEmpty()) return;
     nbt.putString(ZombieApocalypse.ZOMBIE_ID_KEY, getVariant().getIdAsString());
   }
@@ -312,7 +316,7 @@ public class ExtendedZombieEntity extends ZombieEntity
   public boolean canSpawn(WorldView world) {
     return world.doesNotIntersectEntities(this)
         && world.isSpaceEmpty(this)
-        && (this.canSpawnAsReinforcementInFluid() || !world.containsFluid(this.getBoundingBox()));
+        && !world.containsFluid(this.getBoundingBox());
   }
 
   @Override

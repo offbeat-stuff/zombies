@@ -8,7 +8,6 @@ import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.dynamic.Codecs;
 import net.minecraft.world.biome.Biome;
 
 public record BiomePredicate(List<TagSetEntry> tags) implements Predicate<RegistryEntry<Biome>> {
@@ -16,7 +15,7 @@ public record BiomePredicate(List<TagSetEntry> tags) implements Predicate<Regist
   public static final BiomePredicate DEFAULT = new BiomePredicate(List.of());
 
   public static final Codec<BiomePredicate> CODEC =
-      Codecs.listOrSingle(TagSetEntry.CODEC).xmap(BiomePredicate::new, BiomePredicate::tags);
+      TagSetEntry.CODEC.listOf().xmap(BiomePredicate::new, BiomePredicate::tags);
 
   static record TagSetEntry(boolean spawnIn, TagKey<Biome> biomeTag)
       implements Predicate<RegistryEntry<Biome>> {

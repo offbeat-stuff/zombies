@@ -6,14 +6,14 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Util;
-import net.minecraft.util.dynamic.Codecs;
 import org.codeberg.zenxarch.zombies.entity.ExtendedZombieEntity;
 import org.jetbrains.annotations.Nullable;
 
 public record StatusEffectZombieEffect(List<StatusEffectInstance> effects) implements ZombieEffect {
 
   public static final MapCodec<StatusEffectZombieEffect> CODEC =
-      Codecs.listOrSingle(StatusEffectInstance.CODEC)
+      StatusEffectInstance.CODEC
+          .listOf()
           .xmap(StatusEffectZombieEffect::new, StatusEffectZombieEffect::effects)
           .fieldOf("effects");
 

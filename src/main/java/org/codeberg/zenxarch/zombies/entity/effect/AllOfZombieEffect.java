@@ -4,14 +4,14 @@ import com.mojang.serialization.MapCodec;
 import java.util.List;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.dynamic.Codecs;
 import org.codeberg.zenxarch.zombies.entity.ExtendedZombieEntity;
 import org.jetbrains.annotations.Nullable;
 
 public record AllOfZombieEffect(List<ZombieEffect> effects) implements ZombieEffect {
 
   public static final MapCodec<AllOfZombieEffect> CODEC =
-      Codecs.listOrSingle(ZombieEffect.CODEC)
+      ZombieEffect.CODEC
+          .listOf()
           .xmap(AllOfZombieEffect::new, AllOfZombieEffect::effects)
           .fieldOf("effects");
 

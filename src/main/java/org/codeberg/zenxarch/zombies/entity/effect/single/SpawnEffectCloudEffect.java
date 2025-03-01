@@ -1,5 +1,6 @@
 package org.codeberg.zenxarch.zombies.entity.effect.single;
 
+import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.List;
@@ -9,7 +10,6 @@ import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.particle.ParticleEffect;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.dynamic.Codecs;
 
 public record SpawnEffectCloudEffect(
     List<StatusEffectInstance> effects,
@@ -23,18 +23,15 @@ public record SpawnEffectCloudEffect(
           instance ->
               instance
                   .group(
-                      Codecs.listOrSingle(
-                              StatusEffectInstance.CODEC,
-                              StatusEffectInstance.CODEC.listOf(1, Integer.MAX_VALUE))
+                      StatusEffectInstance.CODEC
+                          .listOf(1, Integer.MAX_VALUE)
                           .fieldOf("effects")
                           .forGetter(SpawnEffectCloudEffect::effects),
                       ParticleTypes.TYPE_CODEC
                           .fieldOf("particleEffect")
                           .forGetter(SpawnEffectCloudEffect::particleEffect),
-                      Codecs.NON_NEGATIVE_FLOAT
-                          .fieldOf("radius")
-                          .forGetter(SpawnEffectCloudEffect::radius),
-                      Codecs.NON_NEGATIVE_FLOAT
+                      Codec.FLOAT.fieldOf("radius").forGetter(SpawnEffectCloudEffect::radius),
+                      Codec.FLOAT
                           .fieldOf("radiusOnUse")
                           .forGetter(SpawnEffectCloudEffect::radiusOnUse))
                   .apply(instance, SpawnEffectCloudEffect::new));

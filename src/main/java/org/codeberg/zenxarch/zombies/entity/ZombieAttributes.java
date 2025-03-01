@@ -6,7 +6,6 @@ import java.util.List;
 import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.util.dynamic.Codecs;
 import net.minecraft.util.math.floatprovider.ConstantFloatProvider;
 import net.minecraft.util.math.floatprovider.FloatProvider;
 import org.codeberg.zenxarch.zombies.Zombies;
@@ -18,10 +17,12 @@ public record ZombieAttributes(List<DefaultAttribute> defaults, List<AttributeMo
           instance ->
               instance
                   .group(
-                      Codecs.listOrSingle(DefaultAttribute.CODEC)
+                      DefaultAttribute.CODEC
+                          .listOf()
                           .optionalFieldOf("defaults", List.of())
                           .forGetter(ZombieAttributes::defaults),
-                      Codecs.listOrSingle(AttributeModifier.CODEC)
+                      AttributeModifier.CODEC
+                          .listOf()
                           .optionalFieldOf("modifiers", List.of())
                           .forGetter(ZombieAttributes::modifiers))
                   .apply(instance, ZombieAttributes::new));

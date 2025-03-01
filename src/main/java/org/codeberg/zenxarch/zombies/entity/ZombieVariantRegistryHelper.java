@@ -12,7 +12,7 @@ import org.codeberg.zenxarch.zombies.registry.ZombieRegistryKeys;
 public interface ZombieVariantRegistryHelper {
 
   private static Optional<Registry<ZombieVariant>> getRegistry(ServerWorld world) {
-    return world.getRegistryManager().getOptionalWrapper(ZombieRegistryKeys.ZOMBIE_VARIANT);
+    return world.getRegistryManager().getOptional(ZombieRegistryKeys.ZOMBIE_VARIANT);
   }
 
   public static Optional<ExtendedZombieEntity> newZombie(

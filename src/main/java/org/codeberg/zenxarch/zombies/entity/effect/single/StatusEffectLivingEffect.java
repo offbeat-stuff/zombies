@@ -6,12 +6,12 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Util;
-import net.minecraft.util.dynamic.Codecs;
 
 public record StatusEffectLivingEffect(List<StatusEffectInstance> effects)
     implements SingleLivingEffect {
   public static final MapCodec<StatusEffectLivingEffect> CODEC =
-      Codecs.listOrSingle(StatusEffectInstance.CODEC)
+      StatusEffectInstance.CODEC
+          .listOf()
           .xmap(StatusEffectLivingEffect::new, StatusEffectLivingEffect::effects)
           .fieldOf("effects");
 

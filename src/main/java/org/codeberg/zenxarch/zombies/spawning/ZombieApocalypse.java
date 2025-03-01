@@ -9,6 +9,7 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.predicate.entity.EntityPredicates;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.entry.RegistryEntry.Reference;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -134,7 +135,7 @@ public class ZombieApocalypse {
   private static Optional<Reference<ZombieVariant>> fromId(World world, Identifier id) {
     var registry = world.getRegistryManager().getOptionalWrapper(ZombieRegistryKeys.ZOMBIE_VARIANT);
     if (registry.isEmpty()) return Optional.empty();
-    return registry.get().get(id);
+    return registry.get().getOptional(RegistryKey.of(ZombieRegistryKeys.ZOMBIE_VARIANT, id));
   }
 
   public static Optional<Entity> loadFromNbt(NbtCompound nbt, World world) {
