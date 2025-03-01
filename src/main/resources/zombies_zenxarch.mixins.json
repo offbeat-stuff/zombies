@@ -8,7 +8,10 @@
     "ServerChunkManagerMixin",
     "MobEntityAccessor"
   ],
+  "client": [
+    "client.LivingEntityRendererMixin"
+  ],
   "injectors": {
     "defaultRequire": 1
-	}
+  }
 }

@@ -27,5 +27,6 @@ public class Zombies implements ModInitializer {
     ZombieLootNumberProviderTypes.initialize();
     ZombieLootFunctionTypes.initialize();
     ZombieLootConditionTypes.initialize();
+    ZombieEntityAttachments.initialize();
   }
 }
