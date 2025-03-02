@@ -1,14 +1,13 @@
 {
-  "biomePredicate": "zenxarch:with_frost_zombies",
-  "events": {
-    "attack": {
+  "components": {
+    "zenxarch:on_attack": {
       "type": "zenxarch:single_target",
       "effect": {
         "type": "zenxarch:freeze"
       },
       "targetZombie": false
     },
-    "tick": {
+    "zenxarch:on_tick": {
       "type": "zenxarch:single_target",
       "effect": {
         "type": "zenxarch:spawn_particle_effect",
@@ -31,7 +30,13 @@
       }
     }
   },
-  "weight": {
-    "weight": 16
-  }
+  "spawnConditions": [
+    {
+      "condition": {
+        "type": "minecraft:biome",
+        "biomes": "#zenxarch:with_frost_zombies"
+      },
+      "priority": 16
+    }
+  ]
 }

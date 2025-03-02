@@ -1,9 +1,9 @@
 {
-  "events": {
-    "attack": {
+  "components": {
+    "zenxarch:on_attack": {
       "type": "zenxarch:swap_position"
     },
-    "tick": {
+    "zenxarch:on_tick": {
       "type": "zenxarch:single_target",
       "effect": {
         "type": "zenxarch:spawn_particle_effect",
@@ -25,5 +25,10 @@
         }
       }
     }
-  }
+  },
+  "spawnConditions": [
+    {
+      "priority": 1
+    }
+  ]
 }

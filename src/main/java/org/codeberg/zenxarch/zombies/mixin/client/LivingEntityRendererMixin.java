@@ -47,9 +47,9 @@ public abstract class LivingEntityRendererMixin {
       LivingEntityRenderState livingEntityRenderState,
       float f,
       CallbackInfo ci) {
-    if (livingEntity.hasAttached(ZombieEntityAttachments.ZOMBIE_VARIANT_TEXTURE_OVERRIDE)) {
+    if (livingEntity.hasAttached(ZombieEntityAttachments.TEXTURE_OVERRIDE)) {
       this.zenxarch$texture_override =
-          livingEntity.getAttached(ZombieEntityAttachments.ZOMBIE_VARIANT_TEXTURE_OVERRIDE);
+          livingEntity.getAttached(ZombieEntityAttachments.TEXTURE_OVERRIDE).texturePath();
     } else {
       this.zenxarch$texture_override = null;
     }

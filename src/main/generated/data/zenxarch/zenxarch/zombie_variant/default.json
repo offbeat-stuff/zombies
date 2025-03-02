@@ -1,5 +1,8 @@
 {
-  "weight": {
-    "weight": 512
-  }
+  "components": {},
+  "spawnConditions": [
+    {
+      "priority": 512
+    }
+  ]
 }

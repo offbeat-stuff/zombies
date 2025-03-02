@@ -6,7 +6,7 @@
     "ServerWorldMixin",
     "EntityTypeMixin",
     "ServerChunkManagerMixin",
-    "MobEntityAccessor"
+    "MobEntityMixin"
   ],
   "client": [
     "client.LivingEntityRendererMixin"

@@ -4,9 +4,9 @@ import com.mojang.serialization.MapCodec;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import org.codeberg.zenxarch.zombies.Zombies;
-import org.codeberg.zenxarch.zombies.entity.ZombieVariant;
 import org.codeberg.zenxarch.zombies.entity.effect.ZombieEffect;
 import org.codeberg.zenxarch.zombies.entity.effect.single.SingleLivingEffect;
+import org.codeberg.zenxarch.zombies.entity.variant.ZombieVariant;
 
 public interface ZombieRegistryKeys {
   private static <T> RegistryKey<Registry<T>> getRegistryKey(String id) {

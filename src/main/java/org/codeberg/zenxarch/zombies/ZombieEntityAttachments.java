@@ -1,19 +1,76 @@
 package org.codeberg.zenxarch.zombies;
 
+import java.util.List;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentSyncPredicate;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
-import net.minecraft.util.Identifier;
+import net.minecraft.entity.EquipmentTable;
+import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.loot.LootTable;
+import net.minecraft.loot.context.LootContextParameters;
+import net.minecraft.loot.context.LootContextTypes;
+import net.minecraft.loot.context.LootWorldContext;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.AssetInfo;
+import net.minecraft.util.dynamic.Codecs;
+import net.minecraft.world.LocalDifficulty;
+import org.codeberg.zenxarch.zombies.entity.ZombieModifier.AttributeModifier;
+import org.codeberg.zenxarch.zombies.entity.ZombieModifier.DefaultAttribute;
+import org.codeberg.zenxarch.zombies.entity.effect.ZombieEffect;
 
 public final class ZombieEntityAttachments {
   private ZombieEntityAttachments() {
     throw new IllegalStateException("Utility class");
   }
 
-  public static final AttachmentType<Identifier> ZOMBIE_VARIANT_TEXTURE_OVERRIDE =
+  public static final AttachmentType<AssetInfo> TEXTURE_OVERRIDE =
       AttachmentRegistry.create(
-          Zombies.id("zombie_variant_texture_override"),
-          builder -> builder.syncWith(Identifier.PACKET_CODEC, AttachmentSyncPredicate.all()));
+          Zombies.id("texture_override"),
+          builder ->
+              builder
+                  .persistent(AssetInfo.CODEC)
+                  .syncWith(AssetInfo.PACKET_CODEC, AttachmentSyncPredicate.all()));
+
+  public static final AttachmentType<EquipmentTable> EQUIPMENT_TABLE =
+      AttachmentRegistry.createPersistent(Zombies.id("equipment_table"), EquipmentTable.CODEC);
+
+  public static final AttachmentType<RegistryKey<LootTable>> LOOT_TABLE =
+      AttachmentRegistry.createPersistent(
+          Zombies.id("loot_table"), RegistryKey.createCodec(RegistryKeys.LOOT_TABLE));
+
+  public static final AttachmentType<List<DefaultAttribute>> DEFAULT_ATTRIBUTES =
+      AttachmentRegistry.createPersistent(
+          Zombies.id("default_attributes"), Codecs.listOrSingle(DefaultAttribute.CODEC));
+
+  public static final AttachmentType<List<AttributeModifier>> ATTRIBUTE_MODIFIERS =
+      AttachmentRegistry.createPersistent(
+          Zombies.id("attribute_modifiers"), Codecs.listOrSingle(AttributeModifier.CODEC));
+
+  public static final AttachmentType<ZombieEffect> ON_SPAWN = createZombieEvent("on_spawn");
+  public static final AttachmentType<ZombieEffect> ON_TICK = createZombieEvent("on_tick");
+  public static final AttachmentType<ZombieEffect> ON_ATTACK = createZombieEvent("on_attack");
+  public static final AttachmentType<ZombieEffect> ON_DAMAGE = createZombieEvent("on_damage");
+  public static final AttachmentType<ZombieEffect> ON_DEATH = createZombieEvent("on_death");
+  public static final AttachmentType<ZombieEffect> ON_KILL = createZombieEvent("on_kill");
+  public static final AttachmentType<ZombieEffect> ON_KILLED = createZombieEvent("on_killed");
+
+  private static AttachmentType<ZombieEffect> createZombieEvent(String id) {
+    return AttachmentRegistry.createPersistent(Zombies.id(id), ZombieEffect.CODEC);
+  }
+
+  public static void initEquipment(
+      MobEntity mob, ServerWorld world, EquipmentTable table, LocalDifficulty difficulty) {
+    mob.setEquipmentFromTable(
+        table.lootTable(),
+        new LootWorldContext.Builder(world)
+            .add(LootContextParameters.ORIGIN, mob.getPos())
+            .add(LootContextParameters.THIS_ENTITY, mob)
+            .luck(difficulty.getClampedLocalDifficulty())
+            .build(LootContextTypes.EQUIPMENT),
+        table.slotDropChances());
+  }
 
   public static void initialize() {
     // Force load class
