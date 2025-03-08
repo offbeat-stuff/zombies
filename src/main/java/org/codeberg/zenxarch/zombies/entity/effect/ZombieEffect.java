@@ -42,6 +42,7 @@ public interface ZombieEffect {
     register("single_target", SingleTargetZombieEffect.CODEC);
     register("status_effect", StatusEffectZombieEffect.CODEC);
     register("swap_position", SwapPositionZombieEffect.CODEC);
+    register("conditional", ConditionalSpawnEffect.CODEC);
   }
 
   private static void register(String id, MapCodec<? extends ZombieEffect> codec) {
