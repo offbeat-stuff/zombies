@@ -16,5 +16,7 @@ public final class ZombieSpawnConditions {
         Registries.SPAWN_CONDITION_TYPE, Zombies.id("is_night"), NightSpawnCondition.CODEC);
     Registry.register(
         Registries.SPAWN_CONDITION_TYPE, Zombies.id("negate"), NegateSpawnCondition.CODEC);
+    Registry.register(
+        Registries.SPAWN_CONDITION_TYPE, Zombies.id("all_of"), AllOfSpawnCondition.CODEC);
   }
 }
