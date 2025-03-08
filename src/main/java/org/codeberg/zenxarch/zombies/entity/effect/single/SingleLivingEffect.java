@@ -26,6 +26,8 @@ public interface SingleLivingEffect {
     register("spawn_effect_cloud", SpawnEffectCloudEffect.CODEC);
     register("spawn_particle_effect", SpawnParticleEffect.CODEC);
     register("apply_status_effect", StatusEffectLivingEffect.CODEC);
+    register("default_attribute", DefaultAttributeEffect.CODEC);
+    register("attribute_modifier", AttributeModifierEffect.CODEC);
   }
 
   private static void register(String id, MapCodec<? extends SingleLivingEffect> codec) {

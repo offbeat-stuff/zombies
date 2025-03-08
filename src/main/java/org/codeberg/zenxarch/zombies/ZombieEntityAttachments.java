@@ -1,6 +1,5 @@
 package org.codeberg.zenxarch.zombies;
 
-import java.util.List;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentSyncPredicate;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
@@ -14,10 +13,7 @@ import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.AssetInfo;
-import net.minecraft.util.dynamic.Codecs;
 import net.minecraft.world.LocalDifficulty;
-import org.codeberg.zenxarch.zombies.entity.ZombieModifier.AttributeModifier;
-import org.codeberg.zenxarch.zombies.entity.ZombieModifier.DefaultAttribute;
 import org.codeberg.zenxarch.zombies.entity.effect.ZombieEffect;
 
 public final class ZombieEntityAttachments {
@@ -39,14 +35,6 @@ public final class ZombieEntityAttachments {
   public static final AttachmentType<RegistryKey<LootTable>> LOOT_TABLE =
       AttachmentRegistry.createPersistent(
           Zombies.id("loot_table"), RegistryKey.createCodec(RegistryKeys.LOOT_TABLE));
-
-  public static final AttachmentType<List<DefaultAttribute>> DEFAULT_ATTRIBUTES =
-      AttachmentRegistry.createPersistent(
-          Zombies.id("default_attributes"), Codecs.listOrSingle(DefaultAttribute.CODEC));
-
-  public static final AttachmentType<List<AttributeModifier>> ATTRIBUTE_MODIFIERS =
-      AttachmentRegistry.createPersistent(
-          Zombies.id("attribute_modifiers"), Codecs.listOrSingle(AttributeModifier.CODEC));
 
   public static final AttachmentType<ZombieEffect> ON_SPAWN = createZombieEvent("on_spawn");
   public static final AttachmentType<ZombieEffect> ON_TICK = createZombieEvent("on_tick");

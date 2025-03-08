@@ -290,9 +290,6 @@ public class ExtendedZombieEntity extends ZombieEntity
   @Override
   protected void initAttributes() {
     this.getAttributeInstance(EntityAttributes.SPAWN_REINFORCEMENTS).setBaseValue(0.0);
-    if (this.hasAttached(ZombieEntityAttachments.DEFAULT_ATTRIBUTES))
-      for (var attribute : this.getAttached(ZombieEntityAttachments.DEFAULT_ATTRIBUTES))
-        attribute.apply(this);
     var random = this.random.nextDouble() - this.random.nextDouble();
     if (random < 0.0) random *= 0.5;
     this.getAttributeInstance(EntityAttributes.FOLLOW_RANGE)
@@ -309,16 +306,12 @@ public class ExtendedZombieEntity extends ZombieEntity
     super.applyAttributeModifiers(chanceMultiplier);
     this.getAttributeInstance(EntityAttributes.SPAWN_REINFORCEMENTS)
         .removeModifier(Identifier.ofVanilla("leader_zombie_bonus"));
-    if (this.hasAttached(ZombieEntityAttachments.ATTRIBUTE_MODIFIERS))
-      for (var attribute : this.getAttached(ZombieEntityAttachments.ATTRIBUTE_MODIFIERS))
-        attribute.apply(this);
   }
 
   @Override
   public void readCustomDataFromNbt(NbtCompound nbt) {
     super.readCustomDataFromNbt(nbt);
-    ZombieApocalypse.getVariantFromNbt(this.getWorld(), nbt)
-        .ifPresent(variant -> this.setVariant(variant));
+    ZombieApocalypse.getVariantFromNbt(this.getWorld(), nbt).ifPresent(this::setVariant);
   }
 
   @Override
