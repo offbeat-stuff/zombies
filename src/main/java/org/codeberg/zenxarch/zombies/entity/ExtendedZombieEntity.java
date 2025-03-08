@@ -56,7 +56,6 @@ import net.tslat.smartbrainlib.object.MemoryTest;
 import net.tslat.smartbrainlib.registry.SBLMemoryTypes;
 import net.tslat.smartbrainlib.util.BrainUtil;
 import net.tslat.smartbrainlib.util.SensoryUtil;
-import org.codeberg.zenxarch.zombies.ZombieEntityAttachments;
 import org.codeberg.zenxarch.zombies.ZombieGamerules;
 import org.codeberg.zenxarch.zombies.difficulty.ExtendedDifficulty;
 import org.codeberg.zenxarch.zombies.entity.effect.ZombieEffect;

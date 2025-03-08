@@ -1,4 +1,4 @@
-package org.codeberg.zenxarch.zombies;
+package org.codeberg.zenxarch.zombies.entity;
 
 import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentSyncPredicate;
@@ -14,6 +14,7 @@ import net.minecraft.registry.RegistryKeys;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.AssetInfo;
 import net.minecraft.world.LocalDifficulty;
+import org.codeberg.zenxarch.zombies.Zombies;
 import org.codeberg.zenxarch.zombies.entity.effect.ZombieEffect;
 
 public final class ZombieEntityAttachments {

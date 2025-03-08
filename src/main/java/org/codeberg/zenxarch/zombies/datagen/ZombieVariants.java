@@ -14,9 +14,9 @@ import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.world.biome.Biome;
-import org.codeberg.zenxarch.zombies.ZombieEntityAttachments;
 import org.codeberg.zenxarch.zombies.Zombies;
 import org.codeberg.zenxarch.zombies.data.ZBiomeTags;
+import org.codeberg.zenxarch.zombies.entity.ZombieEntityAttachments;
 import org.codeberg.zenxarch.zombies.entity.variant.ZombieVariant;
 import org.codeberg.zenxarch.zombies.registry.ZombieRegistryKeys;
 
