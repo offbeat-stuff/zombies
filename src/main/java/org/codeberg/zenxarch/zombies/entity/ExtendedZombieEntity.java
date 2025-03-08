@@ -209,7 +209,7 @@ public class ExtendedZombieEntity extends ZombieEntity
       LocalDifficulty difficulty,
       SpawnReason spawnReason,
       EntityData entityData) {
-    ZombieVariantRegistryHelper.getRandomVariantFromPos(world.toServerWorld(), this.getBlockPos())
+    ZombieVariants.getRandomVariantFromPos(world.toServerWorld(), this.getBlockPos())
         .ifPresent(this::setVariant);
     var result = super.initialize(world, difficulty, spawnReason, new ZombieData(false, false));
     executeEvent(ZombieEntityAttachments.ON_SPAWN, world.toServerWorld(), null);

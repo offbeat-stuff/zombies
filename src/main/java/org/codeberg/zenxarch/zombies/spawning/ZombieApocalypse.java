@@ -22,7 +22,6 @@ import org.codeberg.zenxarch.zombies.ZombieGamerules;
 import org.codeberg.zenxarch.zombies.Zombies;
 import org.codeberg.zenxarch.zombies.difficulty.ExtendedDifficulty;
 import org.codeberg.zenxarch.zombies.entity.ExtendedZombieEntity;
-import org.codeberg.zenxarch.zombies.entity.ZombieVariantRegistryHelper;
 import org.codeberg.zenxarch.zombies.entity.variant.ZombieVariant;
 import org.codeberg.zenxarch.zombies.registry.ZombieRegistryKeys;
 
@@ -49,8 +48,15 @@ public class ZombieApocalypse {
     this.world.spawnEntityAndPassengers(zombie);
   }
 
+  private Optional<ExtendedZombieEntity> createZombie(BlockPos pos) {
+    var zombie = new ExtendedZombieEntity(world);
+    zombie.refreshPositionAndAngles(pos, world.random.nextFloat() * 360.0F, 0.0F);
+    if (zombie.canSpawn(world)) return Optional.of(zombie);
+    return Optional.empty();
+  }
+
   private void spawnZombie(ServerPlayerEntity player, BlockPos pos, ExtendedDifficulty difficulty) {
-    ZombieVariantRegistryHelper.newZombie(world, pos).ifPresent(this::spawnZombie);
+    createZombie(pos).ifPresent(this::spawnZombie);
   }
 
   public void spawnZombiesNear(ServerPlayerEntity player, List<BlockPos> positions) {

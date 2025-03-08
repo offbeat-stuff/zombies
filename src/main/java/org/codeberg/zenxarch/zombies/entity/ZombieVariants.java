@@ -1,22 +1,27 @@
-package org.codeberg.zenxarch.zombies.datagen;
+package org.codeberg.zenxarch.zombies.entity;
 
 import static org.codeberg.zenxarch.zombies.entity.effect.ZombieEffect.*;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
+import net.minecraft.entity.VariantSelectorProvider;
 import net.minecraft.entity.spawn.BiomeSpawnCondition;
 import net.minecraft.entity.spawn.SpawnCondition;
 import net.minecraft.entity.spawn.SpawnConditionSelectors;
+import net.minecraft.entity.spawn.SpawnContext;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.Registerable;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.tag.TagKey;
+import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.biome.Biome;
 import org.codeberg.zenxarch.zombies.Zombies;
 import org.codeberg.zenxarch.zombies.data.ZBiomeTags;
-import org.codeberg.zenxarch.zombies.entity.ZombieEntityAttachments;
 import org.codeberg.zenxarch.zombies.entity.variant.ZombieVariant;
 import org.codeberg.zenxarch.zombies.registry.ZombieRegistryKeys;
 
@@ -95,5 +100,14 @@ public interface ZombieVariants {
     public Map<AttachmentType<?>, Object> build() {
       return componentMap;
     }
+  }
+
+  public static Optional<RegistryEntry.Reference<ZombieVariant>> getRandomVariantFromPos(
+      ServerWorld world, BlockPos pos) {
+    return VariantSelectorProvider.select(
+        world.getRegistryManager().getOrThrow(ZombieRegistryKeys.ZOMBIE_VARIANT).streamEntries(),
+        RegistryEntry::value,
+        world.getRandom(),
+        SpawnContext.of(world, pos));
   }
 }

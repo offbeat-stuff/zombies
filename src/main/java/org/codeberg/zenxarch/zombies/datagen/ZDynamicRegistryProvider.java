@@ -11,6 +11,7 @@ import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.registry.RegistryWrapper.WrapperLookup;
 import net.minecraft.registry.entry.RegistryEntry;
+import org.codeberg.zenxarch.zombies.entity.ZombieVariants;
 
 public class ZDynamicRegistryProvider extends FabricDynamicRegistryProvider {
   public ZDynamicRegistryProvider(
