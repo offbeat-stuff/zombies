@@ -289,15 +289,6 @@ public class ExtendedZombieEntity extends ZombieEntity
   @Override
   protected void initAttributes() {
     this.getAttributeInstance(EntityAttributes.SPAWN_REINFORCEMENTS).setBaseValue(0.0);
-    var random = this.random.nextDouble() - this.random.nextDouble();
-    if (random < 0.0) random *= 0.5;
-    this.getAttributeInstance(EntityAttributes.FOLLOW_RANGE)
-        .setBaseValue((getWorld().isDay() ? 18.0 : 30.0) + 8.0 * random);
-    if (this.random.nextDouble() < 0.8) {
-      this.getAttributeInstance(EntityAttributes.MAX_HEALTH).setBaseValue(10.0);
-      if (getWorld().isNight())
-        this.getAttributeInstance(EntityAttributes.MOVEMENT_SPEED).setBaseValue(0.46);
-    }
   }
 
   @Override
