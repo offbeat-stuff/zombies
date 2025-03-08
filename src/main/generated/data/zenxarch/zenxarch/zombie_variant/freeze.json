@@ -54,123 +54,35 @@
         },
         {
           "type": "zenxarch:random",
-          "effects": [
-            {
-              "type": "zenxarch:default"
-            },
-            {
-              "type": "zenxarch:all_of",
-              "effects": [
-                {
+          "chance": 0.8,
+          "effects": {
+            "type": "zenxarch:all_of",
+            "effects": [
+              {
+                "type": "zenxarch:single_target",
+                "effect": {
+                  "type": "zenxarch:default_attribute",
+                  "attribute": "minecraft:max_health",
+                  "value": 10.0
+                }
+              },
+              {
+                "type": "zenxarch:conditional",
+                "condition": {
+                  "type": "zenxarch:is_night"
+                },
+                "effect": {
                   "type": "zenxarch:single_target",
                   "effect": {
                     "type": "zenxarch:default_attribute",
-                    "attribute": "minecraft:max_health",
-                    "value": 10.0
+                    "attribute": "minecraft:movement_speed",
+                    "value": 0.46
                   }
                 },
-                {
-                  "type": "zenxarch:conditional",
-                  "condition": {
-                    "type": "zenxarch:is_night"
-                  },
-                  "effect": {
-                    "type": "zenxarch:single_target",
-                    "effect": {
-                      "type": "zenxarch:default_attribute",
-                      "attribute": "minecraft:movement_speed",
-                      "value": 0.46
-                    }
-                  },
-                  "testZombie": true
-                }
-              ]
-            },
-            {
-              "type": "zenxarch:all_of",
-              "effects": [
-                {
-                  "type": "zenxarch:single_target",
-                  "effect": {
-                    "type": "zenxarch:default_attribute",
-                    "attribute": "minecraft:max_health",
-                    "value": 10.0
-                  }
-                },
-                {
-                  "type": "zenxarch:conditional",
-                  "condition": {
-                    "type": "zenxarch:is_night"
-                  },
-                  "effect": {
-                    "type": "zenxarch:single_target",
-                    "effect": {
-                      "type": "zenxarch:default_attribute",
-                      "attribute": "minecraft:movement_speed",
-                      "value": 0.46
-                    }
-                  },
-                  "testZombie": true
-                }
-              ]
-            },
-            {
-              "type": "zenxarch:all_of",
-              "effects": [
-                {
-                  "type": "zenxarch:single_target",
-                  "effect": {
-                    "type": "zenxarch:default_attribute",
-                    "attribute": "minecraft:max_health",
-                    "value": 10.0
-                  }
-                },
-                {
-                  "type": "zenxarch:conditional",
-                  "condition": {
-                    "type": "zenxarch:is_night"
-                  },
-                  "effect": {
-                    "type": "zenxarch:single_target",
-                    "effect": {
-                      "type": "zenxarch:default_attribute",
-                      "attribute": "minecraft:movement_speed",
-                      "value": 0.46
-                    }
-                  },
-                  "testZombie": true
-                }
-              ]
-            },
-            {
-              "type": "zenxarch:all_of",
-              "effects": [
-                {
-                  "type": "zenxarch:single_target",
-                  "effect": {
-                    "type": "zenxarch:default_attribute",
-                    "attribute": "minecraft:max_health",
-                    "value": 10.0
-                  }
-                },
-                {
-                  "type": "zenxarch:conditional",
-                  "condition": {
-                    "type": "zenxarch:is_night"
-                  },
-                  "effect": {
-                    "type": "zenxarch:single_target",
-                    "effect": {
-                      "type": "zenxarch:default_attribute",
-                      "attribute": "minecraft:movement_speed",
-                      "value": 0.46
-                    }
-                  },
-                  "testZombie": true
-                }
-              ]
-            }
-          ]
+                "testZombie": true
+              }
+            ]
+          }
         }
       ]
     },

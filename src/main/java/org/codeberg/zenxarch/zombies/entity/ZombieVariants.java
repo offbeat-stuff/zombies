@@ -29,7 +29,6 @@ import org.codeberg.zenxarch.zombies.Zombies;
 import org.codeberg.zenxarch.zombies.data.ZBiomeTags;
 import org.codeberg.zenxarch.zombies.entity.effect.AllOfZombieEffect;
 import org.codeberg.zenxarch.zombies.entity.effect.ConditionalSpawnEffect;
-import org.codeberg.zenxarch.zombies.entity.effect.DefaultZombieEffect;
 import org.codeberg.zenxarch.zombies.entity.effect.RandomZombieEffect;
 import org.codeberg.zenxarch.zombies.entity.effect.SingleTargetZombieEffect;
 import org.codeberg.zenxarch.zombies.entity.effect.ZombieEffect;
@@ -95,12 +94,7 @@ public interface ZombieVariants {
     return AllOfZombieEffect.create(
         dayFollowRangeEffect,
         nightFollowRangeEffect,
-        RandomZombieEffect.create(
-            DefaultZombieEffect.create(),
-            optionalEffect,
-            optionalEffect,
-            optionalEffect,
-            optionalEffect));
+        RandomZombieEffect.create(ConstantFloatProvider.create(0.8f), optionalEffect));
   }
 
   public static void bootstrap(Registerable<ZombieVariant> registry) {
