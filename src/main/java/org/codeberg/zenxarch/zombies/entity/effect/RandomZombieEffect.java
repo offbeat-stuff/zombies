@@ -24,7 +24,7 @@ public record RandomZombieEffect(List<ZombieEffect> effects) implements ZombieEf
 
   @Override
   public MapCodec<RandomZombieEffect> getCodec() {
-    return null;
+    return CODEC;
   }
 
   public static ZombieEffect create(ZombieEffect... effects) {
