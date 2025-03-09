@@ -28,7 +28,7 @@
 	],
 	"depends": {
 		"fabricloader": ">=${loader_version}",
-		"minecraft": "1.21.5-alpha.25.9.b",
+		"minecraft": "${minecraft_version}",
 		"java": ">=21",
 		"fabric": "*",
 		"smartbrainlib": ">=${sbl_version}"
