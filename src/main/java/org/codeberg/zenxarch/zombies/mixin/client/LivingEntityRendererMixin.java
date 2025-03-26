@@ -41,7 +41,10 @@ public abstract class LivingEntityRendererMixin {
     return op.call(self, renderState);
   }
 
-  @Inject(method = "updateRenderState", at = @At("HEAD"))
+  @Inject(
+      method =
+          "updateRenderState(Lnet/minecraft/entity/LivingEntity;Lnet/minecraft/client/render/entity/state/LivingEntityRenderState;F)V",
+      at = @At("HEAD"))
   private void zenxarch$tryGetTextureOverride(
       LivingEntity livingEntity,
       LivingEntityRenderState livingEntityRenderState,
