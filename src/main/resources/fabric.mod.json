@@ -19,13 +19,14 @@
 	"entrypoints": {
 		"main": [
 			"org.codeberg.zenxarch.zombies.Zombies"
-		],
-		"fabric-datagen": [
-			"org.codeberg.zenxarch.zombies.ZombiesDataGenerator"
 		]
 	},
 	"mixins": [
-		"zombies_zenxarch.mixins.json"
+		"zombies_zenxarch.mixins.json",
+		{
+			"config": "zombies_zenxarch.client.mixins.json",
+			"environment": "client"
+		}
 	],
 	"depends": {
 		"fabricloader": ">=${loader_version}",

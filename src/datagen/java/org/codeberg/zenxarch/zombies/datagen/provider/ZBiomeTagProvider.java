@@ -1,4 +1,4 @@
-package org.codeberg.zenxarch.zombies.datagen;
+package org.codeberg.zenxarch.zombies.datagen.provider;
 
 import java.util.concurrent.CompletableFuture;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;

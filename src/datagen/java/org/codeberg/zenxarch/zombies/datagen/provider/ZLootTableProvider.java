@@ -1,4 +1,4 @@
-package org.codeberg.zenxarch.zombies.loot_table;
+package org.codeberg.zenxarch.zombies.datagen.provider;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
@@ -13,6 +13,8 @@ import net.minecraft.loot.context.LootContextTypes;
 import net.minecraft.loot.entry.ItemEntry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryWrapper;
+import org.codeberg.zenxarch.zombies.datagen.loot_table.EquipmentLootTable;
+import org.codeberg.zenxarch.zombies.loot_table.ZombieLootTables;
 
 public class ZLootTableProvider extends SimpleFabricLootTableProvider {
 

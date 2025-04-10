@@ -1,4 +1,4 @@
-package org.codeberg.zenxarch.zombies.loot_table;
+package org.codeberg.zenxarch.zombies.loot_table.condition;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;

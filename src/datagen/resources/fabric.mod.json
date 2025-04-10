@@ -1,0 +1,13 @@
+{
+    "schemaVersion": 1,
+    "id": "zombies_zenxarch_datagen",
+    "version": "1.0.0",
+    "name": "ZenXArch's Zombie Apocalypse Datagen",
+    "license": "Mozilla Public License 2.0",
+    "environment": "*",
+    "entrypoints": {
+        "fabric-datagen": [
+            "org.codeberg.zenxarch.zombies.datagen.ZombiesDataGenerator"
+        ]
+    }
+}

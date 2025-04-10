@@ -324,6 +324,7 @@ public class ExtendedZombieEntity extends ZombieEntity
     if (variant != null) this.variant.value().components().forEach(this::setAttachedFromVariant);
   }
 
+  @SuppressWarnings("unchecked")
   private void setAttachedFromVariant(AttachmentType<?> attachment, Object value) {
     if (!this.hasAttached(attachment)) this.setAttached((AttachmentType<Object>) attachment, value);
   }

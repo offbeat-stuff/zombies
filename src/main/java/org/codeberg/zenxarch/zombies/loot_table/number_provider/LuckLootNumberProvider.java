@@ -1,4 +1,4 @@
-package org.codeberg.zenxarch.zombies.loot_table;
+package org.codeberg.zenxarch.zombies.loot_table.number_provider;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;

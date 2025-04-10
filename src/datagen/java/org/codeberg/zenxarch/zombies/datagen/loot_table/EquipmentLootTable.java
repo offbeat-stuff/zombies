@@ -1,4 +1,4 @@
-package org.codeberg.zenxarch.zombies.loot_table;
+package org.codeberg.zenxarch.zombies.datagen.loot_table;
 
 import java.util.stream.Stream;
 import net.minecraft.entity.EquipmentSlot;
@@ -12,7 +12,9 @@ import net.minecraft.loot.entry.LeafEntry;
 import net.minecraft.loot.entry.LootPoolEntry;
 import net.minecraft.loot.entry.LootTableEntry;
 import net.minecraft.loot.provider.number.ConstantLootNumberProvider;
-import org.codeberg.zenxarch.zombies.datagen.ZEnchantmentProviders;
+import org.codeberg.zenxarch.zombies.data.ZEnchantmentProviders;
+import org.codeberg.zenxarch.zombies.loot_table.function.EnchantmentProviderLootFunction;
+import org.codeberg.zenxarch.zombies.loot_table.number_provider.LuckLootNumberProvider;
 
 public interface EquipmentLootTable {
 
