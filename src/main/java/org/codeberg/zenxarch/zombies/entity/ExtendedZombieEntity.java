@@ -57,9 +57,10 @@ import net.tslat.smartbrainlib.registry.SBLMemoryTypes;
 import net.tslat.smartbrainlib.util.BrainUtil;
 import net.tslat.smartbrainlib.util.SensoryUtil;
 import org.codeberg.zenxarch.zombies.ZombieGamerules;
+import org.codeberg.zenxarch.zombies.data.entity.MobAttachments;
+import org.codeberg.zenxarch.zombies.data.entity.effect.MobEffect;
 import org.codeberg.zenxarch.zombies.difficulty.ExtendedDifficulty;
-import org.codeberg.zenxarch.zombies.entity.effect.ZombieEffect;
-import org.codeberg.zenxarch.zombies.entity.variant.ZombieVariant;
+import org.codeberg.zenxarch.zombies.entity.variant.MobVariant;
 import org.codeberg.zenxarch.zombies.registry.ZombieRegistryKeys;
 import org.codeberg.zenxarch.zombies.spawning.ZombieApocalypse;
 import org.jetbrains.annotations.Nullable;
@@ -67,7 +68,7 @@ import org.jetbrains.annotations.Nullable;
 public class ExtendedZombieEntity extends ZombieEntity
     implements SmartBrainOwner<ExtendedZombieEntity> {
 
-  private RegistryEntry<ZombieVariant> variant;
+  private RegistryEntry<MobVariant> variant;
 
   public ExtendedZombieEntity(World world) {
     super(world);
@@ -196,9 +197,7 @@ public class ExtendedZombieEntity extends ZombieEntity
   }
 
   private void executeEvent(
-      AttachmentType<ZombieEffect> attachment,
-      ServerWorld world,
-      @Nullable LivingEntity adversary) {
+      AttachmentType<MobEffect> attachment, ServerWorld world, @Nullable LivingEntity adversary) {
     if (!this.hasAttached(attachment)) return;
     this.getAttached(attachment).run(world, this, adversary);
   }
@@ -212,25 +211,25 @@ public class ExtendedZombieEntity extends ZombieEntity
     ZombieVariants.getRandomVariantFromPos(world.toServerWorld(), this.getBlockPos())
         .ifPresent(this::setVariant);
     var result = super.initialize(world, difficulty, spawnReason, new ZombieData(false, false));
-    executeEvent(ZombieEntityAttachments.ON_SPAWN, world.toServerWorld(), null);
+    executeEvent(MobAttachments.ON_SPAWN, world.toServerWorld(), null);
     return result;
   }
 
   @Override
   protected void initEquipment(Random random, LocalDifficulty unused) {
     /* equipment is initialized in updateEnchantments */
-    if (this.hasAttached(ZombieEntityAttachments.EQUIPMENT_TABLE)) return;
+    if (this.hasAttached(MobAttachments.EQUIPMENT_TABLE)) return;
     super.initEquipment(random, unused);
   }
 
   @Override
   protected void updateEnchantments(
       ServerWorldAccess world, Random random, LocalDifficulty unused) {
-    if (this.hasAttached(ZombieEntityAttachments.EQUIPMENT_TABLE))
-      ZombieEntityAttachments.initEquipment(
+    if (this.hasAttached(MobAttachments.EQUIPMENT_TABLE))
+      MobAttachments.initEquipment(
           this,
           world.toServerWorld(),
-          this.getAttached(ZombieEntityAttachments.EQUIPMENT_TABLE),
+          this.getAttached(MobAttachments.EQUIPMENT_TABLE),
           getExtentedDifficulty(world));
     else super.updateEnchantments(world, random, unused);
   }
@@ -239,7 +238,7 @@ public class ExtendedZombieEntity extends ZombieEntity
   public boolean damage(ServerWorld world, DamageSource source, float amount) {
     if (!super.damage(world, source, amount)) return false;
     executeEvent(
-        ZombieEntityAttachments.ON_DAMAGE,
+        MobAttachments.ON_DAMAGE,
         world,
         source.getAttacker() instanceof LivingEntity living ? living : null);
     return true;
@@ -249,7 +248,7 @@ public class ExtendedZombieEntity extends ZombieEntity
   public boolean tryAttack(ServerWorld world, Entity target) {
     var result = super.tryAttack(world, target);
     if (result && target instanceof LivingEntity living) {
-      executeEvent(ZombieEntityAttachments.ON_ATTACK, world, living);
+      executeEvent(MobAttachments.ON_ATTACK, world, living);
     }
     return result;
   }
@@ -257,14 +256,14 @@ public class ExtendedZombieEntity extends ZombieEntity
   @Override
   protected void onKilledBy(@Nullable LivingEntity adversary) {
     if (this.getWorld() instanceof ServerWorld world)
-      executeEvent(ZombieEntityAttachments.ON_KILLED, world, adversary);
+      executeEvent(MobAttachments.ON_KILLED, world, adversary);
     super.onKilledBy(adversary);
   }
 
   @Override
   public boolean onKilledOther(ServerWorld world, LivingEntity other) {
     var result = super.onKilledOther(world, other);
-    executeEvent(ZombieEntityAttachments.ON_KILL, world, other);
+    executeEvent(MobAttachments.ON_KILL, world, other);
     return result;
   }
 
@@ -272,7 +271,7 @@ public class ExtendedZombieEntity extends ZombieEntity
   public void onDeath(DamageSource damageSource) {
     if (!this.isRemoved() && !this.dead && this.getWorld() instanceof ServerWorld world) {
       executeEvent(
-          ZombieEntityAttachments.ON_DEATH,
+          MobAttachments.ON_DEATH,
           world,
           damageSource.getAttacker() instanceof LivingEntity adversery ? adversery : null);
     }
@@ -282,7 +281,7 @@ public class ExtendedZombieEntity extends ZombieEntity
   @Override
   public void tick() {
     if (this.getWorld() instanceof ServerWorld world)
-      executeEvent(ZombieEntityAttachments.ON_TICK, world, null);
+      executeEvent(MobAttachments.ON_TICK, world, null);
     super.tick();
   }
 
@@ -307,7 +306,7 @@ public class ExtendedZombieEntity extends ZombieEntity
   @Override
   public void writeCustomDataToNbt(NbtCompound nbt) {
     super.writeCustomDataToNbt(nbt);
-    var registry = getWorld().getRegistryManager().getOptional(ZombieRegistryKeys.ZOMBIE_VARIANT);
+    var registry = getWorld().getRegistryManager().getOptional(ZombieRegistryKeys.MOB_VARIANT);
     if (registry.isEmpty()) return;
     nbt.putString(ZombieApocalypse.ZOMBIE_ID_KEY, getVariant().getIdAsString());
   }
@@ -319,7 +318,7 @@ public class ExtendedZombieEntity extends ZombieEntity
         && (this.canSpawnAsReinforcementInFluid() || !world.containsFluid(this.getBoundingBox()));
   }
 
-  public void setVariant(RegistryEntry<ZombieVariant> variant) {
+  public void setVariant(RegistryEntry<MobVariant> variant) {
     this.variant = variant;
     if (variant != null) this.variant.value().components().forEach(this::setAttachedFromVariant);
   }
@@ -329,7 +328,7 @@ public class ExtendedZombieEntity extends ZombieEntity
     if (!this.hasAttached(attachment)) this.setAttached((AttachmentType<Object>) attachment, value);
   }
 
-  public RegistryEntry<ZombieVariant> getVariant() {
+  public RegistryEntry<MobVariant> getVariant() {
     return this.variant;
   }
 }

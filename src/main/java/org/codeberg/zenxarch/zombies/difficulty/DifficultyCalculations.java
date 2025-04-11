@@ -16,7 +16,6 @@ import net.minecraft.util.math.ChunkSectionPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.World;
-import org.codeberg.zenxarch.zombies.data.ItemAttributeUtils;
 import org.codeberg.zenxarch.zombies.spawning.ZombieApocalypse;
 
 public abstract class DifficultyCalculations {

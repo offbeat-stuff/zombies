@@ -22,7 +22,7 @@ import org.codeberg.zenxarch.zombies.ZombieGamerules;
 import org.codeberg.zenxarch.zombies.Zombies;
 import org.codeberg.zenxarch.zombies.difficulty.ExtendedDifficulty;
 import org.codeberg.zenxarch.zombies.entity.ExtendedZombieEntity;
-import org.codeberg.zenxarch.zombies.entity.variant.ZombieVariant;
+import org.codeberg.zenxarch.zombies.entity.variant.MobVariant;
 import org.codeberg.zenxarch.zombies.registry.ZombieRegistryKeys;
 
 public class ZombieApocalypse {
@@ -133,15 +133,15 @@ public class ZombieApocalypse {
     return Zombies.id(id);
   }
 
-  private static Optional<RegistryEntry<ZombieVariant>> fromId(World world, Identifier id) {
+  private static Optional<RegistryEntry<MobVariant>> fromId(World world, Identifier id) {
     return world
         .getRegistryManager()
-        .getOrThrow(ZombieRegistryKeys.ZOMBIE_VARIANT)
+        .getOrThrow(ZombieRegistryKeys.MOB_VARIANT)
         .getEntry(id)
         .map(Function.identity());
   }
 
-  public static Optional<RegistryEntry<ZombieVariant>> getVariantFromNbt(
+  public static Optional<RegistryEntry<MobVariant>> getVariantFromNbt(
       World world, NbtCompound nbt) {
     var idKey = nbt.getString(ZOMBIE_ID_KEY);
     if (idKey.isEmpty()) return Optional.empty();
@@ -163,7 +163,7 @@ public class ZombieApocalypse {
   }
 
   private static ExtendedZombieEntity loadFromVariant(
-      World world, RegistryEntry<ZombieVariant> variant, NbtCompound nbt) {
+      World world, RegistryEntry<MobVariant> variant, NbtCompound nbt) {
     var result = new ExtendedZombieEntity(world);
     result.readNbt(nbt);
     return result;

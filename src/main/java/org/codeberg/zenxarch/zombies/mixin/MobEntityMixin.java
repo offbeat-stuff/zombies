@@ -6,7 +6,7 @@ import net.fabricmc.fabric.api.attachment.v1.AttachmentTarget;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.loot.LootTable;
 import net.minecraft.registry.RegistryKey;
-import org.codeberg.zenxarch.zombies.entity.ZombieEntityAttachments;
+import org.codeberg.zenxarch.zombies.data.entity.MobAttachments;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
@@ -16,8 +16,8 @@ public abstract class MobEntityMixin implements AttachmentTarget {
   @ModifyReturnValue(method = "getLootTableKey", at = @At("RETURN"))
   private Optional<RegistryKey<LootTable>> zenxarch$override_loot_table(
       Optional<RegistryKey<LootTable>> lootTable) {
-    if (this.hasAttached(ZombieEntityAttachments.LOOT_TABLE))
-      return Optional.of(this.getAttached(ZombieEntityAttachments.LOOT_TABLE));
+    if (this.hasAttached(MobAttachments.LOOT_TABLE))
+      return Optional.of(this.getAttached(MobAttachments.LOOT_TABLE));
     return lootTable;
   }
 }

@@ -2,8 +2,8 @@ package org.codeberg.zenxarch.zombies;
 
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.util.Identifier;
-import org.codeberg.zenxarch.zombies.entity.ZombieEntityAttachments;
-import org.codeberg.zenxarch.zombies.entity.spawn_conditions.ZombieSpawnConditions;
+import org.codeberg.zenxarch.zombies.data.entity.MobAttachments;
+import org.codeberg.zenxarch.zombies.data.spawn_conditions.ZombieSpawnConditions;
 import org.codeberg.zenxarch.zombies.loot_table.condition.ZombieLootConditionTypes;
 import org.codeberg.zenxarch.zombies.loot_table.function.ZombieLootFunctionTypes;
 import org.codeberg.zenxarch.zombies.loot_table.number_provider.ZombieLootNumberProviderTypes;
@@ -31,7 +31,7 @@ public class Zombies implements ModInitializer {
     ZombieLootNumberProviderTypes.initialize();
     ZombieLootFunctionTypes.initialize();
     ZombieLootConditionTypes.initialize();
-    ZombieEntityAttachments.initialize();
+    MobAttachments.initialize();
     ZombieSpawnConditions.initialize();
   }
 }

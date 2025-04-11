@@ -9,7 +9,7 @@ import net.minecraft.client.render.entity.LivingEntityRenderer;
 import net.minecraft.client.render.entity.state.LivingEntityRenderState;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.Identifier;
-import org.codeberg.zenxarch.zombies.entity.ZombieEntityAttachments;
+import org.codeberg.zenxarch.zombies.data.entity.MobAttachments;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -50,9 +50,9 @@ public abstract class LivingEntityRendererMixin {
       LivingEntityRenderState livingEntityRenderState,
       float f,
       CallbackInfo ci) {
-    if (livingEntity.hasAttached(ZombieEntityAttachments.TEXTURE_OVERRIDE)) {
+    if (livingEntity.hasAttached(MobAttachments.TEXTURE_OVERRIDE)) {
       this.zenxarch$texture_override =
-          livingEntity.getAttached(ZombieEntityAttachments.TEXTURE_OVERRIDE).texturePath();
+          livingEntity.getAttached(MobAttachments.TEXTURE_OVERRIDE).texturePath();
     } else {
       this.zenxarch$texture_override = null;
     }
