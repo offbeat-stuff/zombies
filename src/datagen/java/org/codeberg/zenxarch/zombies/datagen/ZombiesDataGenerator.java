@@ -22,7 +22,7 @@ public class ZombiesDataGenerator implements DataGeneratorEntrypoint {
   public static final Logger LOGGER = LoggerFactory.getLogger(MODID);
 
   public static List<DynamicRegistryInitializer<?>> DYNAMIC_CONTENT =
-      List.of(new ZEnchantmentProviderGenerator(), new ZombieVariantGenerator());
+      List.of(ZEnchantmentProviderGenerator.INITIALIZER, ZombieVariantGenerator.INITIALIZER);
 
   @Override
   public void onInitializeDataGenerator(FabricDataGenerator generator) {
@@ -35,7 +35,7 @@ public class ZombiesDataGenerator implements DataGeneratorEntrypoint {
 
   private <T> void addRegistryBuilder(
       RegistryBuilder registryBuilder, DynamicRegistryInitializer<T> builder) {
-    registryBuilder.addRegistry(builder.getRegistryKey(), builder::bootstrap);
+    registryBuilder.addRegistry(builder.key(), builder.bootstrap());
   }
 
   @Override

@@ -1,16 +1,13 @@
 package org.codeberg.zenxarch.zombies.datagen.dynamic;
 
-import net.minecraft.registry.Registerable;
 import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryBuilder.BootstrapFunction;
 import net.minecraft.registry.RegistryKey;
 import org.codeberg.zenxarch.zombies.Zombies;
 
-public interface DynamicRegistryInitializer<T> {
-  default RegistryKey<T> of(String id) {
-    return RegistryKey.of(getRegistryKey(), Zombies.id(id));
+public record DynamicRegistryInitializer<T>(
+    RegistryKey<? extends Registry<T>> key, BootstrapFunction<T> bootstrap) {
+  public RegistryKey<T> of(String id) {
+    return RegistryKey.of(key, Zombies.id(id));
   }
-
-  void bootstrap(Registerable<T> registry);
-
-  RegistryKey<? extends Registry<T>> getRegistryKey();
 }

@@ -12,7 +12,6 @@ import net.minecraft.entity.spawn.SpawnCondition;
 import net.minecraft.entity.spawn.SpawnConditionSelectors;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.Registerable;
-import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
@@ -31,10 +30,15 @@ import org.codeberg.zenxarch.zombies.data.entity.effect.pair.SingleMobEffect;
 import org.codeberg.zenxarch.zombies.data.entity.effect.single.DefaultAttributeEffect;
 import org.codeberg.zenxarch.zombies.data.spawn_conditions.DaySpawnCondition;
 import org.codeberg.zenxarch.zombies.data.spawn_conditions.NightSpawnCondition;
+import org.codeberg.zenxarch.zombies.datagen.provider.ZLootTableProvider;
 import org.codeberg.zenxarch.zombies.entity.variant.MobVariant;
 import org.codeberg.zenxarch.zombies.registry.ZombieRegistryKeys;
 
-public final class ZombieVariantGenerator implements DynamicRegistryInitializer<MobVariant> {
+public final class ZombieVariantGenerator {
+
+  public static final DynamicRegistryInitializer<MobVariant> INITIALIZER =
+      new DynamicRegistryInitializer<>(
+          ZombieRegistryKeys.MOB_VARIANT, ZombieVariantGenerator::bootstrap);
 
   private static SpawnCondition condition(Registerable<MobVariant> registry, TagKey<Biome> tag) {
     var entryList = registry.getRegistryLookup(RegistryKeys.BIOME).getOrThrow(tag);
@@ -50,10 +54,11 @@ public final class ZombieVariantGenerator implements DynamicRegistryInitializer<
     return SpawnConditionSelectors.createFallback(weight);
   }
 
-  public static final String COMMON_ZOMBIE = "default";
-  public static final String SWAPPING_ZOMBIE = "swapping";
-  public static final String FIRE_ZOMBIE = "fire";
-  public static final String FREEZE_ZOMBIE = "freeze";
+  public static final RegistryKey<MobVariant> COMMON = INITIALIZER.of("default");
+  public static final RegistryKey<MobVariant> AXE = INITIALIZER.of("axe");
+  public static final RegistryKey<MobVariant> SWAPPING = INITIALIZER.of("swapping");
+  public static final RegistryKey<MobVariant> FIRE = INITIALIZER.of("fire");
+  public static final RegistryKey<MobVariant> FREEZE = INITIALIZER.of("freeze");
 
   private static MobEffect createAttributeEffect(
       RegistryEntry<EntityAttribute> attribute, FloatProvider value) {
@@ -90,53 +95,57 @@ public final class ZombieVariantGenerator implements DynamicRegistryInitializer<
         RandomMobEffect.create(ConstantFloatProvider.create(0.8f), optionalEffect));
   }
 
-  @Override
-  public void bootstrap(Registerable<MobVariant> registry) {
-    var attributesOnSpawn = attributesOnSpawn();
+  private static ZombieVariantMapBuilder defaultAttributeMap() {
+    return new ZombieVariantMapBuilder().with(MobAttachments.ON_SPAWN, attributesOnSpawn());
+  }
+
+  private static ZombieVariantMapBuilder defaultEquipmentMap() {
+    return defaultAttributeMap()
+        .with(MobAttachments.EQUIPMENT_TABLE, ZLootTableProvider.COMMON_ZOMBIE_EQUIPMENT);
+  }
+
+  public static void bootstrap(Registerable<MobVariant> registry) {
+    register(registry, COMMON, defaultEquipmentMap(), condition(512));
     register(
         registry,
-        COMMON_ZOMBIE,
-        new ZombieVariantMapBuilder().with(MobAttachments.ON_SPAWN, attributesOnSpawn),
-        condition(512));
-    register(
-        registry,
-        SWAPPING_ZOMBIE,
-        new ZombieVariantMapBuilder()
+        SWAPPING,
+        defaultEquipmentMap()
             .with(MobAttachments.ON_ATTACK, swapPositions())
-            .with(MobAttachments.ON_TICK, spawnParticles(ParticleTypes.PORTAL, 0.2F))
-            .with(MobAttachments.ON_SPAWN, attributesOnSpawn),
+            .with(MobAttachments.ON_TICK, spawnParticles(ParticleTypes.PORTAL, 0.2F)),
         condition(1));
 
     register(
         registry,
-        FIRE_ZOMBIE,
-        new ZombieVariantMapBuilder()
+        FIRE,
+        defaultEquipmentMap()
             .with(MobAttachments.ON_ATTACK, ignite(1.0F))
-            .with(MobAttachments.ON_TICK, spawnParticles(ParticleTypes.FLAME, 0.2F))
-            .with(MobAttachments.ON_SPAWN, attributesOnSpawn),
+            .with(MobAttachments.ON_TICK, spawnParticles(ParticleTypes.FLAME, 0.2F)),
         condition(registry, ZBiomeTags.WITH_FLAME_ZOMBIES, 16));
 
     register(
         registry,
-        FREEZE_ZOMBIE,
-        new ZombieVariantMapBuilder()
+        FREEZE,
+        defaultEquipmentMap()
             .with(MobAttachments.ON_ATTACK, freeze())
-            .with(MobAttachments.ON_TICK, spawnParticles(ParticleTypes.SNOWFLAKE, 0.2F))
-            .with(MobAttachments.ON_SPAWN, attributesOnSpawn),
+            .with(MobAttachments.ON_TICK, spawnParticles(ParticleTypes.SNOWFLAKE, 0.2F)),
         condition(registry, ZBiomeTags.WITH_FROST_ZOMBIES, 16));
+
+    register(
+        registry,
+        AXE,
+        defaultAttributeMap()
+            .with(MobAttachments.EQUIPMENT_TABLE, ZLootTableProvider.AXE_ZOMBIE_EQUIPMENT)
+            .with(MobAttachments.ON_ATTACK, freeze())
+            .with(MobAttachments.ON_TICK, spawnParticles(ParticleTypes.SNOWFLAKE, 0.2F)),
+        condition(registry, ZBiomeTags.WITH_AXE_ZOMBIES, 128));
   }
 
-  @Override
-  public RegistryKey<? extends Registry<MobVariant>> getRegistryKey() {
-    return ZombieRegistryKeys.MOB_VARIANT;
-  }
-
-  private void register(
+  private static void register(
       Registerable<MobVariant> registry,
-      String id,
+      RegistryKey<MobVariant> key,
       ZombieVariantMapBuilder componentMap,
       SpawnConditionSelectors condition) {
-    registry.register(of(id), new MobVariant(componentMap.build(), condition));
+    registry.register(key, new MobVariant(componentMap.build(), condition));
   }
 
   static class ZombieVariantMapBuilder {

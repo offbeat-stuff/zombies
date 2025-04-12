@@ -4,6 +4,7 @@ import java.util.stream.Stream;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.item.Item;
+import net.minecraft.item.Items;
 import net.minecraft.loot.LootPool;
 import net.minecraft.loot.LootTable;
 import net.minecraft.loot.condition.RandomChanceLootCondition;
@@ -12,7 +13,7 @@ import net.minecraft.loot.entry.LeafEntry;
 import net.minecraft.loot.entry.LootPoolEntry;
 import net.minecraft.loot.entry.LootTableEntry;
 import net.minecraft.loot.provider.number.ConstantLootNumberProvider;
-import org.codeberg.zenxarch.zombies.data.ZEnchantmentProviders;
+import org.codeberg.zenxarch.zombies.datagen.dynamic.ZEnchantmentProviderGenerator;
 import org.codeberg.zenxarch.zombies.loot_table.function.EnchantmentProviderLootFunction;
 import org.codeberg.zenxarch.zombies.loot_table.number_provider.LuckLootNumberProvider;
 
@@ -58,7 +59,7 @@ public interface EquipmentLootTable {
 
   private static LootPoolEntry.Builder<?> applyEnchantment(LootTable.Builder builder, int weight) {
     var enchantment =
-        new EnchantmentProviderLootFunction(ZEnchantmentProviders.ZOMBIE_SPAWN_EQUIPMENT);
+        new EnchantmentProviderLootFunction(ZEnchantmentProviderGenerator.ZOMBIE_SPAWN_EQUIPMENT);
     return entry(
             table(
                 pool()
@@ -67,10 +68,26 @@ public interface EquipmentLootTable {
         .weight(weight);
   }
 
+  public static LootPool.Builder axeWeaponTable() {
+    return pool()
+        .with(ItemEntry.builder(Items.WOODEN_AXE).weight(5))
+        .with(ItemEntry.builder(Items.STONE_AXE).weight(100))
+        .with(ItemEntry.builder(Items.IRON_AXE).weight(10))
+        .with(ItemEntry.builder(Items.DIAMOND_AXE).weight(1))
+        .conditionally(RandomChanceLootCondition.builder(0.05f));
+  }
+
+  public static LootPool.Builder leatherOnlyEquipmentTable() {
+    return pool()
+        .with(applyEnchantment(getLootTableForLevel(0), 1))
+        .conditionally(
+            RandomChanceLootCondition.builder(LuckLootNumberProvider.create(0.0f, 0.15f)));
+  }
+
   public static LootPool.Builder vanillaEquipmentTable() {
     final int[] equipmentLevel = {0, 1, 2, 3, 4};
     final int[] weights = {3706, 4873, 1290, 127, 4};
-    var pool = LootPool.builder().rolls(ConstantLootNumberProvider.create(1.0f));
+    var pool = pool();
     for (var index : equipmentLevel)
       pool = pool.with(applyEnchantment(getLootTableForLevel(index), weights[index]));
     return pool.conditionally(

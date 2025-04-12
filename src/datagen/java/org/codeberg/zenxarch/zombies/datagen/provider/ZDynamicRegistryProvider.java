@@ -34,7 +34,7 @@ public class ZDynamicRegistryProvider extends FabricDynamicRegistryProvider {
   @Override
   protected void configure(WrapperLookup registries, Entries entries) {
     for (var content : ZombiesDataGenerator.DYNAMIC_CONTENT)
-      addAll(registries, entries, content.getRegistryKey());
+      addAll(registries, entries, content.key());
   }
 
   private String genNamespace() {
