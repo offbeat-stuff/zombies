@@ -19,9 +19,10 @@ import net.minecraft.entity.passive.IronGolemEntity;
 import net.minecraft.entity.passive.MerchantEntity;
 import net.minecraft.entity.passive.TurtleEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.storage.ReadView;
+import net.minecraft.storage.WriteView;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.LocalDifficulty;
@@ -298,17 +299,17 @@ public class ExtendedZombieEntity extends ZombieEntity
   }
 
   @Override
-  public void readCustomDataFromNbt(NbtCompound nbt) {
-    super.readCustomDataFromNbt(nbt);
-    ZombieApocalypse.getVariantFromNbt(this.getWorld(), nbt).ifPresent(this::setVariant);
+  public void readCustomData(ReadView view) {
+    super.readCustomData(view);
+    ZombieApocalypse.getVariantFromView(this.getWorld(), view).ifPresent(this::setVariant);
   }
 
   @Override
-  public void writeCustomDataToNbt(NbtCompound nbt) {
-    super.writeCustomDataToNbt(nbt);
+  public void writeCustomData(WriteView view) {
+    super.writeCustomData(view);
     var registry = getWorld().getRegistryManager().getOptional(ZombieRegistryKeys.MOB_VARIANT);
     if (registry.isEmpty()) return;
-    nbt.putString(ZombieApocalypse.ZOMBIE_ID_KEY, getVariant().getIdAsString());
+    view.putString(ZombieApocalypse.ZOMBIE_ID_KEY, getVariant().getIdAsString());
   }
 
   @Override

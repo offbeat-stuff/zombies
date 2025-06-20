@@ -18,13 +18,12 @@ public class ZBiomeTagProvider extends FabricTagProvider<Biome> {
 
   @Override
   protected void configure(WrapperLookup registries) {
-    this.getOrCreateTagBuilder(ZBiomeTags.WITHOUT_ZOMBIE_APOCALYPSE)
+    this.builder(ZBiomeTags.WITHOUT_ZOMBIE_APOCALYPSE)
         .addOptionalTag(ConventionalBiomeTags.NO_DEFAULT_MONSTERS);
-    this.getOrCreateTagBuilder(ZBiomeTags.WITH_FLAME_ZOMBIES)
+    this.builder(ZBiomeTags.WITH_FLAME_ZOMBIES)
         .addOptionalTag(ConventionalBiomeTags.IS_HOT_OVERWORLD);
-    this.getOrCreateTagBuilder(ZBiomeTags.WITH_FROST_ZOMBIES)
+    this.builder(ZBiomeTags.WITH_FROST_ZOMBIES)
         .addOptionalTag(ConventionalBiomeTags.IS_COLD_OVERWORLD);
-    this.getOrCreateTagBuilder(ZBiomeTags.WITH_AXE_ZOMBIES)
-        .addOptionalTag(ConventionalBiomeTags.IS_FOREST);
+    this.builder(ZBiomeTags.WITH_AXE_ZOMBIES).addOptionalTag(ConventionalBiomeTags.IS_FOREST);
   }
 }

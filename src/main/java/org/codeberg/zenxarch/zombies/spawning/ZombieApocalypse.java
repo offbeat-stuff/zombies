@@ -7,11 +7,11 @@ import java.util.Optional;
 import java.util.function.Function;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.entity.Entity;
-import net.minecraft.nbt.NbtCompound;
 import net.minecraft.predicate.entity.EntityPredicates;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.storage.ReadView;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
@@ -141,9 +141,8 @@ public class ZombieApocalypse {
         .map(Function.identity());
   }
 
-  public static Optional<RegistryEntry<MobVariant>> getVariantFromNbt(
-      World world, NbtCompound nbt) {
-    var idKey = nbt.getString(ZOMBIE_ID_KEY);
+  public static Optional<RegistryEntry<MobVariant>> getVariantFromView(World world, ReadView view) {
+    var idKey = view.getOptionalString(ZOMBIE_ID_KEY);
     if (idKey.isEmpty()) return Optional.empty();
     return switch (idKey.get()) {
       case "" -> Optional.empty();
@@ -158,14 +157,14 @@ public class ZombieApocalypse {
     };
   }
 
-  public static Optional<Entity> loadFromNbt(NbtCompound nbt, World world) {
-    return getVariantFromNbt(world, nbt).map(variant -> loadFromVariant(world, variant, nbt));
+  public static Optional<Entity> loadFromView(ReadView view, World world) {
+    return getVariantFromView(world, view).map(variant -> loadFromView(world, variant, view));
   }
 
-  private static ExtendedZombieEntity loadFromVariant(
-      World world, RegistryEntry<MobVariant> variant, NbtCompound nbt) {
+  private static ExtendedZombieEntity loadFromView(
+      World world, RegistryEntry<MobVariant> variant, ReadView view) {
     var result = new ExtendedZombieEntity(world);
-    result.readNbt(nbt);
+    result.readData(view);
     return result;
   }
 }
