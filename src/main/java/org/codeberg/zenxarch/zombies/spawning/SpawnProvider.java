@@ -11,6 +11,7 @@ import net.minecraft.util.math.random.Random;
 import net.minecraft.world.LightType;
 import org.codeberg.zenxarch.zombies.ZombieGamerules;
 import org.codeberg.zenxarch.zombies.math.IntRange;
+import org.codeberg.zenxarch.zombies.spawning.provider.SpawnPosGenerator;
 
 public final class SpawnProvider {
   private static final Random random = Random.create();
@@ -97,7 +98,7 @@ public final class SpawnProvider {
 
     var maxDensity = ZombieDensityMap.getMaxDensity(toSpawn);
 
-    for (var pos : BlockPos.iterateRandomly(random, spawnTries, centerPos, SPAWN_RANGE)) {
+    for (var pos : SpawnPosGenerator.RANDOM.iterator(world, random, centerPos, toSpawn)) {
       if (SpawnUtils.burnsZombie(world, pos) || ZombieDensityMap.get(densityMap, pos) > maxDensity)
         continue;
 
