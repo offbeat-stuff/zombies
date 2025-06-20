@@ -134,9 +134,7 @@ public final class ZombieVariantGenerator {
         registry,
         AXE,
         defaultAttributeMap()
-            .with(MobAttachments.EQUIPMENT_TABLE, ZLootTableProvider.AXE_ZOMBIE_EQUIPMENT)
-            .with(MobAttachments.ON_ATTACK, freeze())
-            .with(MobAttachments.ON_TICK, spawnParticles(ParticleTypes.SNOWFLAKE, 0.2F)),
+            .with(MobAttachments.EQUIPMENT_TABLE, ZLootTableProvider.AXE_ZOMBIE_EQUIPMENT),
         condition(registry, ZBiomeTags.WITH_AXE_ZOMBIES, 128));
   }
 

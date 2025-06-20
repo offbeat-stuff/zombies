@@ -73,8 +73,7 @@ public interface EquipmentLootTable {
         .with(ItemEntry.builder(Items.WOODEN_AXE).weight(5))
         .with(ItemEntry.builder(Items.STONE_AXE).weight(100))
         .with(ItemEntry.builder(Items.IRON_AXE).weight(10))
-        .with(ItemEntry.builder(Items.DIAMOND_AXE).weight(1))
-        .conditionally(RandomChanceLootCondition.builder(0.05f));
+        .with(ItemEntry.builder(Items.DIAMOND_AXE).weight(1));
   }
 
   public static LootPool.Builder leatherOnlyEquipmentTable() {

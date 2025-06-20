@@ -4,13 +4,6 @@
       "loot_table": "zenxarch:axe_zombie_equipment",
       "slot_drop_chances": 7.5E-4
     },
-    "zenxarch:on_attack": {
-      "type": "zenxarch:single",
-      "effect": {
-        "type": "zenxarch:freeze"
-      },
-      "forSelf": false
-    },
     "zenxarch:on_spawn": {
       "type": "zenxarch:all_of",
       "effects": [
@@ -89,28 +82,6 @@
           }
         }
       ]
-    },
-    "zenxarch:on_tick": {
-      "type": "zenxarch:single",
-      "effect": {
-        "type": "zenxarch:spawn_particle",
-        "horizontal_position": {
-          "type": "in_bounding_box"
-        },
-        "horizontal_velocity": {
-          "base": 0.2
-        },
-        "particle": {
-          "type": "minecraft:snowflake"
-        },
-        "speed": 0.2,
-        "vertical_position": {
-          "type": "in_bounding_box"
-        },
-        "vertical_velocity": {
-          "base": 0.2
-        }
-      }
     }
   },
   "spawnConditions": [
