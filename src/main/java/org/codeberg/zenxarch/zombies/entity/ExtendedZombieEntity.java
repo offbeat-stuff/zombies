@@ -209,8 +209,12 @@ public class ExtendedZombieEntity extends ZombieEntity
       LocalDifficulty difficulty,
       SpawnReason spawnReason,
       EntityData entityData) {
-    ZombieVariants.getRandomVariantFromPos(world.toServerWorld(), this.getBlockPos())
-        .ifPresent(this::setVariant);
+    if (entityData instanceof ExtendedZombieData extendedZombieData) {
+      this.setVariant(extendedZombieData.getVariant());
+    } else {
+      ZombieVariants.getRandomVariantFromPos(world.toServerWorld(), this.getBlockPos())
+          .ifPresent(this::setVariant);
+    }
     var result = super.initialize(world, difficulty, spawnReason, new ZombieData(false, false));
     executeEvent(MobAttachments.ON_SPAWN, world.toServerWorld(), null);
     return result;
@@ -331,5 +335,20 @@ public class ExtendedZombieEntity extends ZombieEntity
 
   public RegistryEntry<MobVariant> getVariant() {
     return this.variant;
+  }
+
+  public static class ExtendedZombieData extends ZombieData {
+
+    private final RegistryEntry<MobVariant> variant;
+
+    public ExtendedZombieData(
+        RegistryEntry<MobVariant> variant, boolean baby, boolean tryChickenJockey) {
+      super(baby, tryChickenJockey);
+      this.variant = variant;
+    }
+
+    public RegistryEntry<MobVariant> getVariant() {
+      return this.variant;
+    }
   }
 }

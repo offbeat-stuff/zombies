@@ -1,6 +1,10 @@
 package org.codeberg.zenxarch.zombies;
 
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.command.v2.ArgumentTypeRegistry;
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.command.argument.serialize.ConstantArgumentSerializer;
 import net.minecraft.util.Identifier;
 import org.codeberg.zenxarch.zombies.data.entity.MobAttachments;
 import org.codeberg.zenxarch.zombies.data.spawn_conditions.ZombieSpawnConditions;
@@ -33,5 +37,12 @@ public class Zombies implements ModInitializer {
     ZombieLootConditionTypes.initialize();
     MobAttachments.initialize();
     ZombieSpawnConditions.initialize();
+    if (FabricLoader.getInstance().isDevelopmentEnvironment()) {
+      ArgumentTypeRegistry.registerArgumentType(
+          id("mob_variant"),
+          DebugCommands.MobVariantArgumentType.class,
+          ConstantArgumentSerializer.of(DebugCommands::mobVariant));
+      CommandRegistrationCallback.EVENT.register(DebugCommands::registerDebugCommands);
+    }
   }
 }
