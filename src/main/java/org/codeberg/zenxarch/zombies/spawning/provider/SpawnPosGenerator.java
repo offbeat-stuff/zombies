@@ -1,6 +1,5 @@
 package org.codeberg.zenxarch.zombies.spawning.provider;
 
-
 import com.google.common.collect.AbstractIterator;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
@@ -21,12 +20,22 @@ public record SpawnPosGenerator(PosModifier modifier) {
   public static SpawnPosGenerator SURFACE =
       new SpawnPosGenerator(
           (pos, world, random, center) ->
-              pos.set(
+              setToTopPosAt(
+                  world,
                   around(random, center.getX(), SPAWN_RANGE),
-                  world.getTopY(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, center),
-                  around(random, center.getZ(), SPAWN_RANGE)));
+                  around(random, center.getZ(), SPAWN_RANGE),
+                  pos));
 
-  public Iterable<BlockPos> iterator(
+  public static SpawnPosGenerator MIXED =
+      new SpawnPosGenerator(
+          (pos, world, random, center) -> {
+            var topY = world.getTopY(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, center);
+            var distToSurface = center.getY() + 8 - topY;
+            ((distToSurface > 0 && random.nextBoolean()) ? SURFACE : RANDOM)
+                .modifier.modify(pos, world, random, center);
+          });
+
+  public Iterable<BlockPos> iterate(
       ServerWorld world, Random random, BlockPos centerPos, int count) {
     return () ->
         new AbstractIterator<BlockPos>() {
@@ -45,6 +54,10 @@ public record SpawnPosGenerator(PosModifier modifier) {
 
   private static int around(Random random, int center, int range) {
     return center + random.nextBetween(-range, range);
+  }
+
+  private static void setToTopPosAt(ServerWorld world, int x, int z, BlockPos.Mutable mutable) {
+    mutable.set(x, world.getTopY(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, x, z), z);
   }
 
   @FunctionalInterface

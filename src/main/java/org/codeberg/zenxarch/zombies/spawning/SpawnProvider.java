@@ -98,7 +98,7 @@ public final class SpawnProvider {
 
     var maxDensity = ZombieDensityMap.getMaxDensity(toSpawn);
 
-    for (var pos : SpawnPosGenerator.RANDOM.iterator(world, random, centerPos, toSpawn)) {
+    for (var pos : SpawnPosGenerator.MIXED.iterate(world, random, centerPos, toSpawn)) {
       if (SpawnUtils.burnsZombie(world, pos) || ZombieDensityMap.get(densityMap, pos) > maxDensity)
         continue;
 
