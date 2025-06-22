@@ -1,5 +1,6 @@
 package org.codeberg.zenxarch.zombies.spawning.provider;
 
+
 import com.google.common.collect.AbstractIterator;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
@@ -11,19 +12,19 @@ public record SpawnPosGenerator(PosModifier modifier) {
 
   public static SpawnPosGenerator RANDOM =
       new SpawnPosGenerator(
-          (pos, world, random, center) -> {
-            pos.setX(around(random, center.getX(), SPAWN_RANGE));
-            pos.setY(around(random, center.getY(), SPAWN_RANGE));
-            pos.setZ(around(random, center.getZ(), SPAWN_RANGE));
-          });
+          (pos, world, random, center) ->
+              pos.set(
+                  around(random, center.getX(), SPAWN_RANGE),
+                  around(random, center.getY(), SPAWN_RANGE),
+                  around(random, center.getZ(), SPAWN_RANGE)));
 
   public static SpawnPosGenerator SURFACE =
       new SpawnPosGenerator(
-          (pos, world, random, center) -> {
-            pos.setX(around(random, center.getX(), SPAWN_RANGE));
-            pos.setY(world.getTopY(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, center));
-            pos.setZ(around(random, center.getZ(), SPAWN_RANGE));
-          });
+          (pos, world, random, center) ->
+              pos.set(
+                  around(random, center.getX(), SPAWN_RANGE),
+                  world.getTopY(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, center),
+                  around(random, center.getZ(), SPAWN_RANGE)));
 
   public Iterable<BlockPos> iterator(
       ServerWorld world, Random random, BlockPos centerPos, int count) {
