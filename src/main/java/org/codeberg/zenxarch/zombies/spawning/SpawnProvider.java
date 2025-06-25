@@ -1,21 +1,20 @@
 package org.codeberg.zenxarch.zombies.spawning;
 
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.util.math.random.Random;
-import net.minecraft.world.LightType;
 import org.codeberg.zenxarch.zombies.ZombieGamerules;
 import org.codeberg.zenxarch.zombies.math.IntRange;
-import org.codeberg.zenxarch.zombies.spawning.provider.SpawnPosGenerator;
+import org.codeberg.zenxarch.zombies.spawning.provider.PosRangeProvider;
+import org.codeberg.zenxarch.zombies.spawning.provider.SpawnPosProvider;
 
 public final class SpawnProvider {
   private static final Random random = Random.create();
-  private static final int SPAWN_RANGE = 80;
   private static final int SQ_NEARBY_RANGE = 16 * 16;
 
   private SpawnProvider() {
@@ -47,13 +46,7 @@ public final class SpawnProvider {
   private static Optional<BlockPos> adjustPos(ServerWorld world, BlockPos ipos, IntRange yRange) {
     var pos = ipos.mutableCopy();
 
-    var blockLight = world.getLightLevel(LightType.BLOCK, pos);
-    var ourRange = IntRange.of(blockLight, 16).shiftBy(pos.getY());
-    ourRange = ourRange.intersection(yRange);
-
-    if (!ourRange.isValid()) return Optional.empty();
-
-    for (var y : ourRange.iterate()) {
+    for (var y : yRange.iterate()) {
       pos.setY(y + 1);
       if (!doesNotBlockMob(world, pos)) return Optional.of(pos.up());
       if (!doesNotContainFluid(world, pos)) return Optional.empty();
@@ -62,28 +55,24 @@ public final class SpawnProvider {
     return Optional.empty();
   }
 
-  private static IntRange getSpawnRangeFor(int x, int z) {
-    int sqDist = x * x + z * z;
-    int radSq = SPAWN_RANGE * SPAWN_RANGE;
-    if (sqDist >= radSq) return IntRange.INVALID;
-
-    int y = MathHelper.ceil(Math.sqrt((double) radSq - sqDist));
-    return IntRange.of(y);
-  }
-
   private static IntRange getYRange(ServerWorld world, BlockPos centerPos, BlockPos pos) {
-    var range = SpawnUtils.getBounds(world, pos);
+    final var providers =
+        List.of(
+            PosRangeProvider.AROUND_CENTER,
+            PosRangeProvider.HEIGHTMAP_BOUNDS,
+            PosRangeProvider.ZERO_BLOCKLIGHT);
+    var ranges = new ArrayList<IntRange>(providers.size());
+    for (var provider : providers) ranges.add(provider.get(world, pos, centerPos));
 
-    int relx = centerPos.getX() - pos.getX();
-    int relz = centerPos.getZ() - pos.getZ();
-    var otherRange = getSpawnRangeFor(relx, relz);
+    for (var range : ranges) if (!range.isValid()) return IntRange.INVALID;
 
-    if (!otherRange.isValid()) return IntRange.INVALID;
-    otherRange = otherRange.shiftBy(centerPos.getY());
+    var result = ranges.get(0);
+    for (int i = 1; i < ranges.size(); i++) {
+      result = result.intersection(ranges.get(i));
+      if (!result.isValid()) return IntRange.INVALID;
+    }
 
-    range = range.intersection(otherRange);
-
-    return range;
+    return result;
   }
 
   public static Optional<BlockPos> giveSpawnPositions(
@@ -98,7 +87,7 @@ public final class SpawnProvider {
 
     var maxDensity = ZombieDensityMap.getMaxDensity(toSpawn);
 
-    for (var pos : SpawnPosGenerator.MIXED.iterate(world, random, centerPos, toSpawn)) {
+    for (var pos : SpawnPosProvider.MIXED.iterate(world, random, centerPos, toSpawn)) {
       if (SpawnUtils.burnsZombie(world, pos) || ZombieDensityMap.get(densityMap, pos) > maxDensity)
         continue;
 

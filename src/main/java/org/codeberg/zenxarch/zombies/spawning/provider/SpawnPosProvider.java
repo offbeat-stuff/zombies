@@ -6,19 +6,19 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.Heightmap;
 
-public record SpawnPosGenerator(PosModifier modifier) {
+public record SpawnPosProvider(PosModifier modifier) {
   static final int SPAWN_RANGE = 80;
 
-  public static SpawnPosGenerator RANDOM =
-      new SpawnPosGenerator(
+  public static SpawnPosProvider RANDOM =
+      new SpawnPosProvider(
           (pos, world, random, center) ->
               pos.set(
                   around(random, center.getX(), SPAWN_RANGE),
                   around(random, center.getY(), SPAWN_RANGE),
                   around(random, center.getZ(), SPAWN_RANGE)));
 
-  public static SpawnPosGenerator SURFACE =
-      new SpawnPosGenerator(
+  public static SpawnPosProvider SURFACE =
+      new SpawnPosProvider(
           (pos, world, random, center) ->
               setToTopPosAt(
                   world,
@@ -26,8 +26,8 @@ public record SpawnPosGenerator(PosModifier modifier) {
                   around(random, center.getZ(), SPAWN_RANGE),
                   pos));
 
-  public static SpawnPosGenerator MIXED =
-      new SpawnPosGenerator(
+  public static SpawnPosProvider MIXED =
+      new SpawnPosProvider(
           (pos, world, random, center) -> {
             var topY = world.getTopY(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, center);
             var distToSurface = center.getY() + 8 - topY;
