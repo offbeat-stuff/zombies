@@ -13,14 +13,12 @@ import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.spawn.BiomeSpawnCondition;
 import net.minecraft.entity.spawn.SpawnCondition;
 import net.minecraft.entity.spawn.SpawnConditionSelectors;
-import net.minecraft.particle.EntityEffectParticleEffect;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.Registerable;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.tag.TagKey;
-import net.minecraft.util.math.ColorHelper;
 import net.minecraft.util.math.floatprovider.ClampedNormalFloatProvider;
 import net.minecraft.util.math.floatprovider.ConstantFloatProvider;
 import net.minecraft.util.math.floatprovider.FloatProvider;
@@ -144,15 +142,14 @@ public final class ZombieVariantGenerator {
             .with(MobAttachments.EQUIPMENT_TABLE, ZLootTableProvider.AXE_ZOMBIE_EQUIPMENT),
         condition(registry, ZBiomeTags.WITH_AXE_ZOMBIES, 128));
     var poisonEffectParticle =
-        EntityEffectParticleEffect.create(
-            ParticleTypes.ENTITY_EFFECT, ColorHelper.withAlpha(255, 8889187));
+        StatusEffects.POISON.value().createParticle(new StatusEffectInstance(StatusEffects.POISON));
     register(
         registry,
         SWAMP,
         defaultEquipmentMap()
             .with(
                 MobAttachments.ON_ATTACK,
-                statusEffect(new StatusEffectInstance(StatusEffects.POISON)))
+                statusEffect(new StatusEffectInstance(StatusEffects.POISON, 80)))
             .with(MobAttachments.ON_TICK, spawnParticles(poisonEffectParticle, 0.2F))
             .with(
                 MobAttachments.ON_KILLED,

@@ -7,6 +7,7 @@
     "zenxarch:on_attack": {
       "type": "zenxarch:status_effect",
       "effects": {
+        "duration": 80,
         "id": "minecraft:poison",
         "show_icon": true
       }
