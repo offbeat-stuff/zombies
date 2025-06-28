@@ -25,5 +25,6 @@ public class ZBiomeTagProvider extends FabricTagProvider<Biome> {
     this.builder(ZBiomeTags.WITH_FROST_ZOMBIES)
         .addOptionalTag(ConventionalBiomeTags.IS_COLD_OVERWORLD);
     this.builder(ZBiomeTags.WITH_AXE_ZOMBIES).addOptionalTag(ConventionalBiomeTags.IS_FOREST);
+    this.builder(ZBiomeTags.WITH_SWAMP_ZOMBIES).addOptionalTag(ConventionalBiomeTags.IS_SWAMP);
   }
 }

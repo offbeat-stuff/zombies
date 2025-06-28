@@ -1,5 +1,6 @@
 package org.codeberg.zenxarch.zombies.data.entity.effect.single;
 
+import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.List;
@@ -16,7 +17,8 @@ public record SpawnEffectCloudEffect(
     List<StatusEffectInstance> effects,
     ParticleEffect particleEffect,
     float radius,
-    float radiusOnUse)
+    float radiusOnUse,
+    int duration)
     implements LivingEffect {
 
   public static final MapCodec<SpawnEffectCloudEffect> CODEC =
@@ -37,7 +39,8 @@ public record SpawnEffectCloudEffect(
                           .forGetter(SpawnEffectCloudEffect::radius),
                       Codecs.NON_NEGATIVE_FLOAT
                           .fieldOf("radiusOnUse")
-                          .forGetter(SpawnEffectCloudEffect::radiusOnUse))
+                          .forGetter(SpawnEffectCloudEffect::radiusOnUse),
+                      Codec.INT.fieldOf("duration").forGetter(SpawnEffectCloudEffect::duration))
                   .apply(instance, SpawnEffectCloudEffect::new));
 
   @Override
@@ -47,7 +50,7 @@ public record SpawnEffectCloudEffect(
     cloud.setRadius(radius);
     cloud.setRadiusOnUse(radiusOnUse);
     cloud.setWaitTime(10);
-    cloud.setDuration(cloud.getDuration() / 2);
+    cloud.setDuration(this.duration);
     cloud.setRadiusGrowth(-cloud.getRadius() / cloud.getDuration());
 
     cloud.setParticleType(particleEffect);
