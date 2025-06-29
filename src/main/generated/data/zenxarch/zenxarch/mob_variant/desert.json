@@ -120,7 +120,8 @@
           "base": 0.2
         }
       }
-    }
+    },
+    "zenxarch:texture_override": "minecraft:entity/zombie/husk"
   },
   "spawnConditions": [
     {

@@ -20,6 +20,8 @@ import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.tag.TagKey;
+import net.minecraft.util.AssetInfo;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.floatprovider.ClampedNormalFloatProvider;
 import net.minecraft.util.math.floatprovider.ConstantFloatProvider;
 import net.minecraft.util.math.floatprovider.FloatProvider;
@@ -173,7 +175,10 @@ public final class ZombieVariantGenerator {
     register(
         registry,
         DESERT,
-        defaultEffectMap(List.of(StatusEffects.DARKNESS, StatusEffects.HUNGER)),
+        defaultEffectMap(List.of(StatusEffects.DARKNESS, StatusEffects.HUNGER))
+            .with(
+                MobAttachments.TEXTURE_OVERRIDE,
+                new AssetInfo(Identifier.ofVanilla("entity/zombie/husk"))),
         condition(registry, ZBiomeTags.WITH_DESERT_ZOMBIES, 16));
   }
 
