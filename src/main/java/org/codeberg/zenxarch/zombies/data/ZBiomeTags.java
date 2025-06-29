@@ -11,6 +11,7 @@ public interface ZBiomeTags {
   public static final TagKey<Biome> WITH_FROST_ZOMBIES = of("with_frost_zombies");
   public static final TagKey<Biome> WITH_AXE_ZOMBIES = of("with_axe_zombies");
   public static final TagKey<Biome> WITH_SWAMP_ZOMBIES = of("with_swamp_zombies");
+  public static final TagKey<Biome> WITH_DESERT_ZOMBIES = of("with_desert_zombies");
 
   private static TagKey<Biome> of(String id) {
     return TagKey.of(RegistryKeys.BIOME, Zombies.id(id));

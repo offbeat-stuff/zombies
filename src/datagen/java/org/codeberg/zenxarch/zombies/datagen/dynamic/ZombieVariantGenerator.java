@@ -8,6 +8,7 @@ import java.util.Map;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
 import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributes;
+import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.spawn.BiomeSpawnCondition;
@@ -30,6 +31,7 @@ import org.codeberg.zenxarch.zombies.data.entity.effect.pair.AllOfMobEffect;
 import org.codeberg.zenxarch.zombies.data.entity.effect.pair.ConditionalSpawnEffect;
 import org.codeberg.zenxarch.zombies.data.entity.effect.pair.RandomMobEffect;
 import org.codeberg.zenxarch.zombies.data.entity.effect.pair.SingleMobEffect;
+import org.codeberg.zenxarch.zombies.data.entity.effect.pair.StatusMobEffect;
 import org.codeberg.zenxarch.zombies.data.entity.effect.single.DefaultAttributeEffect;
 import org.codeberg.zenxarch.zombies.data.entity.effect.single.SpawnEffectCloudEffect;
 import org.codeberg.zenxarch.zombies.data.spawn_conditions.DaySpawnCondition;
@@ -64,6 +66,7 @@ public final class ZombieVariantGenerator {
   public static final RegistryKey<MobVariant> FIRE = INITIALIZER.of("fire");
   public static final RegistryKey<MobVariant> FREEZE = INITIALIZER.of("freeze");
   public static final RegistryKey<MobVariant> SWAMP = INITIALIZER.of("swamp");
+  public static final RegistryKey<MobVariant> DESERT = INITIALIZER.of("desert");
 
   private static MobEffect createAttributeEffect(
       RegistryEntry<EntityAttribute> attribute, FloatProvider value) {
@@ -109,6 +112,27 @@ public final class ZombieVariantGenerator {
         .with(MobAttachments.EQUIPMENT_TABLE, ZLootTableProvider.COMMON_ZOMBIE_EQUIPMENT);
   }
 
+  private static ZombieVariantMapBuilder defaultEffectMap(
+      List<RegistryEntry<StatusEffect>> effects) {
+    var effectInstances = effects.stream().map(e -> new StatusEffectInstance(e, 80)).toList();
+    var particle = effects.get(0).value().createParticle(effectInstances.get(0));
+    return defaultEquipmentMap()
+        .with(MobAttachments.ON_ATTACK, new StatusMobEffect(effectInstances))
+        .with(MobAttachments.ON_TICK, spawnParticles(particle, 0.2F));
+  }
+
+  private static ZombieVariantMapBuilder defaultEffectMapWithSpawnCloud(
+      List<RegistryEntry<StatusEffect>> effects) {
+    var effectInstance = new StatusEffectInstance(effects.get(0), 200);
+    var particle = effects.get(0).value().createParticle(effectInstance);
+    return defaultEffectMap(effects)
+        .with(
+            MobAttachments.ON_KILLED,
+            new SingleMobEffect(
+                new SpawnEffectCloudEffect(List.of(effectInstance), particle, 5.0F, 2.0F, 200),
+                true));
+  }
+
   public static void bootstrap(Registerable<MobVariant> registry) {
     register(registry, COMMON, defaultEquipmentMap(), condition(512));
     register(
@@ -141,27 +165,16 @@ public final class ZombieVariantGenerator {
         defaultAttributeMap()
             .with(MobAttachments.EQUIPMENT_TABLE, ZLootTableProvider.AXE_ZOMBIE_EQUIPMENT),
         condition(registry, ZBiomeTags.WITH_AXE_ZOMBIES, 128));
-    var poisonEffectParticle =
-        StatusEffects.POISON.value().createParticle(new StatusEffectInstance(StatusEffects.POISON));
     register(
         registry,
         SWAMP,
-        defaultEquipmentMap()
-            .with(
-                MobAttachments.ON_ATTACK,
-                statusEffect(new StatusEffectInstance(StatusEffects.POISON, 80)))
-            .with(MobAttachments.ON_TICK, spawnParticles(poisonEffectParticle, 0.2F))
-            .with(
-                MobAttachments.ON_KILLED,
-                new SingleMobEffect(
-                    new SpawnEffectCloudEffect(
-                        List.of(new StatusEffectInstance(StatusEffects.POISON, 200)),
-                        poisonEffectParticle,
-                        5.0F,
-                        2.0F,
-                        200),
-                    true)),
+        defaultEffectMapWithSpawnCloud(List.of(StatusEffects.POISON)),
         condition(registry, ZBiomeTags.WITH_SWAMP_ZOMBIES, 16));
+    register(
+        registry,
+        DESERT,
+        defaultEffectMap(List.of(StatusEffects.DARKNESS, StatusEffects.HUNGER)),
+        condition(registry, ZBiomeTags.WITH_DESERT_ZOMBIES, 16));
   }
 
   private static void register(
