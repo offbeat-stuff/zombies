@@ -6,36 +6,36 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.Heightmap;
 
-public record SpawnPosProvider(PosModifier modifier) {
+@FunctionalInterface
+public interface SpawnPosProvider {
   static final int SPAWN_RANGE = 80;
 
+  public void modify(BlockPos.Mutable pos, ServerWorld world, Random random, BlockPos center);
+
   public static SpawnPosProvider RANDOM =
-      new SpawnPosProvider(
-          (pos, world, random, center) ->
-              pos.set(
-                  around(random, center.getX(), SPAWN_RANGE),
-                  around(random, center.getY(), SPAWN_RANGE),
-                  around(random, center.getZ(), SPAWN_RANGE)));
+      (pos, world, random, center) ->
+          pos.set(
+              around(random, center.getX(), SPAWN_RANGE),
+              around(random, center.getY(), SPAWN_RANGE),
+              around(random, center.getZ(), SPAWN_RANGE));
 
   public static SpawnPosProvider SURFACE =
-      new SpawnPosProvider(
-          (pos, world, random, center) ->
-              setToTopPosAt(
-                  world,
-                  around(random, center.getX(), SPAWN_RANGE),
-                  around(random, center.getZ(), SPAWN_RANGE),
-                  pos));
+      (pos, world, random, center) ->
+          setToTopPosAt(
+              world,
+              around(random, center.getX(), SPAWN_RANGE),
+              around(random, center.getZ(), SPAWN_RANGE),
+              pos);
 
   public static SpawnPosProvider MIXED =
-      new SpawnPosProvider(
-          (pos, world, random, center) -> {
-            var topY = world.getTopY(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, center);
-            var distToSurface = center.getY() + 8 - topY;
-            ((distToSurface > 0 && random.nextBoolean()) ? SURFACE : RANDOM)
-                .modifier.modify(pos, world, random, center);
-          });
+      (pos, world, random, center) -> {
+        var topY = world.getTopY(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, center);
+        var distToSurface = center.getY() + 8 - topY;
+        ((distToSurface > 0 && random.nextBoolean()) ? SURFACE : RANDOM)
+            .modify(pos, world, random, center);
+      };
 
-  public Iterable<BlockPos> iterate(
+  public default Iterable<BlockPos> iterate(
       ServerWorld world, Random random, BlockPos centerPos, int count) {
     return () ->
         new AbstractIterator<BlockPos>() {
@@ -46,7 +46,7 @@ public record SpawnPosProvider(PosModifier modifier) {
           protected BlockPos computeNext() {
             if (remaining == 0) return this.endOfData();
             remaining--;
-            modifier.modify(pos, world, random, centerPos);
+            modify(pos, world, random, centerPos);
             return pos.toImmutable();
           }
         };
@@ -58,10 +58,5 @@ public record SpawnPosProvider(PosModifier modifier) {
 
   private static void setToTopPosAt(ServerWorld world, int x, int z, BlockPos.Mutable mutable) {
     mutable.set(x, world.getTopY(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, x, z), z);
-  }
-
-  @FunctionalInterface
-  public static interface PosModifier {
-    public void modify(BlockPos.Mutable pos, ServerWorld world, Random random, BlockPos center);
   }
 }
