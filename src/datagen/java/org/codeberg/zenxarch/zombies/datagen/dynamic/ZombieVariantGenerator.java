@@ -19,6 +19,7 @@ import net.minecraft.registry.Registerable;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.registry.tag.DamageTypeTags;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.AssetInfo;
 import net.minecraft.util.Identifier;
@@ -137,6 +138,7 @@ public final class ZombieVariantGenerator {
   }
 
   public static void bootstrap(Registerable<MobVariant> registry) {
+    var lookup = registry.getRegistryLookup(RegistryKeys.DAMAGE_TYPE);
     register(registry, COMMON, defaultEquipmentMap(), condition(512));
     register(
         registry,
@@ -151,7 +153,8 @@ public final class ZombieVariantGenerator {
         FIRE,
         defaultEquipmentMap()
             .with(MobAttachments.ON_ATTACK, ignite(1.0F))
-            .with(MobAttachments.ON_TICK, spawnParticles(ParticleTypes.FLAME, 0.2F)),
+            .with(MobAttachments.ON_TICK, spawnParticles(ParticleTypes.FLAME, 0.2F))
+            .with(MobAttachments.INVULNERABLE_TO, lookup.getOrThrow(DamageTypeTags.IS_FIRE)),
         condition(registry, ZBiomeTags.WITH_FLAME_ZOMBIES, 16));
 
     register(
@@ -159,7 +162,8 @@ public final class ZombieVariantGenerator {
         FREEZE,
         defaultEquipmentMap()
             .with(MobAttachments.ON_ATTACK, freeze())
-            .with(MobAttachments.ON_TICK, spawnParticles(ParticleTypes.SNOWFLAKE, 0.2F)),
+            .with(MobAttachments.ON_TICK, spawnParticles(ParticleTypes.SNOWFLAKE, 0.2F))
+            .with(MobAttachments.INVULNERABLE_TO, lookup.getOrThrow(DamageTypeTags.IS_FREEZING)),
         condition(registry, ZBiomeTags.WITH_FROST_ZOMBIES, 16));
 
     register(
