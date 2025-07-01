@@ -19,6 +19,7 @@ import org.codeberg.zenxarch.zombies.Zombies;
 import org.codeberg.zenxarch.zombies.data.entity.effect.pair.AllOfMobEffect;
 import org.codeberg.zenxarch.zombies.data.entity.effect.pair.ConditionalSpawnEffect;
 import org.codeberg.zenxarch.zombies.data.entity.effect.pair.DefaultMobEffect;
+import org.codeberg.zenxarch.zombies.data.entity.effect.pair.HealFromDamage;
 import org.codeberg.zenxarch.zombies.data.entity.effect.pair.RandomMobEffect;
 import org.codeberg.zenxarch.zombies.data.entity.effect.pair.SingleMobEffect;
 import org.codeberg.zenxarch.zombies.data.entity.effect.pair.StatusMobEffect;
@@ -47,6 +48,7 @@ public interface MobEffect {
     register("status_effect", StatusMobEffect.CODEC);
     register("swap", SwapMobEffect.CODEC);
     register("conditional", ConditionalSpawnEffect.CODEC);
+    register("heal", HealFromDamage.CODEC);
   }
 
   private static void register(String id, MapCodec<? extends MobEffect> codec) {

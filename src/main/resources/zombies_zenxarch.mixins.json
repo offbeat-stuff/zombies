@@ -6,7 +6,8 @@
     "ServerWorldMixin",
     "EntityTypeMixin",
     "ServerChunkManagerMixin",
-    "MobEntityMixin"
+    "MobEntityMixin",
+    "LivingEntityAccessor"
   ],
   "injectors": {
     "defaultRequire": 1
