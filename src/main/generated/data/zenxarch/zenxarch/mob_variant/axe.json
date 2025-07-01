@@ -4,6 +4,36 @@
       "loot_table": "zenxarch:axe_zombie_equipment",
       "slot_drop_chances": 7.5E-4
     },
+    "zenxarch:on_attack": {
+      "type": "zenxarch:all_of",
+      "effects": [
+        {
+          "type": "zenxarch:heal"
+        },
+        {
+          "type": "zenxarch:single",
+          "effect": {
+            "type": "zenxarch:spawn_particle",
+            "horizontal_position": {
+              "type": "in_bounding_box"
+            },
+            "horizontal_velocity": {
+              "base": 1.0
+            },
+            "particle": {
+              "type": "minecraft:heart"
+            },
+            "speed": 1.0,
+            "vertical_position": {
+              "type": "in_bounding_box"
+            },
+            "vertical_velocity": {
+              "base": 1.0
+            }
+          }
+        }
+      ]
+    },
     "zenxarch:on_spawn": {
       "type": "zenxarch:all_of",
       "effects": [

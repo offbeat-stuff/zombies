@@ -31,6 +31,7 @@ import org.codeberg.zenxarch.zombies.data.entity.MobAttachments;
 import org.codeberg.zenxarch.zombies.data.entity.effect.*;
 import org.codeberg.zenxarch.zombies.data.entity.effect.pair.AllOfMobEffect;
 import org.codeberg.zenxarch.zombies.data.entity.effect.pair.ConditionalSpawnEffect;
+import org.codeberg.zenxarch.zombies.data.entity.effect.pair.HealFromDamage;
 import org.codeberg.zenxarch.zombies.data.entity.effect.pair.RandomMobEffect;
 import org.codeberg.zenxarch.zombies.data.entity.effect.pair.SingleMobEffect;
 import org.codeberg.zenxarch.zombies.data.entity.effect.pair.StatusMobEffect;
@@ -165,6 +166,10 @@ public final class ZombieVariantGenerator {
         registry,
         AXE,
         defaultAttributeMap()
+            .with(
+                MobAttachments.ON_ATTACK,
+                AllOfMobEffect.create(
+                    HealFromDamage.INSTANCE, spawnParticles(ParticleTypes.HEART, 1.0F)))
             .with(MobAttachments.EQUIPMENT_TABLE, ZLootTableProvider.AXE_ZOMBIE_EQUIPMENT),
         condition(registry, ZBiomeTags.WITH_AXE_ZOMBIES, 128));
     register(
