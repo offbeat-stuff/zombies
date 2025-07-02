@@ -62,8 +62,7 @@ import org.codeberg.zenxarch.zombies.data.entity.MobAttachments;
 import org.codeberg.zenxarch.zombies.data.entity.effect.MobEffect;
 import org.codeberg.zenxarch.zombies.difficulty.ExtendedDifficulty;
 import org.codeberg.zenxarch.zombies.entity.variant.MobVariant;
-import org.codeberg.zenxarch.zombies.registry.ZombieRegistryKeys;
-import org.codeberg.zenxarch.zombies.spawning.ZombieApocalypse;
+import org.codeberg.zenxarch.zombies.spawning.ZombieNbtUtils;
 import org.jetbrains.annotations.Nullable;
 
 public class ExtendedZombieEntity extends ZombieEntity
@@ -304,15 +303,13 @@ public class ExtendedZombieEntity extends ZombieEntity
   @Override
   public void readCustomData(ReadView view) {
     super.readCustomData(view);
-    ZombieApocalypse.getVariantFromView(this.getWorld(), view).ifPresent(this::setVariant);
+    ZombieNbtUtils.getVariantFromView(this.getWorld(), view).ifPresent(this::setVariant);
   }
 
   @Override
   public void writeCustomData(WriteView view) {
     super.writeCustomData(view);
-    var registry = getWorld().getRegistryManager().getOptional(ZombieRegistryKeys.MOB_VARIANT);
-    if (registry.isEmpty()) return;
-    view.putString(ZombieApocalypse.ZOMBIE_ID_KEY, getVariant().getIdAsString());
+    ZombieNbtUtils.setVariantToView(this.getWorld(), view, getVariant());
   }
 
   @Override

@@ -6,7 +6,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.storage.ReadView;
 import net.minecraft.world.World;
-import org.codeberg.zenxarch.zombies.spawning.ZombieApocalypse;
+import org.codeberg.zenxarch.zombies.spawning.ZombieNbtUtils;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -20,7 +20,7 @@ public abstract class EntityTypeMixin {
       World world,
       SpawnReason reason,
       CallbackInfoReturnable<Optional<Entity>> cir) {
-    var opt = ZombieApocalypse.loadFromView(view, world);
+    var opt = ZombieNbtUtils.loadFromView(view, world);
     if (opt.isPresent()) cir.setReturnValue(opt);
   }
 }

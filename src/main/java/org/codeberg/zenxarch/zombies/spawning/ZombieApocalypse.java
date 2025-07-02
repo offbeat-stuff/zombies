@@ -4,26 +4,18 @@ import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Function;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.entity.Entity;
 import net.minecraft.predicate.entity.EntityPredicates;
-import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.storage.ReadView;
 import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.World;
 import org.codeberg.zenxarch.zombies.ZombieGamerules;
-import org.codeberg.zenxarch.zombies.Zombies;
 import org.codeberg.zenxarch.zombies.difficulty.ExtendedDifficulty;
 import org.codeberg.zenxarch.zombies.entity.ExtendedZombieEntity;
-import org.codeberg.zenxarch.zombies.entity.variant.MobVariant;
-import org.codeberg.zenxarch.zombies.registry.ZombieRegistryKeys;
 
 public class ZombieApocalypse {
   private ServerWorld world;
@@ -116,55 +108,5 @@ public class ZombieApocalypse {
   public static boolean isApocalypticWorld(ServerWorld world) {
     if (world.getRegistryKey().equals(World.OVERWORLD)) return true;
     return false;
-  }
-
-  public static final String ZOMBIE_ID_KEY = "zenxarch_zombie_id";
-
-  private static Identifier toId(String id) {
-    int i = id.indexOf(":");
-    if (i >= 0) {
-      String string = id.substring(i + 1);
-      if (i != 0) {
-        String string2 = id.substring(0, i);
-        return Identifier.of(string2, string);
-      }
-      return Zombies.id(string);
-    }
-    return Zombies.id(id);
-  }
-
-  private static Optional<RegistryEntry<MobVariant>> fromId(World world, Identifier id) {
-    return world
-        .getRegistryManager()
-        .getOrThrow(ZombieRegistryKeys.MOB_VARIANT)
-        .getEntry(id)
-        .map(Function.identity());
-  }
-
-  public static Optional<RegistryEntry<MobVariant>> getVariantFromView(World world, ReadView view) {
-    var idKey = view.getOptionalString(ZOMBIE_ID_KEY);
-    if (idKey.isEmpty()) return Optional.empty();
-    return switch (idKey.get()) {
-      case "" -> Optional.empty();
-      case String id -> {
-        try {
-          yield fromId(world, toId(id));
-        } catch (Exception e) {
-          Zombies.LOGGER.info("Exception caught: {}", e.getMessage());
-          yield Optional.empty();
-        }
-      }
-    };
-  }
-
-  public static Optional<Entity> loadFromView(ReadView view, World world) {
-    return getVariantFromView(world, view).map(variant -> loadFromView(world, variant, view));
-  }
-
-  private static ExtendedZombieEntity loadFromView(
-      World world, RegistryEntry<MobVariant> variant, ReadView view) {
-    var result = new ExtendedZombieEntity(world);
-    result.readData(view);
-    return result;
   }
 }
