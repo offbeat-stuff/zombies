@@ -1,11 +1,14 @@
 {
-    "required": true,
-    "package": "org.codeberg.zenxarch.zombies.client.mixin",
-    "compatibilityLevel": "JAVA_21",
-    "client": [
-      "LivingEntityRendererMixin"
-    ],
-    "injectors": {
-      "defaultRequire": 1
-    }
+  "required": true,
+  "package": "org.codeberg.zenxarch.zombies.client.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "client": [
+    "LivingEntityRendererMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "overwrites": {
+    "requireAnnotations": true
   }
+}
