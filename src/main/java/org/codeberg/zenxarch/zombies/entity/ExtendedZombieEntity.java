@@ -114,7 +114,6 @@ public class ExtendedZombieEntity extends ZombieEntity
         new MoveToWalkTarget<>());
   }
 
-  @SuppressWarnings("unchecked")
   @Override
   public BrainActivityGroup<ExtendedZombieEntity> getIdleTasks() {
     return BrainActivityGroup.idleTasks(
