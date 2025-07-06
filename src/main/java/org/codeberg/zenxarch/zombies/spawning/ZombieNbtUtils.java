@@ -12,6 +12,7 @@ import org.codeberg.zenxarch.zombies.Zombies;
 import org.codeberg.zenxarch.zombies.entity.ExtendedZombieEntity;
 import org.codeberg.zenxarch.zombies.entity.variant.MobVariant;
 import org.codeberg.zenxarch.zombies.registry.ZombieRegistryKeys;
+import org.jetbrains.annotations.Nullable;
 
 public final class ZombieNbtUtils {
   private ZombieNbtUtils() {
@@ -58,9 +59,10 @@ public final class ZombieNbtUtils {
   }
 
   public static void setVariantToView(
-      World world, WriteView view, RegistryEntry<MobVariant> variant) {
+      World world, WriteView view, @Nullable RegistryEntry<MobVariant> variant) {
     var registry = world.getRegistryManager().getOptional(ZombieRegistryKeys.MOB_VARIANT);
     if (registry.isEmpty()) return;
+    if (variant == null) return;
     view.putString(ZombieNbtUtils.ZOMBIE_ID_KEY, variant.getIdAsString());
   }
 
