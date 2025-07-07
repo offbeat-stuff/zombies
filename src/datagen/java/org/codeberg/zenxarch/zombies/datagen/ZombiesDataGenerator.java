@@ -4,6 +4,7 @@ import java.util.List;
 import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
 import net.minecraft.registry.RegistryBuilder;
+import org.codeberg.zenxarch.zombies.ZombieDatapacks;
 import org.codeberg.zenxarch.zombies.Zombies;
 import org.codeberg.zenxarch.zombies.datagen.dynamic.DynamicRegistryInitializer;
 import org.codeberg.zenxarch.zombies.datagen.dynamic.ZEnchantmentProviderGenerator;
@@ -26,9 +27,11 @@ public class ZombiesDataGenerator implements DataGeneratorEntrypoint {
 
   @Override
   public void onInitializeDataGenerator(FabricDataGenerator generator) {
-    var pack = generator.createPack();
-    pack.addProvider(ZDynamicRegistryProvider::new);
-    pack.addProvider(ZEnglishLangProvider::new);
+    var base = generator.createPack();
+    base.addProvider(ZEnglishLangProvider::new);
+    base.addProvider(ZDynamicRegistryProvider.factory(ZombieVariantGenerator.DEFAULTS_INITIALIZER));
+    var pack = generator.createBuiltinResourcePack(ZombieDatapacks.DEFAULT_PACK);
+    for (var init : DYNAMIC_CONTENT) pack.addProvider(ZDynamicRegistryProvider.factory(init));
     pack.addProvider(ZLootTableProvider::new);
     pack.addProvider(ZBiomeTagProvider::new);
   }

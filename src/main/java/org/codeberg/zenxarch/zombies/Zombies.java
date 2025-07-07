@@ -30,6 +30,7 @@ public class Zombies implements ModInitializer {
   @Override
   public void onInitialize() {
     LOGGER.info("Hello Fabric world!");
+    ZombieDatapacks.registerDatapacks(FabricLoader.getInstance().getModContainer(MODID).get());
     ZombieRegistries.init();
     ZombieGamerules.initialize();
     ZombieLootNumberProviderTypes.initialize();

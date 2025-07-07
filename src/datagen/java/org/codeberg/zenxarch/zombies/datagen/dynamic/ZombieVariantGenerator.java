@@ -46,6 +46,10 @@ import org.codeberg.zenxarch.zombies.registry.ZombieRegistryKeys;
 
 public final class ZombieVariantGenerator {
 
+  public static final DynamicRegistryInitializer<MobVariant> DEFAULTS_INITIALIZER =
+      new DynamicRegistryInitializer<>(
+          ZombieRegistryKeys.MOB_VARIANT, ZombieVariantGenerator::bootstrapDefaults);
+
   public static final DynamicRegistryInitializer<MobVariant> INITIALIZER =
       new DynamicRegistryInitializer<>(
           ZombieRegistryKeys.MOB_VARIANT, ZombieVariantGenerator::bootstrap);
@@ -135,6 +139,10 @@ public final class ZombieVariantGenerator {
             new SingleMobEffect(
                 new SpawnEffectCloudEffect(List.of(effectInstance), particle, 5.0F, 2.0F, 200),
                 true));
+  }
+
+  public static void bootstrapDefaults(Registerable<MobVariant> registry) {
+    register(registry, COMMON, new ZombieVariantMapBuilder(), condition(1));
   }
 
   public static void bootstrap(Registerable<MobVariant> registry) {
