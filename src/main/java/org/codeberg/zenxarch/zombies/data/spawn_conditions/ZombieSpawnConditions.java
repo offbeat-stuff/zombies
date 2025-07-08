@@ -16,6 +16,9 @@ public final class ZombieSpawnConditions {
     register("is_night", NightSpawnCondition.CODEC);
     register("negate", NegateSpawnCondition.CODEC);
     register("all_of", AllOfSpawnCondition.CODEC);
+    register("is_raining", RainingSpawnCondition.CODEC);
+    register("is_thundering", ThunderingSpawnCondition.CODEC);
+    register("precipitation", PrecipitationSpawnCondition.CODEC);
   }
 
   private static void register(String id, MapCodec<? extends SpawnCondition> codec) {
