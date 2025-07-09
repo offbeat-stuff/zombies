@@ -108,6 +108,7 @@ public class ExtendedZombieEntity extends ZombieEntity
     return BrainActivityGroup.coreTasks(
         new AvoidSun<ExtendedZombieEntity>().startCondition(ExtendedZombieEntity::burnsInDaylight),
         new EscapeSun<ExtendedZombieEntity>()
+            .speedModifier(2.0F)
             .startCondition(ExtendedZombieEntity::burnsInDaylight)
             .cooldownFor(zombie -> 20),
         new InteractWithDoor<>(),
@@ -136,7 +137,7 @@ public class ExtendedZombieEntity extends ZombieEntity
         new TargetOrRetaliate<>()
             .alertAlliesWhen((a, b) -> b instanceof PlayerEntity)
             .cooldownFor(z -> 20),
-        new SetWalkTargetToAttackTarget<>(),
+        new SetWalkTargetToAttackTarget<>().speedMod(2.0F),
         new AnimatableMeleeAttack<>(0)
             .whenStarting(zombie -> zombie.setAttacking(true))
             .whenStopping(zombie -> zombie.setAttacking(false)),
