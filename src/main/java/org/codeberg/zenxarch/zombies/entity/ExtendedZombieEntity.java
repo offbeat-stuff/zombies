@@ -40,6 +40,7 @@ import net.tslat.smartbrainlib.api.core.behaviour.custom.look.LookAtAttackTarget
 import net.tslat.smartbrainlib.api.core.behaviour.custom.misc.AvoidSun;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.misc.Idle;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.move.EscapeSun;
+import net.tslat.smartbrainlib.api.core.behaviour.custom.move.InteractWithDoor;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.move.MoveToWalkTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.path.SetRandomWalkTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.path.SetWalkTargetToAttackTarget;
@@ -109,6 +110,7 @@ public class ExtendedZombieEntity extends ZombieEntity
         new EscapeSun<ExtendedZombieEntity>()
             .startCondition(ExtendedZombieEntity::burnsInDaylight)
             .cooldownFor(zombie -> 20),
+        new InteractWithDoor<>(),
         new LookAtAttackTarget<>().runFor(zombie -> zombie.getRandom().nextBetween(40, 300)),
         new MoveToWalkTarget<>());
   }
@@ -215,6 +217,7 @@ public class ExtendedZombieEntity extends ZombieEntity
     }
     var result = super.initialize(world, difficulty, spawnReason, new ZombieData(false, false));
     executeEvent(MobAttachments.ON_SPAWN, world.toServerWorld(), null);
+    this.navigation.setCanOpenDoors(true);
     return result;
   }
 
