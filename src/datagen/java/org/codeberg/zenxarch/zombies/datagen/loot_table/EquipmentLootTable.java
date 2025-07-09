@@ -1,9 +1,10 @@
 package org.codeberg.zenxarch.zombies.datagen.loot_table;
 
+import static org.codeberg.zenxarch.zombies.datagen.loot_table.LootTableUtils.*;
+
 import java.util.stream.Stream;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.mob.MobEntity;
-import net.minecraft.item.Item;
 import net.minecraft.item.Items;
 import net.minecraft.loot.LootPool;
 import net.minecraft.loot.LootTable;
@@ -12,26 +13,11 @@ import net.minecraft.loot.entry.ItemEntry;
 import net.minecraft.loot.entry.LeafEntry;
 import net.minecraft.loot.entry.LootPoolEntry;
 import net.minecraft.loot.entry.LootTableEntry;
-import net.minecraft.loot.provider.number.ConstantLootNumberProvider;
 import org.codeberg.zenxarch.zombies.datagen.dynamic.ZEnchantmentProviderGenerator;
 import org.codeberg.zenxarch.zombies.loot_table.function.EnchantmentProviderLootFunction;
 import org.codeberg.zenxarch.zombies.loot_table.number_provider.LuckLootNumberProvider;
 
 public interface EquipmentLootTable {
-
-  private static LootPool.Builder pool() {
-    return LootPool.builder().rolls(ConstantLootNumberProvider.create(1.0f));
-  }
-
-  private static LootPool.Builder pool(Item item) {
-    return pool().with(ItemEntry.builder(item));
-  }
-
-  private static LootTable.Builder table(LootPool.Builder... pools) {
-    var result = LootTable.builder();
-    for (var pool : pools) result = result.pool(pool);
-    return result;
-  }
 
   private static LootTable.Builder entry(EquipmentSlot slot, int level) {
     return table(pool(MobEntity.getEquipmentForSlot(slot, level)));

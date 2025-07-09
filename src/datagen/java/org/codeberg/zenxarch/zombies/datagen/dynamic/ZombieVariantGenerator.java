@@ -40,6 +40,7 @@ import org.codeberg.zenxarch.zombies.data.entity.effect.single.DefaultAttributeE
 import org.codeberg.zenxarch.zombies.data.entity.effect.single.SpawnEffectCloudEffect;
 import org.codeberg.zenxarch.zombies.data.spawn_conditions.DaySpawnCondition;
 import org.codeberg.zenxarch.zombies.data.spawn_conditions.NightSpawnCondition;
+import org.codeberg.zenxarch.zombies.datagen.provider.ZEntityLootTableProvider;
 import org.codeberg.zenxarch.zombies.datagen.provider.ZLootTableProvider;
 import org.codeberg.zenxarch.zombies.entity.variant.MobVariant;
 import org.codeberg.zenxarch.zombies.registry.ZombieRegistryKeys;
@@ -112,7 +113,9 @@ public final class ZombieVariantGenerator {
   }
 
   private static ZombieVariantMapBuilder defaultAttributeMap() {
-    return new ZombieVariantMapBuilder().with(MobAttachments.ON_SPAWN, attributesOnSpawn());
+    return new ZombieVariantMapBuilder()
+        .with(MobAttachments.LOOT_TABLE, ZEntityLootTableProvider.ZOMBIE_DROPS)
+        .with(MobAttachments.ON_SPAWN, attributesOnSpawn());
   }
 
   private static ZombieVariantMapBuilder defaultEquipmentMap() {

@@ -12,6 +12,7 @@ import org.codeberg.zenxarch.zombies.datagen.dynamic.ZombieVariantGenerator;
 import org.codeberg.zenxarch.zombies.datagen.provider.ZBiomeTagProvider;
 import org.codeberg.zenxarch.zombies.datagen.provider.ZDynamicRegistryProvider;
 import org.codeberg.zenxarch.zombies.datagen.provider.ZEnglishLangProvider;
+import org.codeberg.zenxarch.zombies.datagen.provider.ZEntityLootTableProvider;
 import org.codeberg.zenxarch.zombies.datagen.provider.ZLootTableProvider;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -33,6 +34,7 @@ public class ZombiesDataGenerator implements DataGeneratorEntrypoint {
     var pack = generator.createBuiltinResourcePack(ZombieDatapacks.DEFAULT_PACK);
     for (var init : DYNAMIC_CONTENT) pack.addProvider(ZDynamicRegistryProvider.factory(init));
     pack.addProvider(ZLootTableProvider::new);
+    pack.addProvider(ZEntityLootTableProvider::new);
     pack.addProvider(ZBiomeTagProvider::new);
   }
 

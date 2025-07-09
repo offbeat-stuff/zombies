@@ -4,6 +4,7 @@
       "loot_table": "zenxarch:common_zombie_equipment",
       "slot_drop_chances": 7.5E-4
     },
+    "zenxarch:loot_table": "zenxarch:zombie_drops",
     "zenxarch:on_spawn": {
       "type": "zenxarch:all_of",
       "effects": [

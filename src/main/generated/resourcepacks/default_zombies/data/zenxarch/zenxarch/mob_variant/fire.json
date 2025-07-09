@@ -5,6 +5,7 @@
       "slot_drop_chances": 7.5E-4
     },
     "zenxarch:invulnerable_to": "#minecraft:is_fire",
+    "zenxarch:loot_table": "zenxarch:zombie_drops",
     "zenxarch:on_attack": {
       "type": "zenxarch:single",
       "effect": {
