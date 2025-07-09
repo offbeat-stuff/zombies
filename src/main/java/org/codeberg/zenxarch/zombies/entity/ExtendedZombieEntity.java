@@ -9,6 +9,7 @@ import net.minecraft.entity.EntityData;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.ai.brain.Brain.Profile;
+import net.minecraft.entity.ai.pathing.EntityNavigation;
 import net.minecraft.entity.ai.brain.MemoryModuleState;
 import net.minecraft.entity.ai.brain.MemoryModuleType;
 import net.minecraft.entity.attribute.EntityAttributes;
@@ -48,6 +49,7 @@ import net.tslat.smartbrainlib.api.core.behaviour.custom.target.InvalidateAttack
 import net.tslat.smartbrainlib.api.core.behaviour.custom.target.SetPlayerLookTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.target.SetRandomLookTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.target.TargetOrRetaliate;
+import net.tslat.smartbrainlib.api.core.navigation.SmoothGroundNavigation;
 import net.tslat.smartbrainlib.api.core.sensor.ExtendedSensor;
 import net.tslat.smartbrainlib.api.core.sensor.custom.GenericAttackTargetSensor;
 import net.tslat.smartbrainlib.api.core.sensor.custom.UnreachableTargetSensor;
@@ -178,6 +180,13 @@ public class ExtendedZombieEntity extends ZombieEntity
   }
 
   @Override
+  protected EntityNavigation createNavigation(World world) {
+      var navigation =  new SmoothGroundNavigation(this, world);
+      navigation.setCanOpenDoors(true);
+      return navigation;
+  }
+
+  @Override
   protected void mobTick(ServerWorld world) {
     super.mobTick(world);
     tickBrain(this);
@@ -218,7 +227,6 @@ public class ExtendedZombieEntity extends ZombieEntity
     }
     var result = super.initialize(world, difficulty, spawnReason, new ZombieData(false, false));
     executeEvent(MobAttachments.ON_SPAWN, world.toServerWorld(), null);
-    this.navigation.setCanOpenDoors(true);
     return result;
   }
 
