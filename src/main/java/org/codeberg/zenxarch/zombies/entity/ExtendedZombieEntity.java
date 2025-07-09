@@ -9,9 +9,9 @@ import net.minecraft.entity.EntityData;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.ai.brain.Brain.Profile;
-import net.minecraft.entity.ai.pathing.EntityNavigation;
 import net.minecraft.entity.ai.brain.MemoryModuleState;
 import net.minecraft.entity.ai.brain.MemoryModuleType;
+import net.minecraft.entity.ai.pathing.EntityNavigation;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.mob.MobEntity;
@@ -42,7 +42,7 @@ import net.tslat.smartbrainlib.api.core.behaviour.custom.misc.AvoidSun;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.misc.Idle;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.move.EscapeSun;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.move.InteractWithDoor;
-import net.tslat.smartbrainlib.api.core.behaviour.custom.move.MoveToWalkTarget;
+import net.tslat.smartbrainlib.api.core.behaviour.custom.move.WalkOrRunToWalkTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.path.SetRandomWalkTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.path.SetWalkTargetToAttackTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.target.InvalidateAttackTarget;
@@ -115,7 +115,7 @@ public class ExtendedZombieEntity extends ZombieEntity
             .cooldownFor(zombie -> 20),
         new InteractWithDoor<>(),
         new LookAtAttackTarget<>().runFor(zombie -> zombie.getRandom().nextBetween(40, 300)),
-        new MoveToWalkTarget<>());
+        new WalkOrRunToWalkTarget<>());
   }
 
   @Override
@@ -181,9 +181,9 @@ public class ExtendedZombieEntity extends ZombieEntity
 
   @Override
   protected EntityNavigation createNavigation(World world) {
-      var navigation =  new SmoothGroundNavigation(this, world);
-      navigation.setCanOpenDoors(true);
-      return navigation;
+    var navigation = new SmoothGroundNavigation(this, world);
+    navigation.setCanOpenDoors(true);
+    return navigation;
   }
 
   @Override
