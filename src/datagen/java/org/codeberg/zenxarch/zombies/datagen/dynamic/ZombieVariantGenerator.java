@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
 import net.minecraft.entity.attribute.EntityAttribute;
+import net.minecraft.entity.attribute.EntityAttributeModifier;
+import net.minecraft.entity.attribute.EntityAttributeModifier.Operation;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
@@ -27,6 +29,7 @@ import net.minecraft.util.math.floatprovider.ClampedNormalFloatProvider;
 import net.minecraft.util.math.floatprovider.ConstantFloatProvider;
 import net.minecraft.util.math.floatprovider.FloatProvider;
 import net.minecraft.world.biome.Biome;
+import org.codeberg.zenxarch.zombies.Zombies;
 import org.codeberg.zenxarch.zombies.data.ZBiomeTags;
 import org.codeberg.zenxarch.zombies.data.entity.MobAttachments;
 import org.codeberg.zenxarch.zombies.data.entity.effect.*;
@@ -36,6 +39,7 @@ import org.codeberg.zenxarch.zombies.data.entity.effect.pair.HealFromDamage;
 import org.codeberg.zenxarch.zombies.data.entity.effect.pair.RandomMobEffect;
 import org.codeberg.zenxarch.zombies.data.entity.effect.pair.SingleMobEffect;
 import org.codeberg.zenxarch.zombies.data.entity.effect.pair.StatusMobEffect;
+import org.codeberg.zenxarch.zombies.data.entity.effect.single.AttributeModifierEffect;
 import org.codeberg.zenxarch.zombies.data.entity.effect.single.DefaultAttributeEffect;
 import org.codeberg.zenxarch.zombies.data.entity.effect.single.SpawnEffectCloudEffect;
 import org.codeberg.zenxarch.zombies.data.spawn_conditions.DaySpawnCondition;
@@ -82,6 +86,14 @@ public final class ZombieVariantGenerator {
     return new SingleMobEffect(new DefaultAttributeEffect(attribute, value), true);
   }
 
+  private static MobEffect createAttributeModifierEffect(
+      RegistryEntry<EntityAttribute> attribute, String id, double value, Operation op) {
+    return new SingleMobEffect(
+        new AttributeModifierEffect(
+            attribute, List.of(new EntityAttributeModifier(Zombies.id(id), value, op)), true),
+        true);
+  }
+
   private static MobEffect attributesOnSpawn() {
     var dayFollowRange = ClampedNormalFloatProvider.create(20.0f, 8.0f, 14.0f, 26.0f);
     var nightFollowRange = ClampedNormalFloatProvider.create(32.0f, 8.0f, 26.0f, 38.0f);
@@ -97,14 +109,17 @@ public final class ZombieVariantGenerator {
             true);
     var halfHealthEffect =
         createAttributeEffect(EntityAttributes.MAX_HEALTH, ConstantFloatProvider.create(10.0f));
-    var doubleSpeedEffect =
+    var extraSpeedEffect =
         new ConditionalSpawnEffect(
             NightSpawnCondition.INSTANCE,
-            createAttributeEffect(
-                EntityAttributes.MOVEMENT_SPEED, ConstantFloatProvider.create(0.46f)),
+            createAttributeModifierEffect(
+                EntityAttributes.MOVEMENT_SPEED,
+                "zombie_speed_boost",
+                0.5,
+                Operation.ADD_MULTIPLIED_TOTAL),
             true);
 
-    var optionalEffect = AllOfMobEffect.create(halfHealthEffect, doubleSpeedEffect);
+    var optionalEffect = AllOfMobEffect.create(halfHealthEffect, extraSpeedEffect);
 
     return AllOfMobEffect.create(
         dayFollowRangeEffect,

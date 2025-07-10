@@ -72,9 +72,13 @@
                 "effect": {
                   "type": "zenxarch:single",
                   "effect": {
-                    "type": "zenxarch:default_attribute",
+                    "type": "zenxarch:attribute_modifier",
                     "attribute": "minecraft:movement_speed",
-                    "value": 0.46
+                    "modifiers": {
+                      "amount": 0.5,
+                      "id": "zenxarch:zombie_speed_boost",
+                      "operation": "add_multiplied_total"
+                    }
                   }
                 },
                 "forSelf": true
