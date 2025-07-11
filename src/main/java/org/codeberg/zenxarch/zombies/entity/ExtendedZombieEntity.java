@@ -64,6 +64,7 @@ import org.codeberg.zenxarch.zombies.ZombieGamerules;
 import org.codeberg.zenxarch.zombies.data.entity.MobAttachments;
 import org.codeberg.zenxarch.zombies.data.entity.effect.MobEffect;
 import org.codeberg.zenxarch.zombies.difficulty.ExtendedDifficulty;
+import org.codeberg.zenxarch.zombies.entity.behaviour.RideMobsBehaviour;
 import org.codeberg.zenxarch.zombies.entity.variant.MobVariant;
 import org.codeberg.zenxarch.zombies.spawning.ZombieNbtUtils;
 import org.jetbrains.annotations.Nullable;
@@ -158,7 +159,8 @@ public class ExtendedZombieEntity extends ZombieEntity
           }
         }.startCondition(ExtendedZombieEntity::shouldTryLeaping)
             .whenStarting(zombie -> zombie.setAttacking(true))
-            .whenStopping(zombie -> zombie.setAttacking(false)));
+            .whenStopping(zombie -> zombie.setAttacking(false)),
+        new RideMobsBehaviour<>());
   }
 
   private static boolean shouldTryLeaping(MobEntity self) {
