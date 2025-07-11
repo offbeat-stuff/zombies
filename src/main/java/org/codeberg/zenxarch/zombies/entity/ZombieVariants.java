@@ -12,10 +12,11 @@ import org.codeberg.zenxarch.zombies.registry.ZombieRegistryKeys;
 public interface ZombieVariants {
   public static Optional<RegistryEntry.Reference<MobVariant>> getRandomVariantFromPos(
       ServerWorld world, BlockPos pos) {
-    return VariantSelectorProvider.select(
-        world.getRegistryManager().getOrThrow(ZombieRegistryKeys.MOB_VARIANT).streamEntries(),
-        RegistryEntry::value,
-        world.getRandom(),
-        SpawnContext.of(world, pos));
+
+    var entries = world.getRegistryManager().getWrapperOrThrow(ZombieRegistryKeys.MOB_VARIANT).streamEntries().map(RegistryEntry::value).toList();
+    var ctx = new SpawnContext(world, pos);
+    return entries.stream().filter(
+      v -> v.spawnConditions()
+    )
   }
 }

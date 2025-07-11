@@ -59,7 +59,6 @@ import net.tslat.smartbrainlib.api.core.sensor.vanilla.NearbyPlayersSensor;
 import net.tslat.smartbrainlib.object.MemoryTest;
 import net.tslat.smartbrainlib.registry.SBLMemoryTypes;
 import net.tslat.smartbrainlib.util.BrainUtil;
-import net.tslat.smartbrainlib.util.SensoryUtil;
 import org.codeberg.zenxarch.zombies.ZombieGamerules;
 import org.codeberg.zenxarch.zombies.data.entity.MobAttachments;
 import org.codeberg.zenxarch.zombies.data.entity.effect.MobEffect;

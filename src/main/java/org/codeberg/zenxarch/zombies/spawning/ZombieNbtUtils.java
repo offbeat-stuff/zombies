@@ -3,9 +3,9 @@ package org.codeberg.zenxarch.zombies.spawning;
 import java.util.Optional;
 import java.util.function.Function;
 import net.minecraft.entity.Entity;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.storage.ReadView;
-import net.minecraft.storage.WriteView;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
 import org.codeberg.zenxarch.zombies.Zombies;
@@ -37,15 +37,16 @@ public final class ZombieNbtUtils {
   private static Optional<RegistryEntry<MobVariant>> fromId(World world, Identifier id) {
     return world
         .getRegistryManager()
-        .getOrThrow(ZombieRegistryKeys.MOB_VARIANT)
-        .getEntry(id)
+        .getWrapperOrThrow(ZombieRegistryKeys.MOB_VARIANT)
+        .getOptional(RegistryKey.of(ZombieRegistryKeys.MOB_VARIANT, id))
         .map(Function.identity());
   }
 
-  public static Optional<RegistryEntry<MobVariant>> getVariantFromView(World world, ReadView view) {
-    var idKey = view.getOptionalString(ZOMBIE_ID_KEY);
+  public static Optional<RegistryEntry<MobVariant>> getVariantFromView(
+      World world, NbtCompound view) {
+    var idKey = view.getString(ZOMBIE_ID_KEY);
     if (idKey.isEmpty()) return Optional.empty();
-    return switch (idKey.get()) {
+    return switch (idKey) {
       case "" -> Optional.empty();
       case String id -> {
         try {
@@ -59,21 +60,21 @@ public final class ZombieNbtUtils {
   }
 
   public static void setVariantToView(
-      World world, WriteView view, @Nullable RegistryEntry<MobVariant> variant) {
+      World world, NbtCompound view, @Nullable RegistryEntry<MobVariant> variant) {
     var registry = world.getRegistryManager().getOptional(ZombieRegistryKeys.MOB_VARIANT);
     if (registry.isEmpty()) return;
     if (variant == null) return;
     view.putString(ZombieNbtUtils.ZOMBIE_ID_KEY, variant.getIdAsString());
   }
 
-  public static Optional<Entity> loadFromView(ReadView view, World world) {
+  public static Optional<Entity> loadFromView(NbtCompound view, World world) {
     return getVariantFromView(world, view).map(variant -> loadFromView(world, variant, view));
   }
 
   private static ExtendedZombieEntity loadFromView(
-      World world, RegistryEntry<MobVariant> variant, ReadView view) {
+      World world, RegistryEntry<MobVariant> variant, NbtCompound view) {
     var result = new ExtendedZombieEntity(world);
-    result.readData(view);
+    result.readNbt(view);
     return result;
   }
 }

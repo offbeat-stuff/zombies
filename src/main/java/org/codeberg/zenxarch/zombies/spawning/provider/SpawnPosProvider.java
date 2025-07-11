@@ -29,7 +29,8 @@ public interface SpawnPosProvider {
 
   public static SpawnPosProvider MIXED =
       (pos, world, random, center) -> {
-        var topY = world.getTopY(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, center);
+        var topY =
+            world.getTopY(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, center.getX(), center.getZ());
         var distToSurface = center.getY() + 8 - topY;
         ((distToSurface > 0 && random.nextBoolean()) ? SURFACE : RANDOM)
             .modify(pos, world, random, center);

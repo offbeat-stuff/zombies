@@ -10,7 +10,6 @@ import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.particle.ParticleEffect;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.dynamic.Codecs;
 import org.codeberg.zenxarch.zombies.data.entity.effect.LivingEffect;
 
 public record SpawnEffectCloudEffect(

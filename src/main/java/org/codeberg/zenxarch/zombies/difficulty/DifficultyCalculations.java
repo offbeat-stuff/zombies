@@ -101,7 +101,7 @@ public abstract class DifficultyCalculations {
   }
 
   private static Stream<ItemStack> items(ServerPlayerEntity player) {
-    return player.getInventory().getMainStacks().stream();
+    return player.getInventory().main.stream();
   }
 
   private static double getPlayerScore(ServerPlayerEntity player) {

@@ -2,8 +2,10 @@ package org.codeberg.zenxarch.zombies.data.spawn_conditions;
 
 import com.mojang.serialization.MapCodec;
 import java.util.List;
-import net.minecraft.entity.spawn.SpawnCondition;
-import net.minecraft.entity.spawn.SpawnContext;
+
+import org.codeberg.zenxarch.zombies.entity.variant.SpawnCondition;
+import org.codeberg.zenxarch.zombies.entity.variant.SpawnContext;
+
 import net.minecraft.util.dynamic.Codecs;
 
 public record AllOfSpawnCondition(List<SpawnCondition> conditions) implements SpawnCondition {

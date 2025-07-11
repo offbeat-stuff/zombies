@@ -7,7 +7,6 @@ import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Util;
-import org.codeberg.zenxarch.zombies.entity.ExtendedZombieEntity;
 import net.minecraft.util.dynamic.Codecs;
 import org.codeberg.zenxarch.zombies.data.entity.effect.MobEffect;
 import org.jetbrains.annotations.Nullable;

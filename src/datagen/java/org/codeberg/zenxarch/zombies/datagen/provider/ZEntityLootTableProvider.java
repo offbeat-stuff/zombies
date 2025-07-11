@@ -5,12 +5,18 @@ import static net.minecraft.loot.entry.LootTableEntry.builder;
 import static org.codeberg.zenxarch.zombies.datagen.loot_table.LootTableUtils.*;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.function.BiConsumer;
+
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
+import net.fabricmc.fabric.api.datagen.v1.provider.FabricBlockLootTableProvider;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricEntityLootTableProvider;
+import net.fabricmc.fabric.api.datagen.v1.provider.FabricLootTableProvider;
+import net.fabricmc.fabric.api.datagen.v1.provider.SimpleFabricLootTableProvider;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.Items;
 import net.minecraft.loot.LootPool;
 import net.minecraft.loot.LootTable;
+import net.minecraft.loot.LootTable.Builder;
 import net.minecraft.loot.function.EnchantedCountIncreaseLootFunction;
 import net.minecraft.loot.function.SetCountLootFunction;
 import net.minecraft.loot.provider.number.UniformLootNumberProvider;
@@ -20,7 +26,7 @@ import net.minecraft.registry.RegistryWrapper.WrapperLookup;
 import org.codeberg.zenxarch.zombies.Zombies;
 import org.jetbrains.annotations.NotNull;
 
-public class ZEntityLootTableProvider extends FabricEntityLootTableProvider {
+public class ZEntityLootTableProvider extends SimpleFabricLootTableProvider {
 
   public ZEntityLootTableProvider(
       FabricDataOutput output, @NotNull CompletableFuture<WrapperLookup> registryLookup) {
@@ -49,7 +55,12 @@ public class ZEntityLootTableProvider extends FabricEntityLootTableProvider {
     addLootTable(
         EntityType.ZOMBIE,
         ZOMBIE_DROPS,
-        pool().with(builder(EntityType.ZOMBIE.getLootTableKey().orElseThrow())),
+        pool().with(builder(EntityType.ZOMBIE.getLootTableId())),
         pool().with(boneEntry));
+  }
+
+  @Override
+  public void accept(
+      BiConsumer<RegistryKey<LootTable>, Builder> lootTableBiConsumer) {
   }
 }
