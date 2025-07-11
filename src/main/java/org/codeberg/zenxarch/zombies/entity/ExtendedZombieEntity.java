@@ -1,6 +1,5 @@
 package org.codeberg.zenxarch.zombies.entity;
 
-import com.mojang.datafixers.util.Pair;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import java.util.List;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
@@ -9,12 +8,9 @@ import net.minecraft.entity.EntityData;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.ai.brain.Brain.Profile;
-import net.minecraft.entity.ai.brain.MemoryModuleState;
-import net.minecraft.entity.ai.brain.MemoryModuleType;
 import net.minecraft.entity.ai.pathing.EntityNavigation;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.mob.ZombieEntity;
 import net.minecraft.entity.passive.IronGolemEntity;
 import net.minecraft.entity.passive.MerchantEntity;
@@ -36,7 +32,6 @@ import net.tslat.smartbrainlib.api.core.SmartBrainProvider;
 import net.tslat.smartbrainlib.api.core.behaviour.FirstApplicableBehaviour;
 import net.tslat.smartbrainlib.api.core.behaviour.OneRandomBehaviour;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.attack.AnimatableMeleeAttack;
-import net.tslat.smartbrainlib.api.core.behaviour.custom.attack.LeapAtTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.look.LookAtAttackTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.misc.AvoidSun;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.misc.Idle;
@@ -56,14 +51,11 @@ import net.tslat.smartbrainlib.api.core.sensor.custom.UnreachableTargetSensor;
 import net.tslat.smartbrainlib.api.core.sensor.vanilla.HurtBySensor;
 import net.tslat.smartbrainlib.api.core.sensor.vanilla.NearbyLivingEntitySensor;
 import net.tslat.smartbrainlib.api.core.sensor.vanilla.NearbyPlayersSensor;
-import net.tslat.smartbrainlib.object.MemoryTest;
-import net.tslat.smartbrainlib.registry.SBLMemoryTypes;
-import net.tslat.smartbrainlib.util.BrainUtil;
-import net.tslat.smartbrainlib.util.SensoryUtil;
 import org.codeberg.zenxarch.zombies.ZombieGamerules;
 import org.codeberg.zenxarch.zombies.data.entity.MobAttachments;
 import org.codeberg.zenxarch.zombies.data.entity.effect.MobEffect;
 import org.codeberg.zenxarch.zombies.difficulty.ExtendedDifficulty;
+import org.codeberg.zenxarch.zombies.entity.behaviour.LeapAtUnreachableTargetBehaviour;
 import org.codeberg.zenxarch.zombies.entity.behaviour.RideMobsBehaviour;
 import org.codeberg.zenxarch.zombies.entity.variant.MobVariant;
 import org.codeberg.zenxarch.zombies.spawning.ZombieNbtUtils;
@@ -144,31 +136,10 @@ public class ExtendedZombieEntity extends ZombieEntity
         new AnimatableMeleeAttack<>(0)
             .whenStarting(zombie -> zombie.setAttacking(true))
             .whenStopping(zombie -> zombie.setAttacking(false)),
-        new LeapAtTarget<>(0) {
-          private static final MemoryTest MEMORY_REQUIREMENTS =
-              MemoryTest.builder(4)
-                  .hasMemories(
-                      MemoryModuleType.ATTACK_TARGET,
-                      MemoryModuleType.CANT_REACH_WALK_TARGET_SINCE,
-                      SBLMemoryTypes.TARGET_UNREACHABLE.get())
-                  .noMemory(MemoryModuleType.ATTACK_COOLING_DOWN);
-
-          @Override
-          protected List<Pair<MemoryModuleType<?>, MemoryModuleState>> getMemoryRequirements() {
-            return MEMORY_REQUIREMENTS;
-          }
-        }.startCondition(ExtendedZombieEntity::shouldTryLeaping)
+        new LeapAtUnreachableTargetBehaviour<>(0)
             .whenStarting(zombie -> zombie.setAttacking(true))
             .whenStopping(zombie -> zombie.setAttacking(false)),
         new RideMobsBehaviour<>());
-  }
-
-  private static boolean shouldTryLeaping(MobEntity self) {
-    var target = BrainUtil.getTargetOfEntity(self);
-    return self.isOnGround()
-        && BrainUtil.getMemory(self, MemoryModuleType.CANT_REACH_WALK_TARGET_SINCE) > 100
-        && SensoryUtil.hasLineOfSight(self, target)
-        && self.squaredDistanceTo(target) < 4 * 4;
   }
 
   @Override
