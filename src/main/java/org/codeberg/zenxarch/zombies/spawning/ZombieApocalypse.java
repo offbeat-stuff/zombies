@@ -4,28 +4,18 @@ import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Function;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.entity.Entity;
-import net.minecraft.nbt.NbtCompound;
 import net.minecraft.predicate.entity.EntityPredicates;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.entry.RegistryEntry.Reference;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.World;
 import org.codeberg.zenxarch.zombies.ZombieGamerules;
-import org.codeberg.zenxarch.zombies.Zombies;
 import org.codeberg.zenxarch.zombies.difficulty.ExtendedDifficulty;
 import org.codeberg.zenxarch.zombies.entity.ExtendedZombieEntity;
-import org.codeberg.zenxarch.zombies.entity.ZombieVariant;
-import org.codeberg.zenxarch.zombies.entity.ZombieVariantRegistryHelper;
-import org.codeberg.zenxarch.zombies.registry.ZombieRegistryKeys;
 
 public class ZombieApocalypse {
   private ServerWorld world;
@@ -50,10 +40,15 @@ public class ZombieApocalypse {
     this.world.spawnEntityAndPassengers(zombie);
   }
 
+  private Optional<ExtendedZombieEntity> createZombie(BlockPos pos) {
+    var zombie = new ExtendedZombieEntity(world);
+    zombie.refreshPositionAndAngles(pos, world.random.nextFloat() * 360.0F, 0.0F);
+    if (zombie.canSpawn(world)) return Optional.of(zombie);
+    return Optional.empty();
+  }
+
   private void spawnZombie(ServerPlayerEntity player, BlockPos pos, ExtendedDifficulty difficulty) {
-    ZombieVariantRegistryHelper.getRandomVariantFromPos(world, pos, player, difficulty)
-        .flatMap(t -> ZombieVariantRegistryHelper.newZombie(world, t, pos))
-        .ifPresent(this::spawnZombie);
+    createZombie(pos).ifPresent(this::spawnZombie);
   }
 
   public void spawnZombiesNear(ServerPlayerEntity player, List<BlockPos> positions) {
@@ -113,45 +108,5 @@ public class ZombieApocalypse {
   public static boolean isApocalypticWorld(ServerWorld world) {
     if (world.getRegistryKey().equals(World.OVERWORLD)) return true;
     return false;
-  }
-
-  public static final String ZOMBIE_ID_KEY = "zenxarch_zombie_id";
-
-  private static Identifier toId(String id) {
-    int i = id.indexOf(":");
-    if (i >= 0) {
-      String string = id.substring(i + 1);
-      if (i != 0) {
-        String string2 = id.substring(0, i);
-        return Identifier.of(string2, string);
-      } else {
-        return Zombies.id(string);
-      }
-    } else {
-      return Zombies.id(id);
-    }
-  }
-
-  private static Optional<Reference<ZombieVariant>> fromId(World world, Identifier id) {
-    var registry = world.getRegistryManager().getOptionalWrapper(ZombieRegistryKeys.ZOMBIE_VARIANT);
-    if (registry.isEmpty()) return Optional.empty();
-    return registry.get().getOptional(RegistryKey.of(ZombieRegistryKeys.ZOMBIE_VARIANT, id));
-  }
-
-  public static Optional<Entity> loadFromNbt(NbtCompound nbt, World world) {
-    return switch (nbt.getString(ZOMBIE_ID_KEY)) {
-      case "" -> Optional.empty();
-      case String id -> {
-        try {
-          var result =
-              fromId(world, toId(id)).map(variant -> new ExtendedZombieEntity(world, variant));
-          result.ifPresent(zombie -> zombie.readNbt(nbt));
-          yield result.map(Function.identity());
-        } catch (Exception e) {
-          Zombies.LOGGER.info("Exception caught: {}", e.getMessage());
-          yield Optional.empty();
-        }
-      }
-    };
   }
 }

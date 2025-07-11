@@ -16,7 +16,6 @@ import net.minecraft.util.math.ChunkSectionPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.World;
-import org.codeberg.zenxarch.zombies.data.ItemAttributeUtils;
 import org.codeberg.zenxarch.zombies.spawning.ZombieApocalypse;
 
 public abstract class DifficultyCalculations {
@@ -78,12 +77,14 @@ public abstract class DifficultyCalculations {
   }
 
   private static double mapHours(Difficulty difficulty, double hours) {
-    return switch (difficulty) {
-      case PEACEFUL -> 0.0;
-      case EASY -> normalize(hours, 8.0, 1.5);
-      case NORMAL -> normalize(hours, 20.0, 1.5);
-      case HARD -> normalize(hours, 35.0, 1.5);
-    };
+    var delta =
+        switch (difficulty) {
+          case PEACEFUL -> 0.0;
+          case EASY -> normalize(hours, 8.0, 1.5);
+          case NORMAL -> normalize(hours, 20.0, 1.5);
+          case HARD -> normalize(hours, 35.0, 1.5);
+        };
+    return MathHelper.lerp(delta, 0.25, 1.0);
   }
 
   private static double getDays(ServerWorld world) {
@@ -100,7 +101,7 @@ public abstract class DifficultyCalculations {
   }
 
   private static Stream<ItemStack> items(ServerPlayerEntity player) {
-    return player.getInventory().main.stream();
+    return player.getInventory().getMainStacks().stream();
   }
 
   private static double getPlayerScore(ServerPlayerEntity player) {

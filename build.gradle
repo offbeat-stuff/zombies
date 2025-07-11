@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version '1.10-SNAPSHOT'
+	id 'fabric-loom' version '1.11-SNAPSHOT'
 }
 
 version = project.mod_version
@@ -21,6 +21,10 @@ repositories {
 	}
 }
 
+loom {
+	splitEnvironmentSourceSets()
+}
+
 dependencies {
 	// To change the versions see the gradle.properties file
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
@@ -29,11 +33,15 @@ dependencies {
 
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-	modImplementation "net.tslat.smartbrainlib:SmartBrainLib-fabric-${project.minecraft_version}:${project.sbl_version}"
+	modImplementation "net.tslat.smartbrainlib:SmartBrainLib-fabric-${project.sbl_mc_version}:${project.sbl_version}"
 }
 
 fabricApi {
-	configureDataGeneration ()
+	configureDataGeneration() {
+		createSourceSet = true
+		client = true
+		modId = "zombies_zenxarch_datagen"
+	}
 }
 
 processResources {

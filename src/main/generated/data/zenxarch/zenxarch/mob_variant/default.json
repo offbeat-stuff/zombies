@@ -1,0 +1,8 @@
+{
+  "components": {},
+  "spawnConditions": [
+    {
+      "priority": 1
+    }
+  ]
+}

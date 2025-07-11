@@ -1,0 +1,150 @@
+{
+  "components": {
+    "zenxarch:equipment_table": {
+      "loot_table": "zenxarch:common_zombie_equipment",
+      "slot_drop_chances": 7.5E-4
+    },
+    "zenxarch:loot_table": "zenxarch:zombie_drops",
+    "zenxarch:on_attack": {
+      "type": "zenxarch:status_effect",
+      "effects": {
+        "duration": 80,
+        "id": "minecraft:poison",
+        "show_icon": true
+      }
+    },
+    "zenxarch:on_killed": {
+      "type": "zenxarch:single",
+      "effect": {
+        "type": "zenxarch:spawn_effect_cloud",
+        "duration": 200,
+        "effects": {
+          "duration": 200,
+          "id": "minecraft:poison",
+          "show_icon": true
+        },
+        "particleEffect": {
+          "type": "minecraft:entity_effect",
+          "color": -7888029
+        },
+        "radius": 5.0,
+        "radiusOnUse": 2.0
+      }
+    },
+    "zenxarch:on_spawn": {
+      "type": "zenxarch:all_of",
+      "effects": [
+        {
+          "type": "zenxarch:conditional",
+          "condition": {
+            "type": "zenxarch:is_day"
+          },
+          "effect": {
+            "type": "zenxarch:single",
+            "effect": {
+              "type": "zenxarch:default_attribute",
+              "attribute": "minecraft:follow_range",
+              "value": {
+                "type": "minecraft:clamped_normal",
+                "deviation": 8.0,
+                "max": 26.0,
+                "mean": 20.0,
+                "min": 14.0
+              }
+            }
+          },
+          "forSelf": true
+        },
+        {
+          "type": "zenxarch:conditional",
+          "condition": {
+            "type": "zenxarch:is_night"
+          },
+          "effect": {
+            "type": "zenxarch:single",
+            "effect": {
+              "type": "zenxarch:default_attribute",
+              "attribute": "minecraft:follow_range",
+              "value": {
+                "type": "minecraft:clamped_normal",
+                "deviation": 8.0,
+                "max": 38.0,
+                "mean": 32.0,
+                "min": 26.0
+              }
+            }
+          },
+          "forSelf": true
+        },
+        {
+          "type": "zenxarch:random",
+          "chance": 0.8,
+          "effects": {
+            "type": "zenxarch:all_of",
+            "effects": [
+              {
+                "type": "zenxarch:single",
+                "effect": {
+                  "type": "zenxarch:default_attribute",
+                  "attribute": "minecraft:max_health",
+                  "value": 10.0
+                }
+              },
+              {
+                "type": "zenxarch:conditional",
+                "condition": {
+                  "type": "zenxarch:is_night"
+                },
+                "effect": {
+                  "type": "zenxarch:single",
+                  "effect": {
+                    "type": "zenxarch:attribute_modifier",
+                    "attribute": "minecraft:movement_speed",
+                    "modifiers": {
+                      "amount": 0.5,
+                      "id": "zenxarch:zombie_speed_boost",
+                      "operation": "add_multiplied_total"
+                    }
+                  }
+                },
+                "forSelf": true
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "zenxarch:on_tick": {
+      "type": "zenxarch:single",
+      "effect": {
+        "type": "zenxarch:spawn_particle",
+        "horizontal_position": {
+          "type": "in_bounding_box"
+        },
+        "horizontal_velocity": {
+          "base": 0.2
+        },
+        "particle": {
+          "type": "minecraft:entity_effect",
+          "color": -7888029
+        },
+        "speed": 0.2,
+        "vertical_position": {
+          "type": "in_bounding_box"
+        },
+        "vertical_velocity": {
+          "base": 0.2
+        }
+      }
+    }
+  },
+  "spawnConditions": [
+    {
+      "condition": {
+        "type": "minecraft:biome",
+        "biomes": "#zenxarch:with_swamp_zombies"
+      },
+      "priority": 16
+    }
+  ]
+}

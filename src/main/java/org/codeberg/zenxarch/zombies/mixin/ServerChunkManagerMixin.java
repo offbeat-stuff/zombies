@@ -18,9 +18,7 @@ public abstract class ServerChunkManagerMixin {
   @Shadow
   public abstract World getWorld();
 
-  @Inject(
-      method = "tickChunks(Lnet/minecraft/util/profiler/Profiler;JLjava/util/List;)V",
-      at = @At("TAIL"))
+  @Inject(method = "tickChunks(Lnet/minecraft/util/profiler/Profiler;J)V", at = @At("TAIL"))
   private void zenxarch$handle_spawners(CallbackInfo ci) {
     if (!(getWorld() instanceof ServerWorld sw)) return;
     if (!(getWorld() instanceof SpawnerProvider sp)) return;
