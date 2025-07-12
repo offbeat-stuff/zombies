@@ -35,6 +35,7 @@ import net.tslat.smartbrainlib.api.core.behaviour.custom.attack.AnimatableMeleeA
 import net.tslat.smartbrainlib.api.core.behaviour.custom.look.LookAtAttackTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.misc.AvoidSun;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.misc.Idle;
+import net.tslat.smartbrainlib.api.core.behaviour.custom.misc.ReactToUnreachableTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.move.EscapeSun;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.move.InteractWithDoor;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.move.WalkOrRunToWalkTarget;
@@ -56,7 +57,7 @@ import org.codeberg.zenxarch.zombies.data.entity.MobAttachments;
 import org.codeberg.zenxarch.zombies.data.entity.effect.MobEffect;
 import org.codeberg.zenxarch.zombies.difficulty.ExtendedDifficulty;
 import org.codeberg.zenxarch.zombies.entity.behaviour.LeapAtUnreachableTargetBehaviour;
-import org.codeberg.zenxarch.zombies.entity.behaviour.RideMobsBehaviour;
+import org.codeberg.zenxarch.zombies.entity.behaviour.RideMobsBehaviourImpl;
 import org.codeberg.zenxarch.zombies.entity.variant.MobVariant;
 import org.codeberg.zenxarch.zombies.spawning.ZombieNbtUtils;
 import org.jetbrains.annotations.Nullable;
@@ -139,7 +140,7 @@ public class ExtendedZombieEntity extends ZombieEntity
         new LeapAtUnreachableTargetBehaviour<>(0)
             .whenStarting(zombie -> zombie.setAttacking(true))
             .whenStopping(zombie -> zombie.setAttacking(false)),
-        new RideMobsBehaviour<>());
+        new ReactToUnreachableTarget<>().reaction(RideMobsBehaviourImpl::rideFlyingMobs));
   }
 
   @Override
