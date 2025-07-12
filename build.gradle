@@ -23,6 +23,13 @@ repositories {
 
 loom {
 	splitEnvironmentSourceSets()
+
+	mods {
+		"zombies_zenxarch" {
+			sourceSet sourceSets.main
+			sourceSet sourceSets.client
+		}
+	}
 }
 
 dependencies {
@@ -70,7 +77,8 @@ java {
 }
 
 jar {
-	inputs.property "archivesBaseName", project.base.archivesName
+	inputs.property "archivesName", project.base.archivesName
+
 	from("LICENSE") {
 		rename { "${it}_${inputs.properties.archivesName}"}
 	}
