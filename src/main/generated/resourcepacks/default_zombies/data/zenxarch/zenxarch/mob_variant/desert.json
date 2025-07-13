@@ -134,7 +134,7 @@
         "type": "minecraft:biome",
         "biomes": "#zenxarch:with_desert_zombies"
       },
-      "priority": 16
+      "priority": 64
     }
   ]
 }

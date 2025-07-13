@@ -126,7 +126,7 @@
         "type": "minecraft:biome",
         "biomes": "#zenxarch:with_flame_zombies"
       },
-      "priority": 16
+      "priority": 64
     }
   ]
 }

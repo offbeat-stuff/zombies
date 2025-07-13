@@ -116,7 +116,7 @@
   },
   "spawnConditions": [
     {
-      "priority": 1
+      "priority": 64
     }
   ]
 }

@@ -163,16 +163,20 @@ public final class ZombieVariantGenerator {
     register(registry, COMMON, new ZombieVariantMapBuilder(), condition(1));
   }
 
+  private static final int COMMON_WEIGHT = 512;
+  private static final int UNCOMMON_WEIGHT = 128;
+  private static final int RARE_WEIGHT = 64;
+
   public static void bootstrap(Registerable<MobVariant> registry) {
     var lookup = registry.getRegistryLookup(RegistryKeys.DAMAGE_TYPE);
-    register(registry, COMMON, defaultEquipmentMap(), condition(512));
+    register(registry, COMMON, defaultEquipmentMap(), condition(COMMON_WEIGHT));
     register(
         registry,
         SWAPPING,
         defaultEquipmentMap()
             .with(MobAttachments.ON_ATTACK, swapPositions())
             .with(MobAttachments.ON_TICK, spawnParticles(ParticleTypes.PORTAL, 0.2F)),
-        condition(1));
+        condition(RARE_WEIGHT));
 
     register(
         registry,
@@ -181,7 +185,7 @@ public final class ZombieVariantGenerator {
             .with(MobAttachments.ON_ATTACK, ignite(1.0F))
             .with(MobAttachments.ON_TICK, spawnParticles(ParticleTypes.FLAME, 0.2F))
             .with(MobAttachments.INVULNERABLE_TO, lookup.getOrThrow(DamageTypeTags.IS_FIRE)),
-        condition(registry, ZBiomeTags.WITH_FLAME_ZOMBIES, 16));
+        condition(registry, ZBiomeTags.WITH_FLAME_ZOMBIES, RARE_WEIGHT));
 
     register(
         registry,
@@ -190,7 +194,7 @@ public final class ZombieVariantGenerator {
             .with(MobAttachments.ON_ATTACK, freeze())
             .with(MobAttachments.ON_TICK, spawnParticles(ParticleTypes.SNOWFLAKE, 0.2F))
             .with(MobAttachments.INVULNERABLE_TO, lookup.getOrThrow(DamageTypeTags.IS_FREEZING)),
-        condition(registry, ZBiomeTags.WITH_FROST_ZOMBIES, 16));
+        condition(registry, ZBiomeTags.WITH_FROST_ZOMBIES, RARE_WEIGHT));
 
     register(
         registry,
@@ -201,12 +205,12 @@ public final class ZombieVariantGenerator {
                 AllOfMobEffect.create(
                     HealFromDamage.INSTANCE, spawnParticles(ParticleTypes.HEART, 1.0F)))
             .with(MobAttachments.EQUIPMENT_TABLE, ZLootTableProvider.AXE_ZOMBIE_EQUIPMENT),
-        condition(registry, ZBiomeTags.WITH_AXE_ZOMBIES, 128));
+        condition(registry, ZBiomeTags.WITH_AXE_ZOMBIES, UNCOMMON_WEIGHT));
     register(
         registry,
         SWAMP,
         defaultEffectMapWithSpawnCloud(List.of(StatusEffects.POISON)),
-        condition(registry, ZBiomeTags.WITH_SWAMP_ZOMBIES, 16));
+        condition(registry, ZBiomeTags.WITH_SWAMP_ZOMBIES, RARE_WEIGHT));
     register(
         registry,
         DESERT,
@@ -214,7 +218,7 @@ public final class ZombieVariantGenerator {
             .with(
                 MobAttachments.TEXTURE_OVERRIDE,
                 new AssetInfo(Identifier.ofVanilla("entity/zombie/husk"))),
-        condition(registry, ZBiomeTags.WITH_DESERT_ZOMBIES, 16));
+        condition(registry, ZBiomeTags.WITH_DESERT_ZOMBIES, RARE_WEIGHT));
   }
 
   private static void register(
