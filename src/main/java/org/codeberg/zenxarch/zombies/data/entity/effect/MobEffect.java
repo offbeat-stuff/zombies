@@ -18,6 +18,7 @@ import net.minecraft.util.math.floatprovider.FloatProvider;
 import org.codeberg.zenxarch.zombies.Zombies;
 import org.codeberg.zenxarch.zombies.data.entity.effect.pair.AllOfMobEffect;
 import org.codeberg.zenxarch.zombies.data.entity.effect.pair.ConditionalSpawnEffect;
+import org.codeberg.zenxarch.zombies.data.entity.effect.pair.ConvertToEntityTypeEffect;
 import org.codeberg.zenxarch.zombies.data.entity.effect.pair.DefaultMobEffect;
 import org.codeberg.zenxarch.zombies.data.entity.effect.pair.HealFromDamage;
 import org.codeberg.zenxarch.zombies.data.entity.effect.pair.RandomMobEffect;
@@ -49,6 +50,7 @@ public interface MobEffect {
     register("swap", SwapMobEffect.CODEC);
     register("conditional", ConditionalSpawnEffect.CODEC);
     register("heal", HealFromDamage.CODEC);
+    register("convert_to", ConvertToEntityTypeEffect.CODEC);
   }
 
   private static void register(String id, MapCodec<? extends MobEffect> codec) {

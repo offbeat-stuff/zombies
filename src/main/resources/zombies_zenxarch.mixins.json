@@ -8,7 +8,8 @@
     "ServerChunkManagerMixin",
     "MobEntityMixin",
     "LivingEntityAccessor",
-    "LivingEntityMixin"
+    "LivingEntityMixin",
+    "EntityConversionTypeInvoker"
   ],
   "injectors": {
     "defaultRequire": 1
