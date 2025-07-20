@@ -29,6 +29,7 @@ public interface LivingEffect {
     register("apply_status_effect", StatusLivingEffect.CODEC);
     register("default_attribute", DefaultAttributeEffect.CODEC);
     register("attribute_modifier", AttributeModifierEffect.CODEC);
+    register("explosion", ExplosionEffect.CODEC);
   }
 
   private static void register(String id, MapCodec<? extends LivingEffect> codec) {
