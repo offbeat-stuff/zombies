@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributeModifier.Operation;
@@ -44,6 +45,7 @@ import org.codeberg.zenxarch.zombies.data.entity.effect.single.DefaultAttributeE
 import org.codeberg.zenxarch.zombies.data.entity.effect.single.SpawnEffectCloudEffect;
 import org.codeberg.zenxarch.zombies.data.spawn_conditions.DaySpawnCondition;
 import org.codeberg.zenxarch.zombies.data.spawn_conditions.NightSpawnCondition;
+import org.codeberg.zenxarch.zombies.data.spawn_conditions.RainingSpawnCondition;
 import org.codeberg.zenxarch.zombies.datagen.provider.ZEntityLootTableProvider;
 import org.codeberg.zenxarch.zombies.datagen.provider.ZLootTableProvider;
 import org.codeberg.zenxarch.zombies.entity.variant.MobVariant;
@@ -80,6 +82,7 @@ public final class ZombieVariantGenerator {
   public static final RegistryKey<MobVariant> FREEZE = INITIALIZER.of("freeze");
   public static final RegistryKey<MobVariant> SWAMP = INITIALIZER.of("swamp");
   public static final RegistryKey<MobVariant> DESERT = INITIALIZER.of("desert");
+  public static final RegistryKey<MobVariant> RAIN = INITIALIZER.of("rain");
 
   private static MobEffect createAttributeEffect(
       RegistryEntry<EntityAttribute> attribute, FloatProvider value) {
@@ -219,6 +222,15 @@ public final class ZombieVariantGenerator {
                 MobAttachments.TEXTURE_OVERRIDE,
                 new AssetInfo(Identifier.ofVanilla("entity/zombie/husk"))),
         condition(registry, ZBiomeTags.WITH_DESERT_ZOMBIES, RARE_WEIGHT));
+    register(
+        registry,
+        RAIN,
+        defaultEquipmentMap()
+            .with(
+                MobAttachments.TEXTURE_OVERRIDE,
+                new AssetInfo(Identifier.of("entity/zombie/drowned")))
+            .with(MobAttachments.LOOT_TABLE, EntityType.DROWNED.getLootTableKey().get()),
+        SpawnConditionSelectors.createSingle(RainingSpawnCondition.INSTANCE, UNCOMMON_WEIGHT));
   }
 
   private static void register(
