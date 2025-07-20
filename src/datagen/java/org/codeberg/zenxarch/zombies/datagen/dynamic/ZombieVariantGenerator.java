@@ -42,6 +42,7 @@ import org.codeberg.zenxarch.zombies.data.entity.effect.pair.SingleMobEffect;
 import org.codeberg.zenxarch.zombies.data.entity.effect.pair.StatusMobEffect;
 import org.codeberg.zenxarch.zombies.data.entity.effect.single.AttributeModifierEffect;
 import org.codeberg.zenxarch.zombies.data.entity.effect.single.DefaultAttributeEffect;
+import org.codeberg.zenxarch.zombies.data.entity.effect.single.ExplosionEffect;
 import org.codeberg.zenxarch.zombies.data.entity.effect.single.SpawnEffectCloudEffect;
 import org.codeberg.zenxarch.zombies.data.spawn_conditions.DaySpawnCondition;
 import org.codeberg.zenxarch.zombies.data.spawn_conditions.NightSpawnCondition;
@@ -83,6 +84,7 @@ public final class ZombieVariantGenerator {
   public static final RegistryKey<MobVariant> SWAMP = INITIALIZER.of("swamp");
   public static final RegistryKey<MobVariant> DESERT = INITIALIZER.of("desert");
   public static final RegistryKey<MobVariant> RAIN = INITIALIZER.of("rain");
+  public static final RegistryKey<MobVariant> EXPLOSION = INITIALIZER.of("explosion");
 
   private static MobEffect createAttributeEffect(
       RegistryEntry<EntityAttribute> attribute, FloatProvider value) {
@@ -231,6 +233,12 @@ public final class ZombieVariantGenerator {
                 new AssetInfo(Identifier.of("entity/zombie/drowned")))
             .with(MobAttachments.LOOT_TABLE, EntityType.DROWNED.getLootTableKey().get()),
         SpawnConditionSelectors.createSingle(RainingSpawnCondition.INSTANCE, UNCOMMON_WEIGHT));
+    register(
+        registry,
+        EXPLOSION,
+        defaultAttributeMap()
+            .with(MobAttachments.ON_ATTACK, new SingleMobEffect(new ExplosionEffect(3.0F), true)),
+        condition(RARE_WEIGHT));
   }
 
   private static void register(
