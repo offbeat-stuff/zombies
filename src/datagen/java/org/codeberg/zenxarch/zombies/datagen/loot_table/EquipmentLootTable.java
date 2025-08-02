@@ -58,6 +58,7 @@ public interface EquipmentLootTable {
     return pool()
         .with(ItemEntry.builder(Items.WOODEN_AXE).weight(5))
         .with(ItemEntry.builder(Items.STONE_AXE).weight(100))
+        .with(ItemEntry.builder(Items.COPPER_AXE).weight(20))
         .with(ItemEntry.builder(Items.IRON_AXE).weight(10))
         .with(ItemEntry.builder(Items.DIAMOND_AXE).weight(1));
   }
@@ -70,8 +71,8 @@ public interface EquipmentLootTable {
   }
 
   public static LootPool.Builder vanillaEquipmentTable() {
-    final int[] equipmentLevel = {0, 1, 2, 3, 4};
-    final int[] weights = {3706, 4873, 1290, 127, 4};
+    final int[] equipmentLevel = {0, 1, 2, 3, 4, 5};
+    final int[] weights = {2286, 3143, 3335, 1065, 159, 13};
     var pool = pool();
     for (var index : equipmentLevel)
       pool = pool.with(applyEnchantment(getLootTableForLevel(index), weights[index]));
