@@ -37,10 +37,12 @@ import org.codeberg.zenxarch.zombies.data.entity.effect.*;
 import org.codeberg.zenxarch.zombies.data.entity.effect.pair.AllOfMobEffect;
 import org.codeberg.zenxarch.zombies.data.entity.effect.pair.ConditionalSpawnEffect;
 import org.codeberg.zenxarch.zombies.data.entity.effect.pair.HealFromDamage;
+import org.codeberg.zenxarch.zombies.data.entity.effect.pair.IntervalMobEffect;
 import org.codeberg.zenxarch.zombies.data.entity.effect.pair.RandomMobEffect;
 import org.codeberg.zenxarch.zombies.data.entity.effect.pair.SingleMobEffect;
 import org.codeberg.zenxarch.zombies.data.entity.effect.pair.StatusMobEffect;
 import org.codeberg.zenxarch.zombies.data.entity.effect.single.AttributeModifierEffect;
+import org.codeberg.zenxarch.zombies.data.entity.effect.single.BonemealLivingEffect;
 import org.codeberg.zenxarch.zombies.data.entity.effect.single.DefaultAttributeEffect;
 import org.codeberg.zenxarch.zombies.data.entity.effect.single.ExplosionEffect;
 import org.codeberg.zenxarch.zombies.data.entity.effect.single.SpawnEffectCloudEffect;
@@ -87,6 +89,7 @@ public final class ZombieVariantGenerator {
   public static final RegistryKey<MobVariant> RAIN = INITIALIZER.of("rain");
   public static final RegistryKey<MobVariant> EXPLOSION = INITIALIZER.of("explosion");
   public static final RegistryKey<MobVariant> INVISIBLE = INITIALIZER.of("invisible");
+  public static final RegistryKey<MobVariant> BONEMEAL = INITIALIZER.of("bonemeal");
 
   // public static final RegistryKey<MobVariant> INK_ATTACK = INITIALIZER.of("ink_attack");
 
@@ -259,6 +262,17 @@ public final class ZombieVariantGenerator {
         INVISIBLE,
         spawnWithEffects(List.of(StatusEffects.INVISIBILITY)),
         condition(RARE_WEIGHT));
+    register(
+        registry,
+        BONEMEAL,
+        defaultEquipmentMap()
+            .with(
+                MobAttachments.ON_TICK,
+                AllOfMobEffect.create(
+                    new IntervalMobEffect(
+                        20, new SingleMobEffect(new BonemealLivingEffect(), true)),
+                    spawnParticles(ParticleTypes.HAPPY_VILLAGER, 0.2F))),
+        condition(registry, ZBiomeTags.WITH_AXE_ZOMBIES, RARE_WEIGHT));
 
     // register(
     //     registry,
