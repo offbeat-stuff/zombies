@@ -44,6 +44,7 @@ import org.codeberg.zenxarch.zombies.data.entity.effect.single.AttributeModifier
 import org.codeberg.zenxarch.zombies.data.entity.effect.single.DefaultAttributeEffect;
 import org.codeberg.zenxarch.zombies.data.entity.effect.single.ExplosionEffect;
 import org.codeberg.zenxarch.zombies.data.entity.effect.single.SpawnEffectCloudEffect;
+import org.codeberg.zenxarch.zombies.data.entity.effect.single.StatusLivingEffect;
 import org.codeberg.zenxarch.zombies.data.spawn_conditions.DaySpawnCondition;
 import org.codeberg.zenxarch.zombies.data.spawn_conditions.NightSpawnCondition;
 import org.codeberg.zenxarch.zombies.data.spawn_conditions.RainingSpawnCondition;
@@ -85,6 +86,7 @@ public final class ZombieVariantGenerator {
   public static final RegistryKey<MobVariant> DESERT = INITIALIZER.of("desert");
   public static final RegistryKey<MobVariant> RAIN = INITIALIZER.of("rain");
   public static final RegistryKey<MobVariant> EXPLOSION = INITIALIZER.of("explosion");
+  public static final RegistryKey<MobVariant> INVISIBLE = INITIALIZER.of("invisible");
 
   // public static final RegistryKey<MobVariant> INK_ATTACK = INITIALIZER.of("ink_attack");
 
@@ -151,6 +153,17 @@ public final class ZombieVariantGenerator {
     var particle = effects.get(0).value().createParticle(effectInstances.get(0));
     return defaultEquipmentMap()
         .with(MobAttachments.ON_ATTACK, new StatusMobEffect(effectInstances))
+        .with(MobAttachments.ON_TICK, spawnParticles(particle, 0.2F));
+  }
+
+  private static ZombieVariantMapBuilder spawnWithEffects(
+      List<RegistryEntry<StatusEffect>> effects) {
+    var effectInstances = effects.stream().map(e -> new StatusEffectInstance(e, -1)).toList();
+    var particle = effects.get(0).value().createParticle(effectInstances.get(0));
+    return defaultEquipmentMap()
+        .with(
+            MobAttachments.ON_SPAWN,
+            new SingleMobEffect(new StatusLivingEffect(effectInstances), true))
         .with(MobAttachments.ON_TICK, spawnParticles(particle, 0.2F));
   }
 
@@ -241,6 +254,12 @@ public final class ZombieVariantGenerator {
         defaultAttributeMap()
             .with(MobAttachments.ON_ATTACK, new SingleMobEffect(new ExplosionEffect(3.0F), true)),
         condition(RARE_WEIGHT));
+    register(
+        registry,
+        INVISIBLE,
+        spawnWithEffects(List.of(StatusEffects.INVISIBILITY)),
+        condition(RARE_WEIGHT));
+
     // register(
     //     registry,
     //     INK_ATTACK,
