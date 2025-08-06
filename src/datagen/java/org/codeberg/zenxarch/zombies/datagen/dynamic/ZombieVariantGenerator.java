@@ -86,6 +86,8 @@ public final class ZombieVariantGenerator {
   public static final RegistryKey<MobVariant> RAIN = INITIALIZER.of("rain");
   public static final RegistryKey<MobVariant> EXPLOSION = INITIALIZER.of("explosion");
 
+  // public static final RegistryKey<MobVariant> INK_ATTACK = INITIALIZER.of("ink_attack");
+
   private static MobEffect createAttributeEffect(
       RegistryEntry<EntityAttribute> attribute, FloatProvider value) {
     return new SingleMobEffect(new DefaultAttributeEffect(attribute, value), true);
@@ -239,6 +241,25 @@ public final class ZombieVariantGenerator {
         defaultAttributeMap()
             .with(MobAttachments.ON_ATTACK, new SingleMobEffect(new ExplosionEffect(3.0F), true)),
         condition(RARE_WEIGHT));
+    // register(
+    //     registry,
+    //     INK_ATTACK,
+    //     defaultAttributeMap()
+    //         .with(
+    //             MobAttachments.ON_ATTACK,
+    //             new SingleMobEffect(
+    //                 new SpawnParticleEffect(
+    //                     new SpawnParticlesEnchantmentEffect(
+    //                         ParticleTypes.SQUID_INK,
+    //                         SpawnParticlesEnchantmentEffect.withinBoundingBox(),
+    //                         SpawnParticlesEnchantmentEffect.withinBoundingBox(),
+    //                         SpawnParticlesEnchantmentEffect.scaledVelocity(0.1f),
+    //                         SpawnParticlesEnchantmentEffect.fixedVelocity(
+    //                             UniformFloatProvider.create(0.01f, 0.05f)),
+    //                         ConstantFloatProvider.create(0.05f)),
+    //                     450),
+    //                 false)),
+    //     condition(UNCOMMON_WEIGHT));
   }
 
   private static void register(
