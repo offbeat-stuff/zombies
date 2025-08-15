@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
+import net.minecraft.client.render.entity.model.EntityModelLayers;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
@@ -31,6 +32,7 @@ import net.minecraft.util.math.floatprovider.ConstantFloatProvider;
 import net.minecraft.util.math.floatprovider.FloatProvider;
 import net.minecraft.world.biome.Biome;
 import org.codeberg.zenxarch.zombies.Zombies;
+import org.codeberg.zenxarch.zombies.client.OverlayClient;
 import org.codeberg.zenxarch.zombies.data.ZBiomeTags;
 import org.codeberg.zenxarch.zombies.data.entity.MobAttachments;
 import org.codeberg.zenxarch.zombies.data.entity.effect.*;
@@ -249,7 +251,12 @@ public final class ZombieVariantGenerator {
             .with(
                 MobAttachments.TEXTURE_OVERRIDE,
                 new AssetInfo(Identifier.of("entity/zombie/drowned")))
-            .with(MobAttachments.LOOT_TABLE, EntityType.DROWNED.getLootTableKey().get()),
+            .with(MobAttachments.LOOT_TABLE, EntityType.DROWNED.getLootTableKey().get())
+            .with(
+                MobAttachments.OVERLAY,
+                OverlayClient.make(
+                    EntityModelLayers.DROWNED_OUTER,
+                    new AssetInfo(Identifier.ofVanilla("entity/zombie/drowned_outer_layer")))),
         SpawnConditionSelectors.createSingle(RainingSpawnCondition.INSTANCE, UNCOMMON_WEIGHT));
     register(
         registry,
