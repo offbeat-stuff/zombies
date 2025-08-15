@@ -45,6 +45,14 @@ public final class MobAttachments {
       AttachmentRegistry.createPersistent(
           id("invulnerable_to"), RegistryCodecs.entryList(RegistryKeys.DAMAGE_TYPE));
 
+  public static final AttachmentType<OverlayAttachment> OVERLAY =
+      AttachmentRegistry.create(
+          id("overlay"),
+          builder ->
+              builder
+                  .persistent(OverlayAttachment.CODEC)
+                  .syncWith(OverlayAttachment.PACKET_CODEC, AttachmentSyncPredicate.all()));
+
   public static final AttachmentType<MobEffect> ON_SPAWN = createZombieEvent("on_spawn");
   public static final AttachmentType<MobEffect> ON_TICK = createZombieEvent("on_tick");
   public static final AttachmentType<MobEffect> ON_ATTACK = createZombieEvent("on_attack");
