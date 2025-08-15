@@ -133,7 +133,7 @@ public class ExtendedZombieEntity extends ZombieEntity {
 
   @Override
   protected boolean burnsInDaylight() {
-    if (this.getWorld() instanceof ServerWorld sw)
+    if (this.getEntityWorld() instanceof ServerWorld sw)
       return sw.getGameRules().getBoolean(ZombieGamerules.ZOMBIES_BURN_IN_DAYLIGHT);
     return false;
   }
@@ -209,7 +209,7 @@ public class ExtendedZombieEntity extends ZombieEntity {
 
   @Override
   protected void onKilledBy(@Nullable LivingEntity adversary) {
-    if (this.getWorld() instanceof ServerWorld world)
+    if (this.getEntityWorld() instanceof ServerWorld world)
       executeEvent(MobAttachments.ON_KILLED, world, adversary);
     super.onKilledBy(adversary);
   }
@@ -223,7 +223,7 @@ public class ExtendedZombieEntity extends ZombieEntity {
 
   @Override
   public void onDeath(DamageSource damageSource) {
-    if (!this.isRemoved() && !this.dead && this.getWorld() instanceof ServerWorld world) {
+    if (!this.isRemoved() && !this.dead && this.getEntityWorld() instanceof ServerWorld world) {
       executeEvent(
           MobAttachments.ON_DEATH,
           world,
@@ -234,7 +234,7 @@ public class ExtendedZombieEntity extends ZombieEntity {
 
   @Override
   public void tick() {
-    if (this.getWorld() instanceof ServerWorld world)
+    if (this.getEntityWorld() instanceof ServerWorld world)
       executeEvent(MobAttachments.ON_TICK, world, null);
     super.tick();
   }
@@ -254,13 +254,13 @@ public class ExtendedZombieEntity extends ZombieEntity {
   @Override
   public void readCustomData(ReadView view) {
     super.readCustomData(view);
-    ZombieNbtUtils.getVariantFromView(this.getWorld(), view).ifPresent(this::setVariant);
+    ZombieNbtUtils.getVariantFromView(this.getEntityWorld(), view).ifPresent(this::setVariant);
   }
 
   @Override
   public void writeCustomData(WriteView view) {
     super.writeCustomData(view);
-    ZombieNbtUtils.setVariantToView(this.getWorld(), view, getVariant());
+    ZombieNbtUtils.setVariantToView(this.getEntityWorld(), view, getVariant());
   }
 
   @Override
