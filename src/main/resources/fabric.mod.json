@@ -19,6 +19,9 @@
 	"entrypoints": {
 		"main": [
 			"org.codeberg.zenxarch.zombies.Zombies"
+		],
+		"client": [
+			"org.codeberg.zenxarch.zombies.client.ZombiesClient"
 		]
 	},
 	"mixins": [
