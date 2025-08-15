@@ -27,7 +27,7 @@ public class ExtendedZombieEntityOverlayRenderer
   private void setOverlay(OverlayAttachment overlay) {
     this.overlay = overlay;
     if (this.overlay == null) return;
-    this.texture = overlay.texture().texturePath();
+    this.texture = this.overlay.texture().texturePath();
     try {
       var loader = MinecraftClient.getInstance().getLoadedEntityModels();
       this.model =

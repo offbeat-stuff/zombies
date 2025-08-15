@@ -18,7 +18,7 @@ public class ExtendedZombieEntityRenderer extends ZombieEntityRenderer {
 
   @Override
   public ZombieEntityRenderState createRenderState() {
-    return super.createRenderState();
+    return new ExtendedZombieEntityRenderState();
   }
 
   @Override
