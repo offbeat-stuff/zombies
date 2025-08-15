@@ -30,7 +30,9 @@ public class ExtendedZombieEntityOverlayRenderer
     this.texture = overlay.texture().texturePath();
     try {
       var loader = MinecraftClient.getInstance().getLoadedEntityModels();
-      this.model = new ZombieEntityModel<>(loader.getModelPart(this.overlay.getEntityModelLayer()));
+      this.model =
+          new ZombieEntityModel<>(
+              loader.getModelPart(OverlayClient.getEntityModelLayer(this.overlay)));
     } catch (Exception e) {
       this.model = null;
     }

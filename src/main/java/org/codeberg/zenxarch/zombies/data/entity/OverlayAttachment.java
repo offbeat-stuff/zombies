@@ -3,9 +3,6 @@ package org.codeberg.zenxarch.zombies.data.entity;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.netty.buffer.ByteBuf;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.minecraft.client.render.entity.model.EntityModelLayer;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.util.AssetInfo;
@@ -35,14 +32,4 @@ public record OverlayAttachment(Identifier layerId, String layerName, AssetInfo 
                   Identifier.PACKET_CODEC.decode(buf),
                   PacketCodecs.STRING.decode(buf),
                   AssetInfo.PACKET_CODEC.decode(buf)));
-
-  @Environment(EnvType.CLIENT)
-  public OverlayAttachment(EntityModelLayer layer, AssetInfo info) {
-    this(layer.id(), layer.name(), info);
-  }
-
-  @Environment(EnvType.CLIENT)
-  public EntityModelLayer getEntityModelLayer() {
-    return new EntityModelLayer(this.layerId, this.layerName);
-  }
 }
