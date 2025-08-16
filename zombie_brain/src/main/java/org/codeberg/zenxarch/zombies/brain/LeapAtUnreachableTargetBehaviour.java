@@ -1,4 +1,4 @@
-package org.codeberg.zenxarch.zombies.entity.behaviour;
+package org.codeberg.zenxarch.zombies.brain;
 
 import com.mojang.datafixers.util.Pair;
 import java.util.List;
