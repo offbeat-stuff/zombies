@@ -1,85 +1,97 @@
 plugins {
-	id 'fabric-loom' version '1.11-SNAPSHOT'
+    id 'fabric-loom' version "${loom_version}"
 }
 
 version = project.mod_version
 group = project.maven_group
 
 base {
-	archivesName = project.archives_base_name
+    archivesName = project.archives_base_name
+}
+
+configure(allprojects) {
+    apply plugin: 'fabric-loom'
+
+    repositories {
+        maven {
+            name = 'SmartBrainLib (SBL) Maven Repo'
+            url = 'https://dl.cloudsmith.io/public/tslat/sbl/maven/'
+        }
+    }
+
+    dependencies {
+        // To change the versions see the gradle.properties file
+        minecraft "com.mojang:minecraft:${project.minecraft_version}"
+        mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
+        modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+
+        // Fabric API. This is technically optional, but you probably want it anyway.
+        modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+        modImplementation "net.tslat.smartbrainlib:SmartBrainLib-fabric-${project.sbl_mc_version}:${project.sbl_version}"
+    }
 }
 
 repositories {
-	// Add repositories to retrieve artifacts from in here.
-	// You should only use this when depending on other mods because
-	// Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
-	// See https://docs.gradle.org/current/userguide/declaring_repositories.html
-	// for more information about repositories.
-	maven {
-		name = "SmartBrainLib (SBL) Maven Repo"
-		url = "https://dl.cloudsmith.io/public/tslat/sbl/maven/"
-	}
+// Add repositories to retrieve artifacts from in here.
+// You should only use this when depending on other mods because
+// Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
+// See https://docs.gradle.org/current/userguide/declaring_repositories.html
+// for more information about repositories.
 }
 
 loom {
-	splitEnvironmentSourceSets()
+    splitEnvironmentSourceSets()
 
-	mods {
-		"zombies_zenxarch" {
-			sourceSet sourceSets.main
-			sourceSet sourceSets.client
-		}
-	}
+    mods {
+        'zombies_zenxarch' {
+            sourceSet sourceSets.main
+            sourceSet sourceSets.client
+        }
+    }
 }
 
 dependencies {
-	// To change the versions see the gradle.properties file
-	minecraft "com.mojang:minecraft:${project.minecraft_version}"
-	mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
-	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-
-	// Fabric API. This is technically optional, but you probably want it anyway.
-	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-	modImplementation "net.tslat.smartbrainlib:SmartBrainLib-fabric-${project.sbl_mc_version}:${project.sbl_version}"
+    include(implementation project(path: ':mob_variants_api', configuration: 'namedElements'))
+    include(implementation project(path: ':zombie_brain', configuration: 'namedElements'))
 }
 
 fabricApi {
-	configureDataGeneration() {
-		createSourceSet = true
-		client = true
-		modId = "zombies_zenxarch_datagen"
-	}
+    configureDataGeneration() {
+        createSourceSet = true
+        client = true
+        modId = 'zombies_zenxarch_datagen'
+    }
 }
 
 processResources {
-	inputs.property "version", project.version
-	inputs.property "loader_version", project.loader_version
-	inputs.property "minecraft_version", project.minecraft_version
-	inputs.property "sbl_version", project.sbl_version
+    inputs.property 'version', project.version
+    inputs.property 'loader_version', project.loader_version
+    inputs.property 'minecraft_version', project.minecraft_version
+    inputs.property 'sbl_version', project.sbl_version
 
-	filesMatching("fabric.mod.json") {
-		expand(inputs.properties)
-	}
+    filesMatching('fabric.mod.json') {
+        expand(inputs.properties)
+    }
 }
 
 tasks.withType(JavaCompile).configureEach {
-	it.options.release = 21
+    it.options.release = 21
 }
 
 java {
-	// Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
-	// if it is present.
-	// If you remove this line, sources will not be generated.
-	withSourcesJar()
+    // Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
+    // if it is present.
+    // If you remove this line, sources will not be generated.
+    withSourcesJar()
 
-	sourceCompatibility = JavaVersion.VERSION_21
-	targetCompatibility = JavaVersion.VERSION_21
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
 }
 
 jar {
-	inputs.property "archivesName", project.base.archivesName
+    inputs.property 'archivesName', project.base.archivesName
 
-	from("LICENSE") {
-		rename { "${it}_${inputs.properties.archivesName}"}
-	}
+    from('LICENSE') {
+        rename { "${it }_${inputs.properties.archivesName}"}
+    }
 }
