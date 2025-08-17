@@ -6,8 +6,8 @@ import net.minecraft.entity.spawn.SpawnContext;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
-import org.codeberg.zenxarch.zombies.entity.variant.MobVariant;
 import org.codeberg.zenxarch.zombies.registry.ZombieRegistryKeys;
+import org.codeberg.zenxarch.zombies.variant.MobVariant;
 
 public interface ZombieVariants {
   public static Optional<RegistryEntry.Reference<MobVariant>> getRandomVariantFromPos(

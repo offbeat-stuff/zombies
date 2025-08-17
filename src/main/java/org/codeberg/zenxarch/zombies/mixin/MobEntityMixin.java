@@ -6,7 +6,7 @@ import net.fabricmc.fabric.api.attachment.v1.AttachmentTarget;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.loot.LootTable;
 import net.minecraft.registry.RegistryKey;
-import org.codeberg.zenxarch.zombies.data.entity.MobAttachments;
+import org.codeberg.zenxarch.zombies.variant.MobAttachments;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 

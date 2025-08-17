@@ -9,7 +9,7 @@ import net.minecraft.client.render.entity.LivingEntityRenderer;
 import net.minecraft.client.render.entity.state.LivingEntityRenderState;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.Identifier;
-import org.codeberg.zenxarch.zombies.data.entity.MobAttachments;
+import org.codeberg.zenxarch.zombies.variant.MobAttachments;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;

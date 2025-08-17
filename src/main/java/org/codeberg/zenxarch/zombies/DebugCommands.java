@@ -20,11 +20,11 @@ import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.command.CommandManager.RegistrationEnvironment;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.util.math.BlockPos;
-import org.codeberg.zenxarch.zombies.data.entity.MobAttachments;
 import org.codeberg.zenxarch.zombies.difficulty.ExtendedDifficulty;
 import org.codeberg.zenxarch.zombies.entity.ExtendedZombieEntity;
-import org.codeberg.zenxarch.zombies.entity.variant.MobVariant;
 import org.codeberg.zenxarch.zombies.registry.ZombieRegistryKeys;
+import org.codeberg.zenxarch.zombies.variant.MobAttachments;
+import org.codeberg.zenxarch.zombies.variant.MobVariant;
 
 public final class DebugCommands {
   private DebugCommands() {

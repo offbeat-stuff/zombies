@@ -9,4 +9,4 @@ pluginManagement {
     }
 }
 
-include('zombie_brain', 'mob_variants_api')
+include('zombie_brain', 'mob_variants_api', 'common')

@@ -10,8 +10,8 @@ import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
 import org.codeberg.zenxarch.zombies.Zombies;
 import org.codeberg.zenxarch.zombies.entity.ExtendedZombieEntity;
-import org.codeberg.zenxarch.zombies.entity.variant.MobVariant;
 import org.codeberg.zenxarch.zombies.registry.ZombieRegistryKeys;
+import org.codeberg.zenxarch.zombies.variant.MobVariant;
 import org.jetbrains.annotations.Nullable;
 
 public final class ZombieNbtUtils {

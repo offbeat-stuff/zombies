@@ -31,6 +31,12 @@ configure(allprojects) {
     }
 }
 
+configure(allprojects - project(':common')) {
+    dependencies {
+        implementation project(path: ':common', configuration: 'namedElements')
+    }
+}
+
 repositories {
 // Add repositories to retrieve artifacts from in here.
 // You should only use this when depending on other mods because
@@ -53,6 +59,7 @@ loom {
 dependencies {
     include(implementation project(path: ':mob_variants_api', configuration: 'namedElements'))
     include(implementation project(path: ':zombie_brain', configuration: 'namedElements'))
+    include project(path: ':common', configuration: 'namedElements')
 }
 
 fabricApi {
@@ -92,6 +99,6 @@ jar {
     inputs.property 'archivesName', project.base.archivesName
 
     from('LICENSE') {
-        rename { "${it }_${inputs.properties.archivesName}"}
+        rename { "${it }_${inputs.properties.archivesName }" }
     }
 }
