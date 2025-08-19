@@ -92,7 +92,8 @@
       "layerId": "minecraft:drowned",
       "layerName": "outer",
       "texture": "minecraft:entity/zombie/drowned_outer_layer"
-    }
+    },
+    "zenxarch:texture_override": "minecraft:entity/zombie/drowned"
   },
   "spawnConditions": [
     {
