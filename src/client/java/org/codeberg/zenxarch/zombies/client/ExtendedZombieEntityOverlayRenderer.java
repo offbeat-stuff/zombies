@@ -2,7 +2,7 @@ package org.codeberg.zenxarch.zombies.client;
 
 import java.util.Objects;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.render.entity.command.EntityRenderCommandQueue;
+import net.minecraft.client.render.command.OrderedRenderCommandQueue;
 import net.minecraft.client.render.entity.feature.FeatureRenderer;
 import net.minecraft.client.render.entity.feature.FeatureRendererContext;
 import net.minecraft.client.render.entity.model.ZombieEntityModel;
@@ -41,7 +41,7 @@ public class ExtendedZombieEntityOverlayRenderer
   @Override
   public void render(
       MatrixStack matrices,
-      EntityRenderCommandQueue queue,
+      OrderedRenderCommandQueue queue,
       int light,
       ZombieEntityRenderState state,
       float limbAngle,
