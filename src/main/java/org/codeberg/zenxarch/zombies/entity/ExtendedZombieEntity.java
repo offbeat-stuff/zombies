@@ -24,13 +24,13 @@ import net.minecraft.world.WorldView;
 import net.tslat.smartbrainlib.api.SmartBrainOwner;
 import net.tslat.smartbrainlib.api.core.BrainActivityGroup;
 import net.tslat.smartbrainlib.api.core.sensor.ExtendedSensor;
+import org.codeberg.zenxarch.mob_variants_api.variant.MobAttachments;
+import org.codeberg.zenxarch.mob_variants_api.variant.MobVariant;
+import org.codeberg.zenxarch.mob_variants_api.variant.effect.MobEffect;
 import org.codeberg.zenxarch.zombies.ZombieGamerules;
 import org.codeberg.zenxarch.zombies.brain.ZombieBrain;
 import org.codeberg.zenxarch.zombies.difficulty.ExtendedDifficulty;
 import org.codeberg.zenxarch.zombies.spawning.ZombieNbtUtils;
-import org.codeberg.zenxarch.zombies.variant.MobAttachments;
-import org.codeberg.zenxarch.zombies.variant.MobVariant;
-import org.codeberg.zenxarch.zombies.variant.effect.MobEffect;
 import org.jetbrains.annotations.Nullable;
 
 public class ExtendedZombieEntity extends ZombieEntity

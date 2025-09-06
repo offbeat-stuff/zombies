@@ -1,11 +1,12 @@
 {
   "required": true,
-  "package": "org.codeberg.zenxarch.zombies.mixin",
+  "package": "org.codeberg.zenxarch.mob_variants_api.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "ServerWorldMixin",
-    "EntityTypeMixin",
-    "ServerChunkManagerMixin"
+    "MobEntityMixin",
+    "LivingEntityAccessor",
+    "LivingEntityMixin",
+    "EntityConversionTypeInvoker"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -9,6 +9,13 @@ base {
     archivesName = project.archives_base_name
 }
 
+configure(project(":mob_variants_api")) {
+    apply plugin: 'fabric-loom'
+    loom {
+        splitEnvironmentSourceSets()
+    }
+}
+
 configure(allprojects) {
     apply plugin: 'fabric-loom'
 
@@ -60,6 +67,7 @@ dependencies {
     include(implementation project(path: ':mob_variants_api', configuration: 'namedElements'))
     include(implementation project(path: ':zombie_brain', configuration: 'namedElements'))
     include project(path: ':common', configuration: 'namedElements')
+    clientImplementation project(":mob_variants_api").sourceSets.client.output
 }
 
 fabricApi {

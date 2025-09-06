@@ -14,20 +14,22 @@
 		"modrinth": "https://modrinth.com/mod/zenxarch-zombie-apocalypse"
 	},
 	"license": "Mozilla Public License 2.0",
-	"icon": "assets/mob_variants_api_zenxarch/icon.png",
 	"environment": "*",
 	"entrypoints": {
 		"main": [
 		]
 	},
 	"mixins": [
-		
+		"mob_variants_api.mixins.json",
+		{
+			"config": "mob_variants_api.client.mixins.json",
+			"environment": "client"
+		}
 	],
 	"depends": {
 		"fabricloader": ">=${loader_version}",
 		"minecraft": "${minecraft_version}",
 		"java": ">=21",
-		"fabric": "*",
-		"smartbrainlib": ">=${sbl_version}"
+		"fabric": "*"
 	}
 }

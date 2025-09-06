@@ -1,6 +1,6 @@
 package org.codeberg.zenxarch.zombies.datagen.dynamic;
 
-import static org.codeberg.zenxarch.zombies.variant.effect.MobEffect.*;
+import static org.codeberg.zenxarch.mob_variants_api.variant.effect.MobEffect.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -30,27 +30,27 @@ import net.minecraft.util.math.floatprovider.ClampedNormalFloatProvider;
 import net.minecraft.util.math.floatprovider.ConstantFloatProvider;
 import net.minecraft.util.math.floatprovider.FloatProvider;
 import net.minecraft.world.biome.Biome;
+import org.codeberg.zenxarch.mob_variants_api.registry.ZombieRegistryKeys;
+import org.codeberg.zenxarch.mob_variants_api.spawn_conditions.DaySpawnCondition;
+import org.codeberg.zenxarch.mob_variants_api.spawn_conditions.NightSpawnCondition;
+import org.codeberg.zenxarch.mob_variants_api.spawn_conditions.RainingSpawnCondition;
+import org.codeberg.zenxarch.mob_variants_api.variant.MobAttachments;
+import org.codeberg.zenxarch.mob_variants_api.variant.MobVariant;
+import org.codeberg.zenxarch.mob_variants_api.variant.effect.*;
+import org.codeberg.zenxarch.mob_variants_api.variant.effect.pair.AllOfMobEffect;
+import org.codeberg.zenxarch.mob_variants_api.variant.effect.pair.ConditionalSpawnEffect;
+import org.codeberg.zenxarch.mob_variants_api.variant.effect.pair.HealFromDamage;
+import org.codeberg.zenxarch.mob_variants_api.variant.effect.pair.RandomMobEffect;
+import org.codeberg.zenxarch.mob_variants_api.variant.effect.pair.SingleMobEffect;
+import org.codeberg.zenxarch.mob_variants_api.variant.effect.pair.StatusMobEffect;
+import org.codeberg.zenxarch.mob_variants_api.variant.effect.single.AttributeModifierEffect;
+import org.codeberg.zenxarch.mob_variants_api.variant.effect.single.DefaultAttributeEffect;
+import org.codeberg.zenxarch.mob_variants_api.variant.effect.single.ExplosionEffect;
+import org.codeberg.zenxarch.mob_variants_api.variant.effect.single.SpawnEffectCloudEffect;
 import org.codeberg.zenxarch.zombies.Zombies;
 import org.codeberg.zenxarch.zombies.data.ZBiomeTags;
 import org.codeberg.zenxarch.zombies.datagen.provider.ZEntityLootTableProvider;
 import org.codeberg.zenxarch.zombies.datagen.provider.ZLootTableProvider;
-import org.codeberg.zenxarch.zombies.registry.ZombieRegistryKeys;
-import org.codeberg.zenxarch.zombies.spawn_conditions.DaySpawnCondition;
-import org.codeberg.zenxarch.zombies.spawn_conditions.NightSpawnCondition;
-import org.codeberg.zenxarch.zombies.spawn_conditions.RainingSpawnCondition;
-import org.codeberg.zenxarch.zombies.variant.MobAttachments;
-import org.codeberg.zenxarch.zombies.variant.MobVariant;
-import org.codeberg.zenxarch.zombies.variant.effect.*;
-import org.codeberg.zenxarch.zombies.variant.effect.pair.AllOfMobEffect;
-import org.codeberg.zenxarch.zombies.variant.effect.pair.ConditionalSpawnEffect;
-import org.codeberg.zenxarch.zombies.variant.effect.pair.HealFromDamage;
-import org.codeberg.zenxarch.zombies.variant.effect.pair.RandomMobEffect;
-import org.codeberg.zenxarch.zombies.variant.effect.pair.SingleMobEffect;
-import org.codeberg.zenxarch.zombies.variant.effect.pair.StatusMobEffect;
-import org.codeberg.zenxarch.zombies.variant.effect.single.AttributeModifierEffect;
-import org.codeberg.zenxarch.zombies.variant.effect.single.DefaultAttributeEffect;
-import org.codeberg.zenxarch.zombies.variant.effect.single.ExplosionEffect;
-import org.codeberg.zenxarch.zombies.variant.effect.single.SpawnEffectCloudEffect;
 
 public final class ZombieVariantGenerator {
 

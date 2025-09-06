@@ -1,0 +1,31 @@
+version = project.mod_version
+group = project.maven_group
+
+base {
+    archivesName = project.archives_base_name
+}
+
+loom {
+    // splitEnvironmentSourceSets()
+
+    mods {
+        'mob_variants_api_zenxarch' {
+            sourceSet sourceSets.main
+            sourceSet sourceSets.client
+        }
+    }
+}
+
+processResources {
+    inputs.property 'version', project.version
+    inputs.property 'loader_version', project.loader_version
+    inputs.property 'minecraft_version', project.minecraft_version
+
+    filesMatching('fabric.mod.json') {
+        expand(inputs.properties)
+    }
+}
+
+java {
+    withSourcesJar()
+}
