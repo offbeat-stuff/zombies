@@ -46,15 +46,15 @@ public final class MobAttachments {
           MobVariantsApiMod.id("invulnerable_to"),
           RegistryCodecs.entryList(RegistryKeys.DAMAGE_TYPE));
 
-  public static final AttachmentType<MobEffect> ON_SPAWN = createZombieEvent("on_spawn");
-  public static final AttachmentType<MobEffect> ON_TICK = createZombieEvent("on_tick");
-  public static final AttachmentType<MobEffect> ON_ATTACK = createZombieEvent("on_attack");
-  public static final AttachmentType<MobEffect> ON_DAMAGE = createZombieEvent("on_damage");
-  public static final AttachmentType<MobEffect> ON_DEATH = createZombieEvent("on_death");
-  public static final AttachmentType<MobEffect> ON_KILL = createZombieEvent("on_kill");
-  public static final AttachmentType<MobEffect> ON_KILLED = createZombieEvent("on_killed");
+  public static final AttachmentType<MobEffect> ON_SPAWN = createMobEvent("on_spawn");
+  public static final AttachmentType<MobEffect> ON_TICK = createMobEvent("on_tick");
+  public static final AttachmentType<MobEffect> ON_ATTACK = createMobEvent("on_attack");
+  public static final AttachmentType<MobEffect> ON_DAMAGE = createMobEvent("on_damage");
+  public static final AttachmentType<MobEffect> ON_DEATH = createMobEvent("on_death");
+  public static final AttachmentType<MobEffect> ON_KILL = createMobEvent("on_kill");
+  public static final AttachmentType<MobEffect> ON_KILLED = createMobEvent("on_killed");
 
-  private static AttachmentType<MobEffect> createZombieEvent(String id) {
+  private static AttachmentType<MobEffect> createMobEvent(String id) {
     return AttachmentRegistry.createPersistent(MobVariantsApiMod.id(id), MobEffect.CODEC);
   }
 

@@ -11,7 +11,7 @@ import org.codeberg.zenxarch.mob_variants_api.variant.MobVariant;
 import org.codeberg.zenxarch.mob_variants_api.variant.effect.LivingEffect;
 import org.codeberg.zenxarch.mob_variants_api.variant.effect.MobEffect;
 
-public interface ZombieRegistries {
+public interface MobRegisteries {
 
   private static <T> DefaultedRegistry<MapCodec<? extends T>> createRegistry(
       RegistryKey<Registry<MapCodec<? extends T>>> key) {
@@ -20,14 +20,14 @@ public interface ZombieRegistries {
   }
 
   public static final DefaultedRegistry<MapCodec<? extends LivingEffect>> LIVING_EFFECT =
-      createRegistry(ZombieRegistryKeys.LIVING_EFFECT);
+      createRegistry(MobRegistryKeys.LIVING_EFFECT);
 
   public static final DefaultedRegistry<MapCodec<? extends MobEffect>> MOB_EFFECT =
-      createRegistry(ZombieRegistryKeys.MOB_EFFECT);
+      createRegistry(MobRegistryKeys.MOB_EFFECT);
 
   public static void init() {
     MobEffect.init();
     LivingEffect.init();
-    DynamicRegistries.register(ZombieRegistryKeys.MOB_VARIANT, MobVariant.CODEC);
+    DynamicRegistries.register(MobRegistryKeys.MOB_VARIANT, MobVariant.CODEC);
   }
 }

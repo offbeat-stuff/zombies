@@ -20,7 +20,7 @@ import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.command.CommandManager.RegistrationEnvironment;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.util.math.BlockPos;
-import org.codeberg.zenxarch.mob_variants_api.registry.ZombieRegistryKeys;
+import org.codeberg.zenxarch.mob_variants_api.registry.MobRegistryKeys;
 import org.codeberg.zenxarch.mob_variants_api.variant.MobAttachments;
 import org.codeberg.zenxarch.mob_variants_api.variant.MobVariant;
 import org.codeberg.zenxarch.zombies.difficulty.ExtendedDifficulty;
@@ -86,7 +86,7 @@ public final class DebugCommands {
   public static class MobVariantArgumentType extends RegistryEntryArgumentType<MobVariant> {
 
     public MobVariantArgumentType(CommandRegistryAccess registryAccess) {
-      super(registryAccess, ZombieRegistryKeys.MOB_VARIANT, MobVariant.CODEC);
+      super(registryAccess, MobRegistryKeys.MOB_VARIANT, MobVariant.CODEC);
     }
 
     @SuppressWarnings("unchecked")

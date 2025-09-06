@@ -8,7 +8,7 @@ import org.codeberg.zenxarch.mob_variants_api.variant.MobVariant;
 import org.codeberg.zenxarch.mob_variants_api.variant.effect.LivingEffect;
 import org.codeberg.zenxarch.mob_variants_api.variant.effect.MobEffect;
 
-public interface ZombieRegistryKeys {
+public interface MobRegistryKeys {
   private static <T> RegistryKey<Registry<T>> getRegistryKey(String id) {
     return RegistryKey.ofRegistry(MobVariantsApiMod.id(id));
   }

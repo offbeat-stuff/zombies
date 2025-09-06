@@ -30,7 +30,7 @@ import net.minecraft.util.math.floatprovider.ClampedNormalFloatProvider;
 import net.minecraft.util.math.floatprovider.ConstantFloatProvider;
 import net.minecraft.util.math.floatprovider.FloatProvider;
 import net.minecraft.world.biome.Biome;
-import org.codeberg.zenxarch.mob_variants_api.registry.ZombieRegistryKeys;
+import org.codeberg.zenxarch.mob_variants_api.registry.MobRegistryKeys;
 import org.codeberg.zenxarch.mob_variants_api.spawn_conditions.DaySpawnCondition;
 import org.codeberg.zenxarch.mob_variants_api.spawn_conditions.NightSpawnCondition;
 import org.codeberg.zenxarch.mob_variants_api.spawn_conditions.RainingSpawnCondition;
@@ -56,11 +56,11 @@ public final class ZombieVariantGenerator {
 
   public static final DynamicRegistryInitializer<MobVariant> DEFAULTS_INITIALIZER =
       new DynamicRegistryInitializer<>(
-          ZombieRegistryKeys.MOB_VARIANT, ZombieVariantGenerator::bootstrapDefaults);
+          MobRegistryKeys.MOB_VARIANT, ZombieVariantGenerator::bootstrapDefaults);
 
   public static final DynamicRegistryInitializer<MobVariant> INITIALIZER =
       new DynamicRegistryInitializer<>(
-          ZombieRegistryKeys.MOB_VARIANT, ZombieVariantGenerator::bootstrap);
+          MobRegistryKeys.MOB_VARIANT, ZombieVariantGenerator::bootstrap);
 
   private static SpawnCondition condition(Registerable<MobVariant> registry, TagKey<Biome> tag) {
     var entryList = registry.getRegistryLookup(RegistryKeys.BIOME).getOrThrow(tag);

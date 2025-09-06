@@ -6,8 +6,8 @@ import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import org.codeberg.zenxarch.mob_variants_api.MobVariantsApiMod;
 
-public final class ZombieSpawnConditions {
-  private ZombieSpawnConditions() {
+public final class MobSpawnConditions {
+  private MobSpawnConditions() {
     throw new IllegalStateException("Utility class");
   }
 

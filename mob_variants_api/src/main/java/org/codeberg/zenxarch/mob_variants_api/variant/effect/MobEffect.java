@@ -16,7 +16,7 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.floatprovider.ConstantFloatProvider;
 import net.minecraft.util.math.floatprovider.FloatProvider;
 import org.codeberg.zenxarch.mob_variants_api.MobVariantsApiMod;
-import org.codeberg.zenxarch.mob_variants_api.registry.ZombieRegistries;
+import org.codeberg.zenxarch.mob_variants_api.registry.MobRegisteries;
 import org.codeberg.zenxarch.mob_variants_api.variant.effect.pair.AllOfMobEffect;
 import org.codeberg.zenxarch.mob_variants_api.variant.effect.pair.ConditionalSpawnEffect;
 import org.codeberg.zenxarch.mob_variants_api.variant.effect.pair.ConvertToEntityTypeEffect;
@@ -34,7 +34,7 @@ import org.jetbrains.annotations.Nullable;
 public interface MobEffect {
   public static final Codec<MobEffect> CODEC =
       Codec.withAlternative(
-          ZombieRegistries.MOB_EFFECT.getCodec().dispatch(MobEffect::getCodec, Function.identity()),
+          MobRegisteries.MOB_EFFECT.getCodec().dispatch(MobEffect::getCodec, Function.identity()),
           DefaultMobEffect.CODEC.codec());
 
   public void run(ServerWorld world, MobEntity mob, @Nullable LivingEntity adversery);
@@ -54,7 +54,7 @@ public interface MobEffect {
   }
 
   private static void register(String id, MapCodec<? extends MobEffect> codec) {
-    Registry.register(ZombieRegistries.MOB_EFFECT, MobVariantsApiMod.id(id), codec);
+    Registry.register(MobRegisteries.MOB_EFFECT, MobVariantsApiMod.id(id), codec);
   }
 
   public static SwapMobEffect swapPositions() {
@@ -65,7 +65,7 @@ public interface MobEffect {
     return new SingleMobEffect(effect, false);
   }
 
-  public static SingleMobEffect toZombie(LivingEffect effect) {
+  public static SingleMobEffect toMob(LivingEffect effect) {
     return new SingleMobEffect(effect, true);
   }
 
@@ -93,7 +93,7 @@ public interface MobEffect {
       SpawnParticlesEnchantmentEffect.VelocitySource horizontalVelocity,
       SpawnParticlesEnchantmentEffect.VelocitySource verticalVelocity,
       FloatProvider speed) {
-    return toZombie(
+    return toMob(
         new SpawnParticleEffect(
             new SpawnParticlesEnchantmentEffect(
                 particle,

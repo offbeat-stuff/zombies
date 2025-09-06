@@ -8,7 +8,7 @@ import net.minecraft.storage.ReadView;
 import net.minecraft.storage.WriteView;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
-import org.codeberg.zenxarch.mob_variants_api.registry.ZombieRegistryKeys;
+import org.codeberg.zenxarch.mob_variants_api.registry.MobRegistryKeys;
 import org.codeberg.zenxarch.mob_variants_api.variant.MobVariant;
 import org.codeberg.zenxarch.zombies.Zombies;
 import org.codeberg.zenxarch.zombies.entity.ExtendedZombieEntity;
@@ -37,7 +37,7 @@ public final class ZombieNbtUtils {
   private static Optional<RegistryEntry<MobVariant>> fromId(World world, Identifier id) {
     return world
         .getRegistryManager()
-        .getOrThrow(ZombieRegistryKeys.MOB_VARIANT)
+        .getOrThrow(MobRegistryKeys.MOB_VARIANT)
         .getEntry(id)
         .map(Function.identity());
   }
@@ -60,7 +60,7 @@ public final class ZombieNbtUtils {
 
   public static void setVariantToView(
       World world, WriteView view, @Nullable RegistryEntry<MobVariant> variant) {
-    var registry = world.getRegistryManager().getOptional(ZombieRegistryKeys.MOB_VARIANT);
+    var registry = world.getRegistryManager().getOptional(MobRegistryKeys.MOB_VARIANT);
     if (registry.isEmpty()) return;
     if (variant == null) return;
     view.putString(ZombieNbtUtils.ZOMBIE_ID_KEY, variant.getIdAsString());
