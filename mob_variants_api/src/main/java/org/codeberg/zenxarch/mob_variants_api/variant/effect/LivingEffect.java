@@ -6,7 +6,7 @@ import java.util.function.Function;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.registry.Registry;
 import net.minecraft.server.world.ServerWorld;
-import org.codeberg.zenxarch.ZModUtils;
+import org.codeberg.zenxarch.mob_variants_api.MobVariantsApiMod;
 import org.codeberg.zenxarch.mob_variants_api.registry.ZombieRegistries;
 import org.codeberg.zenxarch.mob_variants_api.variant.effect.single.*;
 
@@ -33,6 +33,6 @@ public interface LivingEffect {
   }
 
   private static void register(String id, MapCodec<? extends LivingEffect> codec) {
-    Registry.register(ZombieRegistries.LIVING_EFFECT, ZModUtils.id(id), codec);
+    Registry.register(ZombieRegistries.LIVING_EFFECT, MobVariantsApiMod.id(id), codec);
   }
 }

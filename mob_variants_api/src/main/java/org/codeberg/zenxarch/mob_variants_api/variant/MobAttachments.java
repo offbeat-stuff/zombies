@@ -17,7 +17,7 @@ import net.minecraft.registry.entry.RegistryEntryList;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.AssetInfo;
 import net.minecraft.world.LocalDifficulty;
-import org.codeberg.zenxarch.ZModUtils;
+import org.codeberg.zenxarch.mob_variants_api.MobVariantsApiMod;
 import org.codeberg.zenxarch.mob_variants_api.variant.effect.MobEffect;
 
 public final class MobAttachments {
@@ -27,22 +27,24 @@ public final class MobAttachments {
 
   public static final AttachmentType<AssetInfo> TEXTURE_OVERRIDE =
       AttachmentRegistry.create(
-          ZModUtils.id("texture_override"),
+          MobVariantsApiMod.id("texture_override"),
           builder ->
               builder
                   .persistent(AssetInfo.CODEC)
                   .syncWith(AssetInfo.PACKET_CODEC, AttachmentSyncPredicate.all()));
 
   public static final AttachmentType<EquipmentTable> EQUIPMENT_TABLE =
-      AttachmentRegistry.createPersistent(ZModUtils.id("equipment_table"), EquipmentTable.CODEC);
+      AttachmentRegistry.createPersistent(
+          MobVariantsApiMod.id("equipment_table"), EquipmentTable.CODEC);
 
   public static final AttachmentType<RegistryKey<LootTable>> LOOT_TABLE =
       AttachmentRegistry.createPersistent(
-          ZModUtils.id("loot_table"), RegistryKey.createCodec(RegistryKeys.LOOT_TABLE));
+          MobVariantsApiMod.id("loot_table"), RegistryKey.createCodec(RegistryKeys.LOOT_TABLE));
 
   public static final AttachmentType<RegistryEntryList<DamageType>> INVULNERABLE_TO =
       AttachmentRegistry.createPersistent(
-          ZModUtils.id("invulnerable_to"), RegistryCodecs.entryList(RegistryKeys.DAMAGE_TYPE));
+          MobVariantsApiMod.id("invulnerable_to"),
+          RegistryCodecs.entryList(RegistryKeys.DAMAGE_TYPE));
 
   public static final AttachmentType<MobEffect> ON_SPAWN = createZombieEvent("on_spawn");
   public static final AttachmentType<MobEffect> ON_TICK = createZombieEvent("on_tick");
@@ -53,7 +55,7 @@ public final class MobAttachments {
   public static final AttachmentType<MobEffect> ON_KILLED = createZombieEvent("on_killed");
 
   private static AttachmentType<MobEffect> createZombieEvent(String id) {
-    return AttachmentRegistry.createPersistent(ZModUtils.id(id), MobEffect.CODEC);
+    return AttachmentRegistry.createPersistent(MobVariantsApiMod.id(id), MobEffect.CODEC);
   }
 
   public static void initEquipment(

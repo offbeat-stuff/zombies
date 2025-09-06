@@ -15,7 +15,7 @@ import net.minecraft.registry.Registry;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.floatprovider.ConstantFloatProvider;
 import net.minecraft.util.math.floatprovider.FloatProvider;
-import org.codeberg.zenxarch.ZModUtils;
+import org.codeberg.zenxarch.mob_variants_api.MobVariantsApiMod;
 import org.codeberg.zenxarch.mob_variants_api.registry.ZombieRegistries;
 import org.codeberg.zenxarch.mob_variants_api.variant.effect.pair.AllOfMobEffect;
 import org.codeberg.zenxarch.mob_variants_api.variant.effect.pair.ConditionalSpawnEffect;
@@ -54,7 +54,7 @@ public interface MobEffect {
   }
 
   private static void register(String id, MapCodec<? extends MobEffect> codec) {
-    Registry.register(ZombieRegistries.MOB_EFFECT, ZModUtils.id(id), codec);
+    Registry.register(ZombieRegistries.MOB_EFFECT, MobVariantsApiMod.id(id), codec);
   }
 
   public static SwapMobEffect swapPositions() {

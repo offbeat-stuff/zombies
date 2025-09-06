@@ -4,7 +4,7 @@ import com.mojang.serialization.MapCodec;
 import net.minecraft.entity.spawn.SpawnCondition;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
-import org.codeberg.zenxarch.ZModUtils;
+import org.codeberg.zenxarch.mob_variants_api.MobVariantsApiMod;
 
 public final class ZombieSpawnConditions {
   private ZombieSpawnConditions() {
@@ -22,6 +22,6 @@ public final class ZombieSpawnConditions {
   }
 
   private static void register(String id, MapCodec<? extends SpawnCondition> codec) {
-    Registry.register(Registries.SPAWN_CONDITION_TYPE, ZModUtils.id(id), codec);
+    Registry.register(Registries.SPAWN_CONDITION_TYPE, MobVariantsApiMod.id(id), codec);
   }
 }

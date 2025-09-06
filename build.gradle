@@ -9,13 +9,6 @@ base {
     archivesName = project.archives_base_name
 }
 
-configure(project(":mob_variants_api")) {
-    apply plugin: 'fabric-loom'
-    loom {
-        splitEnvironmentSourceSets()
-    }
-}
-
 configure(allprojects) {
     apply plugin: 'fabric-loom'
 
@@ -34,11 +27,22 @@ configure(allprojects) {
 
         // Fabric API. This is technically optional, but you probably want it anyway.
         modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+    }
+}
+
+configure(project(':mob_variants_api')) {
+    loom {
+        splitEnvironmentSourceSets()
+    }
+}
+
+configure(project(':zombie_brain')) {
+    dependencies {
         modImplementation "net.tslat.smartbrainlib:SmartBrainLib-fabric-${project.sbl_mc_version}:${project.sbl_version}"
     }
 }
 
-configure(allprojects - project(':common')) {
+configure((allprojects - project(':common')) - project(':mob_variants_api')) {
     dependencies {
         implementation project(path: ':common', configuration: 'namedElements')
     }
@@ -68,6 +72,8 @@ dependencies {
     include(implementation project(path: ':zombie_brain', configuration: 'namedElements'))
     include project(path: ':common', configuration: 'namedElements')
     clientImplementation project(":mob_variants_api").sourceSets.client.output
+
+    modImplementation "net.tslat.smartbrainlib:SmartBrainLib-fabric-${project.sbl_mc_version}:${project.sbl_version}"
 }
 
 fabricApi {

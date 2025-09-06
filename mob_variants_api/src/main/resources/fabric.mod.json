@@ -17,6 +17,7 @@
 	"environment": "*",
 	"entrypoints": {
 		"main": [
+			"org.codeberg.zenxarch.mob_variants_api.MobVariantsApiMod"
 		]
 	},
 	"mixins": [
