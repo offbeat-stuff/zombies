@@ -8,6 +8,7 @@ import java.util.Map;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
 import net.minecraft.client.render.entity.model.EntityModelLayers;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.EquipmentTable;
 import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributeModifier.Operation;
@@ -92,7 +93,9 @@ public final class ZombieVariantGenerator {
   public static final RegistryKey<MobVariant> EXPLOSION = INITIALIZER.of("explosion");
   public static final RegistryKey<MobVariant> INVISIBLE = INITIALIZER.of("invisible");
   public static final RegistryKey<MobVariant> BONEMEAL = INITIALIZER.of("bonemeal");
-  public static final RegistryKey<MobVariant> DOOR_SHIELD = INITIALIZER.of("door_shield");
+  public static final RegistryKey<MobVariant> OAK_DOOR = INITIALIZER.of("oak_door");
+  public static final RegistryKey<MobVariant> COPPER_DOOR = INITIALIZER.of("copper_door");
+  public static final RegistryKey<MobVariant> IRON_DOOR = INITIALIZER.of("iron_door");
 
   // public static final RegistryKey<MobVariant> INK_ATTACK = INITIALIZER.of("ink_attack");
 
@@ -146,6 +149,12 @@ public final class ZombieVariantGenerator {
     return new ZombieVariantMapBuilder()
         .with(MobAttachments.LOOT_TABLE, ZEntityLootTableProvider.ZOMBIE_DROPS)
         .with(MobAttachments.ON_SPAWN, attributesOnSpawn());
+  }
+
+  private static ZombieVariantMapBuilder doorMap(EquipmentTable table) {
+    return new ZombieVariantMapBuilder()
+        .with(MobAttachments.LOOT_TABLE, ZEntityLootTableProvider.ZOMBIE_DROPS)
+        .with(MobAttachments.EQUIPMENT_TABLE, table);
   }
 
   private static ZombieVariantMapBuilder defaultEquipmentMap() {
@@ -284,9 +293,20 @@ public final class ZombieVariantGenerator {
 
     register(
         registry,
-        DOOR_SHIELD,
-        defaultAttributeMap()
-            .with(MobAttachments.EQUIPMENT_TABLE, ZLootTableProvider.DOOR_SHIELD_EQUIPMENT),
+        OAK_DOOR,
+        doorMap(ZLootTableProvider.OAK_DOOR_SHIELD_EQUIPMENT),
+        condition(UNCOMMON_WEIGHT));
+
+    register(
+        registry,
+        COPPER_DOOR,
+        doorMap(ZLootTableProvider.COPPER_DOOR_SHIELD_EQUIPMENT),
+        condition(RARE_WEIGHT));
+
+    register(
+        registry,
+        IRON_DOOR,
+        doorMap(ZLootTableProvider.IRON_DOOR_SHIELD_EQUIPMENT),
         condition(RARE_WEIGHT));
 
     // register(
