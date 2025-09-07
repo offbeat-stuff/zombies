@@ -2,17 +2,26 @@ package org.codeberg.zenxarch.zombies.datagen.loot_table;
 
 import static org.codeberg.zenxarch.zombies.datagen.loot_table.LootTableUtils.*;
 
+import java.util.Map;
 import java.util.stream.Stream;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.EquippableComponent;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.Items;
+import net.minecraft.item.equipment.ArmorMaterial;
+import net.minecraft.item.equipment.EquipmentType;
 import net.minecraft.loot.LootPool;
 import net.minecraft.loot.LootTable;
 import net.minecraft.loot.condition.RandomChanceLootCondition;
 import net.minecraft.loot.entry.ItemEntry;
 import net.minecraft.loot.entry.LeafEntry;
+import net.minecraft.loot.entry.LeafEntry.Builder;
 import net.minecraft.loot.entry.LootPoolEntry;
 import net.minecraft.loot.entry.LootTableEntry;
+import net.minecraft.loot.function.SetComponentsLootFunction;
 import org.codeberg.zenxarch.zombies.datagen.dynamic.ZEnchantmentProviderGenerator;
 import org.codeberg.zenxarch.zombies.loot_table.function.EnchantmentProviderLootFunction;
 import org.codeberg.zenxarch.zombies.loot_table.number_provider.LuckLootNumberProvider;
@@ -78,5 +87,37 @@ public interface EquipmentLootTable {
       pool = pool.with(applyEnchantment(getLootTableForLevel(index), weights[index]));
     return pool.conditionally(
         RandomChanceLootCondition.builder(LuckLootNumberProvider.create(0.0f, 0.15f)));
+  }
+
+  private static Builder<?> shieldDoorItem(
+      Item item, int maxDamage, int defense, float toughness, float knockbackResistance) {
+    var equippable =
+        EquippableComponent.builder(EquipmentSlot.CHEST).allowedEntities(EntityType.ZOMBIE).build();
+
+    var customArmor =
+        new ArmorMaterial(
+            maxDamage,
+            Map.of(EquipmentType.CHESTPLATE, defense),
+            0,
+            null,
+            toughness,
+            knockbackResistance,
+            null,
+            null);
+
+    var attributes = customArmor.createAttributeModifiers(EquipmentType.CHESTPLATE);
+
+    var setEquippable =
+        SetComponentsLootFunction.builder(DataComponentTypes.EQUIPPABLE, equippable);
+    var setMaxDamage = SetComponentsLootFunction.builder(DataComponentTypes.MAX_DAMAGE, maxDamage);
+    var setAttributes =
+        SetComponentsLootFunction.builder(DataComponentTypes.ATTRIBUTE_MODIFIERS, attributes);
+
+    return ItemEntry.builder(item).apply(setEquippable).apply(setMaxDamage).apply(setAttributes);
+  }
+
+  public static LootPool.Builder shieldDoorEquipment(
+      Item item, int maxDamage, int defense, float toughness, float knockbackResistance) {
+    return pool().with(shieldDoorItem(item, maxDamage, defense, toughness, knockbackResistance));
   }
 }

@@ -26,6 +26,9 @@ public class ZLootTableProvider extends SimpleFabricLootTableProvider {
   public static final EquipmentTable AXE_ZOMBIE_EQUIPMENT =
       equipmentTable("axe_zombie_equipment", 0.00075F);
 
+  public static final EquipmentTable DOOR_SHIELD_EQUIPMENT =
+      equipmentTable("door_shield_equipment", 0F);
+
   private static EquipmentTable equipmentTable(String id, float slotDropChances) {
     return new EquipmentTable(key(id), slotDropChances);
   }
@@ -63,5 +66,9 @@ public class ZLootTableProvider extends SimpleFabricLootTableProvider {
         AXE_ZOMBIE_EQUIPMENT.lootTable(),
         EquipmentLootTable.leatherOnlyEquipmentTable(),
         EquipmentLootTable.axeWeaponTable());
+    addLootTable(
+        registry,
+        DOOR_SHIELD_EQUIPMENT.lootTable(),
+        EquipmentLootTable.shieldDoorEquipment(Items.OAK_DOOR, 125, 12, 5.0f, 0.3f));
   }
 }

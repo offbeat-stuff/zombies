@@ -92,6 +92,7 @@ public final class ZombieVariantGenerator {
   public static final RegistryKey<MobVariant> EXPLOSION = INITIALIZER.of("explosion");
   public static final RegistryKey<MobVariant> INVISIBLE = INITIALIZER.of("invisible");
   public static final RegistryKey<MobVariant> BONEMEAL = INITIALIZER.of("bonemeal");
+  public static final RegistryKey<MobVariant> DOOR_SHIELD = INITIALIZER.of("door_shield");
 
   // public static final RegistryKey<MobVariant> INK_ATTACK = INITIALIZER.of("ink_attack");
 
@@ -280,6 +281,13 @@ public final class ZombieVariantGenerator {
                         20, new SingleMobEffect(new BonemealLivingEffect(), true)),
                     spawnParticles(ParticleTypes.HAPPY_VILLAGER, 0.2F))),
         condition(registry, ZBiomeTags.WITH_AXE_ZOMBIES, RARE_WEIGHT));
+
+    register(
+        registry,
+        DOOR_SHIELD,
+        defaultAttributeMap()
+            .with(MobAttachments.EQUIPMENT_TABLE, ZLootTableProvider.DOOR_SHIELD_EQUIPMENT),
+        condition(RARE_WEIGHT));
 
     // register(
     //     registry,
