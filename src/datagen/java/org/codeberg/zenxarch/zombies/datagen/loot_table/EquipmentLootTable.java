@@ -5,8 +5,6 @@ import static org.codeberg.zenxarch.zombies.datagen.loot_table.LootTableUtils.*;
 import java.util.Map;
 import java.util.stream.Stream;
 import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.EquippableComponent;
-import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.item.Item;
@@ -22,6 +20,8 @@ import net.minecraft.loot.entry.LeafEntry.Builder;
 import net.minecraft.loot.entry.LootPoolEntry;
 import net.minecraft.loot.entry.LootTableEntry;
 import net.minecraft.loot.function.SetComponentsLootFunction;
+import net.minecraft.registry.Registries;
+import net.minecraft.util.Identifier;
 import org.codeberg.zenxarch.zombies.datagen.dynamic.ZEnchantmentProviderGenerator;
 import org.codeberg.zenxarch.zombies.loot_table.function.EnchantmentProviderLootFunction;
 import org.codeberg.zenxarch.zombies.loot_table.number_provider.LuckLootNumberProvider;
@@ -91,8 +91,6 @@ public interface EquipmentLootTable {
 
   private static Builder<?> shieldDoorItem(
       Item item, int maxDamage, int defense, float toughness, float knockbackResistance) {
-    var equippable =
-        EquippableComponent.builder(EquipmentSlot.CHEST).allowedEntities(EntityType.ZOMBIE).build();
 
     var customArmor =
         new ArmorMaterial(
@@ -107,13 +105,21 @@ public interface EquipmentLootTable {
 
     var attributes = customArmor.createAttributeModifiers(EquipmentType.CHESTPLATE);
 
-    var setEquippable =
-        SetComponentsLootFunction.builder(DataComponentTypes.EQUIPPABLE, equippable);
+    var itemPath =
+        Registries.ITEM
+            .getEntry(item)
+            .getKey()
+            .map(key -> key.getValue().getPath())
+            .orElse("oak_door");
+    var setItemModel =
+        SetComponentsLootFunction.builder(
+            DataComponentTypes.ITEM_MODEL, Identifier.of("zombies_zenxarch", itemPath));
+
     var setMaxDamage = SetComponentsLootFunction.builder(DataComponentTypes.MAX_DAMAGE, maxDamage);
     var setAttributes =
         SetComponentsLootFunction.builder(DataComponentTypes.ATTRIBUTE_MODIFIERS, attributes);
 
-    return ItemEntry.builder(item).apply(setEquippable).apply(setMaxDamage).apply(setAttributes);
+    return ItemEntry.builder(item).apply(setMaxDamage).apply(setAttributes).apply(setItemModel);
   }
 
   public static LootPool.Builder shieldDoorEquipment(

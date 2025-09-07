@@ -1,0 +1,73 @@
+{
+  "parent": "minecraft:item/copper_door",
+  "display": {
+    "thirdperson_righthand": {
+      "rotation": [
+        10,
+        0,
+        0
+      ],
+      "translation": [
+        -6,
+        -1,
+        -0.75
+      ],
+      "scale": [
+        1.6,
+        1.6,
+        1.6
+      ]
+    },
+    "thirdperson_lefthand": {
+      "rotation": [
+        10,
+        0,
+        0
+      ],
+      "translation": [
+        -6,
+        -1,
+        -0.75
+      ],
+      "scale": [
+        1.6,
+        1.6,
+        1.6
+      ]
+    },
+    "firstperson_righthand": {
+      "rotation": [
+        10,
+        0,
+        0
+      ],
+      "translation": [
+        -10,
+        2.5,
+        0
+      ],
+      "scale": [
+        1.6,
+        1.6,
+        1.6
+      ]
+    },
+    "firstperson_lefthand": {
+      "rotation": [
+        10,
+        0,
+        0
+      ],
+      "translation": [
+        -10,
+        2.5,
+        0
+      ],
+      "scale": [
+        1.6,
+        1.6,
+        1.6
+      ]
+    }
+  }
+}

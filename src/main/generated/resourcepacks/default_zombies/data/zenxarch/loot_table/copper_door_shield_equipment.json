@@ -9,15 +9,6 @@
           "functions": [
             {
               "components": {
-                "minecraft:equippable": {
-                  "allowed_entities": "minecraft:zombie",
-                  "slot": "chest"
-                }
-              },
-              "function": "minecraft:set_components"
-            },
-            {
-              "components": {
                 "minecraft:max_damage": 250
               },
               "function": "minecraft:set_components"
@@ -47,6 +38,12 @@
                     "slot": "chest"
                   }
                 ]
+              },
+              "function": "minecraft:set_components"
+            },
+            {
+              "components": {
+                "minecraft:item_model": "zombies_zenxarch:copper_door"
               },
               "function": "minecraft:set_components"
             }
