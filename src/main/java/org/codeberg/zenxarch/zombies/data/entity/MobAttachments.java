@@ -2,6 +2,7 @@ package org.codeberg.zenxarch.zombies.data.entity;
 
 import static org.codeberg.zenxarch.zombies.Zombies.id;
 
+import com.mojang.serialization.Codec;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentSyncPredicate;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
@@ -60,6 +61,9 @@ public final class MobAttachments {
   public static final AttachmentType<MobEffect> ON_DEATH = createZombieEvent("on_death");
   public static final AttachmentType<MobEffect> ON_KILL = createZombieEvent("on_kill");
   public static final AttachmentType<MobEffect> ON_KILLED = createZombieEvent("on_killed");
+
+  public static final AttachmentType<Boolean> RENDER_HEAD =
+      AttachmentRegistry.createPersistent(id("render_head"), Codec.BOOL);
 
   private static AttachmentType<MobEffect> createZombieEvent(String id) {
     return AttachmentRegistry.createPersistent(id(id), MobEffect.CODEC);
