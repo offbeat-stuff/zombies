@@ -96,6 +96,7 @@ public final class ZombieVariantGenerator {
   public static final RegistryKey<MobVariant> OAK_DOOR = INITIALIZER.of("oak_door");
   public static final RegistryKey<MobVariant> COPPER_DOOR = INITIALIZER.of("copper_door");
   public static final RegistryKey<MobVariant> IRON_DOOR = INITIALIZER.of("iron_door");
+  public static final RegistryKey<MobVariant> HEADLESS = INITIALIZER.of("headless");
 
   // public static final RegistryKey<MobVariant> INK_ATTACK = INITIALIZER.of("ink_attack");
 
@@ -308,6 +309,12 @@ public final class ZombieVariantGenerator {
         IRON_DOOR,
         doorMap(ZLootTableProvider.IRON_DOOR_SHIELD_EQUIPMENT),
         condition(RARE_WEIGHT));
+
+    register(
+        registry,
+        HEADLESS,
+        defaultAttributeMap().with(MobAttachments.RENDER_HEAD, false),
+        condition(UNCOMMON_WEIGHT));
 
     // register(
     //     registry,
