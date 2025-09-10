@@ -81,7 +81,7 @@ public interface EquipmentLootTable {
 
   public static LootPool.Builder vanillaEquipmentTable() {
     final int[] equipmentLevel = {0, 1, 2, 3, 4, 5};
-    final int[] weights = {2286, 3143, 3335, 1065, 159, 13};
+    final int[] weights = {33435, 47460, 16505, 2443, 154, 4};
     var pool = pool();
     for (var index : equipmentLevel)
       pool = pool.with(applyEnchantment(getLootTableForLevel(index), weights[index]));

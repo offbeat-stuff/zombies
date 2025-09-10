@@ -242,7 +242,7 @@
               }
             ]
           },
-          "weight": 2286
+          "weight": 33435
         },
         {
           "type": "minecraft:loot_table",
@@ -473,7 +473,7 @@
               }
             ]
           },
-          "weight": 3143
+          "weight": 47460
         },
         {
           "type": "minecraft:loot_table",
@@ -704,7 +704,7 @@
               }
             ]
           },
-          "weight": 3335
+          "weight": 16505
         },
         {
           "type": "minecraft:loot_table",
@@ -935,7 +935,7 @@
               }
             ]
           },
-          "weight": 1065
+          "weight": 2443
         },
         {
           "type": "minecraft:loot_table",
@@ -1166,7 +1166,7 @@
               }
             ]
           },
-          "weight": 159
+          "weight": 154
         },
         {
           "type": "minecraft:loot_table",
@@ -1397,7 +1397,7 @@
               }
             ]
           },
-          "weight": 13
+          "weight": 4
         }
       ],
       "rolls": 1.0
