@@ -13,6 +13,8 @@ import net.minecraft.loot.LootTable;
 import net.minecraft.loot.context.LootContextParameters;
 import net.minecraft.loot.context.LootContextTypes;
 import net.minecraft.loot.context.LootWorldContext;
+import net.minecraft.network.RegistryByteBuf;
+import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.registry.RegistryCodecs;
 import net.minecraft.registry.RegistryKey;
@@ -29,31 +31,19 @@ public final class MobAttachments {
   }
 
   public static final AttachmentType<AssetInfo> TEXTURE_OVERRIDE =
-      AttachmentRegistry.create(
-          id("texture_override"),
-          builder ->
-              builder
-                  .persistent(AssetInfo.CODEC)
-                  .syncWith(AssetInfo.PACKET_CODEC, AttachmentSyncPredicate.all()));
+      createAttachment("texture_override", AssetInfo.CODEC, AssetInfo.PACKET_CODEC);
 
   public static final AttachmentType<EquipmentTable> EQUIPMENT_TABLE =
-      AttachmentRegistry.createPersistent(id("equipment_table"), EquipmentTable.CODEC);
+      createAttachment("equipment_table", EquipmentTable.CODEC);
 
   public static final AttachmentType<RegistryKey<LootTable>> LOOT_TABLE =
-      AttachmentRegistry.createPersistent(
-          id("loot_table"), RegistryKey.createCodec(RegistryKeys.LOOT_TABLE));
+      createAttachment("loot_table", RegistryKey.createCodec(RegistryKeys.LOOT_TABLE));
 
   public static final AttachmentType<RegistryEntryList<DamageType>> INVULNERABLE_TO =
-      AttachmentRegistry.createPersistent(
-          id("invulnerable_to"), RegistryCodecs.entryList(RegistryKeys.DAMAGE_TYPE));
+      createAttachment("invulnerable_to", RegistryCodecs.entryList(RegistryKeys.DAMAGE_TYPE));
 
   public static final AttachmentType<OverlayAttachment> OVERLAY =
-      AttachmentRegistry.create(
-          id("overlay"),
-          builder ->
-              builder
-                  .persistent(OverlayAttachment.CODEC)
-                  .syncWith(OverlayAttachment.PACKET_CODEC, AttachmentSyncPredicate.all()));
+      createAttachment("overlay", OverlayAttachment.CODEC, OverlayAttachment.PACKET_CODEC);
 
   public static final AttachmentType<MobEffect> ON_SPAWN = createZombieEvent("on_spawn");
   public static final AttachmentType<MobEffect> ON_TICK = createZombieEvent("on_tick");
@@ -64,15 +54,21 @@ public final class MobAttachments {
   public static final AttachmentType<MobEffect> ON_KILLED = createZombieEvent("on_killed");
 
   public static final AttachmentType<Boolean> RENDER_HEAD =
-      AttachmentRegistry.create(
-          id("render_head"),
-          builder ->
-              builder
-                  .persistent(Codec.BOOL)
-                  .syncWith(PacketCodecs.BOOLEAN, AttachmentSyncPredicate.all()));
+      createAttachment("render_head", Codec.BOOL, PacketCodecs.BOOLEAN);
 
   private static AttachmentType<MobEffect> createZombieEvent(String id) {
     return AttachmentRegistry.createPersistent(id(id), MobEffect.CODEC);
+  }
+
+  private static <T> AttachmentType<T> createAttachment(String id, Codec<T> codec) {
+    return AttachmentRegistry.createPersistent(id(id), codec);
+  }
+
+  private static <T> AttachmentType<T> createAttachment(
+      String id, Codec<T> codec, PacketCodec<? super RegistryByteBuf, T> packetCodec) {
+    return AttachmentRegistry.create(
+        id(id),
+        builder -> builder.persistent(codec).syncWith(packetCodec, AttachmentSyncPredicate.all()));
   }
 
   public static void initEquipment(
