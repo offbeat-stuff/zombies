@@ -3,8 +3,8 @@ import random
 
 var s = [0, 0, 0, 0, 0, 0]
 
-for i in 0 .. 10000:
-    var r = rand(2)
+for i in 0 .. 100000:
+    var r = rand(1)
     if (rand(1.0) < f): r.inc()
     if (rand(1.0) < f): r.inc()
     if (rand(1.0) < f): r.inc()
@@ -12,4 +12,4 @@ for i in 0 .. 10000:
     s[r].inc()
 
 echo s
-# result: [2286, 3143, 3335, 1065, 159, 13]
+# result: [33435, 47460, 16505, 2443, 154, 4]
