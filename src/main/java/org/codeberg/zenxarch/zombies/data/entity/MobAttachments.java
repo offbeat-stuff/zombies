@@ -13,6 +13,7 @@ import net.minecraft.loot.LootTable;
 import net.minecraft.loot.context.LootContextParameters;
 import net.minecraft.loot.context.LootContextTypes;
 import net.minecraft.loot.context.LootWorldContext;
+import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.registry.RegistryCodecs;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
@@ -63,7 +64,12 @@ public final class MobAttachments {
   public static final AttachmentType<MobEffect> ON_KILLED = createZombieEvent("on_killed");
 
   public static final AttachmentType<Boolean> RENDER_HEAD =
-      AttachmentRegistry.createPersistent(id("render_head"), Codec.BOOL);
+      AttachmentRegistry.create(
+          id("render_head"),
+          builder ->
+              builder
+                  .persistent(Codec.BOOL)
+                  .syncWith(PacketCodecs.BOOLEAN, AttachmentSyncPredicate.all()));
 
   private static AttachmentType<MobEffect> createZombieEvent(String id) {
     return AttachmentRegistry.createPersistent(id(id), MobEffect.CODEC);
