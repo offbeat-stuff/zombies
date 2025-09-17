@@ -21,7 +21,7 @@ import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntryList;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.AssetInfo;
+import net.minecraft.class_12079.AssetInfo;
 import net.minecraft.world.LocalDifficulty;
 import org.codeberg.zenxarch.zombies.data.entity.effect.MobEffect;
 
