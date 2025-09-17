@@ -6,6 +6,7 @@ import com.mojang.serialization.Codec;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentSyncPredicate;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
+import net.minecraft.class_12079.AssetInfo;
 import net.minecraft.entity.EquipmentTable;
 import net.minecraft.entity.damage.DamageType;
 import net.minecraft.entity.mob.MobEntity;
@@ -21,7 +22,6 @@ import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntryList;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.class_12079.AssetInfo;
 import net.minecraft.world.LocalDifficulty;
 import org.codeberg.zenxarch.zombies.data.entity.effect.MobEffect;
 
