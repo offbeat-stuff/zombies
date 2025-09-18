@@ -3,7 +3,7 @@ package org.codeberg.zenxarch.zombies.data.entity;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.class_12079.AssetInfo;
+import net.minecraft.client.ClientAssets.AssetInfo;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.util.Identifier;

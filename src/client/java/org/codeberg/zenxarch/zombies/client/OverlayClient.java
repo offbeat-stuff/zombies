@@ -1,6 +1,6 @@
 package org.codeberg.zenxarch.zombies.client;
 
-import net.minecraft.class_12079.AssetInfo;
+import net.minecraft.client.ClientAssets.AssetInfo;
 import net.minecraft.client.render.entity.model.EntityModelLayer;
 import org.codeberg.zenxarch.zombies.data.entity.OverlayAttachment;
 

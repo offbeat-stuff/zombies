@@ -6,7 +6,7 @@ import com.mojang.serialization.Codec;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentSyncPredicate;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
-import net.minecraft.class_12079.AssetInfo;
+import net.minecraft.client.ClientAssets.AssetInfo;
 import net.minecraft.entity.EquipmentTable;
 import net.minecraft.entity.damage.DamageType;
 import net.minecraft.entity.mob.MobEntity;

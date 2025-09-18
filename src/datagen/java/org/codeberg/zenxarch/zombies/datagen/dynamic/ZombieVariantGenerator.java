@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
-import net.minecraft.class_12079.AssetInfo;
+import net.minecraft.client.ClientAssets.AssetInfo;
 import net.minecraft.client.render.entity.model.EntityModelLayers;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentTable;
