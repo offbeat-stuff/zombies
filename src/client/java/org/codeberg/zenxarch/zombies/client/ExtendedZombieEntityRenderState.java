@@ -5,4 +5,5 @@ import org.codeberg.zenxarch.zombies.data.entity.OverlayAttachment;
 
 public class ExtendedZombieEntityRenderState extends ZombieEntityRenderState {
   public OverlayAttachment overlay;
+  public boolean renderHead;
 }
