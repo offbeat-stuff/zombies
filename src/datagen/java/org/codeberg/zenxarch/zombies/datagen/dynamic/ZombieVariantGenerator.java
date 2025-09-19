@@ -32,7 +32,6 @@ import net.minecraft.util.math.floatprovider.ClampedNormalFloatProvider;
 import net.minecraft.util.math.floatprovider.ConstantFloatProvider;
 import net.minecraft.util.math.floatprovider.FloatProvider;
 import net.minecraft.world.biome.Biome;
-import org.codeberg.zenxarch.mob_variants_api.client.OverlayClient;
 import org.codeberg.zenxarch.mob_variants_api.registry.MobRegistryKeys;
 import org.codeberg.zenxarch.mob_variants_api.spawn_conditions.DaySpawnCondition;
 import org.codeberg.zenxarch.mob_variants_api.spawn_conditions.NightSpawnCondition;
@@ -54,6 +53,7 @@ import org.codeberg.zenxarch.mob_variants_api.variant.effect.single.ExplosionEff
 import org.codeberg.zenxarch.mob_variants_api.variant.effect.single.SpawnEffectCloudEffect;
 import org.codeberg.zenxarch.mob_variants_api.variant.effect.single.StatusLivingEffect;
 import org.codeberg.zenxarch.zombies.Zombies;
+import org.codeberg.zenxarch.zombies.client.OverlayClient;
 import org.codeberg.zenxarch.zombies.data.ZBiomeTags;
 import org.codeberg.zenxarch.zombies.datagen.provider.ZEntityLootTableProvider;
 import org.codeberg.zenxarch.zombies.datagen.provider.ZLootTableProvider;

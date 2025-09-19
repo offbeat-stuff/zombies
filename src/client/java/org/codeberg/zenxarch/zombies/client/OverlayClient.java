@@ -1,4 +1,4 @@
-package org.codeberg.zenxarch.mob_variants_api.client;
+package org.codeberg.zenxarch.zombies.client;
 
 import net.minecraft.client.ClientAssets.AssetInfo;
 import net.minecraft.client.render.entity.model.EntityModelLayer;

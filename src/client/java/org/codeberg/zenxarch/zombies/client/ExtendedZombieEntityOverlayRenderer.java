@@ -1,4 +1,4 @@
-package org.codeberg.zenxarch.mob_variants_api.client;
+package org.codeberg.zenxarch.zombies.client;
 
 import java.util.Objects;
 import net.minecraft.client.MinecraftClient;
