@@ -1,8 +1,8 @@
-package org.codeberg.zenxarch.zombies.client;
+package org.codeberg.zenxarch.mob_variants_api.client;
 
 import net.minecraft.client.ClientAssets.AssetInfo;
 import net.minecraft.client.render.entity.model.EntityModelLayer;
-import org.codeberg.zenxarch.zombies.data.entity.OverlayAttachment;
+import org.codeberg.zenxarch.mob_variants_api.variant.OverlayAttachment;
 
 public final class OverlayClient {
   private OverlayClient() {

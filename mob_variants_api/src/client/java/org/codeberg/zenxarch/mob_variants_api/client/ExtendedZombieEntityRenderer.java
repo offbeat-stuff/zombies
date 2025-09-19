@@ -1,4 +1,4 @@
-package org.codeberg.zenxarch.zombies.client;
+package org.codeberg.zenxarch.mob_variants_api.client;
 
 import net.minecraft.client.render.entity.EntityRendererFactory.Context;
 import net.minecraft.client.render.entity.ZombieEntityRenderer;
@@ -7,7 +7,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.mob.ZombieEntity;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RotationAxis;
-import org.codeberg.zenxarch.zombies.data.entity.MobAttachments;
+import org.codeberg.zenxarch.mob_variants_api.variant.MobAttachments;
 
 public class ExtendedZombieEntityRenderer extends ZombieEntityRenderer {
 

@@ -6,6 +6,8 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityData;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SpawnReason;
+import net.minecraft.entity.ai.brain.Brain.Profile;
+import net.minecraft.entity.ai.pathing.EntityNavigation;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.mob.ZombieEntity;
@@ -29,12 +31,11 @@ import org.codeberg.zenxarch.mob_variants_api.variant.effect.MobEffect;
 import org.codeberg.zenxarch.zombies.ZombieGamerules;
 import org.codeberg.zenxarch.zombies.brain.ZombieBrain;
 import org.codeberg.zenxarch.zombies.difficulty.ExtendedDifficulty;
-import org.codeberg.zenxarch.zombies.entity.variant.MobVariant;
 import org.codeberg.zenxarch.zombies.spawning.ZombieNbtUtils;
 import org.jetbrains.annotations.Nullable;
 
-public class ExtendedZombieEntity extends ZombieEntity {
-  // implements SmartBrainOwner<ExtendedZombieEntity> {
+public class ExtendedZombieEntity extends ZombieEntity
+    implements SmartBrainOwner<ExtendedZombieEntity> {
 
   private static ZombieBrain<ExtendedZombieEntity> BRAIN_PROVIDER = new ZombieBrain<>();
   private RegistryEntry<MobVariant> variant;
@@ -68,26 +69,26 @@ public class ExtendedZombieEntity extends ZombieEntity {
     return BRAIN_PROVIDER.getFightTasks();
   }
 
-  // @Override
-  // protected void initGoals() {
-  //   /* use smartbrainlib for ai */
-  // }
+  @Override
+  protected void initGoals() {
+    /* use smartbrainlib for ai */
+  }
 
-  // @Override
-  // public void setCanBreakDoors(boolean canBreakDoors) {
-  //   /* no griefing */
-  // }
+  @Override
+  public void setCanBreakDoors(boolean canBreakDoors) {
+    /* no griefing */
+  }
 
   @Override
   protected EntityNavigation createNavigation(World world) {
     return BRAIN_PROVIDER.createNavigation(this, world);
   }
 
-  // @Override
-  // protected void mobTick(ServerWorld world) {
-  //   super.mobTick(world);
-  //   tickBrain(this);
-  // }
+  @Override
+  protected void mobTick(ServerWorld world) {
+    super.mobTick(world);
+    tickBrain(this);
+  }
 
   @Override
   protected boolean burnsInDaylight() {

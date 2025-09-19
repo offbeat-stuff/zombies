@@ -1,4 +1,4 @@
-package org.codeberg.zenxarch.zombies.client;
+package org.codeberg.zenxarch.mob_variants_api.client;
 
 import java.util.Objects;
 import net.minecraft.client.MinecraftClient;
@@ -9,7 +9,7 @@ import net.minecraft.client.render.entity.model.ZombieEntityModel;
 import net.minecraft.client.render.entity.state.ZombieEntityRenderState;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
-import org.codeberg.zenxarch.zombies.data.entity.OverlayAttachment;
+import org.codeberg.zenxarch.mob_variants_api.variant.OverlayAttachment;
 
 public class ExtendedZombieEntityOverlayRenderer
     extends FeatureRenderer<ZombieEntityRenderState, ZombieEntityModel<ZombieEntityRenderState>> {

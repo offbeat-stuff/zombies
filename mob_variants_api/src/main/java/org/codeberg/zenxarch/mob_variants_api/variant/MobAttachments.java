@@ -60,7 +60,7 @@ public final class MobAttachments {
   }
 
   private static <T> AttachmentType<T> createAttachment(String id, Codec<T> codec) {
-    return AttachmentRegistry.createPersistent(id(id), codec);
+    return AttachmentRegistry.createPersistent(MobVariantsApiMod.id(id), codec);
   }
 
   private static <T> AttachmentType<T> createAttachment(

@@ -1,4 +1,4 @@
-package org.codeberg.zenxarch.zombies.client;
+package org.codeberg.zenxarch.mob_variants_api.client;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;

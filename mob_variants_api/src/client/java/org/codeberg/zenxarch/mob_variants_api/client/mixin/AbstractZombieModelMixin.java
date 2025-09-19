@@ -1,8 +1,8 @@
-package org.codeberg.zenxarch.zombies.client.mixin;
+package org.codeberg.zenxarch.mob_variants_api.client.mixin;
 
 import net.minecraft.client.render.entity.model.AbstractZombieModel;
 import net.minecraft.client.render.entity.state.ZombieEntityRenderState;
-import org.codeberg.zenxarch.zombies.client.ExtendedZombieEntityRenderState;
+import org.codeberg.zenxarch.mob_variants_api.client.ExtendedZombieEntityRenderState;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;

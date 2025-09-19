@@ -1,4 +1,4 @@
-package org.codeberg.zenxarch.zombies.data.entity.effect.single;
+package org.codeberg.zenxarch.mob_variants_api.variant.effect.single;
 
 import com.mojang.serialization.MapCodec;
 import net.minecraft.block.BlockState;
@@ -6,7 +6,7 @@ import net.minecraft.block.Fertilizable;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
-import org.codeberg.zenxarch.zombies.data.entity.effect.LivingEffect;
+import org.codeberg.zenxarch.mob_variants_api.variant.effect.LivingEffect;
 
 public record BonemealLivingEffect() implements LivingEffect {
 

@@ -22,6 +22,7 @@ import org.codeberg.zenxarch.mob_variants_api.variant.effect.pair.ConditionalSpa
 import org.codeberg.zenxarch.mob_variants_api.variant.effect.pair.ConvertToEntityTypeEffect;
 import org.codeberg.zenxarch.mob_variants_api.variant.effect.pair.DefaultMobEffect;
 import org.codeberg.zenxarch.mob_variants_api.variant.effect.pair.HealFromDamage;
+import org.codeberg.zenxarch.mob_variants_api.variant.effect.pair.IntervalMobEffect;
 import org.codeberg.zenxarch.mob_variants_api.variant.effect.pair.RandomMobEffect;
 import org.codeberg.zenxarch.mob_variants_api.variant.effect.pair.SingleMobEffect;
 import org.codeberg.zenxarch.mob_variants_api.variant.effect.pair.StatusMobEffect;
@@ -29,7 +30,6 @@ import org.codeberg.zenxarch.mob_variants_api.variant.effect.pair.SwapMobEffect;
 import org.codeberg.zenxarch.mob_variants_api.variant.effect.single.FreezeEffect;
 import org.codeberg.zenxarch.mob_variants_api.variant.effect.single.IgniteEffect;
 import org.codeberg.zenxarch.mob_variants_api.variant.effect.single.SpawnParticleEffect;
-import org.codeberg.zenxarch.zombies.data.entity.effect.pair.IntervalMobEffect;
 import org.jetbrains.annotations.Nullable;
 
 public interface MobEffect {

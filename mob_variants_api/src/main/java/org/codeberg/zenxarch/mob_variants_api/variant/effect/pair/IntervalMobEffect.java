@@ -1,4 +1,4 @@
-package org.codeberg.zenxarch.zombies.data.entity.effect.pair;
+package org.codeberg.zenxarch.mob_variants_api.variant.effect.pair;
 
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -6,7 +6,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.dynamic.Codecs;
-import org.codeberg.zenxarch.zombies.data.entity.effect.MobEffect;
+import org.codeberg.zenxarch.mob_variants_api.variant.effect.MobEffect;
 import org.jetbrains.annotations.Nullable;
 
 public record IntervalMobEffect(int ticks, MobEffect effect) implements MobEffect {

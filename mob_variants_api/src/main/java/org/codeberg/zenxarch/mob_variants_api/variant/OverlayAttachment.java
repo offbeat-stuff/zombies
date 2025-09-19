@@ -1,4 +1,4 @@
-package org.codeberg.zenxarch.zombies.data.entity;
+package org.codeberg.zenxarch.mob_variants_api.variant;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
