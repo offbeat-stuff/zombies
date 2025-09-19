@@ -68,7 +68,7 @@ loom {
 }
 
 dependencies {
-    include(modImplementation project(path: ':mob_variants_api', configuration: 'namedElements'))
+    include(implementation project(path: ':mob_variants_api', configuration: 'namedElements'))
     clientImplementation project(":mob_variants_api").sourceSets.client.output
 
     include(implementation project(path: ':zombie_brain', configuration: 'namedElements'))
@@ -88,7 +88,7 @@ fabricApi {
 processResources {
     inputs.property 'version', project.version
     inputs.property 'loader_version', project.loader_version
-    inputs.property 'minecraft_version', project.minecraft_version
+    inputs.property 'minecraft_version', "1.21.8"
     inputs.property 'sbl_version', project.sbl_version
 
     filesMatching('fabric.mod.json') {
