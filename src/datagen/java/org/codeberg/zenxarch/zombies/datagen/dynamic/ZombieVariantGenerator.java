@@ -6,7 +6,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
+import net.minecraft.client.ClientAssets.AssetInfo;
+import net.minecraft.client.render.entity.model.EntityModelLayers;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.EquipmentTable;
 import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributeModifier.Operation;
@@ -24,7 +27,6 @@ import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.tag.DamageTypeTags;
 import net.minecraft.registry.tag.TagKey;
-import net.minecraft.util.AssetInfo;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.floatprovider.ClampedNormalFloatProvider;
 import net.minecraft.util.math.floatprovider.ConstantFloatProvider;
@@ -48,7 +50,11 @@ import org.codeberg.zenxarch.mob_variants_api.variant.effect.single.DefaultAttri
 import org.codeberg.zenxarch.mob_variants_api.variant.effect.single.ExplosionEffect;
 import org.codeberg.zenxarch.mob_variants_api.variant.effect.single.SpawnEffectCloudEffect;
 import org.codeberg.zenxarch.zombies.Zombies;
+import org.codeberg.zenxarch.zombies.client.OverlayClient;
 import org.codeberg.zenxarch.zombies.data.ZBiomeTags;
+import org.codeberg.zenxarch.zombies.data.entity.effect.pair.IntervalMobEffect;
+import org.codeberg.zenxarch.zombies.data.entity.effect.single.BonemealLivingEffect;
+import org.codeberg.zenxarch.zombies.data.entity.effect.single.StatusLivingEffect;
 import org.codeberg.zenxarch.zombies.datagen.provider.ZEntityLootTableProvider;
 import org.codeberg.zenxarch.zombies.datagen.provider.ZLootTableProvider;
 
@@ -85,6 +91,14 @@ public final class ZombieVariantGenerator {
   public static final RegistryKey<MobVariant> DESERT = INITIALIZER.of("desert");
   public static final RegistryKey<MobVariant> RAIN = INITIALIZER.of("rain");
   public static final RegistryKey<MobVariant> EXPLOSION = INITIALIZER.of("explosion");
+  public static final RegistryKey<MobVariant> INVISIBLE = INITIALIZER.of("invisible");
+  public static final RegistryKey<MobVariant> BONEMEAL = INITIALIZER.of("bonemeal");
+  public static final RegistryKey<MobVariant> OAK_DOOR = INITIALIZER.of("oak_door");
+  public static final RegistryKey<MobVariant> COPPER_DOOR = INITIALIZER.of("copper_door");
+  public static final RegistryKey<MobVariant> IRON_DOOR = INITIALIZER.of("iron_door");
+  public static final RegistryKey<MobVariant> HEADLESS = INITIALIZER.of("headless");
+
+  // public static final RegistryKey<MobVariant> INK_ATTACK = INITIALIZER.of("ink_attack");
 
   private static MobEffect createAttributeEffect(
       RegistryEntry<EntityAttribute> attribute, FloatProvider value) {
@@ -138,6 +152,12 @@ public final class ZombieVariantGenerator {
         .with(MobAttachments.ON_SPAWN, attributesOnSpawn());
   }
 
+  private static ZombieVariantMapBuilder doorMap(EquipmentTable table) {
+    return new ZombieVariantMapBuilder()
+        .with(MobAttachments.LOOT_TABLE, ZEntityLootTableProvider.ZOMBIE_DROPS)
+        .with(MobAttachments.EQUIPMENT_TABLE, table);
+  }
+
   private static ZombieVariantMapBuilder defaultEquipmentMap() {
     return defaultAttributeMap()
         .with(MobAttachments.EQUIPMENT_TABLE, ZLootTableProvider.COMMON_ZOMBIE_EQUIPMENT);
@@ -149,6 +169,17 @@ public final class ZombieVariantGenerator {
     var particle = effects.get(0).value().createParticle(effectInstances.get(0));
     return defaultEquipmentMap()
         .with(MobAttachments.ON_ATTACK, new StatusMobEffect(effectInstances))
+        .with(MobAttachments.ON_TICK, spawnParticles(particle, 0.2F));
+  }
+
+  private static ZombieVariantMapBuilder spawnWithEffects(
+      List<RegistryEntry<StatusEffect>> effects) {
+    var effectInstances = effects.stream().map(e -> new StatusEffectInstance(e, -1)).toList();
+    var particle = effects.get(0).value().createParticle(effectInstances.get(0));
+    return defaultEquipmentMap()
+        .with(
+            MobAttachments.ON_SPAWN,
+            new SingleMobEffect(new StatusLivingEffect(effectInstances), true))
         .with(MobAttachments.ON_TICK, spawnParticles(particle, 0.2F));
   }
 
@@ -231,7 +262,12 @@ public final class ZombieVariantGenerator {
             .with(
                 MobAttachments.TEXTURE_OVERRIDE,
                 new AssetInfo(Identifier.of("entity/zombie/drowned")))
-            .with(MobAttachments.LOOT_TABLE, EntityType.DROWNED.getLootTableKey().get()),
+            .with(MobAttachments.LOOT_TABLE, EntityType.DROWNED.getLootTableKey().get())
+            .with(
+                MobAttachments.OVERLAY,
+                OverlayClient.make(
+                    EntityModelLayers.DROWNED_OUTER,
+                    new AssetInfo(Identifier.ofVanilla("entity/zombie/drowned_outer_layer")))),
         SpawnConditionSelectors.createSingle(RainingSpawnCondition.INSTANCE, UNCOMMON_WEIGHT));
     register(
         registry,
@@ -239,6 +275,66 @@ public final class ZombieVariantGenerator {
         defaultAttributeMap()
             .with(MobAttachments.ON_ATTACK, new SingleMobEffect(new ExplosionEffect(3.0F), true)),
         condition(RARE_WEIGHT));
+    register(
+        registry,
+        INVISIBLE,
+        spawnWithEffects(List.of(StatusEffects.INVISIBILITY)),
+        condition(RARE_WEIGHT));
+    register(
+        registry,
+        BONEMEAL,
+        defaultEquipmentMap()
+            .with(
+                MobAttachments.ON_TICK,
+                AllOfMobEffect.create(
+                    new IntervalMobEffect(
+                        20, new SingleMobEffect(new BonemealLivingEffect(), true)),
+                    spawnParticles(ParticleTypes.HAPPY_VILLAGER, 0.2F))),
+        condition(registry, ZBiomeTags.WITH_AXE_ZOMBIES, RARE_WEIGHT));
+
+    register(
+        registry,
+        OAK_DOOR,
+        doorMap(ZLootTableProvider.OAK_DOOR_SHIELD_EQUIPMENT),
+        condition(UNCOMMON_WEIGHT));
+
+    register(
+        registry,
+        COPPER_DOOR,
+        doorMap(ZLootTableProvider.COPPER_DOOR_SHIELD_EQUIPMENT),
+        condition(RARE_WEIGHT));
+
+    register(
+        registry,
+        IRON_DOOR,
+        doorMap(ZLootTableProvider.IRON_DOOR_SHIELD_EQUIPMENT),
+        condition(RARE_WEIGHT));
+
+    register(
+        registry,
+        HEADLESS,
+        defaultAttributeMap().with(MobAttachments.RENDER_HEAD, false),
+        condition(UNCOMMON_WEIGHT));
+
+    // register(
+    //     registry,
+    //     INK_ATTACK,
+    //     defaultAttributeMap()
+    //         .with(
+    //             MobAttachments.ON_ATTACK,
+    //             new SingleMobEffect(
+    //                 new SpawnParticleEffect(
+    //                     new SpawnParticlesEnchantmentEffect(
+    //                         ParticleTypes.SQUID_INK,
+    //                         SpawnParticlesEnchantmentEffect.withinBoundingBox(),
+    //                         SpawnParticlesEnchantmentEffect.withinBoundingBox(),
+    //                         SpawnParticlesEnchantmentEffect.scaledVelocity(0.1f),
+    //                         SpawnParticlesEnchantmentEffect.fixedVelocity(
+    //                             UniformFloatProvider.create(0.01f, 0.05f)),
+    //                         ConstantFloatProvider.create(0.05f)),
+    //                     450),
+    //                 false)),
+    //     condition(UNCOMMON_WEIGHT));
   }
 
   private static void register(

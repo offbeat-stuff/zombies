@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(LivingEntity.class)
-public class LivingEntityMixin {
+public abstract class LivingEntityMixin {
   @Inject(at = @At("HEAD"), method = "isInvulnerableTo", cancellable = true)
   public void zenxarch$implement_damage_invulnerability(
       ServerWorld world, DamageSource source, CallbackInfoReturnable<Boolean> cir) {

@@ -29,6 +29,7 @@ import org.codeberg.zenxarch.mob_variants_api.variant.effect.pair.SwapMobEffect;
 import org.codeberg.zenxarch.mob_variants_api.variant.effect.single.FreezeEffect;
 import org.codeberg.zenxarch.mob_variants_api.variant.effect.single.IgniteEffect;
 import org.codeberg.zenxarch.mob_variants_api.variant.effect.single.SpawnParticleEffect;
+import org.codeberg.zenxarch.zombies.data.entity.effect.pair.IntervalMobEffect;
 import org.jetbrains.annotations.Nullable;
 
 public interface MobEffect {
@@ -51,6 +52,7 @@ public interface MobEffect {
     register("conditional", ConditionalSpawnEffect.CODEC);
     register("heal", HealFromDamage.CODEC);
     register("convert_to", ConvertToEntityTypeEffect.CODEC);
+    register("interval", IntervalMobEffect.CODEC);
   }
 
   private static void register(String id, MapCodec<? extends MobEffect> codec) {

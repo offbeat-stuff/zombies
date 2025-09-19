@@ -26,6 +26,15 @@ public class ZLootTableProvider extends SimpleFabricLootTableProvider {
   public static final EquipmentTable AXE_ZOMBIE_EQUIPMENT =
       equipmentTable("axe_zombie_equipment", 0.00075F);
 
+  public static final EquipmentTable OAK_DOOR_SHIELD_EQUIPMENT =
+      equipmentTable("oak_door_shield_equipment", 0F);
+
+  public static final EquipmentTable COPPER_DOOR_SHIELD_EQUIPMENT =
+      equipmentTable("copper_door_shield_equipment", 0F);
+
+  public static final EquipmentTable IRON_DOOR_SHIELD_EQUIPMENT =
+      equipmentTable("iron_door_shield_equipment", 0F);
+
   private static EquipmentTable equipmentTable(String id, float slotDropChances) {
     return new EquipmentTable(key(id), slotDropChances);
   }
@@ -63,5 +72,18 @@ public class ZLootTableProvider extends SimpleFabricLootTableProvider {
         AXE_ZOMBIE_EQUIPMENT.lootTable(),
         EquipmentLootTable.leatherOnlyEquipmentTable(),
         EquipmentLootTable.axeWeaponTable());
+
+    addLootTable(
+        registry,
+        OAK_DOOR_SHIELD_EQUIPMENT.lootTable(),
+        EquipmentLootTable.shieldDoorEquipment(Items.OAK_DOOR, 125, 12, 5.0f, 0.3f));
+    addLootTable(
+        registry,
+        COPPER_DOOR_SHIELD_EQUIPMENT.lootTable(),
+        EquipmentLootTable.shieldDoorEquipment(Items.COPPER_DOOR, 250, 16, 6.0f, 0.4f));
+    addLootTable(
+        registry,
+        IRON_DOOR_SHIELD_EQUIPMENT.lootTable(),
+        EquipmentLootTable.shieldDoorEquipment(Items.IRON_DOOR, 375, 20, 7.0f, 0.5f));
   }
 }

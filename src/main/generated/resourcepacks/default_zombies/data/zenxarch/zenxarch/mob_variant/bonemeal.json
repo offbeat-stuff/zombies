@@ -4,7 +4,7 @@
       "loot_table": "zenxarch:common_zombie_equipment",
       "slot_drop_chances": 7.5E-4
     },
-    "zenxarch:loot_table": "minecraft:entities/drowned",
+    "zenxarch:loot_table": "zenxarch:zombie_drops",
     "zenxarch:on_spawn": {
       "type": "zenxarch:all_of",
       "effects": [
@@ -88,19 +88,51 @@
         }
       ]
     },
-    "zenxarch:overlay": {
-      "layerId": "minecraft:drowned",
-      "layerName": "outer",
-      "texture": "minecraft:entity/zombie/drowned_outer_layer"
-    },
-    "zenxarch:texture_override": "minecraft:entity/zombie/drowned"
+    "zenxarch:on_tick": {
+      "type": "zenxarch:all_of",
+      "effects": [
+        {
+          "type": "zenxarch:interval",
+          "effect": {
+            "type": "zenxarch:single",
+            "effect": {
+              "type": "zenxarch:bonemeal"
+            }
+          },
+          "ticks": 20
+        },
+        {
+          "type": "zenxarch:single",
+          "effect": {
+            "type": "zenxarch:spawn_particle",
+            "horizontal_position": {
+              "type": "in_bounding_box"
+            },
+            "horizontal_velocity": {
+              "base": 0.2
+            },
+            "particle": {
+              "type": "minecraft:happy_villager"
+            },
+            "speed": 0.2,
+            "vertical_position": {
+              "type": "in_bounding_box"
+            },
+            "vertical_velocity": {
+              "base": 0.2
+            }
+          }
+        }
+      ]
+    }
   },
   "spawnConditions": [
     {
       "condition": {
-        "type": "zenxarch:is_raining"
+        "type": "minecraft:biome",
+        "biomes": "#zenxarch:with_axe_zombies"
       },
-      "priority": 128
+      "priority": 64
     }
   ]
 }

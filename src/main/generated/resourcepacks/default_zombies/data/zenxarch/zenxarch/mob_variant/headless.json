@@ -1,10 +1,6 @@
 {
   "components": {
-    "zenxarch:equipment_table": {
-      "loot_table": "zenxarch:common_zombie_equipment",
-      "slot_drop_chances": 7.5E-4
-    },
-    "zenxarch:loot_table": "minecraft:entities/drowned",
+    "zenxarch:loot_table": "zenxarch:zombie_drops",
     "zenxarch:on_spawn": {
       "type": "zenxarch:all_of",
       "effects": [
@@ -88,18 +84,10 @@
         }
       ]
     },
-    "zenxarch:overlay": {
-      "layerId": "minecraft:drowned",
-      "layerName": "outer",
-      "texture": "minecraft:entity/zombie/drowned_outer_layer"
-    },
-    "zenxarch:texture_override": "minecraft:entity/zombie/drowned"
+    "zenxarch:render_head": false
   },
   "spawnConditions": [
     {
-      "condition": {
-        "type": "zenxarch:is_raining"
-      },
       "priority": 128
     }
   ]

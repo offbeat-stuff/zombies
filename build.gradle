@@ -2,7 +2,7 @@ plugins {
     id 'fabric-loom' version "${loom_version}"
 }
 
-version = project.mod_version
+version = project.mod_version + "+" + project.minecraft_version
 group = project.maven_group
 
 base {
@@ -74,7 +74,7 @@ dependencies {
     include(implementation project(path: ':zombie_brain', configuration: 'namedElements'))
     include project(path: ':common', configuration: 'namedElements')
 
-    modImplementation "net.tslat.smartbrainlib:SmartBrainLib-fabric-${project.sbl_mc_version}:${project.sbl_version}"
+    // modImplementation "net.tslat.smartbrainlib:SmartBrainLib-fabric-${project.sbl_mc_version}:${project.sbl_version}"
 }
 
 fabricApi {

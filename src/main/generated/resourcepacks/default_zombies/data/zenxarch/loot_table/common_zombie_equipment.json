@@ -242,7 +242,238 @@
               }
             ]
           },
-          "weight": 3706
+          "weight": 33435
+        },
+        {
+          "type": "minecraft:loot_table",
+          "value": {
+            "pools": [
+              {
+                "bonus_rolls": 0.0,
+                "entries": [
+                  {
+                    "type": "minecraft:loot_table",
+                    "value": {
+                      "pools": [
+                        {
+                          "bonus_rolls": 0.0,
+                          "entries": [
+                            {
+                              "type": "minecraft:item",
+                              "name": "minecraft:copper_helmet"
+                            }
+                          ],
+                          "rolls": 1.0
+                        },
+                        {
+                          "bonus_rolls": 0.0,
+                          "entries": [
+                            {
+                              "type": "minecraft:loot_table",
+                              "conditions": [
+                                {
+                                  "chance": 0.009,
+                                  "condition": "minecraft:random_chance"
+                                }
+                              ],
+                              "value": {
+                                "pools": [
+                                  {
+                                    "bonus_rolls": 0.0,
+                                    "entries": [
+                                      {
+                                        "type": "minecraft:item",
+                                        "name": "minecraft:copper_chestplate"
+                                      }
+                                    ],
+                                    "rolls": 1.0
+                                  },
+                                  {
+                                    "bonus_rolls": 0.0,
+                                    "entries": [
+                                      {
+                                        "type": "minecraft:loot_table",
+                                        "conditions": [
+                                          {
+                                            "chance": 0.009,
+                                            "condition": "minecraft:random_chance"
+                                          }
+                                        ],
+                                        "value": {
+                                          "pools": [
+                                            {
+                                              "bonus_rolls": 0.0,
+                                              "entries": [
+                                                {
+                                                  "type": "minecraft:item",
+                                                  "name": "minecraft:copper_leggings"
+                                                }
+                                              ],
+                                              "rolls": 1.0
+                                            },
+                                            {
+                                              "bonus_rolls": 0.0,
+                                              "entries": [
+                                                {
+                                                  "type": "minecraft:loot_table",
+                                                  "conditions": [
+                                                    {
+                                                      "chance": 0.009,
+                                                      "condition": "minecraft:random_chance"
+                                                    }
+                                                  ],
+                                                  "value": {
+                                                    "pools": [
+                                                      {
+                                                        "bonus_rolls": 0.0,
+                                                        "entries": [
+                                                          {
+                                                            "type": "minecraft:item",
+                                                            "name": "minecraft:copper_boots"
+                                                          }
+                                                        ],
+                                                        "rolls": 1.0
+                                                      }
+                                                    ]
+                                                  }
+                                                }
+                                              ],
+                                              "rolls": 1.0
+                                            }
+                                          ]
+                                        }
+                                      }
+                                    ],
+                                    "rolls": 1.0
+                                  }
+                                ]
+                              }
+                            }
+                          ],
+                          "rolls": 1.0
+                        }
+                      ]
+                    },
+                    "weight": 200000
+                  },
+                  {
+                    "type": "minecraft:loot_table",
+                    "quality": 1000,
+                    "value": {
+                      "functions": [
+                        {
+                          "function": "zenxarch:enchantment_provider",
+                          "provider": "zenxarch:zombie_spawn_equipment"
+                        }
+                      ],
+                      "pools": [
+                        {
+                          "bonus_rolls": 0.0,
+                          "entries": [
+                            {
+                              "type": "minecraft:item",
+                              "name": "minecraft:copper_helmet"
+                            }
+                          ],
+                          "rolls": 1.0
+                        },
+                        {
+                          "bonus_rolls": 0.0,
+                          "entries": [
+                            {
+                              "type": "minecraft:loot_table",
+                              "conditions": [
+                                {
+                                  "chance": 0.009,
+                                  "condition": "minecraft:random_chance"
+                                }
+                              ],
+                              "value": {
+                                "pools": [
+                                  {
+                                    "bonus_rolls": 0.0,
+                                    "entries": [
+                                      {
+                                        "type": "minecraft:item",
+                                        "name": "minecraft:copper_chestplate"
+                                      }
+                                    ],
+                                    "rolls": 1.0
+                                  },
+                                  {
+                                    "bonus_rolls": 0.0,
+                                    "entries": [
+                                      {
+                                        "type": "minecraft:loot_table",
+                                        "conditions": [
+                                          {
+                                            "chance": 0.009,
+                                            "condition": "minecraft:random_chance"
+                                          }
+                                        ],
+                                        "value": {
+                                          "pools": [
+                                            {
+                                              "bonus_rolls": 0.0,
+                                              "entries": [
+                                                {
+                                                  "type": "minecraft:item",
+                                                  "name": "minecraft:copper_leggings"
+                                                }
+                                              ],
+                                              "rolls": 1.0
+                                            },
+                                            {
+                                              "bonus_rolls": 0.0,
+                                              "entries": [
+                                                {
+                                                  "type": "minecraft:loot_table",
+                                                  "conditions": [
+                                                    {
+                                                      "chance": 0.009,
+                                                      "condition": "minecraft:random_chance"
+                                                    }
+                                                  ],
+                                                  "value": {
+                                                    "pools": [
+                                                      {
+                                                        "bonus_rolls": 0.0,
+                                                        "entries": [
+                                                          {
+                                                            "type": "minecraft:item",
+                                                            "name": "minecraft:copper_boots"
+                                                          }
+                                                        ],
+                                                        "rolls": 1.0
+                                                      }
+                                                    ]
+                                                  }
+                                                }
+                                              ],
+                                              "rolls": 1.0
+                                            }
+                                          ]
+                                        }
+                                      }
+                                    ],
+                                    "rolls": 1.0
+                                  }
+                                ]
+                              }
+                            }
+                          ],
+                          "rolls": 1.0
+                        }
+                      ]
+                    },
+                    "weight": 0
+                  }
+                ],
+                "rolls": 1.0
+              }
+            ]
+          },
+          "weight": 47460
         },
         {
           "type": "minecraft:loot_table",
@@ -473,7 +704,7 @@
               }
             ]
           },
-          "weight": 4873
+          "weight": 16505
         },
         {
           "type": "minecraft:loot_table",
@@ -704,7 +935,7 @@
               }
             ]
           },
-          "weight": 1290
+          "weight": 2443
         },
         {
           "type": "minecraft:loot_table",
@@ -935,7 +1166,7 @@
               }
             ]
           },
-          "weight": 127
+          "weight": 154
         },
         {
           "type": "minecraft:loot_table",

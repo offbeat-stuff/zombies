@@ -1,0 +1,57 @@
+{
+  "type": "minecraft:equipment",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "components": {
+                "minecraft:max_damage": 125
+              },
+              "function": "minecraft:set_components"
+            },
+            {
+              "components": {
+                "minecraft:attribute_modifiers": [
+                  {
+                    "type": "minecraft:armor",
+                    "amount": 12.0,
+                    "id": "minecraft:armor.chestplate",
+                    "operation": "add_value",
+                    "slot": "chest"
+                  },
+                  {
+                    "type": "minecraft:armor_toughness",
+                    "amount": 5.0,
+                    "id": "minecraft:armor.chestplate",
+                    "operation": "add_value",
+                    "slot": "chest"
+                  },
+                  {
+                    "type": "minecraft:knockback_resistance",
+                    "amount": 0.30000001192092896,
+                    "id": "minecraft:armor.chestplate",
+                    "operation": "add_value",
+                    "slot": "chest"
+                  }
+                ]
+              },
+              "function": "minecraft:set_components"
+            },
+            {
+              "components": {
+                "minecraft:item_model": "zombies_zenxarch:oak_door"
+              },
+              "function": "minecraft:set_components"
+            }
+          ],
+          "name": "minecraft:oak_door"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ]
+}
