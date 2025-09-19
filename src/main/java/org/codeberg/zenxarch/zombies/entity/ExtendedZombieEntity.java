@@ -1,10 +1,13 @@
 package org.codeberg.zenxarch.zombies.entity;
 
+import java.util.List;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityData;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SpawnReason;
+import net.minecraft.entity.ai.brain.Brain.Profile;
+import net.minecraft.entity.ai.pathing.EntityNavigation;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.mob.ZombieEntity;
@@ -18,118 +21,74 @@ import net.minecraft.world.LocalDifficulty;
 import net.minecraft.world.ServerWorldAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldView;
+import net.tslat.smartbrainlib.api.SmartBrainOwner;
+import net.tslat.smartbrainlib.api.core.BrainActivityGroup;
+import net.tslat.smartbrainlib.api.core.sensor.ExtendedSensor;
+import org.codeberg.zenxarch.mob_variants_api.registry.MobVariantUtils;
+import org.codeberg.zenxarch.mob_variants_api.variant.MobAttachments;
+import org.codeberg.zenxarch.mob_variants_api.variant.MobVariant;
+import org.codeberg.zenxarch.mob_variants_api.variant.effect.MobEffect;
 import org.codeberg.zenxarch.zombies.ZombieGamerules;
-import org.codeberg.zenxarch.zombies.data.entity.MobAttachments;
-import org.codeberg.zenxarch.zombies.data.entity.effect.MobEffect;
+import org.codeberg.zenxarch.zombies.brain.ZombieBrain;
 import org.codeberg.zenxarch.zombies.difficulty.ExtendedDifficulty;
-import org.codeberg.zenxarch.zombies.entity.variant.MobVariant;
 import org.codeberg.zenxarch.zombies.spawning.ZombieNbtUtils;
 import org.jetbrains.annotations.Nullable;
 
-public class ExtendedZombieEntity extends ZombieEntity {
-  // implements SmartBrainOwner<ExtendedZombieEntity> {
+public class ExtendedZombieEntity extends ZombieEntity
+    implements SmartBrainOwner<ExtendedZombieEntity> {
 
+  private static ZombieBrain<ExtendedZombieEntity> BRAIN_PROVIDER = new ZombieBrain<>();
   private RegistryEntry<MobVariant> variant;
 
   public ExtendedZombieEntity(World world) {
     super(world);
   }
 
-  // @Override
-  // protected Profile<?> createBrainProfile() {
-  //   return new SmartBrainProvider<>(this);
-  // }
+  @Override
+  protected Profile<?> createBrainProfile() {
+    return BRAIN_PROVIDER.getBrainProfile(this);
+  }
 
-  // private static boolean shouldTargetEntity(LivingEntity living, ExtendedZombieEntity zombie) {
-  //   if (!zombie.canTarget(living)) return false;
-  //   return switch (living) {
-  //     case TurtleEntity turtle -> turtle.isBaby() && !turtle.isTouchingWater();
-  //     default ->
-  //         living instanceof PlayerEntity
-  //             || living instanceof MerchantEntity
-  //             || living instanceof IronGolemEntity;
-  //   };
-  // }
+  @Override
+  public List<ExtendedSensor<ExtendedZombieEntity>> getSensors() {
+    return BRAIN_PROVIDER.getSensors();
+  }
 
-  // @Override
-  // public List<ExtendedSensor<ExtendedZombieEntity>> getSensors() {
-  //   return ObjectArrayList.of(
-  //       new NearbyPlayersSensor<>(),
-  //       new NearbyLivingEntitySensor<ExtendedZombieEntity>()
-  //           .setPredicate(ExtendedZombieEntity::shouldTargetEntity),
-  //       new HurtBySensor<ExtendedZombieEntity>()
-  //           .setPredicate((source, living) -> !(living instanceof ExtendedZombieEntity)),
-  //       new GenericAttackTargetSensor<>(),
-  //       new UnreachableTargetSensor<>());
-  // }
+  @Override
+  public BrainActivityGroup<ExtendedZombieEntity> getCoreTasks() {
+    return BRAIN_PROVIDER.getCoreTasks(ExtendedZombieEntity::burnsInDaylight);
+  }
 
-  // @Override
-  // public BrainActivityGroup<? extends ExtendedZombieEntity> getCoreTasks() {
-  //   return BrainActivityGroup.coreTasks(
-  //       new
-  // AvoidSun<ExtendedZombieEntity>().startCondition(ExtendedZombieEntity::burnsInDaylight),
-  //       new EscapeSun<ExtendedZombieEntity>()
-  //           .speedModifier(1.5F)
-  //           .startCondition(ExtendedZombieEntity::burnsInDaylight)
-  //           .cooldownFor(zombie -> 20),
-  //       new InteractWithDoor<>(),
-  //       new LookAtAttackTarget<>().runFor(zombie -> zombie.getRandom().nextBetween(40, 300)),
-  //       new WalkOrRunToWalkTarget<>());
-  // }
+  @Override
+  public BrainActivityGroup<ExtendedZombieEntity> getIdleTasks() {
+    return BRAIN_PROVIDER.getIdleTasks();
+  }
 
-  // @Override
-  // public BrainActivityGroup<ExtendedZombieEntity> getIdleTasks() {
-  //   return BrainActivityGroup.idleTasks(
-  //       new FirstApplicableBehaviour<ExtendedZombieEntity>(
-  //           new TargetOrRetaliate<>()
-  //               .alertAlliesWhen((a, b) -> b instanceof PlayerEntity)
-  //               .cooldownFor(z -> 20),
-  //           new SetPlayerLookTarget<>(),
-  //           new SetRandomLookTarget<>()),
-  //       new OneRandomBehaviour<ExtendedZombieEntity>(
-  //           new SetRandomWalkTarget<>(),
-  //           new Idle<>().runFor(zombie -> zombie.getRandom().nextBetween(30, 60))));
-  // }
+  @Override
+  public BrainActivityGroup<? extends ExtendedZombieEntity> getFightTasks() {
+    return BRAIN_PROVIDER.getFightTasks();
+  }
 
-  // @Override
-  // public BrainActivityGroup<? extends ExtendedZombieEntity> getFightTasks() {
-  //   return BrainActivityGroup.fightTasks(
-  //       new InvalidateAttackTarget<>(),
-  //       new TargetOrRetaliate<>()
-  //           .alertAlliesWhen((a, b) -> b instanceof PlayerEntity)
-  //           .cooldownFor(z -> 20),
-  //       new SetWalkTargetToAttackTarget<>().speedMod(1.25F),
-  //       new AnimatableMeleeAttack<>(0)
-  //           .whenStarting(zombie -> zombie.setAttacking(true))
-  //           .whenStopping(zombie -> zombie.setAttacking(false)),
-  //       new LeapAtUnreachableTargetBehaviour<>(0)
-  //           .whenStarting(zombie -> zombie.setAttacking(true))
-  //           .whenStopping(zombie -> zombie.setAttacking(false)),
-  //       new ReactToUnreachableTarget<>().reaction(RideMobsBehaviourImpl::rideFlyingMobs));
-  // }
+  @Override
+  protected void initGoals() {
+    /* use smartbrainlib for ai */
+  }
 
-  // @Override
-  // protected void initGoals() {
-  //   /* use smartbrainlib for ai */
-  // }
+  @Override
+  public void setCanBreakDoors(boolean canBreakDoors) {
+    /* no griefing */
+  }
 
-  // @Override
-  // public void setCanBreakDoors(boolean canBreakDoors) {
-  //   /* no griefing */
-  // }
+  @Override
+  protected EntityNavigation createNavigation(World world) {
+    return BRAIN_PROVIDER.createNavigation(this, world);
+  }
 
-  // @Override
-  // protected EntityNavigation createNavigation(World world) {
-  //   var navigation = new SmoothGroundNavigation(this, world);
-  //   navigation.setCanOpenDoors(true);
-  //   return navigation;
-  // }
-
-  // @Override
-  // protected void mobTick(ServerWorld world) {
-  //   super.mobTick(world);
-  //   tickBrain(this);
-  // }
+  @Override
+  protected void mobTick(ServerWorld world) {
+    super.mobTick(world);
+    tickBrain(this);
+  }
 
   @Override
   protected boolean burnsInDaylight() {
@@ -161,7 +120,7 @@ public class ExtendedZombieEntity extends ZombieEntity {
     if (entityData instanceof ExtendedZombieData extendedZombieData) {
       this.setVariant(extendedZombieData.getVariant());
     } else {
-      ZombieVariants.getRandomVariantFromPos(world.toServerWorld(), this.getBlockPos())
+      MobVariantUtils.getRandomVariantFromPos(world.toServerWorld(), this.getBlockPos())
           .ifPresent(this::setVariant);
     }
     var result = super.initialize(world, difficulty, spawnReason, new ZombieData(false, false));

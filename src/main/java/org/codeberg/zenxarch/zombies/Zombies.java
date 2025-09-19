@@ -6,12 +6,9 @@ import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.command.argument.serialize.ConstantArgumentSerializer;
 import net.minecraft.util.Identifier;
-import org.codeberg.zenxarch.zombies.data.entity.MobAttachments;
-import org.codeberg.zenxarch.zombies.data.spawn_conditions.ZombieSpawnConditions;
 import org.codeberg.zenxarch.zombies.loot_table.condition.ZombieLootConditionTypes;
 import org.codeberg.zenxarch.zombies.loot_table.function.ZombieLootFunctionTypes;
 import org.codeberg.zenxarch.zombies.loot_table.number_provider.ZombieLootNumberProviderTypes;
-import org.codeberg.zenxarch.zombies.registry.ZombieRegistries;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,13 +28,11 @@ public class Zombies implements ModInitializer {
   public void onInitialize() {
     LOGGER.info("Hello Fabric world!");
     ZombieDatapacks.registerDatapacks(FabricLoader.getInstance().getModContainer(MODID).get());
-    ZombieRegistries.init();
     ZombieGamerules.initialize();
     ZombieLootNumberProviderTypes.initialize();
     ZombieLootFunctionTypes.initialize();
     ZombieLootConditionTypes.initialize();
-    MobAttachments.initialize();
-    ZombieSpawnConditions.initialize();
+
     if (FabricLoader.getInstance().isDevelopmentEnvironment()) {
       ArgumentTypeRegistry.registerArgumentType(
           id("mob_variant"),

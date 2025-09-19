@@ -1,0 +1,17 @@
+{
+  "required": true,
+  "package": "org.codeberg.zenxarch.mob_variants_api.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "MobEntityMixin",
+    "LivingEntityAccessor",
+    "LivingEntityMixin",
+    "EntityConversionTypeInvoker"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "overwrites": {
+    "requireAnnotations": true
+  }
+}

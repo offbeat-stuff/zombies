@@ -1,0 +1,36 @@
+{
+	"schemaVersion": 1,
+	"id": "mob_variants_api_zenxarch",
+	"version": "${version}",
+	"name": "ZenXArch's Mob variants api",
+	"description": "An data driven system to create mob variants",
+	"authors": [
+		"ZenXArch"
+	],
+	"contact": {
+		"mastodon": "https://mastodon.social/@ZenXArch",
+		"discord": "https://discord.gg/RFSmd7debX",
+		"sources": "https://codeberg.org/ZenXArch/zombies",
+		"modrinth": "https://modrinth.com/mod/zenxarch-zombie-apocalypse"
+	},
+	"license": "Mozilla Public License 2.0",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"org.codeberg.zenxarch.mob_variants_api.MobVariantsApiMod"
+		]
+	},
+	"mixins": [
+		"mob_variants_api.mixins.json",
+		{
+			"config": "mob_variants_api.client.mixins.json",
+			"environment": "client"
+		}
+	],
+	"depends": {
+		"fabricloader": ">=${loader_version}",
+		"minecraft": ">=${minecraft_version}",
+		"java": ">=21",
+		"fabric": "*"
+	}
+}

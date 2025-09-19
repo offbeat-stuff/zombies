@@ -5,11 +5,7 @@
   "mixins": [
     "ServerWorldMixin",
     "EntityTypeMixin",
-    "ServerChunkManagerMixin",
-    "MobEntityMixin",
-    "LivingEntityAccessor",
-    "LivingEntityMixin",
-    "EntityConversionTypeInvoker"
+    "ServerChunkManagerMixin"
   ],
   "injectors": {
     "defaultRequire": 1
