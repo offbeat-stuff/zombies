@@ -4,6 +4,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.ClientAssets.AssetInfo;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.entity.LivingEntityRenderer;
 import net.minecraft.client.render.entity.state.LivingEntityRenderState;
@@ -50,11 +51,9 @@ public abstract class LivingEntityRendererMixin {
       LivingEntityRenderState livingEntityRenderState,
       float f,
       CallbackInfo ci) {
-    if (livingEntity.hasAttached(MobAttachments.TEXTURE_OVERRIDE)) {
-      this.zenxarch$texture_override =
-          livingEntity.getAttached(MobAttachments.TEXTURE_OVERRIDE).texturePath();
-    } else {
-      this.zenxarch$texture_override = null;
-    }
+    this.zenxarch$texture_override =
+        livingEntity
+            .getAttachedOrElse(MobAttachments.TEXTURE_OVERRIDE, new AssetInfo(null, null))
+            .texturePath();
   }
 }
