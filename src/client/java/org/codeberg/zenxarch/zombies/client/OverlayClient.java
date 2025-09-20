@@ -1,7 +1,7 @@
 package org.codeberg.zenxarch.zombies.client;
 
-import net.minecraft.client.ClientAssets.AssetInfo;
 import net.minecraft.client.render.entity.model.EntityModelLayer;
+import net.minecraft.util.AssetInfo.TextureAssetInfo;
 import org.codeberg.zenxarch.mob_variants_api.variant.OverlayAttachment;
 
 public final class OverlayClient {
@@ -9,7 +9,7 @@ public final class OverlayClient {
     throw new IllegalStateException("Utility class");
   }
 
-  public static OverlayAttachment make(EntityModelLayer layer, AssetInfo info) {
+  public static OverlayAttachment make(EntityModelLayer layer, TextureAssetInfo info) {
     return new OverlayAttachment(layer.id(), layer.name(), info);
   }
 

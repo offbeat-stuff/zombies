@@ -4,11 +4,11 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.ClientAssets.AssetInfo;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.entity.LivingEntityRenderer;
 import net.minecraft.client.render.entity.state.LivingEntityRenderState;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.util.AssetInfo.TextureAssetInfo;
 import net.minecraft.util.Identifier;
 import org.codeberg.zenxarch.mob_variants_api.client.ExtendedRenderState;
 import org.codeberg.zenxarch.mob_variants_api.variant.MobAttachments;
@@ -54,7 +54,7 @@ public abstract class LivingEntityRendererMixin {
       CallbackInfo ci) {
     this.zenxarch$texture_override =
         livingEntity
-            .getAttachedOrElse(MobAttachments.TEXTURE_OVERRIDE, new AssetInfo(null, null))
+            .getAttachedOrElse(MobAttachments.TEXTURE_OVERRIDE, new TextureAssetInfo(null, null))
             .texturePath();
     if (livingEntityRenderState instanceof ExtendedRenderState exState)
       exState.zenxarch$setHideHead(
