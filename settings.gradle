@@ -10,3 +10,5 @@ pluginManagement {
 }
 
 include('zombie_brain', 'mob_variants_api', 'common')
+
+rootProject.name = 'zombies'
