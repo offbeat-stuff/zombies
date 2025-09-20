@@ -2,9 +2,7 @@
   "required": true,
   "package": "org.codeberg.zenxarch.zombies.client.mixin",
   "compatibilityLevel": "JAVA_21",
-  "client": [
-    "AbstractZombieModelMixin"
-  ],
+  "client": [],
   "injectors": {
     "defaultRequire": 1
   },

@@ -10,6 +10,7 @@ import net.minecraft.client.render.entity.LivingEntityRenderer;
 import net.minecraft.client.render.entity.state.LivingEntityRenderState;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.Identifier;
+import org.codeberg.zenxarch.mob_variants_api.client.ExtendedRenderState;
 import org.codeberg.zenxarch.mob_variants_api.variant.MobAttachments;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -55,5 +56,8 @@ public abstract class LivingEntityRendererMixin {
         livingEntity
             .getAttachedOrElse(MobAttachments.TEXTURE_OVERRIDE, new AssetInfo(null, null))
             .texturePath();
+    if (livingEntityRenderState instanceof ExtendedRenderState exState)
+      exState.zenxarch$setHideHead(
+          !livingEntity.getAttachedOrElse(MobAttachments.RENDER_HEAD, true));
   }
 }

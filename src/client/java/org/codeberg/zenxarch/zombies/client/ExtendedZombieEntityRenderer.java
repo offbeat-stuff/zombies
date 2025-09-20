@@ -26,7 +26,6 @@ public class ExtendedZombieEntityRenderer extends ZombieEntityRenderer {
     super.updateRenderState(zombie, state, f);
     if (state instanceof ExtendedZombieEntityRenderState exstate) {
       exstate.overlay = zombie.getAttached(MobAttachments.OVERLAY);
-      exstate.renderHead = zombie.getAttachedOrElse(MobAttachments.RENDER_HEAD, true);
     }
   }
 
