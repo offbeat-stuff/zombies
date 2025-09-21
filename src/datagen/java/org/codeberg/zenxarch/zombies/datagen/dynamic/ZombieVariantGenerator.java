@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
-import net.minecraft.client.ClientAssets.AssetInfo;
 import net.minecraft.client.render.entity.model.EntityModelLayers;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentTable;
@@ -27,6 +26,7 @@ import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.tag.DamageTypeTags;
 import net.minecraft.registry.tag.TagKey;
+import net.minecraft.util.AssetInfo.TextureAssetInfo;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.floatprovider.ClampedNormalFloatProvider;
 import net.minecraft.util.math.floatprovider.ConstantFloatProvider;
@@ -253,7 +253,7 @@ public final class ZombieVariantGenerator {
         defaultEffectMap(List.of(StatusEffects.DARKNESS, StatusEffects.HUNGER))
             .with(
                 MobAttachments.TEXTURE_OVERRIDE,
-                new AssetInfo(Identifier.ofVanilla("entity/zombie/husk"))),
+                new TextureAssetInfo(Identifier.ofVanilla("entity/zombie/husk"))),
         condition(registry, ZBiomeTags.WITH_DESERT_ZOMBIES, RARE_WEIGHT));
     register(
         registry,
@@ -261,13 +261,14 @@ public final class ZombieVariantGenerator {
         defaultEquipmentMap()
             .with(
                 MobAttachments.TEXTURE_OVERRIDE,
-                new AssetInfo(Identifier.of("entity/zombie/drowned")))
+                new TextureAssetInfo(Identifier.of("entity/zombie/drowned")))
             .with(MobAttachments.LOOT_TABLE, EntityType.DROWNED.getLootTableKey().get())
             .with(
                 MobAttachments.OVERLAY,
                 OverlayClient.make(
                     EntityModelLayers.DROWNED_OUTER,
-                    new AssetInfo(Identifier.ofVanilla("entity/zombie/drowned_outer_layer")))),
+                    new TextureAssetInfo(
+                        Identifier.ofVanilla("entity/zombie/drowned_outer_layer")))),
         SpawnConditionSelectors.createSingle(RainingSpawnCondition.INSTANCE, UNCOMMON_WEIGHT));
     register(
         registry,

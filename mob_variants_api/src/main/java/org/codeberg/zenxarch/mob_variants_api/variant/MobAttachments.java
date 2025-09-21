@@ -4,7 +4,6 @@ import com.mojang.serialization.Codec;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentSyncPredicate;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
-import net.minecraft.client.ClientAssets.AssetInfo;
 import net.minecraft.entity.EquipmentTable;
 import net.minecraft.entity.damage.DamageType;
 import net.minecraft.entity.mob.MobEntity;
@@ -20,6 +19,7 @@ import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntryList;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.AssetInfo.TextureAssetInfo;
 import net.minecraft.world.LocalDifficulty;
 import org.codeberg.zenxarch.mob_variants_api.MobVariantsApiMod;
 import org.codeberg.zenxarch.mob_variants_api.variant.effect.MobEffect;
@@ -29,8 +29,8 @@ public final class MobAttachments {
     throw new IllegalStateException("Utility class");
   }
 
-  public static final AttachmentType<AssetInfo> TEXTURE_OVERRIDE =
-      createAttachment("texture_override", AssetInfo.CODEC, AssetInfo.PACKET_CODEC);
+  public static final AttachmentType<TextureAssetInfo> TEXTURE_OVERRIDE =
+      createAttachment("texture_override", TextureAssetInfo.CODEC, TextureAssetInfo.PACKET_CODEC);
 
   public static final AttachmentType<EquipmentTable> EQUIPMENT_TABLE =
       createAttachment("equipment_table", EquipmentTable.CODEC);
