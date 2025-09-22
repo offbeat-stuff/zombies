@@ -2,7 +2,7 @@ plugins {
     id 'fabric-loom' version "${loom_version}"
 }
 
-version = project.mod_version + "+" + project.minecraft_version
+version = project.mod_version + '+' + project.minecraft_version
 group = project.maven_group
 
 base {
@@ -78,13 +78,13 @@ loom {
 
 dependencies {
     def disabledSubprojects = [
-        "zombie_brain"
+        'zombie_brain'
     ]
     (subprojects - disabledSubprojects.collect { project(":${it}") }).forEach {
         include project("${it.name}:")
         implementation project(path: ":${it.name}", configuration: 'namedElements')
     }
-    clientImplementation project(":mob_variants_api").sourceSets.client.output
+    clientImplementation project(':mob_variants_api').sourceSets.client.output
 
     // modImplementation "net.tslat.smartbrainlib:SmartBrainLib-fabric-${project.sbl_mc_version}:${project.sbl_version}"
 }
@@ -100,7 +100,7 @@ fabricApi {
 processResources {
     inputs.property 'version', project.version
     inputs.property 'loader_version', project.loader_version
-    inputs.property 'minecraft_version', "1.21.8"
+    inputs.property 'minecraft_version', '1.21.8'
     inputs.property 'sbl_version', project.sbl_version
 
     filesMatching('fabric.mod.json') {
