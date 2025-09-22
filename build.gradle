@@ -77,11 +77,11 @@ loom {
 }
 
 dependencies {
-    include(implementation project(path: ':mob_variants_api', configuration: 'namedElements'))
+    (subprojects - project(":zombie_brain")).forEach {
+        include project("${it.name}:")
+        implementation project(path: ":${it.name}", configuration: 'namedElements')
+    }
     clientImplementation project(":mob_variants_api").sourceSets.client.output
-
-    // include(implementation project(path: ':zombie_brain', configuration: 'namedElements'))
-    include project(path: ':common', configuration: 'namedElements')
 
     // modImplementation "net.tslat.smartbrainlib:SmartBrainLib-fabric-${project.sbl_mc_version}:${project.sbl_version}"
 }
