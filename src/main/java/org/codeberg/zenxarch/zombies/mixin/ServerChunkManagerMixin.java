@@ -3,7 +3,7 @@ package org.codeberg.zenxarch.zombies.mixin;
 import net.minecraft.server.world.ServerChunkManager;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.world.World;
-import org.codeberg.zenxarch.zombies.spawning.SpawnerProvider;
+import org.codeberg.zenxarch.zombies.spawning.SpawnerAttachments;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -21,8 +21,7 @@ public abstract class ServerChunkManagerMixin {
   @Inject(method = "tickChunks(Lnet/minecraft/util/profiler/Profiler;J)V", at = @At("TAIL"))
   private void zenxarch$handle_spawners(CallbackInfo ci) {
     if (!(getWorld() instanceof ServerWorld sw)) return;
-    if (!(getWorld() instanceof SpawnerProvider sp)) return;
 
-    for (var spawner : sp.zenxarch$getZombieSpawners()) spawner.spawn(sw, spawnMonsters);
+    for (var spawner : SpawnerAttachments.getApocalypses(sw)) spawner.spawn(sw, spawnMonsters);
   }
 }

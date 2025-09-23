@@ -9,6 +9,7 @@ import net.minecraft.util.Identifier;
 import org.codeberg.zenxarch.zombies.loot_table.condition.ZombieLootConditionTypes;
 import org.codeberg.zenxarch.zombies.loot_table.function.ZombieLootFunctionTypes;
 import org.codeberg.zenxarch.zombies.loot_table.number_provider.ZombieLootNumberProviderTypes;
+import org.codeberg.zenxarch.zombies.spawning.SpawnerAttachments;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,5 +41,7 @@ public class Zombies implements ModInitializer {
           ConstantArgumentSerializer.of(DebugCommands::mobVariant));
       CommandRegistrationCallback.EVENT.register(DebugCommands::registerDebugCommands);
     }
+
+    SpawnerAttachments.initialize();
   }
 }

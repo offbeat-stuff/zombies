@@ -3,7 +3,6 @@
   "package": "org.codeberg.zenxarch.zombies.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "ServerWorldMixin",
     "EntityTypeMixin",
     "ServerChunkManagerMixin"
   ],
