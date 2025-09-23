@@ -10,6 +10,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(BipedEntityModel.class)
 public abstract class BipedEntityModelMixin {
+  @SuppressWarnings("rawtypes")
   @Inject(method = "setAngles", at = @At("TAIL"))
   private void zenxarch$hideHead(BipedEntityRenderState zstate, CallbackInfo ci) {
     ((BipedEntityModel) (Object) this).getHead().hidden =
