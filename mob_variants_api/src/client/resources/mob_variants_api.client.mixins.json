@@ -4,8 +4,7 @@
   "compatibilityLevel": "JAVA_21",
   "client": [
     "BipedEntityModelMixin",
-    "LivingEntityRendererMixin",
-    "LivingEntityRenderStateMixin"
+    "LivingEntityRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1

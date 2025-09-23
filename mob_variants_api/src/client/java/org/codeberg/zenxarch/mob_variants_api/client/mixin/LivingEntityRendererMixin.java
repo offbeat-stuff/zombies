@@ -4,16 +4,14 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.entity.LivingEntityRenderer;
 import net.minecraft.client.render.entity.state.LivingEntityRenderState;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.AssetInfo.TextureAssetInfo;
 import net.minecraft.util.Identifier;
-import org.codeberg.zenxarch.mob_variants_api.client.ExtendedRenderState;
+import org.codeberg.zenxarch.mob_variants_api.client.ExtendedRenderStateKeys;
 import org.codeberg.zenxarch.mob_variants_api.variant.MobAttachments;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -21,8 +19,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Environment(EnvType.CLIENT)
 @Mixin(LivingEntityRenderer.class)
 public abstract class LivingEntityRendererMixin {
-
-  @Unique private Identifier zenxarch$texture_override = null;
 
   @WrapOperation(
       method = "getRenderLayer",
@@ -35,11 +31,8 @@ public abstract class LivingEntityRendererMixin {
       LivingEntityRenderer<?, ?, ?> self,
       LivingEntityRenderState renderState,
       Operation<Identifier> op) {
-    if (this.zenxarch$texture_override != null
-        && MinecraftClient.getInstance()
-            .getResourceManager()
-            .getResource(zenxarch$texture_override)
-            .isPresent()) return this.zenxarch$texture_override;
+    var textureOverride = ExtendedRenderStateKeys.getTextureOverride(renderState);
+    if (textureOverride != null) return textureOverride;
     return op.call(self, renderState);
   }
 
@@ -52,12 +45,13 @@ public abstract class LivingEntityRendererMixin {
       LivingEntityRenderState livingEntityRenderState,
       float f,
       CallbackInfo ci) {
-    this.zenxarch$texture_override =
+    livingEntityRenderState.setData(
+        ExtendedRenderStateKeys.TextureOverride,
         livingEntity
             .getAttachedOrElse(MobAttachments.TEXTURE_OVERRIDE, new TextureAssetInfo(null, null))
-            .texturePath();
-    if (livingEntityRenderState instanceof ExtendedRenderState exState)
-      exState.zenxarch$setHideHead(
-          !livingEntity.getAttachedOrElse(MobAttachments.RENDER_HEAD, true));
+            .texturePath());
+    livingEntityRenderState.setData(
+        ExtendedRenderStateKeys.RenderHead,
+        livingEntity.getAttachedOrElse(MobAttachments.RENDER_HEAD, true));
   }
 }
