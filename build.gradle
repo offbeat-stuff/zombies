@@ -122,3 +122,7 @@ jar {
         rename { "${it }_${inputs.properties.archivesName }" }
     }
 }
+
+afterEvaluate {
+    tasks.getByName('genCommonSourcesWithVineflower').dependsOn(":mob_variants_api:genCommonSourcesWithVineflower")
+}
