@@ -125,4 +125,5 @@ jar {
 
 afterEvaluate {
     tasks.getByName('genCommonSourcesWithVineflower').dependsOn(":mob_variants_api:genCommonSourcesWithVineflower")
+    tasks.getByName('genCommonSourcesWithVineflower').dependsOn(":mob_variants_api:genClientOnlySourcesWithVineflower")
 }
