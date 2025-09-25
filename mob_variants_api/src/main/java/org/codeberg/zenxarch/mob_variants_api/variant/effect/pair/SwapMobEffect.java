@@ -15,7 +15,7 @@ public record SwapMobEffect() implements MobEffect {
   private static TeleportTarget getTeleportTarget(ServerWorld world, LivingEntity living) {
     return new TeleportTarget(
         world,
-        living.getPos(),
+        living.getEntityPos(),
         living.getVelocity(),
         living.getYaw(),
         living.getPitch(),

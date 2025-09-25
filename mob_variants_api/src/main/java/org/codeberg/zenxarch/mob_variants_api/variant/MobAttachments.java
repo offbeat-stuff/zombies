@@ -75,7 +75,7 @@ public final class MobAttachments {
     mob.setEquipmentFromTable(
         table.lootTable(),
         new LootWorldContext.Builder(world)
-            .add(LootContextParameters.ORIGIN, mob.getPos())
+            .add(LootContextParameters.ORIGIN, mob.getEntityPos())
             .add(LootContextParameters.THIS_ENTITY, mob)
             .luck(difficulty.getClampedLocalDifficulty())
             .build(LootContextTypes.EQUIPMENT),

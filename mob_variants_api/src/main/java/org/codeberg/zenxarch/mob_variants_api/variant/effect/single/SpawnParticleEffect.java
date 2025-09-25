@@ -26,7 +26,7 @@ public record SpawnParticleEffect(SpawnParticlesEnchantmentEffect effect, int co
 
   @Override
   public void run(ServerWorld world, LivingEntity target) {
-    var pos = target.getPos();
+    var pos = target.getEntityPos();
     var random = target.getRandom();
     var move = target.getMovement();
     var width = target.getWidth();
