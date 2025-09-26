@@ -4,7 +4,7 @@ import java.util.List;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
 import net.minecraft.server.world.ServerWorld;
-import org.codeberg.zenxarch.ZModUtils;
+import org.codeberg.zenxarch.zombies.Zombies;
 
 public final class SpawnerAttachments {
   private SpawnerAttachments() {
@@ -12,7 +12,7 @@ public final class SpawnerAttachments {
   }
 
   public static final AttachmentType<List<ZombieApocalypse>> ZOMBIE_APOCALYPSE =
-      AttachmentRegistry.create(ZModUtils.id("zombie_apocalypse"));
+      AttachmentRegistry.create(Zombies.id("zombie_apocalypse"));
 
   public static List<ZombieApocalypse> getApocalypses(ServerWorld world) {
     return world.getAttachedOrSet(
