@@ -45,6 +45,15 @@ public class ExtendedRenderStateDataKey<T> {
     return new Builder<>(id);
   }
 
+  public static <T> Builder<T> builder(AttachmentType<T> attachmentType) {
+    return new Builder<>(attachmentType);
+  }
+
+  public static <R, T> Builder<T> builder(
+      AttachmentType<R> attachmentType, Function<R, T> converter) {
+    return new Builder<>(attachmentType, converter);
+  }
+
   public static class Builder<T> {
     private final Identifier id;
     private Function<LivingEntity, T> provider;
@@ -56,6 +65,21 @@ public class ExtendedRenderStateDataKey<T> {
 
     public Builder(String id) {
       this.id = MobVariantsApiMod.id(id);
+    }
+
+    public Builder(AttachmentType<T> attachmentType) {
+      this(attachmentType.identifier());
+      attachment(attachmentType);
+    }
+
+    public <R> Builder(AttachmentType<R> attachmentType, Function<R, T> converter) {
+      this(attachmentType.identifier());
+      attachment(attachmentType, converter);
+    }
+
+    public Builder<T> provider(Function<LivingEntity, T> provider) {
+      this.provider = provider;
+      return this;
     }
 
     public Builder<T> attachment(AttachmentType<T> type) {

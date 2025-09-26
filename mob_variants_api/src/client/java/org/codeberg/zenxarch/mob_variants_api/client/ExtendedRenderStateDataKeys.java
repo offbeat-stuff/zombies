@@ -10,13 +10,11 @@ public final class ExtendedRenderStateDataKeys {
   }
 
   public static final ExtendedRenderStateDataKey<Boolean> RENDER_HEAD =
-      ExtendedRenderStateDataKey.<Boolean>builder("render_head")
-          .attachment(MobAttachments.RENDER_HEAD)
-          .build();
+      ExtendedRenderStateDataKey.builder(MobAttachments.RENDER_HEAD).build();
 
   public static final ExtendedRenderStateDataKey<Identifier> TEXTURE_OVERRIDE =
-      ExtendedRenderStateDataKey.<Identifier>builder("texture_override")
-          .attachment(MobAttachments.TEXTURE_OVERRIDE, assetInfo -> assetInfo.texturePath())
+      ExtendedRenderStateDataKey.builder(
+              MobAttachments.TEXTURE_OVERRIDE, assetInfo -> assetInfo.texturePath())
           .condition(ExtendedRenderStateDataKeys::isTextureLoaded)
           .build();
 

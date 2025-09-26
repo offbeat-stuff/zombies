@@ -25,6 +25,7 @@ public class ExtendedZombieEntityOverlayRenderer
   }
 
   private void setOverlay(OverlayAttachment overlay) {
+    if (Objects.equals(this.overlay, overlay)) return;
     this.overlay = overlay;
     if (this.overlay == null) return;
     this.texture = this.overlay.texture().texturePath();
@@ -46,10 +47,7 @@ public class ExtendedZombieEntityOverlayRenderer
       ZombieEntityRenderState state,
       float limbAngle,
       float limbDistance) {
-    if (state instanceof ExtendedZombieEntityRenderState exstate
-        && !Objects.equals(exstate.overlay, this.overlay)) {
-      this.setOverlay(exstate.overlay);
-    }
+    ExtendedZombieEntityRenderer.OVERLAY.get(state).ifPresent(this::setOverlay);
     if (this.overlay == null) return;
     if (this.model == null) return;
     render(this.model, this.texture, matrices, queue, light, state, -1, 1);

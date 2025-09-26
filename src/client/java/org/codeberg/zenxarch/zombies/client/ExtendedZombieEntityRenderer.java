@@ -7,9 +7,14 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.mob.ZombieEntity;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RotationAxis;
+import org.codeberg.zenxarch.mob_variants_api.client.ExtendedRenderStateDataKey;
 import org.codeberg.zenxarch.mob_variants_api.variant.MobAttachments;
+import org.codeberg.zenxarch.mob_variants_api.variant.OverlayAttachment;
 
 public class ExtendedZombieEntityRenderer extends ZombieEntityRenderer {
+
+  public static ExtendedRenderStateDataKey<OverlayAttachment> OVERLAY =
+      ExtendedRenderStateDataKey.builder(MobAttachments.OVERLAY).build();
 
   public ExtendedZombieEntityRenderer(Context context) {
     super(context);
@@ -17,16 +22,9 @@ public class ExtendedZombieEntityRenderer extends ZombieEntityRenderer {
   }
 
   @Override
-  public ZombieEntityRenderState createRenderState() {
-    return new ExtendedZombieEntityRenderState();
-  }
-
-  @Override
   public void updateRenderState(ZombieEntity zombie, ZombieEntityRenderState state, float f) {
     super.updateRenderState(zombie, state, f);
-    if (state instanceof ExtendedZombieEntityRenderState exstate) {
-      exstate.overlay = zombie.getAttached(MobAttachments.OVERLAY);
-    }
+    OVERLAY.set(zombie, state);
   }
 
   @Override
