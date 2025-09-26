@@ -2,7 +2,7 @@ package org.codeberg.zenxarch.mob_variants_api.client.mixin;
 
 import net.minecraft.client.render.entity.model.BipedEntityModel;
 import net.minecraft.client.render.entity.state.BipedEntityRenderState;
-import org.codeberg.zenxarch.mob_variants_api.client.ExtendedRenderStateKeys;
+import org.codeberg.zenxarch.mob_variants_api.client.ExtendedRenderStateDataKeys;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -14,6 +14,6 @@ public abstract class BipedEntityModelMixin {
   @Inject(method = "setAngles", at = @At("TAIL"))
   private void zenxarch$hideHead(BipedEntityRenderState zstate, CallbackInfo ci) {
     ((BipedEntityModel) (Object) this).getHead().hidden =
-        !ExtendedRenderStateKeys.getRenderHead(zstate);
+        !ExtendedRenderStateDataKeys.RENDER_HEAD.get(zstate).orElse(true);
   }
 }

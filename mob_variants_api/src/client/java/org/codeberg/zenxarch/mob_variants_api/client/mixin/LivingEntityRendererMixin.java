@@ -7,10 +7,8 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.render.entity.LivingEntityRenderer;
 import net.minecraft.client.render.entity.state.LivingEntityRenderState;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.util.AssetInfo.TextureAssetInfo;
 import net.minecraft.util.Identifier;
-import org.codeberg.zenxarch.mob_variants_api.client.ExtendedRenderStateKeys;
-import org.codeberg.zenxarch.mob_variants_api.variant.MobAttachments;
+import org.codeberg.zenxarch.mob_variants_api.client.ExtendedRenderStateDataKeys;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -31,9 +29,9 @@ public abstract class LivingEntityRendererMixin {
       LivingEntityRenderer<?, ?, ?> self,
       LivingEntityRenderState renderState,
       Operation<Identifier> op) {
-    var textureOverride = ExtendedRenderStateKeys.getTextureOverride(renderState);
-    if (textureOverride != null) return textureOverride;
-    return op.call(self, renderState);
+    return ExtendedRenderStateDataKeys.TEXTURE_OVERRIDE
+        .get(renderState)
+        .orElse(op.call(self, renderState));
   }
 
   @Inject(
@@ -45,13 +43,7 @@ public abstract class LivingEntityRendererMixin {
       LivingEntityRenderState livingEntityRenderState,
       float f,
       CallbackInfo ci) {
-    livingEntityRenderState.setData(
-        ExtendedRenderStateKeys.TextureOverride,
-        livingEntity
-            .getAttachedOrElse(MobAttachments.TEXTURE_OVERRIDE, new TextureAssetInfo(null, null))
-            .texturePath());
-    livingEntityRenderState.setData(
-        ExtendedRenderStateKeys.RenderHead,
-        livingEntity.getAttachedOrElse(MobAttachments.RENDER_HEAD, true));
+    ExtendedRenderStateDataKeys.TEXTURE_OVERRIDE.set(livingEntity, livingEntityRenderState);
+    ExtendedRenderStateDataKeys.RENDER_HEAD.set(livingEntity, livingEntityRenderState);
   }
 }
