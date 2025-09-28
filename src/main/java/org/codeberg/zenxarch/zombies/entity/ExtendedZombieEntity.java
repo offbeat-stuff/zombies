@@ -118,8 +118,7 @@ public class ExtendedZombieEntity extends ZombieEntity {
     if (entityData instanceof ExtendedZombieData extendedZombieData) {
       this.setVariant(extendedZombieData.getVariant());
     } else {
-      MobVariants.getRandomVariantFromPos(world.toServerWorld(), this.getBlockPos())
-          .ifPresent(this::setVariant);
+      MobVariants.select(world.toServerWorld(), this.getBlockPos()).ifPresent(this::setVariant);
     }
     var result = super.initialize(world, difficulty, spawnReason, new ZombieData(false, false));
     executeEvent(MobAttachments.ON_SPAWN, world.toServerWorld(), null);

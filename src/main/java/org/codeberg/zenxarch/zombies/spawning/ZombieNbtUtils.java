@@ -7,7 +7,7 @@ import net.minecraft.storage.ReadView;
 import net.minecraft.storage.WriteView;
 import net.minecraft.world.World;
 import org.codeberg.zenxarch.mob_variants_api.registry.MobRegistryKeys;
-import org.codeberg.zenxarch.mob_variants_api.registry.MobVariantUtils;
+import org.codeberg.zenxarch.mob_variants_api.registry.MobVariants;
 import org.codeberg.zenxarch.mob_variants_api.variant.MobVariant;
 import org.codeberg.zenxarch.zombies.Zombies;
 import org.codeberg.zenxarch.zombies.entity.ExtendedZombieEntity;
@@ -27,7 +27,7 @@ public final class ZombieNbtUtils {
       case "" -> Optional.empty();
       case String id -> {
         try {
-          yield MobVariantUtils.getOptionalVariant(world, MobVariantUtils.toId(id));
+          yield MobVariants.getOptionalVariant(world, MobVariants.toId(id));
         } catch (Exception e) {
           Zombies.LOGGER.info("Exception caught: {}", e.getMessage());
           yield Optional.empty();

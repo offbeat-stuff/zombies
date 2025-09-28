@@ -17,7 +17,7 @@ public final class MobVariants {
     throw new IllegalStateException("Utility class");
   }
 
-  public static Optional<RegistryEntry.Reference<MobVariant>> getRandomVariantFromPos(
+  public static Optional<RegistryEntry.Reference<MobVariant>> select(
       ServerWorld world, BlockPos pos) {
     return Variants.select(SpawnContext.of(world, pos), MobRegistryKeys.MOB_VARIANT);
   }
