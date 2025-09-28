@@ -2,7 +2,7 @@ package org.codeberg.zenxarch.mob_variants_api.registry;
 
 import java.util.Optional;
 import java.util.function.Function;
-import net.minecraft.entity.VariantSelectorProvider;
+import net.minecraft.entity.Variants;
 import net.minecraft.entity.spawn.SpawnContext;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.world.ServerWorld;
@@ -19,11 +19,7 @@ public final class MobVariantUtils {
 
   public static Optional<RegistryEntry.Reference<MobVariant>> getRandomVariantFromPos(
       ServerWorld world, BlockPos pos) {
-    return VariantSelectorProvider.select(
-        world.getRegistryManager().getOrThrow(MobRegistryKeys.MOB_VARIANT).streamEntries(),
-        RegistryEntry::value,
-        world.getRandom(),
-        SpawnContext.of(world, pos));
+    return Variants.select(SpawnContext.of(world, pos), MobRegistryKeys.MOB_VARIANT);
   }
 
   public static Identifier toId(String id) {
