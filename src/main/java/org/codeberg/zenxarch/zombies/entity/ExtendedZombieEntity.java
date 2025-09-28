@@ -21,7 +21,7 @@ import net.minecraft.world.WorldView;
 // import net.tslat.smartbrainlib.api.SmartBrainOwner;
 // import net.tslat.smartbrainlib.api.core.BrainActivityGroup;
 // import net.tslat.smartbrainlib.api.core.sensor.ExtendedSensor;
-import org.codeberg.zenxarch.mob_variants_api.registry.MobVariantUtils;
+import org.codeberg.zenxarch.mob_variants_api.registry.MobVariants;
 import org.codeberg.zenxarch.mob_variants_api.variant.MobAttachments;
 import org.codeberg.zenxarch.mob_variants_api.variant.MobVariant;
 import org.codeberg.zenxarch.mob_variants_api.variant.effect.MobEffect;
@@ -118,7 +118,7 @@ public class ExtendedZombieEntity extends ZombieEntity {
     if (entityData instanceof ExtendedZombieData extendedZombieData) {
       this.setVariant(extendedZombieData.getVariant());
     } else {
-      MobVariantUtils.getRandomVariantFromPos(world.toServerWorld(), this.getBlockPos())
+      MobVariants.getRandomVariantFromPos(world.toServerWorld(), this.getBlockPos())
           .ifPresent(this::setVariant);
     }
     var result = super.initialize(world, difficulty, spawnReason, new ZombieData(false, false));

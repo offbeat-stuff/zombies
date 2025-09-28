@@ -12,8 +12,8 @@ import net.minecraft.world.World;
 import org.codeberg.zenxarch.mob_variants_api.MobVariantsApiMod;
 import org.codeberg.zenxarch.mob_variants_api.variant.MobVariant;
 
-public final class MobVariantUtils {
-  private MobVariantUtils() {
+public final class MobVariants {
+  private MobVariants() {
     throw new IllegalStateException("Utility class");
   }
 
