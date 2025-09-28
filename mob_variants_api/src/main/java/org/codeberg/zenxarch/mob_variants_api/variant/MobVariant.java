@@ -11,7 +11,10 @@ import net.minecraft.entity.VariantSelectorProvider;
 import net.minecraft.entity.spawn.SpawnCondition;
 import net.minecraft.entity.spawn.SpawnConditionSelectors;
 import net.minecraft.entity.spawn.SpawnContext;
+import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.registry.entry.RegistryFixedCodec;
 import net.minecraft.util.Identifier;
+import org.codeberg.zenxarch.mob_variants_api.registry.MobRegistryKeys;
 
 public record MobVariant(
     Map<AttachmentType<?>, Object> components, SpawnConditionSelectors spawnConditions)
@@ -32,6 +35,9 @@ public record MobVariant(
                           .fieldOf("spawnConditions")
                           .forGetter(MobVariant::spawnConditions))
                   .apply(instance, MobVariant::new));
+
+  public static final Codec<RegistryEntry<MobVariant>> ENTRY_CODEC =
+      RegistryFixedCodec.of(MobRegistryKeys.MOB_VARIANT);
 
   private static DataResult<AttachmentType<?>> getAttachment(Identifier id) {
     var attachmentType = AttachmentRegistryImpl.get(id);
