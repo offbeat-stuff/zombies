@@ -6,11 +6,14 @@ import net.minecraft.entity.Variants;
 import net.minecraft.entity.spawn.SpawnContext;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.storage.ReadView;
+import net.minecraft.storage.WriteView;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.codeberg.zenxarch.mob_variants_api.MobVariantsApiMod;
 import org.codeberg.zenxarch.mob_variants_api.variant.MobVariant;
+import org.jetbrains.annotations.Nullable;
 
 public final class MobVariants {
   private MobVariants() {
@@ -20,6 +23,15 @@ public final class MobVariants {
   public static Optional<RegistryEntry.Reference<MobVariant>> select(
       ServerWorld world, BlockPos pos) {
     return Variants.select(SpawnContext.of(world, pos), MobRegistryKeys.MOB_VARIANT);
+  }
+
+  public static void putVariant(
+      WriteView view, String key, @Nullable RegistryEntry<MobVariant> variantEntry) {
+    view.putNullable(key, MobVariant.ENTRY_CODEC, variantEntry);
+  }
+
+  public static Optional<RegistryEntry<MobVariant>> readVariant(ReadView view, String key) {
+    return view.read(key, MobVariant.ENTRY_CODEC);
   }
 
   public static Identifier toId(String id) {
