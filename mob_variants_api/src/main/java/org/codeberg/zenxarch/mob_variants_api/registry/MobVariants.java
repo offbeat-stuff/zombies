@@ -5,9 +5,10 @@ import java.util.Optional;
 import java.util.Set;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentTarget;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
-import net.minecraft.entity.Variants;
+import net.minecraft.entity.VariantSelectorProvider;
 import net.minecraft.entity.spawn.SpawnContext;
 import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.storage.ReadView;
 import net.minecraft.storage.WriteView;
@@ -20,9 +21,19 @@ public final class MobVariants {
     throw new IllegalStateException("Utility class");
   }
 
-  public static Optional<RegistryEntry.Reference<MobVariant>> select(
-      ServerWorld world, BlockPos pos) {
-    return Variants.select(SpawnContext.of(world, pos), MobRegistryKeys.MOB_VARIANT);
+  public static Optional<RegistryEntry<MobVariant>> select(
+      ServerWorld world, BlockPos pos, TagKey<MobVariant> tag) {
+    return world
+        .getRegistryManager()
+        .getOrThrow(MobRegistryKeys.MOB_VARIANT)
+        .getOptional(tag)
+        .flatMap(
+            entryList ->
+                VariantSelectorProvider.select(
+                    entryList.stream(),
+                    RegistryEntry::value,
+                    world.getRandom(),
+                    SpawnContext.of(world, pos)));
   }
 
   public static void putVariant(
