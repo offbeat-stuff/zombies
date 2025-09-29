@@ -10,10 +10,12 @@ import org.codeberg.zenxarch.zombies.datagen.dynamic.DynamicRegistryInitializer;
 import org.codeberg.zenxarch.zombies.datagen.dynamic.ZEnchantmentProviderGenerator;
 import org.codeberg.zenxarch.zombies.datagen.dynamic.ZombieVariantGenerator;
 import org.codeberg.zenxarch.zombies.datagen.provider.ZBiomeTagProvider;
+import org.codeberg.zenxarch.zombies.datagen.provider.ZDefaultMobVariantTagProvider;
 import org.codeberg.zenxarch.zombies.datagen.provider.ZDynamicRegistryProvider;
 import org.codeberg.zenxarch.zombies.datagen.provider.ZEnglishLangProvider;
 import org.codeberg.zenxarch.zombies.datagen.provider.ZEntityLootTableProvider;
 import org.codeberg.zenxarch.zombies.datagen.provider.ZLootTableProvider;
+import org.codeberg.zenxarch.zombies.datagen.provider.ZMobVariantTagProvider;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,11 +33,13 @@ public class ZombiesDataGenerator implements DataGeneratorEntrypoint {
     var base = generator.createPack();
     base.addProvider(ZEnglishLangProvider::new);
     base.addProvider(ZDynamicRegistryProvider.factory(ZombieVariantGenerator.DEFAULTS_INITIALIZER));
+    base.addProvider(ZDefaultMobVariantTagProvider::new);
     var pack = generator.createBuiltinResourcePack(ZombieDatapacks.DEFAULT_PACK);
     for (var init : DYNAMIC_CONTENT) pack.addProvider(ZDynamicRegistryProvider.factory(init));
     pack.addProvider(ZLootTableProvider::new);
     pack.addProvider(ZEntityLootTableProvider::new);
     pack.addProvider(ZBiomeTagProvider::new);
+    pack.addProvider(ZMobVariantTagProvider::new);
   }
 
   private <T> void addRegistryBuilder(
