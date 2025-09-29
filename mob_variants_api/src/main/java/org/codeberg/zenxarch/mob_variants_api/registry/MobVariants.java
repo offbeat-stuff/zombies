@@ -1,6 +1,8 @@
 package org.codeberg.zenxarch.mob_variants_api.registry;
 
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import java.util.Optional;
+import java.util.Set;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentTarget;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
 import net.minecraft.entity.Variants;
@@ -32,12 +34,22 @@ public final class MobVariants {
     return view.read(key, MobVariant.ENTRY_CODEC);
   }
 
-  public static void updateAttachments(AttachmentTarget target, MobVariant variant) {
+  private static final Set<RegistryEntry<MobVariant>> entriesTemp = new ObjectOpenHashSet<>();
+
+  public static void updateAttachments(AttachmentTarget target, RegistryEntry<MobVariant> variant) {
     if (variant == null) return;
+    updateAttachmentsImpl(target, variant);
+    entriesTemp.clear();
+  }
+
+  private static void updateAttachmentsImpl(
+      AttachmentTarget target, RegistryEntry<MobVariant> variant) {
+    entriesTemp.add(variant);
     variant
+        .value()
         .components()
         .forEach((attachment, value) -> updateAttachment(target, attachment, value));
-    variant.template().ifPresent(template -> updateAttachments(target, template.value()));
+    variant.value().template().ifPresent(template -> updateAttachmentsImpl(target, template));
   }
 
   @SuppressWarnings("unchecked")

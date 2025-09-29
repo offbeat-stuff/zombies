@@ -228,7 +228,7 @@ public class ExtendedZombieEntity extends ZombieEntity {
 
   public void setVariant(RegistryEntry<MobVariant> variant) {
     this.variant = variant;
-    MobVariants.updateAttachments(this, variant.value());
+    MobVariants.updateAttachments(this, variant);
   }
 
   public RegistryEntry<MobVariant> getVariant() {
