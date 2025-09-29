@@ -26,6 +26,7 @@ import org.codeberg.zenxarch.mob_variants_api.variant.MobAttachments;
 import org.codeberg.zenxarch.mob_variants_api.variant.MobVariant;
 import org.codeberg.zenxarch.mob_variants_api.variant.effect.MobEffect;
 import org.codeberg.zenxarch.zombies.ZombieGamerules;
+import org.codeberg.zenxarch.zombies.data.ZMobVariantTags;
 // import org.codeberg.zenxarch.zombies.brain.ZombieBrain;
 import org.codeberg.zenxarch.zombies.difficulty.ExtendedDifficulty;
 import org.codeberg.zenxarch.zombies.spawning.ZombieNbtUtils;
@@ -118,7 +119,8 @@ public class ExtendedZombieEntity extends ZombieEntity {
     if (entityData instanceof ExtendedZombieData extendedZombieData) {
       this.setVariant(extendedZombieData.getVariant());
     } else {
-      MobVariants.select(world.toServerWorld(), this.getBlockPos()).ifPresent(this::setVariant);
+      MobVariants.select(world.toServerWorld(), this.getBlockPos(), ZMobVariantTags.ZOMBIE_VARIANTS)
+          .ifPresent(this::setVariant);
     }
     var result = super.initialize(world, difficulty, spawnReason, new ZombieData(false, false));
     executeEvent(MobAttachments.ON_SPAWN, world.toServerWorld(), null);

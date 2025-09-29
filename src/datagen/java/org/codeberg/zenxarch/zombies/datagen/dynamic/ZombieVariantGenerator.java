@@ -100,6 +100,24 @@ public final class ZombieVariantGenerator {
 
   // public static final RegistryKey<MobVariant> INK_ATTACK = INITIALIZER.of("ink_attack");
 
+  public static List<RegistryKey<MobVariant>> ALL =
+      List.of(
+          COMMON,
+          AXE,
+          SWAPPING,
+          FIRE,
+          FREEZE,
+          SWAMP,
+          DESERT,
+          RAIN,
+          EXPLOSION,
+          INVISIBLE,
+          BONEMEAL,
+          OAK_DOOR,
+          COPPER_DOOR,
+          IRON_DOOR,
+          HEADLESS);
+
   private static MobEffect createAttributeEffect(
       RegistryEntry<EntityAttribute> attribute, FloatProvider value) {
     return new SingleMobEffect(new DefaultAttributeEffect(attribute, value), true);
