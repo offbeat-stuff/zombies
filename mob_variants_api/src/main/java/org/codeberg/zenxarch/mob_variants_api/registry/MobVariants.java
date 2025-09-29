@@ -1,17 +1,13 @@
 package org.codeberg.zenxarch.mob_variants_api.registry;
 
 import java.util.Optional;
-import java.util.function.Function;
 import net.minecraft.entity.Variants;
 import net.minecraft.entity.spawn.SpawnContext;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.storage.ReadView;
 import net.minecraft.storage.WriteView;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import org.codeberg.zenxarch.mob_variants_api.MobVariantsApiMod;
 import org.codeberg.zenxarch.mob_variants_api.variant.MobVariant;
 import org.jetbrains.annotations.Nullable;
 
@@ -32,26 +28,5 @@ public final class MobVariants {
 
   public static Optional<RegistryEntry<MobVariant>> readVariant(ReadView view, String key) {
     return view.read(key, MobVariant.ENTRY_CODEC);
-  }
-
-  public static Identifier toId(String id) {
-    int i = id.indexOf(":");
-    if (i >= 0) {
-      String string = id.substring(i + 1);
-      if (i != 0) {
-        String string2 = id.substring(0, i);
-        return Identifier.of(string2, string);
-      }
-      return MobVariantsApiMod.id(string);
-    }
-    return MobVariantsApiMod.id(id);
-  }
-
-  public static Optional<RegistryEntry<MobVariant>> getOptionalVariant(World world, Identifier id) {
-    return world
-        .getRegistryManager()
-        .getOrThrow(MobRegistryKeys.MOB_VARIANT)
-        .getEntry(id)
-        .map(Function.identity());
   }
 }
