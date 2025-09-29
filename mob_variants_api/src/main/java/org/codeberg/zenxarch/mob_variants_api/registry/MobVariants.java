@@ -55,7 +55,7 @@ public final class MobVariants {
 
   private static void updateAttachmentsImpl(
       AttachmentTarget target, RegistryEntry<MobVariant> variant) {
-    entriesTemp.add(variant);
+    if (!entriesTemp.add(variant)) return;
     variant
         .value()
         .components()
