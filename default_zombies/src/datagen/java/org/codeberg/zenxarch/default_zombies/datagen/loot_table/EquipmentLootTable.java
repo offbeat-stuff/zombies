@@ -1,6 +1,6 @@
-package org.codeberg.zenxarch.zombies.datagen.loot_table;
+package org.codeberg.zenxarch.default_zombies.datagen.loot_table;
 
-import static org.codeberg.zenxarch.zombies.datagen.loot_table.LootTableUtils.*;
+import static org.codeberg.zenxarch.default_zombies.datagen.loot_table.LootTableUtils.*;
 
 import java.util.Map;
 import java.util.stream.Stream;
@@ -22,7 +22,7 @@ import net.minecraft.loot.entry.LootTableEntry;
 import net.minecraft.loot.function.SetComponentsLootFunction;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
-import org.codeberg.zenxarch.zombies.datagen.dynamic.ZEnchantmentProviderGenerator;
+import org.codeberg.zenxarch.default_zombies.datagen.dynamic.ZEnchantmentProviderGenerator;
 import org.codeberg.zenxarch.zombies.loot_table.function.EnchantmentProviderLootFunction;
 import org.codeberg.zenxarch.zombies.loot_table.number_provider.LuckLootNumberProvider;
 

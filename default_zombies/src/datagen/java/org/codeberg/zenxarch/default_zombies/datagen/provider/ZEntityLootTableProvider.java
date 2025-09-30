@@ -1,8 +1,8 @@
-package org.codeberg.zenxarch.zombies.datagen.provider;
+package org.codeberg.zenxarch.default_zombies.datagen.provider;
 
 import static net.minecraft.loot.entry.ItemEntry.builder;
 import static net.minecraft.loot.entry.LootTableEntry.builder;
-import static org.codeberg.zenxarch.zombies.datagen.loot_table.LootTableUtils.*;
+import static org.codeberg.zenxarch.default_zombies.datagen.loot_table.LootTableUtils.*;
 
 import java.util.concurrent.CompletableFuture;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;

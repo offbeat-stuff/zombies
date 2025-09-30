@@ -1,4 +1,4 @@
-package org.codeberg.zenxarch.zombies.datagen.loot_table;
+package org.codeberg.zenxarch.default_zombies.datagen.loot_table;
 
 import net.minecraft.item.Item;
 import net.minecraft.loot.LootPool;

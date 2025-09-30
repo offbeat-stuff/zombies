@@ -1,4 +1,4 @@
-package org.codeberg.zenxarch.zombies.datagen.dynamic;
+package org.codeberg.zenxarch.default_zombies.datagen.dynamic;
 
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.provider.ByCostWithDifficultyEnchantmentProvider;
@@ -8,6 +8,7 @@ import net.minecraft.registry.RegistryEntryLookup;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.tag.EnchantmentTags;
+import org.codeberg.zenxarch.zombies.datagen.dynamic.DynamicRegistryInitializer;
 
 public final class ZEnchantmentProviderGenerator {
 

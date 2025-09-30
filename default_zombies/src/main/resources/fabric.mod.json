@@ -1,0 +1,30 @@
+{
+    "schemaVersion": 1,
+    "id": "default_zombies_zenxarch",
+    "version": "${version}",
+    "name": "ZenXArch's Zombie apocalypse default zombies",
+    "description": "An optional datapack with default zombies for the Zombie apocalypse mod",
+    "authors": [
+        "ZenXArch"
+    ],
+    "contact": {
+        "mastodon": "https://mastodon.social/@ZenXArch",
+        "discord": "https://discord.gg/RFSmd7debX",
+        "sources": "https://codeberg.org/ZenXArch/zombies",
+        "modrinth": "https://modrinth.com/mod/zenxarch-zombie-apocalypse"
+    },
+    "license": "Mozilla Public License 2.0",
+    "environment": "*",
+    "entrypoints": {
+        "main": [
+            "org.codeberg.zenxarch.default_zombies.DefaultZombiesMod"
+        ]
+    },
+    "mixins": [],
+    "depends": {
+        "fabricloader": ">=${loader_version}",
+        "minecraft": ">=${minecraft_version}",
+        "java": ">=21",
+        "fabric": "*"
+    }
+}

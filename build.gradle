@@ -51,6 +51,18 @@ configure(project(':zombie_brain')) {
     }
 }
 
+configure(project(':default_zombies')) {
+    dependencies {
+        implementation project(path: ':mob_variants_api', configuration: 'namedElements')
+    }
+    afterEvaluate {
+        dependencies {
+            datagenImplementation project(path: ':', configuration: 'namedElements')
+            datagenImplementation project(':').sourceSets.datagen.output
+        }
+    }
+}
+
 configure((allprojects - project(':common')) - project(':mob_variants_api')) {
     dependencies {
         implementation project(path: ':common', configuration: 'namedElements')
@@ -76,6 +88,15 @@ loom {
     }
 }
 
+fabricApi {
+    configureDataGeneration() {
+        createSourceSet = true
+        client = true
+        modId = 'zombies_zenxarch_datagen'
+    }
+}
+
+
 dependencies {
     def disabledSubprojects = [
         'zombie_brain'
@@ -87,14 +108,6 @@ dependencies {
     clientImplementation project(':mob_variants_api').sourceSets.client.output
 
     // modImplementation "net.tslat.smartbrainlib:SmartBrainLib-fabric-${project.sbl_mc_version}:${project.sbl_version}"
-}
-
-fabricApi {
-    configureDataGeneration() {
-        createSourceSet = true
-        client = true
-        modId = 'zombies_zenxarch_datagen'
-    }
 }
 
 processResources {
