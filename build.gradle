@@ -100,7 +100,7 @@ fabricApi {
 processResources {
     inputs.property 'version', project.version
     inputs.property 'loader_version', project.loader_version
-    inputs.property 'minecraft_version', '1.21.8'
+    inputs.property 'minecraft_version', project.minecraft_version
     inputs.property 'sbl_version', project.sbl_version
 
     filesMatching('fabric.mod.json') {
