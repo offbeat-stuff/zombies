@@ -86,7 +86,7 @@ dependencies {
     }
     clientImplementation project(':mob_variants_api').sourceSets.client.output
 
-    // modImplementation "net.tslat.smartbrainlib:SmartBrainLib-fabric-${project.sbl_mc_version}:${project.sbl_version}"
+    modImplementation "net.tslat.smartbrainlib:SmartBrainLib-fabric-${project.sbl_mc_version}:${project.sbl_version}"
 }
 
 fabricApi {
