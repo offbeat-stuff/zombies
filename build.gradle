@@ -78,7 +78,7 @@ loom {
 
 dependencies {
     def disabledSubprojects = [
-        'zombie_brain'
+        // 'zombie_brain'
     ]
     (subprojects - disabledSubprojects.collect { project(":${it}") }).forEach {
         include project("${it.name}:")
