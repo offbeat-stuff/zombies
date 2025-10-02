@@ -87,11 +87,11 @@ public abstract class DifficultyCalculations {
     return MathHelper.lerp(delta, 0.25, 1.0);
   }
 
-  private static double getDays(ServerWorld world) {
+  public static double getDays(ServerWorld world) {
     return (double) world.getTimeOfDay() / TICKS_PER_DAY;
   }
 
-  private static double getHoursInhabited(World world, BlockPos pos) {
+  public static double getHoursInhabited(World world, BlockPos pos) {
     if (world.isChunkLoaded(
         ChunkSectionPos.getSectionCoord(pos.getX()), ChunkSectionPos.getSectionCoord(pos.getZ()))) {
       return (double) world.getWorldChunk(pos).getInhabitedTime() / TICKS_PER_HOUR;

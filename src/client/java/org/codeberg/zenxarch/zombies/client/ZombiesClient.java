@@ -11,6 +11,9 @@ public class ZombiesClient implements ClientModInitializer {
 
   public static Identifier DEBUG_ZOMBIE_COUNT =
       DebugHudEntries.register(Zombies.id("zombie_count"), new ZombieCountDebugHudEntry());
+  public static Identifier DEBUG_EXTENDED_DIFFICULTY =
+      DebugHudEntries.register(
+          Zombies.id("extended_difficulty"), new ExtendedDifficultyDebugHudEntry());
 
   @Override
   public void onInitializeClient() {
