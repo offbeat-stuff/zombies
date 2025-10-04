@@ -1,5 +1,8 @@
 package org.codeberg.zenxarch.default_zombies.datagen.provider;
 
+import static org.codeberg.zenxarch.default_zombies.datagen.loot_table.LootTableUtils.pool;
+import static org.codeberg.zenxarch.default_zombies.datagen.loot_table.LootTableUtils.tableEntry;
+
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
@@ -34,6 +37,19 @@ public class ZLootTableProvider extends SimpleFabricLootTableProvider {
   public static final RegistryKey<LootTable> CHAINMAIL_EQUIPMENT = key("chainmail_equipment");
   public static final RegistryKey<LootTable> IRON_EQUIPMENT = key("iron_equipment");
   public static final RegistryKey<LootTable> DIAMOND_EQUIPMENT = key("diamond_equipment");
+
+  public static final RegistryKey<LootTable> ENCHANTED_LEATHER_EQUIPMENT =
+      key("enchanted_leather_equipment");
+  public static final RegistryKey<LootTable> ENCHANTED_COPPER_EQUIPMENT =
+      key("enchanted_copper_equipment");
+  public static final RegistryKey<LootTable> ENCHANTED_GOLDEN_EQUIPMENT =
+      key("enchanted_golden_equipment");
+  public static final RegistryKey<LootTable> ENCHANTED_CHAINMAIL_EQUIPMENT =
+      key("enchanted_chainmail_equipment");
+  public static final RegistryKey<LootTable> ENCHANTED_IRON_EQUIPMENT =
+      key("enchanted_iron_equipment");
+  public static final RegistryKey<LootTable> ENCHANTED_DIAMOND_EQUIPMENT =
+      key("enchanted_diamond_equipment");
 
   public static final EquipmentTable COMMON_ZOMBIE_EQUIPMENT = lowDrop("common_zombie_equipment");
 
@@ -72,38 +88,68 @@ public class ZLootTableProvider extends SimpleFabricLootTableProvider {
 
   @Override
   public void accept(BiConsumer<RegistryKey<LootTable>, Builder> registry) {
-    registry.accept(LEATHER_EQUIPMENT, EquipmentLootTable.getLootTableForLevel(0));
-    registry.accept(COPPER_EQUIPMENT, EquipmentLootTable.getLootTableForLevel(1));
-    registry.accept(GOLDEN_EQUIPMENT, EquipmentLootTable.getLootTableForLevel(2));
-    registry.accept(CHAINMAIL_EQUIPMENT, EquipmentLootTable.getLootTableForLevel(3));
-    registry.accept(IRON_EQUIPMENT, EquipmentLootTable.getLootTableForLevel(4));
-    registry.accept(DIAMOND_EQUIPMENT, EquipmentLootTable.getLootTableForLevel(5));
 
-    addLootTable(
-        registry,
-        COMMON_ZOMBIE_EQUIPMENT.lootTable(),
-        EquipmentLootTable.vanillaEquipmentTable(),
-        LootPool.builder()
-            .with(ItemEntry.builder(Items.IRON_SWORD))
-            .with(ItemEntry.builder(Items.IRON_SHOVEL).weight(2))
-            .conditionally(RandomChanceLootCondition.builder(0.05f)));
-    addLootTable(
-        registry,
-        AXE_ZOMBIE_EQUIPMENT.lootTable(),
-        EquipmentLootTable.leatherOnlyEquipmentTable(),
-        EquipmentLootTable.axeWeaponTable());
+    {
+      registry.accept(LEATHER_EQUIPMENT, EquipmentLootTable.getLootTableForLevel(0));
+      registry.accept(COPPER_EQUIPMENT, EquipmentLootTable.getLootTableForLevel(1));
+      registry.accept(GOLDEN_EQUIPMENT, EquipmentLootTable.getLootTableForLevel(2));
+      registry.accept(CHAINMAIL_EQUIPMENT, EquipmentLootTable.getLootTableForLevel(3));
+      registry.accept(IRON_EQUIPMENT, EquipmentLootTable.getLootTableForLevel(4));
+      registry.accept(DIAMOND_EQUIPMENT, EquipmentLootTable.getLootTableForLevel(5));
+    }
+    {
+      registry.accept(
+          ENCHANTED_LEATHER_EQUIPMENT, EquipmentLootTable.applyEnchantment(LEATHER_EQUIPMENT));
+      registry.accept(
+          ENCHANTED_COPPER_EQUIPMENT, EquipmentLootTable.applyEnchantment(COPPER_EQUIPMENT));
+      registry.accept(
+          ENCHANTED_GOLDEN_EQUIPMENT, EquipmentLootTable.applyEnchantment(GOLDEN_EQUIPMENT));
+      registry.accept(
+          ENCHANTED_CHAINMAIL_EQUIPMENT, EquipmentLootTable.applyEnchantment(CHAINMAIL_EQUIPMENT));
+      registry.accept(
+          ENCHANTED_IRON_EQUIPMENT, EquipmentLootTable.applyEnchantment(IRON_EQUIPMENT));
+      registry.accept(
+          ENCHANTED_DIAMOND_EQUIPMENT, EquipmentLootTable.applyEnchantment(DIAMOND_EQUIPMENT));
+    }
+    {
+      addLootTable(
+          registry,
+          COMMON_ZOMBIE_EQUIPMENT.lootTable(),
+          EquipmentLootTable.withVanillaArmorSpawnChance(
+              pool(
+                  EquipmentLootTable.getLootPoolForEquipmentLevel(ENCHANTED_LEATHER_EQUIPMENT, 0),
+                  EquipmentLootTable.getLootPoolForEquipmentLevel(ENCHANTED_COPPER_EQUIPMENT, 1),
+                  EquipmentLootTable.getLootPoolForEquipmentLevel(ENCHANTED_GOLDEN_EQUIPMENT, 2),
+                  EquipmentLootTable.getLootPoolForEquipmentLevel(ENCHANTED_CHAINMAIL_EQUIPMENT, 3),
+                  EquipmentLootTable.getLootPoolForEquipmentLevel(ENCHANTED_IRON_EQUIPMENT, 4),
+                  EquipmentLootTable.getLootPoolForEquipmentLevel(ENCHANTED_DIAMOND_EQUIPMENT, 5))),
+          LootPool.builder()
+              .with(ItemEntry.builder(Items.IRON_SWORD))
+              .with(ItemEntry.builder(Items.IRON_SHOVEL).weight(2))
+              .conditionally(RandomChanceLootCondition.builder(0.05f)));
+      addLootTable(
+          registry,
+          AXE_ZOMBIE_EQUIPMENT.lootTable(),
+          EquipmentLootTable.withVanillaArmorSpawnChance(
+              pool(tableEntry(ENCHANTED_LEATHER_EQUIPMENT))),
+          EquipmentLootTable.axeWeaponTable());
+    }
 
-    addLootTable(
-        registry,
-        OAK_DOOR_SHIELD_EQUIPMENT.lootTable(),
-        EquipmentLootTable.shieldDoorEquipment(Items.OAK_DOOR, 125, 12, 5.0f, 0.3f));
-    addLootTable(
-        registry,
-        COPPER_DOOR_SHIELD_EQUIPMENT.lootTable(),
-        EquipmentLootTable.shieldDoorEquipment(Items.COPPER_DOOR, 250, 16, 6.0f, 0.4f));
-    addLootTable(
-        registry,
-        IRON_DOOR_SHIELD_EQUIPMENT.lootTable(),
-        EquipmentLootTable.shieldDoorEquipment(Items.IRON_DOOR, 375, 20, 7.0f, 0.5f));
+    {
+      final var durability = 125;
+      addLootTable(
+          registry,
+          OAK_DOOR_SHIELD_EQUIPMENT.lootTable(),
+          EquipmentLootTable.shieldDoorEquipment(Items.OAK_DOOR, durability, 12, 5.0f, 0.3f));
+      addLootTable(
+          registry,
+          COPPER_DOOR_SHIELD_EQUIPMENT.lootTable(),
+          EquipmentLootTable.shieldDoorEquipment(
+              Items.COPPER_DOOR, durability * 2, 16, 6.0f, 0.4f));
+      addLootTable(
+          registry,
+          IRON_DOOR_SHIELD_EQUIPMENT.lootTable(),
+          EquipmentLootTable.shieldDoorEquipment(Items.IRON_DOOR, durability * 3, 20, 7.0f, 0.5f));
+    }
   }
 }

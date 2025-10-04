@@ -4,9 +4,10 @@ import net.minecraft.item.Item;
 import net.minecraft.loot.LootPool;
 import net.minecraft.loot.LootTable;
 import net.minecraft.loot.entry.ItemEntry;
-import net.minecraft.loot.entry.LeafEntry;
+import net.minecraft.loot.entry.LootPoolEntry;
 import net.minecraft.loot.entry.LootTableEntry;
 import net.minecraft.loot.provider.number.ConstantLootNumberProvider;
+import net.minecraft.registry.RegistryKey;
 
 public final class LootTableUtils {
   private LootTableUtils() {
@@ -15,6 +16,12 @@ public final class LootTableUtils {
 
   public static LootPool.Builder pool() {
     return LootPool.builder().rolls(ConstantLootNumberProvider.create(1.0f));
+  }
+
+  public static LootPool.Builder pool(LootPoolEntry.Builder<?>... entries) {
+    var result = pool();
+    for (var entry : entries) result = result.with(entry);
+    return result;
   }
 
   public static LootPool.Builder pool(Item item) {
@@ -27,7 +34,11 @@ public final class LootTableUtils {
     return result;
   }
 
-  public static LeafEntry.Builder<?> tableEntry(LootTable.Builder builder) {
+  public static LootTableEntry.Builder<?> tableEntry(LootTable.Builder builder) {
     return LootTableEntry.builder(builder.build());
+  }
+
+  public static LootTableEntry.Builder<?> tableEntry(RegistryKey<LootTable> table) {
+    return LootTableEntry.builder(table);
   }
 }

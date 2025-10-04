@@ -19,6 +19,7 @@ import net.minecraft.loot.entry.LeafEntry.Builder;
 import net.minecraft.loot.entry.LootPoolEntry;
 import net.minecraft.loot.function.SetComponentsLootFunction;
 import net.minecraft.registry.Registries;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.util.Identifier;
 import org.codeberg.zenxarch.default_zombies.datagen.dynamic.ZEnchantmentProviderGenerator;
 import org.codeberg.zenxarch.zombies.loot_table.function.EnchantmentProviderLootFunction;
@@ -30,7 +31,7 @@ public interface EquipmentLootTable {
     return table(pool(MobEntity.getEquipmentForSlot(slot, level)));
   }
 
-  private static LootPool.Builder build(LootTable.Builder builder) {
+  private static LootPool.Builder applyKeepEntryCondition(LootTable.Builder builder) {
     var keepEntryCondtion = RandomChanceLootCondition.builder(0.9F);
 
     return pool().with(tableEntry(builder).conditionally(keepEntryCondtion));
@@ -45,10 +46,16 @@ public interface EquipmentLootTable {
 
     return entries
         .get(0)
-        .pool(build(entries.get(1).pool(build(entries.get(2).pool(build(entries.get(3)))))));
+        .pool(
+            applyKeepEntryCondition(
+                entries
+                    .get(1)
+                    .pool(
+                        applyKeepEntryCondition(
+                            entries.get(2).pool(applyKeepEntryCondition(entries.get(3)))))));
   }
 
-  private static LootPoolEntry.Builder<?> applyEnchantment(LootTable.Builder builder, int weight) {
+  public static LootTable.Builder applyEnchantment(RegistryKey<LootTable> table) {
     var enchantment =
         new EnchantmentProviderLootFunction(ZEnchantmentProviderGenerator.ZOMBIE_SPAWN_EQUIPMENT);
     /*
@@ -59,18 +66,13 @@ public interface EquipmentLootTable {
      * ql2 = w1 / 2
      */
     final var weightUnenchanted = 1000;
-    return tableEntry(
-            table(
-                pool()
-                    .with(
-                        tableEntry(builder)
-                            .weight(weightUnenchanted)
-                            .quality(-weightUnenchanted / 2))
-                    .with(
-                        tableEntry(builder.apply(enchantment))
-                            .weight(0)
-                            .quality(weightUnenchanted / 2))))
-        .weight(weight);
+    return table(
+        pool()
+            .with(tableEntry(table).weight(weightUnenchanted).quality(-weightUnenchanted / 2))
+            .with(
+                (tableEntry(table).apply(() -> enchantment))
+                    .weight(0)
+                    .quality(weightUnenchanted / 2)));
   }
 
   public static LootPool.Builder axeWeaponTable() {
@@ -82,21 +84,16 @@ public interface EquipmentLootTable {
         .with(ItemEntry.builder(Items.DIAMOND_AXE).weight(1));
   }
 
-  public static LootPool.Builder leatherOnlyEquipmentTable() {
-    return pool()
-        .with(applyEnchantment(getLootTableForLevel(0), 1))
-        .conditionally(
-            RandomChanceLootCondition.builder(LuckLootNumberProvider.create(0.0f, 0.15f)));
+  public static LootPool.Builder withVanillaArmorSpawnChance(LootPool.Builder builder) {
+    return builder.conditionally(
+        RandomChanceLootCondition.builder(LuckLootNumberProvider.create(.0f, 0.15f)));
   }
 
-  public static LootPool.Builder vanillaEquipmentTable() {
-    final int[] equipmentLevel = {0, 1, 2, 3, 4, 5};
-    final int[] weights = {33435, 47460, 16505, 2443, 154, 4};
-    var pool = pool();
-    for (var index : equipmentLevel)
-      pool = pool.with(applyEnchantment(getLootTableForLevel(index), weights[index]));
-    return pool.conditionally(
-        RandomChanceLootCondition.builder(LuckLootNumberProvider.create(0.0f, 0.15f)));
+  public static LootPoolEntry.Builder<?> getLootPoolForEquipmentLevel(
+      RegistryKey<LootTable> table, int level) {
+    final int[] weights = {23599, 32192, 33350, 9677, 1149, 34};
+
+    return tableEntry(table).weight(weights[level]);
   }
 
   private static Builder<?> shieldDoorItem(
