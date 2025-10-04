@@ -66,6 +66,7 @@ configure(project(':default_zombies')) {
 configure((allprojects - project(':common')) - project(':mob_variants_api')) {
     dependencies {
         implementation project(path: ':common', configuration: 'namedElements')
+        modRuntimeOnly "net.tslat.smartbrainlib:SmartBrainLib-fabric-${project.sbl_mc_version}:${project.sbl_version}"
     }
 }
 
