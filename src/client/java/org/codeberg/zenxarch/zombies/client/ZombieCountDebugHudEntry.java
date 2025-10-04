@@ -37,6 +37,7 @@ public class ZombieCountDebugHudEntry implements DebugHudEntry {
 
   private int getZombie(ZombieApocalypse apocalypse, BlockPos center) {
     var zombieCount = apocalypse.getZombieCount();
+    if (zombieCount == null) return -1;
     return ZombieDensityMap.getSubMap(zombieCount, center).values().intStream().sum();
   }
 }
