@@ -20,20 +20,33 @@ import org.codeberg.zenxarch.zombies.Zombies;
 
 public class ZLootTableProvider extends SimpleFabricLootTableProvider {
 
-  public static final EquipmentTable COMMON_ZOMBIE_EQUIPMENT =
-      equipmentTable("common_zombie_equipment", 0.00075F);
+  private static EquipmentTable lowDrop(String id) {
+    return equipmentTable(id, 0.00075F);
+  }
 
-  public static final EquipmentTable AXE_ZOMBIE_EQUIPMENT =
-      equipmentTable("axe_zombie_equipment", 0.00075F);
+  private static EquipmentTable noDrop(String id) {
+    return equipmentTable(id, 0);
+  }
+
+  public static final RegistryKey<LootTable> LEATHER_EQUIPMENT = key("leather_equipment");
+  public static final RegistryKey<LootTable> COPPER_EQUIPMENT = key("copper_equipment");
+  public static final RegistryKey<LootTable> GOLDEN_EQUIPMENT = key("golden_equipment");
+  public static final RegistryKey<LootTable> CHAINMAIL_EQUIPMENT = key("chainmail_equipment");
+  public static final RegistryKey<LootTable> IRON_EQUIPMENT = key("iron_equipment");
+  public static final RegistryKey<LootTable> DIAMOND_EQUIPMENT = key("diamond_equipment");
+
+  public static final EquipmentTable COMMON_ZOMBIE_EQUIPMENT = lowDrop("common_zombie_equipment");
+
+  public static final EquipmentTable AXE_ZOMBIE_EQUIPMENT = lowDrop("axe_zombie_equipment");
 
   public static final EquipmentTable OAK_DOOR_SHIELD_EQUIPMENT =
-      equipmentTable("oak_door_shield_equipment", 0F);
+      noDrop("oak_door_shield_equipment");
 
   public static final EquipmentTable COPPER_DOOR_SHIELD_EQUIPMENT =
-      equipmentTable("copper_door_shield_equipment", 0F);
+      noDrop("copper_door_shield_equipment");
 
   public static final EquipmentTable IRON_DOOR_SHIELD_EQUIPMENT =
-      equipmentTable("iron_door_shield_equipment", 0F);
+      noDrop("iron_door_shield_equipment");
 
   private static EquipmentTable equipmentTable(String id, float slotDropChances) {
     return new EquipmentTable(key(id), slotDropChances);
@@ -59,6 +72,13 @@ public class ZLootTableProvider extends SimpleFabricLootTableProvider {
 
   @Override
   public void accept(BiConsumer<RegistryKey<LootTable>, Builder> registry) {
+    registry.accept(LEATHER_EQUIPMENT, EquipmentLootTable.getLootTableForLevel(0));
+    registry.accept(COPPER_EQUIPMENT, EquipmentLootTable.getLootTableForLevel(1));
+    registry.accept(GOLDEN_EQUIPMENT, EquipmentLootTable.getLootTableForLevel(2));
+    registry.accept(CHAINMAIL_EQUIPMENT, EquipmentLootTable.getLootTableForLevel(3));
+    registry.accept(IRON_EQUIPMENT, EquipmentLootTable.getLootTableForLevel(4));
+    registry.accept(DIAMOND_EQUIPMENT, EquipmentLootTable.getLootTableForLevel(5));
+
     addLootTable(
         registry,
         COMMON_ZOMBIE_EQUIPMENT.lootTable(),

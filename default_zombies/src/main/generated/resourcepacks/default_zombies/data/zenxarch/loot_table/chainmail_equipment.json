@@ -1,0 +1,102 @@
+{
+  "type": "minecraft:equipment",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:chainmail_helmet"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:loot_table",
+          "conditions": [
+            {
+              "chance": 0.9,
+              "condition": "minecraft:random_chance"
+            }
+          ],
+          "value": {
+            "pools": [
+              {
+                "bonus_rolls": 0.0,
+                "entries": [
+                  {
+                    "type": "minecraft:item",
+                    "name": "minecraft:chainmail_chestplate"
+                  }
+                ],
+                "rolls": 1.0
+              },
+              {
+                "bonus_rolls": 0.0,
+                "entries": [
+                  {
+                    "type": "minecraft:loot_table",
+                    "conditions": [
+                      {
+                        "chance": 0.9,
+                        "condition": "minecraft:random_chance"
+                      }
+                    ],
+                    "value": {
+                      "pools": [
+                        {
+                          "bonus_rolls": 0.0,
+                          "entries": [
+                            {
+                              "type": "minecraft:item",
+                              "name": "minecraft:chainmail_leggings"
+                            }
+                          ],
+                          "rolls": 1.0
+                        },
+                        {
+                          "bonus_rolls": 0.0,
+                          "entries": [
+                            {
+                              "type": "minecraft:loot_table",
+                              "conditions": [
+                                {
+                                  "chance": 0.9,
+                                  "condition": "minecraft:random_chance"
+                                }
+                              ],
+                              "value": {
+                                "pools": [
+                                  {
+                                    "bonus_rolls": 0.0,
+                                    "entries": [
+                                      {
+                                        "type": "minecraft:item",
+                                        "name": "minecraft:chainmail_boots"
+                                      }
+                                    ],
+                                    "rolls": 1.0
+                                  }
+                                ]
+                              }
+                            }
+                          ],
+                          "rolls": 1.0
+                        }
+                      ]
+                    }
+                  }
+                ],
+                "rolls": 1.0
+              }
+            ]
+          }
+        }
+      ],
+      "rolls": 1.0
+    }
+  ]
+}

@@ -22,6 +22,7 @@
                 "entries": [
                   {
                     "type": "minecraft:loot_table",
+                    "quality": -500,
                     "value": {
                       "pools": [
                         {
@@ -41,7 +42,7 @@
                               "type": "minecraft:loot_table",
                               "conditions": [
                                 {
-                                  "chance": 0.009,
+                                  "chance": 0.9,
                                   "condition": "minecraft:random_chance"
                                 }
                               ],
@@ -64,7 +65,7 @@
                                         "type": "minecraft:loot_table",
                                         "conditions": [
                                           {
-                                            "chance": 0.009,
+                                            "chance": 0.9,
                                             "condition": "minecraft:random_chance"
                                           }
                                         ],
@@ -87,7 +88,7 @@
                                                   "type": "minecraft:loot_table",
                                                   "conditions": [
                                                     {
-                                                      "chance": 0.009,
+                                                      "chance": 0.9,
                                                       "condition": "minecraft:random_chance"
                                                     }
                                                   ],
@@ -123,11 +124,11 @@
                         }
                       ]
                     },
-                    "weight": 200000
+                    "weight": 1000
                   },
                   {
                     "type": "minecraft:loot_table",
-                    "quality": 1000,
+                    "quality": 500,
                     "value": {
                       "functions": [
                         {
@@ -153,7 +154,7 @@
                               "type": "minecraft:loot_table",
                               "conditions": [
                                 {
-                                  "chance": 0.009,
+                                  "chance": 0.9,
                                   "condition": "minecraft:random_chance"
                                 }
                               ],
@@ -176,7 +177,7 @@
                                         "type": "minecraft:loot_table",
                                         "conditions": [
                                           {
-                                            "chance": 0.009,
+                                            "chance": 0.9,
                                             "condition": "minecraft:random_chance"
                                           }
                                         ],
@@ -199,7 +200,7 @@
                                                   "type": "minecraft:loot_table",
                                                   "conditions": [
                                                     {
-                                                      "chance": 0.009,
+                                                      "chance": 0.9,
                                                       "condition": "minecraft:random_chance"
                                                     }
                                                   ],
@@ -253,6 +254,7 @@
                 "entries": [
                   {
                     "type": "minecraft:loot_table",
+                    "quality": -500,
                     "value": {
                       "pools": [
                         {
@@ -272,7 +274,7 @@
                               "type": "minecraft:loot_table",
                               "conditions": [
                                 {
-                                  "chance": 0.009,
+                                  "chance": 0.9,
                                   "condition": "minecraft:random_chance"
                                 }
                               ],
@@ -295,7 +297,7 @@
                                         "type": "minecraft:loot_table",
                                         "conditions": [
                                           {
-                                            "chance": 0.009,
+                                            "chance": 0.9,
                                             "condition": "minecraft:random_chance"
                                           }
                                         ],
@@ -318,7 +320,7 @@
                                                   "type": "minecraft:loot_table",
                                                   "conditions": [
                                                     {
-                                                      "chance": 0.009,
+                                                      "chance": 0.9,
                                                       "condition": "minecraft:random_chance"
                                                     }
                                                   ],
@@ -354,11 +356,11 @@
                         }
                       ]
                     },
-                    "weight": 200000
+                    "weight": 1000
                   },
                   {
                     "type": "minecraft:loot_table",
-                    "quality": 1000,
+                    "quality": 500,
                     "value": {
                       "functions": [
                         {
@@ -384,7 +386,7 @@
                               "type": "minecraft:loot_table",
                               "conditions": [
                                 {
-                                  "chance": 0.009,
+                                  "chance": 0.9,
                                   "condition": "minecraft:random_chance"
                                 }
                               ],
@@ -407,7 +409,7 @@
                                         "type": "minecraft:loot_table",
                                         "conditions": [
                                           {
-                                            "chance": 0.009,
+                                            "chance": 0.9,
                                             "condition": "minecraft:random_chance"
                                           }
                                         ],
@@ -430,7 +432,7 @@
                                                   "type": "minecraft:loot_table",
                                                   "conditions": [
                                                     {
-                                                      "chance": 0.009,
+                                                      "chance": 0.9,
                                                       "condition": "minecraft:random_chance"
                                                     }
                                                   ],
@@ -484,6 +486,7 @@
                 "entries": [
                   {
                     "type": "minecraft:loot_table",
+                    "quality": -500,
                     "value": {
                       "pools": [
                         {
@@ -503,7 +506,7 @@
                               "type": "minecraft:loot_table",
                               "conditions": [
                                 {
-                                  "chance": 0.009,
+                                  "chance": 0.9,
                                   "condition": "minecraft:random_chance"
                                 }
                               ],
@@ -526,7 +529,7 @@
                                         "type": "minecraft:loot_table",
                                         "conditions": [
                                           {
-                                            "chance": 0.009,
+                                            "chance": 0.9,
                                             "condition": "minecraft:random_chance"
                                           }
                                         ],
@@ -549,7 +552,7 @@
                                                   "type": "minecraft:loot_table",
                                                   "conditions": [
                                                     {
-                                                      "chance": 0.009,
+                                                      "chance": 0.9,
                                                       "condition": "minecraft:random_chance"
                                                     }
                                                   ],
@@ -585,11 +588,11 @@
                         }
                       ]
                     },
-                    "weight": 200000
+                    "weight": 1000
                   },
                   {
                     "type": "minecraft:loot_table",
-                    "quality": 1000,
+                    "quality": 500,
                     "value": {
                       "functions": [
                         {
@@ -615,7 +618,7 @@
                               "type": "minecraft:loot_table",
                               "conditions": [
                                 {
-                                  "chance": 0.009,
+                                  "chance": 0.9,
                                   "condition": "minecraft:random_chance"
                                 }
                               ],
@@ -638,7 +641,7 @@
                                         "type": "minecraft:loot_table",
                                         "conditions": [
                                           {
-                                            "chance": 0.009,
+                                            "chance": 0.9,
                                             "condition": "minecraft:random_chance"
                                           }
                                         ],
@@ -661,7 +664,7 @@
                                                   "type": "minecraft:loot_table",
                                                   "conditions": [
                                                     {
-                                                      "chance": 0.009,
+                                                      "chance": 0.9,
                                                       "condition": "minecraft:random_chance"
                                                     }
                                                   ],
@@ -715,6 +718,7 @@
                 "entries": [
                   {
                     "type": "minecraft:loot_table",
+                    "quality": -500,
                     "value": {
                       "pools": [
                         {
@@ -734,7 +738,7 @@
                               "type": "minecraft:loot_table",
                               "conditions": [
                                 {
-                                  "chance": 0.009,
+                                  "chance": 0.9,
                                   "condition": "minecraft:random_chance"
                                 }
                               ],
@@ -757,7 +761,7 @@
                                         "type": "minecraft:loot_table",
                                         "conditions": [
                                           {
-                                            "chance": 0.009,
+                                            "chance": 0.9,
                                             "condition": "minecraft:random_chance"
                                           }
                                         ],
@@ -780,7 +784,7 @@
                                                   "type": "minecraft:loot_table",
                                                   "conditions": [
                                                     {
-                                                      "chance": 0.009,
+                                                      "chance": 0.9,
                                                       "condition": "minecraft:random_chance"
                                                     }
                                                   ],
@@ -816,11 +820,11 @@
                         }
                       ]
                     },
-                    "weight": 200000
+                    "weight": 1000
                   },
                   {
                     "type": "minecraft:loot_table",
-                    "quality": 1000,
+                    "quality": 500,
                     "value": {
                       "functions": [
                         {
@@ -846,7 +850,7 @@
                               "type": "minecraft:loot_table",
                               "conditions": [
                                 {
-                                  "chance": 0.009,
+                                  "chance": 0.9,
                                   "condition": "minecraft:random_chance"
                                 }
                               ],
@@ -869,7 +873,7 @@
                                         "type": "minecraft:loot_table",
                                         "conditions": [
                                           {
-                                            "chance": 0.009,
+                                            "chance": 0.9,
                                             "condition": "minecraft:random_chance"
                                           }
                                         ],
@@ -892,7 +896,7 @@
                                                   "type": "minecraft:loot_table",
                                                   "conditions": [
                                                     {
-                                                      "chance": 0.009,
+                                                      "chance": 0.9,
                                                       "condition": "minecraft:random_chance"
                                                     }
                                                   ],
@@ -946,6 +950,7 @@
                 "entries": [
                   {
                     "type": "minecraft:loot_table",
+                    "quality": -500,
                     "value": {
                       "pools": [
                         {
@@ -965,7 +970,7 @@
                               "type": "minecraft:loot_table",
                               "conditions": [
                                 {
-                                  "chance": 0.009,
+                                  "chance": 0.9,
                                   "condition": "minecraft:random_chance"
                                 }
                               ],
@@ -988,7 +993,7 @@
                                         "type": "minecraft:loot_table",
                                         "conditions": [
                                           {
-                                            "chance": 0.009,
+                                            "chance": 0.9,
                                             "condition": "minecraft:random_chance"
                                           }
                                         ],
@@ -1011,7 +1016,7 @@
                                                   "type": "minecraft:loot_table",
                                                   "conditions": [
                                                     {
-                                                      "chance": 0.009,
+                                                      "chance": 0.9,
                                                       "condition": "minecraft:random_chance"
                                                     }
                                                   ],
@@ -1047,11 +1052,11 @@
                         }
                       ]
                     },
-                    "weight": 200000
+                    "weight": 1000
                   },
                   {
                     "type": "minecraft:loot_table",
-                    "quality": 1000,
+                    "quality": 500,
                     "value": {
                       "functions": [
                         {
@@ -1077,7 +1082,7 @@
                               "type": "minecraft:loot_table",
                               "conditions": [
                                 {
-                                  "chance": 0.009,
+                                  "chance": 0.9,
                                   "condition": "minecraft:random_chance"
                                 }
                               ],
@@ -1100,7 +1105,7 @@
                                         "type": "minecraft:loot_table",
                                         "conditions": [
                                           {
-                                            "chance": 0.009,
+                                            "chance": 0.9,
                                             "condition": "minecraft:random_chance"
                                           }
                                         ],
@@ -1123,7 +1128,7 @@
                                                   "type": "minecraft:loot_table",
                                                   "conditions": [
                                                     {
-                                                      "chance": 0.009,
+                                                      "chance": 0.9,
                                                       "condition": "minecraft:random_chance"
                                                     }
                                                   ],
@@ -1177,6 +1182,7 @@
                 "entries": [
                   {
                     "type": "minecraft:loot_table",
+                    "quality": -500,
                     "value": {
                       "pools": [
                         {
@@ -1196,7 +1202,7 @@
                               "type": "minecraft:loot_table",
                               "conditions": [
                                 {
-                                  "chance": 0.009,
+                                  "chance": 0.9,
                                   "condition": "minecraft:random_chance"
                                 }
                               ],
@@ -1219,7 +1225,7 @@
                                         "type": "minecraft:loot_table",
                                         "conditions": [
                                           {
-                                            "chance": 0.009,
+                                            "chance": 0.9,
                                             "condition": "minecraft:random_chance"
                                           }
                                         ],
@@ -1242,7 +1248,7 @@
                                                   "type": "minecraft:loot_table",
                                                   "conditions": [
                                                     {
-                                                      "chance": 0.009,
+                                                      "chance": 0.9,
                                                       "condition": "minecraft:random_chance"
                                                     }
                                                   ],
@@ -1278,11 +1284,11 @@
                         }
                       ]
                     },
-                    "weight": 200000
+                    "weight": 1000
                   },
                   {
                     "type": "minecraft:loot_table",
-                    "quality": 1000,
+                    "quality": 500,
                     "value": {
                       "functions": [
                         {
@@ -1308,7 +1314,7 @@
                               "type": "minecraft:loot_table",
                               "conditions": [
                                 {
-                                  "chance": 0.009,
+                                  "chance": 0.9,
                                   "condition": "minecraft:random_chance"
                                 }
                               ],
@@ -1331,7 +1337,7 @@
                                         "type": "minecraft:loot_table",
                                         "conditions": [
                                           {
-                                            "chance": 0.009,
+                                            "chance": 0.9,
                                             "condition": "minecraft:random_chance"
                                           }
                                         ],
@@ -1354,7 +1360,7 @@
                                                   "type": "minecraft:loot_table",
                                                   "conditions": [
                                                     {
-                                                      "chance": 0.009,
+                                                      "chance": 0.9,
                                                       "condition": "minecraft:random_chance"
                                                     }
                                                   ],

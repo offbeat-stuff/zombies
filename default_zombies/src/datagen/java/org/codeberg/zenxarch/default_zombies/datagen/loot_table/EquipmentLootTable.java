@@ -15,10 +15,8 @@ import net.minecraft.loot.LootPool;
 import net.minecraft.loot.LootTable;
 import net.minecraft.loot.condition.RandomChanceLootCondition;
 import net.minecraft.loot.entry.ItemEntry;
-import net.minecraft.loot.entry.LeafEntry;
 import net.minecraft.loot.entry.LeafEntry.Builder;
 import net.minecraft.loot.entry.LootPoolEntry;
-import net.minecraft.loot.entry.LootTableEntry;
 import net.minecraft.loot.function.SetComponentsLootFunction;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
@@ -28,24 +26,22 @@ import org.codeberg.zenxarch.zombies.loot_table.number_provider.LuckLootNumberPr
 
 public interface EquipmentLootTable {
 
-  private static LootTable.Builder entry(EquipmentSlot slot, int level) {
+  private static LootTable.Builder entryForLevel(EquipmentSlot slot, int level) {
     return table(pool(MobEntity.getEquipmentForSlot(slot, level)));
   }
 
-  private static LeafEntry.Builder<?> entry(LootTable.Builder builder) {
-    return LootTableEntry.builder(builder.build());
-  }
-
   private static LootPool.Builder build(LootTable.Builder builder) {
-    return pool().with(entry(builder).conditionally(RandomChanceLootCondition.builder(0.009f)));
+    var keepEntryCondtion = RandomChanceLootCondition.builder(0.9F);
+
+    return pool().with(tableEntry(builder).conditionally(keepEntryCondtion));
   }
 
-  private static LootTable.Builder getLootTableForLevel(int level) {
+  public static LootTable.Builder getLootTableForLevel(int level) {
     final EquipmentSlot[] slots = {
       EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET
     };
 
-    var entries = Stream.of(slots).map(slot -> entry(slot, level)).toList();
+    var entries = Stream.of(slots).map(slot -> entryForLevel(slot, level)).toList();
 
     return entries
         .get(0)
@@ -55,11 +51,25 @@ public interface EquipmentLootTable {
   private static LootPoolEntry.Builder<?> applyEnchantment(LootTable.Builder builder, int weight) {
     var enchantment =
         new EnchantmentProviderLootFunction(ZEnchantmentProviderGenerator.ZOMBIE_SPAWN_EQUIPMENT);
-    return entry(
+    /*
+     * Matches MobEntity.enchantEquipment for power 0.5 on 1.21.9
+     * w1 = ?
+     * ql1 = -w1 / 2
+     * w2 = 0
+     * ql2 = w1 / 2
+     */
+    final var weightUnenchanted = 1000;
+    return tableEntry(
             table(
                 pool()
-                    .with(entry(builder).weight(200 * 1000))
-                    .with(entry(builder.apply(enchantment)).weight(0).quality(1000))))
+                    .with(
+                        tableEntry(builder)
+                            .weight(weightUnenchanted)
+                            .quality(-weightUnenchanted / 2))
+                    .with(
+                        tableEntry(builder.apply(enchantment))
+                            .weight(0)
+                            .quality(weightUnenchanted / 2))))
         .weight(weight);
   }
 

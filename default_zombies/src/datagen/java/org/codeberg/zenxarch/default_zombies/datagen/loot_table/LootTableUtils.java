@@ -27,7 +27,7 @@ public final class LootTableUtils {
     return result;
   }
 
-  public static LeafEntry.Builder<?> entry(LootTable.Builder builder) {
+  public static LeafEntry.Builder<?> tableEntry(LootTable.Builder builder) {
     return LootTableEntry.builder(builder.build());
   }
 }
