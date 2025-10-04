@@ -60,7 +60,7 @@ public final class MobVariants {
         .value()
         .components()
         .forEach((attachment, value) -> updateAttachment(target, attachment, value));
-    variant.value().template().ifPresent(template -> updateAttachmentsImpl(target, template));
+    variant.value().template().forEach(template -> updateAttachmentsImpl(target, template));
   }
 
   @SuppressWarnings("unchecked")
