@@ -3,12 +3,12 @@
     "zenxarch:equipment_table": {
       "loot_table": "zenxarch:oak_door_shield_equipment",
       "slot_drop_chances": 0.0
-    },
-    "zenxarch:loot_table": "zenxarch:zombie_drops"
+    }
   },
   "spawnConditions": [
     {
       "priority": 128
     }
-  ]
+  ],
+  "template": "zenxarch:template/loot"
 }

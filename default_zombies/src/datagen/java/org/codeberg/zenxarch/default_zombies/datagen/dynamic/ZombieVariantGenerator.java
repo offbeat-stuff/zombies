@@ -8,7 +8,6 @@ import java.util.Map;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
 import net.minecraft.client.render.entity.model.EntityModelLayers;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.EquipmentTable;
 import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributeModifier.Operation;
@@ -78,6 +77,10 @@ public final class ZombieVariantGenerator {
   private static SpawnConditionSelectors condition(int weight) {
     return SpawnConditionSelectors.createFallback(weight);
   }
+
+  public static final RegistryKey<MobVariant> LOOT_TEMPLATE = INITIALIZER.of("template/loot");
+  public static final RegistryKey<MobVariant> ATTRIBUTE_TEMPLATE =
+      INITIALIZER.of("template/attribute");
 
   public static final RegistryKey<MobVariant> COMMON = INITIALIZER.of("default");
   public static final RegistryKey<MobVariant> AXE = INITIALIZER.of("axe");
@@ -161,37 +164,20 @@ public final class ZombieVariantGenerator {
         RandomMobEffect.create(ConstantFloatProvider.create(0.8f), optionalEffect));
   }
 
-  private static ZombieVariantMapBuilder defaultAttributeMap() {
-    return new ZombieVariantMapBuilder()
-        .with(MobAttachments.LOOT_TABLE, ZEntityLootTableProvider.ZOMBIE_DROPS)
-        .with(MobAttachments.ON_SPAWN, attributesOnSpawn());
-  }
-
-  private static ZombieVariantMapBuilder doorMap(EquipmentTable table) {
-    return new ZombieVariantMapBuilder()
-        .with(MobAttachments.LOOT_TABLE, ZEntityLootTableProvider.ZOMBIE_DROPS)
-        .with(MobAttachments.EQUIPMENT_TABLE, table);
-  }
-
-  private static ZombieVariantMapBuilder defaultEquipmentMap() {
-    return defaultAttributeMap()
-        .with(MobAttachments.EQUIPMENT_TABLE, ZLootTableProvider.COMMON_ZOMBIE_EQUIPMENT);
-  }
-
   private static ZombieVariantMapBuilder defaultEffectMap(
-      List<RegistryEntry<StatusEffect>> effects) {
+      ZombieVariantMapBuilder original, List<RegistryEntry<StatusEffect>> effects) {
     var effectInstances = effects.stream().map(e -> new StatusEffectInstance(e, 80)).toList();
     var particle = effects.get(0).value().createParticle(effectInstances.get(0));
-    return defaultEquipmentMap()
+    return original
         .with(MobAttachments.ON_ATTACK, new StatusMobEffect(effectInstances))
         .with(MobAttachments.ON_TICK, spawnParticles(particle, 0.2F));
   }
 
   private static ZombieVariantMapBuilder spawnWithEffects(
-      List<RegistryEntry<StatusEffect>> effects) {
+      ZombieVariantMapBuilder original, List<RegistryEntry<StatusEffect>> effects) {
     var effectInstances = effects.stream().map(e -> new StatusEffectInstance(e, -1)).toList();
     var particle = effects.get(0).value().createParticle(effectInstances.get(0));
-    return defaultEquipmentMap()
+    return original
         .with(
             MobAttachments.ON_SPAWN,
             new SingleMobEffect(new StatusLivingEffect(effectInstances), true))
@@ -199,10 +185,10 @@ public final class ZombieVariantGenerator {
   }
 
   private static ZombieVariantMapBuilder defaultEffectMapWithSpawnCloud(
-      List<RegistryEntry<StatusEffect>> effects) {
+      ZombieVariantMapBuilder original, List<RegistryEntry<StatusEffect>> effects) {
     var effectInstance = new StatusEffectInstance(effects.get(0), 200);
     var particle = effects.get(0).value().createParticle(effectInstance);
-    return defaultEffectMap(effects)
+    return defaultEffectMap(original, effects)
         .with(
             MobAttachments.ON_KILLED,
             new SingleMobEffect(
@@ -216,60 +202,92 @@ public final class ZombieVariantGenerator {
 
   public static void bootstrap(Registerable<MobVariant> registry) {
     var lookup = registry.getRegistryLookup(RegistryKeys.DAMAGE_TYPE);
-    register(registry, COMMON, defaultEquipmentMap(), condition(COMMON_WEIGHT));
+
+    register(
+        registry,
+        LOOT_TEMPLATE,
+        new ZombieVariantMapBuilder()
+            .with(MobAttachments.EQUIPMENT_TABLE, ZLootTableProvider.COMMON_ZOMBIE_EQUIPMENT)
+            .with(MobAttachments.LOOT_TABLE, ZEntityLootTableProvider.ZOMBIE_DROPS),
+        condition(0));
+
+    register(
+        registry,
+        ATTRIBUTE_TEMPLATE,
+        new ZombieVariantMapBuilder().with(MobAttachments.ON_SPAWN, attributesOnSpawn()),
+        condition(0));
+
+    register(
+        registry,
+        COMMON,
+        new ZombieVariantMapBuilder(),
+        condition(COMMON_WEIGHT),
+        LOOT_TEMPLATE,
+        ATTRIBUTE_TEMPLATE);
     register(
         registry,
         SWAPPING,
-        defaultEquipmentMap()
+        new ZombieVariantMapBuilder()
             .with(MobAttachments.ON_ATTACK, swapPositions())
             .with(MobAttachments.ON_TICK, spawnParticles(ParticleTypes.PORTAL, 0.2F)),
-        condition(RARE_WEIGHT));
+        condition(RARE_WEIGHT),
+        LOOT_TEMPLATE);
 
     register(
         registry,
         FIRE,
-        defaultEquipmentMap()
+        new ZombieVariantMapBuilder()
             .with(MobAttachments.ON_ATTACK, ignite(1.0F))
             .with(MobAttachments.ON_TICK, spawnParticles(ParticleTypes.FLAME, 0.2F))
             .with(MobAttachments.INVULNERABLE_TO, lookup.getOrThrow(DamageTypeTags.IS_FIRE)),
-        condition(registry, ZBiomeTags.WITH_FLAME_ZOMBIES, RARE_WEIGHT));
+        condition(registry, ZBiomeTags.WITH_FLAME_ZOMBIES, RARE_WEIGHT),
+        LOOT_TEMPLATE);
 
     register(
         registry,
         FREEZE,
-        defaultEquipmentMap()
+        new ZombieVariantMapBuilder()
             .with(MobAttachments.ON_ATTACK, freeze())
             .with(MobAttachments.ON_TICK, spawnParticles(ParticleTypes.SNOWFLAKE, 0.2F))
             .with(MobAttachments.INVULNERABLE_TO, lookup.getOrThrow(DamageTypeTags.IS_FREEZING)),
-        condition(registry, ZBiomeTags.WITH_FROST_ZOMBIES, RARE_WEIGHT));
+        condition(registry, ZBiomeTags.WITH_FROST_ZOMBIES, RARE_WEIGHT),
+        LOOT_TEMPLATE);
 
     register(
         registry,
         AXE,
-        defaultAttributeMap()
+        new ZombieVariantMapBuilder()
             .with(
                 MobAttachments.ON_ATTACK,
                 AllOfMobEffect.create(
                     HealFromDamage.INSTANCE, spawnParticles(ParticleTypes.HEART, 1.0F)))
             .with(MobAttachments.EQUIPMENT_TABLE, ZLootTableProvider.AXE_ZOMBIE_EQUIPMENT),
-        condition(registry, ZBiomeTags.WITH_AXE_ZOMBIES, UNCOMMON_WEIGHT));
+        condition(registry, ZBiomeTags.WITH_AXE_ZOMBIES, UNCOMMON_WEIGHT),
+        LOOT_TEMPLATE,
+        ATTRIBUTE_TEMPLATE);
     register(
         registry,
         SWAMP,
-        defaultEffectMapWithSpawnCloud(List.of(StatusEffects.POISON)),
-        condition(registry, ZBiomeTags.WITH_SWAMP_ZOMBIES, RARE_WEIGHT));
+        defaultEffectMapWithSpawnCloud(
+            new ZombieVariantMapBuilder(), List.of(StatusEffects.POISON)),
+        condition(registry, ZBiomeTags.WITH_SWAMP_ZOMBIES, RARE_WEIGHT),
+        LOOT_TEMPLATE);
     register(
         registry,
         DESERT,
-        defaultEffectMap(List.of(StatusEffects.DARKNESS, StatusEffects.HUNGER))
+        defaultEffectMap(
+                new ZombieVariantMapBuilder(),
+                List.of(StatusEffects.DARKNESS, StatusEffects.HUNGER))
             .with(
                 MobAttachments.TEXTURE_OVERRIDE,
                 new TextureAssetInfo(Identifier.ofVanilla("entity/zombie/husk"))),
-        condition(registry, ZBiomeTags.WITH_DESERT_ZOMBIES, RARE_WEIGHT));
+        condition(registry, ZBiomeTags.WITH_DESERT_ZOMBIES, RARE_WEIGHT),
+        LOOT_TEMPLATE,
+        ATTRIBUTE_TEMPLATE);
     register(
         registry,
         RAIN,
-        defaultEquipmentMap()
+        new ZombieVariantMapBuilder()
             .with(
                 MobAttachments.TEXTURE_OVERRIDE,
                 new TextureAssetInfo(Identifier.of("entity/zombie/drowned")))
@@ -280,53 +298,65 @@ public final class ZombieVariantGenerator {
                     EntityModelLayers.DROWNED_OUTER,
                     new TextureAssetInfo(
                         Identifier.ofVanilla("entity/zombie/drowned_outer_layer")))),
-        SpawnConditionSelectors.createSingle(RainingSpawnCondition.INSTANCE, UNCOMMON_WEIGHT));
+        SpawnConditionSelectors.createSingle(RainingSpawnCondition.INSTANCE, UNCOMMON_WEIGHT),
+        LOOT_TEMPLATE);
     register(
         registry,
         EXPLOSION,
-        defaultAttributeMap()
+        new ZombieVariantMapBuilder()
             .with(MobAttachments.ON_ATTACK, new SingleMobEffect(new ExplosionEffect(3.0F), true)),
-        condition(RARE_WEIGHT));
+        condition(RARE_WEIGHT),
+        LOOT_TEMPLATE);
     register(
         registry,
         INVISIBLE,
-        spawnWithEffects(List.of(StatusEffects.INVISIBILITY)),
-        condition(RARE_WEIGHT));
+        spawnWithEffects(new ZombieVariantMapBuilder(), List.of(StatusEffects.INVISIBILITY)),
+        condition(RARE_WEIGHT),
+        LOOT_TEMPLATE);
     register(
         registry,
         BONEMEAL,
-        defaultEquipmentMap()
+        new ZombieVariantMapBuilder()
             .with(
                 MobAttachments.ON_TICK,
                 AllOfMobEffect.create(
                     new IntervalMobEffect(
                         20, new SingleMobEffect(new BonemealLivingEffect(), true)),
                     spawnParticles(ParticleTypes.HAPPY_VILLAGER, 0.2F))),
-        condition(registry, ZBiomeTags.WITH_AXE_ZOMBIES, RARE_WEIGHT));
+        condition(registry, ZBiomeTags.WITH_AXE_ZOMBIES, RARE_WEIGHT),
+        LOOT_TEMPLATE);
 
     register(
         registry,
         OAK_DOOR,
-        doorMap(ZLootTableProvider.OAK_DOOR_SHIELD_EQUIPMENT),
-        condition(UNCOMMON_WEIGHT));
+        new ZombieVariantMapBuilder()
+            .with(MobAttachments.EQUIPMENT_TABLE, ZLootTableProvider.OAK_DOOR_SHIELD_EQUIPMENT),
+        condition(UNCOMMON_WEIGHT),
+        LOOT_TEMPLATE);
 
     register(
         registry,
         COPPER_DOOR,
-        doorMap(ZLootTableProvider.COPPER_DOOR_SHIELD_EQUIPMENT),
-        condition(RARE_WEIGHT));
+        new ZombieVariantMapBuilder()
+            .with(MobAttachments.EQUIPMENT_TABLE, ZLootTableProvider.COPPER_DOOR_SHIELD_EQUIPMENT),
+        condition(RARE_WEIGHT),
+        LOOT_TEMPLATE);
 
     register(
         registry,
         IRON_DOOR,
-        doorMap(ZLootTableProvider.IRON_DOOR_SHIELD_EQUIPMENT),
-        condition(RARE_WEIGHT));
+        new ZombieVariantMapBuilder()
+            .with(MobAttachments.EQUIPMENT_TABLE, ZLootTableProvider.IRON_DOOR_SHIELD_EQUIPMENT),
+        condition(RARE_WEIGHT),
+        LOOT_TEMPLATE);
 
     register(
         registry,
         HEADLESS,
-        defaultAttributeMap().with(MobAttachments.RENDER_HEAD, false),
-        condition(UNCOMMON_WEIGHT));
+        new ZombieVariantMapBuilder().with(MobAttachments.RENDER_HEAD, false),
+        condition(UNCOMMON_WEIGHT),
+        LOOT_TEMPLATE,
+        ATTRIBUTE_TEMPLATE);
 
     // register(
     //     registry,
@@ -355,6 +385,22 @@ public final class ZombieVariantGenerator {
       ZombieVariantMapBuilder componentMap,
       SpawnConditionSelectors condition) {
     registry.register(key, new MobVariant(componentMap.build(), condition));
+  }
+
+  @SafeVarargs
+  private static void register(
+      Registerable<MobVariant> registry,
+      RegistryKey<MobVariant> key,
+      ZombieVariantMapBuilder componentMap,
+      SpawnConditionSelectors condition,
+      RegistryKey<MobVariant>... templates) {
+    var mobVariantRegistry = registry.getRegistryLookup(MobRegistryKeys.MOB_VARIANT);
+    var templateEntries =
+        List.of(templates).stream()
+            .map(mobVariantRegistry::getOrThrow)
+            .map(t -> (RegistryEntry<MobVariant>) t)
+            .toList();
+    registry.register(key, new MobVariant(componentMap.build(), condition, templateEntries));
   }
 
   static class ZombieVariantMapBuilder {
