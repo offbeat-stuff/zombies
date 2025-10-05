@@ -3,7 +3,7 @@ package org.codeberg.zenxarch.default_zombies.datagen.loot_table;
 import static org.codeberg.zenxarch.default_zombies.datagen.loot_table.LootTableUtils.*;
 
 import java.util.Map;
-import java.util.stream.Stream;
+import java.util.Objects;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.mob.MobEntity;
@@ -17,6 +17,7 @@ import net.minecraft.loot.condition.RandomChanceLootCondition;
 import net.minecraft.loot.entry.ItemEntry;
 import net.minecraft.loot.entry.LeafEntry.Builder;
 import net.minecraft.loot.entry.LootPoolEntry;
+import net.minecraft.loot.entry.LootTableEntry;
 import net.minecraft.loot.function.SetComponentsLootFunction;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.RegistryKey;
@@ -27,32 +28,28 @@ import org.codeberg.zenxarch.zombies.loot_table.number_provider.LuckLootNumberPr
 
 public interface EquipmentLootTable {
 
-  private static LootTable.Builder entryForLevel(EquipmentSlot slot, int level) {
-    return table(pool(MobEntity.getEquipmentForSlot(slot, level)));
+  private static LootPoolEntry.Builder<?> entryForLevel(EquipmentSlot slot, int level) {
+    return ItemEntry.builder(Objects.requireNonNull(MobEntity.getEquipmentForSlot(slot, level)));
   }
 
-  private static LootPool.Builder applyKeepEntryCondition(LootTable.Builder builder) {
-    var keepEntryCondition = RandomChanceLootCondition.builder(0.9F);
-
-    return pool().with(tableEntry(builder).conditionally(keepEntryCondition));
-  }
-
-  public static LootTable.Builder getLootTableForLevel(int level) {
+  private static LootTableEntry.Builder<?> tableEntryForLevel(int entries, int level) {
     final EquipmentSlot[] slots = {
       EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET
     };
+    assert entries > 0 && entries <= 4;
+    var table = table();
+    for (int idx = 0; idx < entries; idx++)
+      table.pool(singleResultPool(entryForLevel(slots[idx], level)));
+    return tableEntry(table);
+  }
 
-    var entries = Stream.of(slots).map(slot -> entryForLevel(slot, level)).toList();
-
-    return entries
-        .get(0)
-        .pool(
-            applyKeepEntryCondition(
-                entries
-                    .get(1)
-                    .pool(
-                        applyKeepEntryCondition(
-                            entries.get(2).pool(applyKeepEntryCondition(entries.get(3)))))));
+  public static LootTable.Builder getLootTableForLevel(int level) {
+    return table(
+        singleResultPool(
+            tableEntryForLevel(4, level).weight(729),
+            tableEntryForLevel(3, level).weight(81),
+            tableEntryForLevel(2, level).weight(90),
+            tableEntryForLevel(1, level).weight(100)));
   }
 
   public static LootTable.Builder applyEnchantment(RegistryKey<LootTable> table) {
@@ -67,7 +64,7 @@ public interface EquipmentLootTable {
      */
     final var weightUnenchanted = 1000;
     return table(
-        pool()
+        singleResultPool()
             .with(tableEntry(table).weight(weightUnenchanted).quality(-weightUnenchanted / 2))
             .with(
                 (tableEntry(table).apply(() -> enchantment))
@@ -76,7 +73,7 @@ public interface EquipmentLootTable {
   }
 
   public static LootPool.Builder axeWeaponTable() {
-    return pool()
+    return singleResultPool()
         .with(ItemEntry.builder(Items.WOODEN_AXE).weight(5))
         .with(ItemEntry.builder(Items.STONE_AXE).weight(100))
         .with(ItemEntry.builder(Items.COPPER_AXE).weight(20))
@@ -131,6 +128,7 @@ public interface EquipmentLootTable {
 
   public static LootPool.Builder shieldDoorEquipment(
       Item item, int maxDamage, int defense, float toughness, float knockbackResistance) {
-    return pool().with(shieldDoorItem(item, maxDamage, defense, toughness, knockbackResistance));
+    return singleResultPool()
+        .with(shieldDoorItem(item, maxDamage, defense, toughness, knockbackResistance));
   }
 }

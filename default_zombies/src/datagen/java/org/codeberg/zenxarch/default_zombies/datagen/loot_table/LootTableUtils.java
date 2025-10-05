@@ -14,23 +14,23 @@ public final class LootTableUtils {
     throw new IllegalStateException("Utility class");
   }
 
-  public static LootPool.Builder pool() {
+  public static LootPool.Builder singleResultPool() {
     return LootPool.builder().rolls(ConstantLootNumberProvider.create(1.0f));
   }
 
-  public static LootPool.Builder pool(LootPoolEntry.Builder<?>... entries) {
-    var result = pool();
-    for (var entry : entries) result = result.with(entry);
+  public static LootPool.Builder singleResultPool(LootPoolEntry.Builder<?>... entries) {
+    var result = singleResultPool();
+    for (var entry : entries) result.with(entry);
     return result;
   }
 
-  public static LootPool.Builder pool(Item item) {
-    return pool().with(ItemEntry.builder(item));
+  public static LootPool.Builder singleItemPool(Item item) {
+    return singleResultPool().with(ItemEntry.builder(item));
   }
 
   public static LootTable.Builder table(LootPool.Builder... pools) {
     var result = LootTable.builder();
-    for (var pool : pools) result = result.pool(pool);
+    for (var pool : pools) result.pool(pool);
     return result;
   }
 

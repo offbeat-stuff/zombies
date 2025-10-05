@@ -49,7 +49,7 @@ public class ZEntityLootTableProvider extends FabricEntityLootTableProvider {
     addLootTable(
         EntityType.ZOMBIE,
         ZOMBIE_DROPS,
-        pool().with(builder(EntityType.ZOMBIE.getLootTableKey().orElseThrow())),
-        pool().with(boneEntry));
+        singleResultPool().with(builder(EntityType.ZOMBIE.getLootTableKey().orElseThrow())),
+        singleResultPool().with(boneEntry));
   }
 }

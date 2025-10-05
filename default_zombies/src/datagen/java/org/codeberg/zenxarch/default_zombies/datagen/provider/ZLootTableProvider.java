@@ -1,6 +1,6 @@
 package org.codeberg.zenxarch.default_zombies.datagen.provider;
 
-import static org.codeberg.zenxarch.default_zombies.datagen.loot_table.LootTableUtils.pool;
+import static org.codeberg.zenxarch.default_zombies.datagen.loot_table.LootTableUtils.singleResultPool;
 import static org.codeberg.zenxarch.default_zombies.datagen.loot_table.LootTableUtils.tableEntry;
 
 import java.util.concurrent.CompletableFuture;
@@ -116,22 +116,22 @@ public class ZLootTableProvider extends SimpleFabricLootTableProvider {
           registry,
           COMMON_ZOMBIE_EQUIPMENT.lootTable(),
           EquipmentLootTable.withVanillaArmorSpawnChance(
-              pool(
+              singleResultPool(
                   EquipmentLootTable.getLootPoolForEquipmentLevel(ENCHANTED_LEATHER_EQUIPMENT, 0),
                   EquipmentLootTable.getLootPoolForEquipmentLevel(ENCHANTED_COPPER_EQUIPMENT, 1),
                   EquipmentLootTable.getLootPoolForEquipmentLevel(ENCHANTED_GOLDEN_EQUIPMENT, 2),
                   EquipmentLootTable.getLootPoolForEquipmentLevel(ENCHANTED_CHAINMAIL_EQUIPMENT, 3),
                   EquipmentLootTable.getLootPoolForEquipmentLevel(ENCHANTED_IRON_EQUIPMENT, 4),
                   EquipmentLootTable.getLootPoolForEquipmentLevel(ENCHANTED_DIAMOND_EQUIPMENT, 5))),
-          LootPool.builder()
-              .with(ItemEntry.builder(Items.IRON_SWORD))
-              .with(ItemEntry.builder(Items.IRON_SHOVEL).weight(2))
+          singleResultPool(
+                  ItemEntry.builder(Items.IRON_SWORD),
+                  ItemEntry.builder(Items.IRON_SHOVEL).weight(2))
               .conditionally(RandomChanceLootCondition.builder(0.05f)));
       addLootTable(
           registry,
           AXE_ZOMBIE_EQUIPMENT.lootTable(),
           EquipmentLootTable.withVanillaArmorSpawnChance(
-              pool(tableEntry(ENCHANTED_LEATHER_EQUIPMENT))),
+              singleResultPool(tableEntry(ENCHANTED_LEATHER_EQUIPMENT))),
           EquipmentLootTable.axeWeaponTable());
     }
 
