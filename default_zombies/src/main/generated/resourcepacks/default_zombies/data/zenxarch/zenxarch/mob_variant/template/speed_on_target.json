@@ -7,7 +7,7 @@
         "attribute": "minecraft:movement_speed",
         "modifiers": {
           "amount": 0.5,
-          "id": "zenxarch:add_target",
+          "id": "zenxarch:add_speed_on_target",
           "operation": "add_multiplied_base"
         }
       }
@@ -15,11 +15,11 @@
     "zenxarch:on_remove_target": {
       "type": "zenxarch:single",
       "effect": {
-        "type": "zenxarch:attribute_modifier",
+        "type": "zenxarch:remove_modifier",
         "attribute": "minecraft:movement_speed",
         "modifiers": {
-          "amount": 0.0,
-          "id": "zenxarch:add_target",
+          "amount": 0.5,
+          "id": "zenxarch:add_speed_on_target",
           "operation": "add_multiplied_base"
         }
       }

@@ -48,35 +48,30 @@
           }
         },
         {
-          "type": "zenxarch:all_of",
-          "effects": [
-            {
-              "type": "zenxarch:single",
-              "effect": {
-                "type": "zenxarch:default_attribute",
-                "attribute": "minecraft:max_health",
-                "value": {
-                  "type": "minecraft:clamped_normal",
-                  "deviation": 10.0,
-                  "max": 48.0,
-                  "mean": 40.0,
-                  "min": 32.0
-                }
-              }
-            },
-            {
-              "type": "zenxarch:single",
-              "effect": {
-                "type": "zenxarch:attribute_modifier",
-                "attribute": "minecraft:movement_speed",
-                "modifiers": {
-                  "amount": -0.5,
-                  "id": "zenxarch:zombie_speed",
-                  "operation": "add_multiplied_total"
-                }
-              }
+          "type": "zenxarch:single",
+          "effect": {
+            "type": "zenxarch:default_attribute",
+            "attribute": "minecraft:max_health",
+            "value": {
+              "type": "minecraft:clamped_normal",
+              "deviation": 10.0,
+              "max": 48.0,
+              "mean": 40.0,
+              "min": 32.0
             }
-          ]
+          }
+        },
+        {
+          "type": "zenxarch:single",
+          "effect": {
+            "type": "zenxarch:attribute_modifier",
+            "attribute": "minecraft:movement_speed",
+            "modifiers": {
+              "amount": -0.5,
+              "id": "zenxarch:zombie_speed",
+              "operation": "add_multiplied_total"
+            }
+          }
         },
         {
           "type": "zenxarch:random",
@@ -115,10 +110,10 @@
               {
                 "type": "zenxarch:single",
                 "effect": {
-                  "type": "zenxarch:attribute_modifier",
+                  "type": "zenxarch:remove_modifier",
                   "attribute": "minecraft:movement_speed",
                   "modifiers": {
-                    "amount": 0.1,
+                    "amount": -0.5,
                     "id": "zenxarch:zombie_speed",
                     "operation": "add_multiplied_total"
                   }
@@ -127,10 +122,10 @@
               {
                 "type": "zenxarch:single",
                 "effect": {
-                  "type": "zenxarch:attribute_modifier",
+                  "type": "zenxarch:remove_modifier",
                   "attribute": "minecraft:attack_damage",
                   "modifiers": {
-                    "amount": 0.0,
+                    "amount": 1.5,
                     "id": "zenxarch:zombie_damage",
                     "operation": "add_multiplied_total"
                   }

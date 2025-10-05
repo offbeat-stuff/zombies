@@ -135,12 +135,6 @@ public final class ZombieVariantGenerator {
         new AttributeModifierEffect(attribute, List.of(modifier), true), true);
   }
 
-  private static MobEffect createAttributeModifierEffect(
-      RegistryEntry<EntityAttribute> attribute, String id, double value, Operation op) {
-    return createAttributeModifierEffect(
-        attribute, new EntityAttributeModifier(Zombies.id(id), value, op));
-  }
-
   private static MobEffect attributesOnSpawn() {
     var commonFollowRange = ClampedNormalFloatProvider.create(10f, 5f, 8f, 14f);
     var uncommonFollowRange = ClampedNormalFloatProvider.create(20f, 8f, 18f, 25f);
@@ -156,30 +150,30 @@ public final class ZombieVariantGenerator {
     var extraHealthEffect =
         createAttributeEffect(
             EntityAttributes.MAX_HEALTH, ClampedNormalFloatProvider.create(40f, 10f, 32f, 48f));
-    var lowSpeedEffect =
-        createAttributeModifierEffect(
-            EntityAttributes.MOVEMENT_SPEED, "zombie_speed", -0.5, Operation.ADD_MULTIPLIED_TOTAL);
-
     var lowHealthEffect =
         createAttributeEffect(
             EntityAttributes.MAX_HEALTH, ClampedNormalFloatProvider.create(24f, 8f, 20f, 28f));
-    var highSpeedEffect =
-        createAttributeModifierEffect(
-            EntityAttributes.MOVEMENT_SPEED, "zombie_speed", 0.1, Operation.ADD_MULTIPLIED_TOTAL);
 
+    var speedModifier =
+        new EntityAttributeModifier(
+            Zombies.id("zombie_speed"), -0.5, Operation.ADD_MULTIPLIED_TOTAL);
+    var lowSpeedEffect =
+        createAttributeModifierEffect(EntityAttributes.MOVEMENT_SPEED, speedModifier);
+    var highSpeedEffect = removeAttributeEffect(EntityAttributes.MOVEMENT_SPEED, speedModifier);
+
+    var damageModifier =
+        new EntityAttributeModifier(
+            Zombies.id("zombie_damage"), 1.5, Operation.ADD_MULTIPLIED_TOTAL);
     var damageEffect =
-        createAttributeModifierEffect(
-            EntityAttributes.ATTACK_DAMAGE, "zombie_damage", 1.5, Operation.ADD_MULTIPLIED_TOTAL);
-
-    var noDamageEffect =
-        createAttributeModifierEffect(
-            EntityAttributes.ATTACK_DAMAGE, "zombie_damage", 0, Operation.ADD_MULTIPLIED_TOTAL);
+        createAttributeModifierEffect(EntityAttributes.ATTACK_DAMAGE, damageModifier);
+    var noDamageEffect = removeAttributeEffect(EntityAttributes.ATTACK_DAMAGE, damageModifier);
 
     return AllOfMobEffect.create(
         damageEffect,
         commonFollowRangeEffect,
         RandomMobEffect.create(ConstantFloatProvider.create(0.05f), uncommonFollowRangeEffect),
-        AllOfMobEffect.create(extraHealthEffect, lowSpeedEffect),
+        extraHealthEffect,
+        lowSpeedEffect,
         RandomMobEffect.create(
             ConstantFloatProvider.create(0.001f),
             AllOfMobEffect.create(
