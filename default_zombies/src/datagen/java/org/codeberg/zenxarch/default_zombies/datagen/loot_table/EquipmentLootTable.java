@@ -32,9 +32,9 @@ public interface EquipmentLootTable {
   }
 
   private static LootPool.Builder applyKeepEntryCondition(LootTable.Builder builder) {
-    var keepEntryCondtion = RandomChanceLootCondition.builder(0.9F);
+    var keepEntryCondition = RandomChanceLootCondition.builder(0.9F);
 
-    return pool().with(tableEntry(builder).conditionally(keepEntryCondtion));
+    return pool().with(tableEntry(builder).conditionally(keepEntryCondition));
   }
 
   public static LootTable.Builder getLootTableForLevel(int level) {
