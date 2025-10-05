@@ -29,6 +29,7 @@ public interface LivingEffect {
     register("attribute_modifier", AttributeModifierEffect.CODEC);
     register("explosion", ExplosionEffect.CODEC);
     register("bonemeal", BonemealLivingEffect.CODEC);
+    register("remove_modifier", RemoveAttributeModifierEffect.CODEC);
   }
 
   private static void register(String id, MapCodec<? extends LivingEffect> codec) {
