@@ -1,7 +1,6 @@
 package org.codeberg.zenxarch.zombies;
 
 import static net.minecraft.command.argument.EntityArgumentType.*;
-import static net.minecraft.command.argument.IdentifierArgumentType.*;
 import static net.minecraft.server.command.CommandManager.*;
 
 import com.mojang.brigadier.CommandDispatcher;
@@ -40,7 +39,8 @@ public final class DebugCommands {
             .then(
                 argument("entity", entity())
                     .then(
-                        argument("identifier", identifier()).executes(DebugCommands::zgiveloot))));
+                        argument("identifier", RegistryEntryArgumentType.lootTable(registryAccess))
+                            .executes(DebugCommands::zgiveloot))));
 
     dispatcher.register(
         literal("zspawnvariant")
