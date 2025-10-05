@@ -9,5 +9,9 @@
     "fabric-datagen": [
       "org.codeberg.zenxarch.default_zombies.datagen.DefaultZombiesDatagen"
     ]
+  },
+  "depends": {
+    "zombies_zenxarch": "*",
+    "zombies_zenxarch_datagen": "*"
   }
 }
