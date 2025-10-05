@@ -34,14 +34,11 @@ import net.minecraft.world.biome.Biome;
 import org.codeberg.zenxarch.default_zombies.datagen.provider.ZEntityLootTableProvider;
 import org.codeberg.zenxarch.default_zombies.datagen.provider.ZLootTableProvider;
 import org.codeberg.zenxarch.mob_variants_api.registry.MobRegistryKeys;
-import org.codeberg.zenxarch.mob_variants_api.spawn_conditions.DaySpawnCondition;
-import org.codeberg.zenxarch.mob_variants_api.spawn_conditions.NightSpawnCondition;
 import org.codeberg.zenxarch.mob_variants_api.spawn_conditions.RainingSpawnCondition;
 import org.codeberg.zenxarch.mob_variants_api.variant.MobAttachments;
 import org.codeberg.zenxarch.mob_variants_api.variant.MobVariant;
 import org.codeberg.zenxarch.mob_variants_api.variant.effect.*;
 import org.codeberg.zenxarch.mob_variants_api.variant.effect.pair.AllOfMobEffect;
-import org.codeberg.zenxarch.mob_variants_api.variant.effect.pair.ConditionalSpawnEffect;
 import org.codeberg.zenxarch.mob_variants_api.variant.effect.pair.HealFromDamage;
 import org.codeberg.zenxarch.mob_variants_api.variant.effect.pair.IntervalMobEffect;
 import org.codeberg.zenxarch.mob_variants_api.variant.effect.pair.RandomMobEffect;
@@ -132,36 +129,38 @@ public final class ZombieVariantGenerator {
   }
 
   private static MobEffect attributesOnSpawn() {
-    var dayFollowRange = ClampedNormalFloatProvider.create(20.0f, 8.0f, 14.0f, 26.0f);
-    var nightFollowRange = ClampedNormalFloatProvider.create(32.0f, 8.0f, 26.0f, 38.0f);
-    var dayFollowRangeEffect =
-        new ConditionalSpawnEffect(
-            DaySpawnCondition.INSTANCE,
-            createAttributeEffect(EntityAttributes.FOLLOW_RANGE, dayFollowRange),
-            true);
-    var nightFollowRangeEffect =
-        new ConditionalSpawnEffect(
-            NightSpawnCondition.INSTANCE,
-            createAttributeEffect(EntityAttributes.FOLLOW_RANGE, nightFollowRange),
-            true);
-    var halfHealthEffect =
-        createAttributeEffect(EntityAttributes.MAX_HEALTH, ConstantFloatProvider.create(10.0f));
-    var extraSpeedEffect =
-        new ConditionalSpawnEffect(
-            NightSpawnCondition.INSTANCE,
-            createAttributeModifierEffect(
-                EntityAttributes.MOVEMENT_SPEED,
-                "zombie_speed_boost",
-                0.5,
-                Operation.ADD_MULTIPLIED_TOTAL),
-            true);
+    var commonFollowRange = ClampedNormalFloatProvider.create(6f, 4f, 4f, 8f);
+    var uncommonFollowRange = ClampedNormalFloatProvider.create(10f, 5f, 7f, 13f);
+    var rareFollowRange = ClampedNormalFloatProvider.create(32f, 8f, 28f, 36f);
 
-    var optionalEffect = AllOfMobEffect.create(halfHealthEffect, extraSpeedEffect);
+    var commonFollowRangeEffect =
+        createAttributeEffect(EntityAttributes.FOLLOW_RANGE, commonFollowRange);
+    var uncommonFollowRangeEffect =
+        createAttributeEffect(EntityAttributes.FOLLOW_RANGE, uncommonFollowRange);
+    var rareFollowRangeEffect =
+        createAttributeEffect(EntityAttributes.FOLLOW_RANGE, rareFollowRange);
+
+    var extraHealthEffect =
+        createAttributeEffect(
+            EntityAttributes.MAX_HEALTH, ClampedNormalFloatProvider.create(40f, 10f, 32f, 48f));
+    var lowSpeedEffect =
+        createAttributeModifierEffect(
+            EntityAttributes.MOVEMENT_SPEED, "zombie_speed", -0.5, Operation.ADD_MULTIPLIED_TOTAL);
+
+    var lowHealthEffect =
+        createAttributeEffect(
+            EntityAttributes.MAX_HEALTH, ClampedNormalFloatProvider.create(16f, 8f, 12f, 24f));
+    var highSpeedEffect =
+        createAttributeModifierEffect(
+            EntityAttributes.MOVEMENT_SPEED, "zombie_speed", 0.1, Operation.ADD_MULTIPLIED_TOTAL);
 
     return AllOfMobEffect.create(
-        dayFollowRangeEffect,
-        nightFollowRangeEffect,
-        RandomMobEffect.create(ConstantFloatProvider.create(0.8f), optionalEffect));
+        commonFollowRangeEffect,
+        RandomMobEffect.create(ConstantFloatProvider.create(0.05f), uncommonFollowRangeEffect),
+        AllOfMobEffect.create(extraHealthEffect, lowSpeedEffect),
+        RandomMobEffect.create(
+            ConstantFloatProvider.create(0.001f),
+            AllOfMobEffect.create(rareFollowRangeEffect, lowHealthEffect, highSpeedEffect)));
   }
 
   private static ZombieVariantMapBuilder defaultEffectMap(
