@@ -19,6 +19,8 @@ public final class MobSpawnConditions {
     register("is_raining", RainingSpawnCondition.CODEC);
     register("is_thundering", ThunderingSpawnCondition.CODEC);
     register("precipitation", PrecipitationSpawnCondition.CODEC);
+    register("difficulty", DifficultySpawnCondition.CODEC);
+    register("random", RandomSpawnCondition.CODEC);
   }
 
   private static void register(String id, MapCodec<? extends SpawnCondition> codec) {
