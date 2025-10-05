@@ -51,6 +51,9 @@ public final class MobAttachments {
   public static final AttachmentType<MobEffect> ON_DEATH = createMobEvent("on_death");
   public static final AttachmentType<MobEffect> ON_KILL = createMobEvent("on_kill");
   public static final AttachmentType<MobEffect> ON_KILLED = createMobEvent("on_killed");
+  public static final AttachmentType<MobEffect> ON_ADD_TARGET = createMobEvent("on_add_target");
+  public static final AttachmentType<MobEffect> ON_REMOVE_TARGET =
+      createMobEvent("on_remove_target");
 
   public static final AttachmentType<Boolean> RENDER_HEAD =
       createAttachment("render_head", Codec.BOOL, PacketCodecs.BOOLEAN);
