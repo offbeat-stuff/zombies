@@ -48,6 +48,7 @@ import org.codeberg.zenxarch.mob_variants_api.variant.effect.single.AttributeMod
 import org.codeberg.zenxarch.mob_variants_api.variant.effect.single.BonemealLivingEffect;
 import org.codeberg.zenxarch.mob_variants_api.variant.effect.single.DefaultAttributeEffect;
 import org.codeberg.zenxarch.mob_variants_api.variant.effect.single.ExplosionEffect;
+import org.codeberg.zenxarch.mob_variants_api.variant.effect.single.RemoveAttributeModifierEffect;
 import org.codeberg.zenxarch.mob_variants_api.variant.effect.single.SpawnEffectCloudEffect;
 import org.codeberg.zenxarch.mob_variants_api.variant.effect.single.StatusLivingEffect;
 import org.codeberg.zenxarch.zombies.Zombies;
@@ -122,12 +123,22 @@ public final class ZombieVariantGenerator {
     return new SingleMobEffect(new DefaultAttributeEffect(attribute, value), true);
   }
 
+  private static MobEffect removeAttributeEffect(
+      RegistryEntry<EntityAttribute> attribute, EntityAttributeModifier modifier) {
+    return new SingleMobEffect(
+        new RemoveAttributeModifierEffect(attribute, List.of(modifier)), true);
+  }
+
+  private static MobEffect createAttributeModifierEffect(
+      RegistryEntry<EntityAttribute> attribute, EntityAttributeModifier modifier) {
+    return new SingleMobEffect(
+        new AttributeModifierEffect(attribute, List.of(modifier), true), true);
+  }
+
   private static MobEffect createAttributeModifierEffect(
       RegistryEntry<EntityAttribute> attribute, String id, double value, Operation op) {
-    return new SingleMobEffect(
-        new AttributeModifierEffect(
-            attribute, List.of(new EntityAttributeModifier(Zombies.id(id), value, op)), true),
-        true);
+    return createAttributeModifierEffect(
+        attribute, new EntityAttributeModifier(Zombies.id(id), value, op));
   }
 
   private static MobEffect attributesOnSpawn() {
@@ -228,6 +239,10 @@ public final class ZombieVariantGenerator {
         new ZombieVariantMapBuilder().with(MobAttachments.ON_SPAWN, attributesOnSpawn()),
         condition(0));
 
+    var speedOnTargetAttribute =
+        new EntityAttributeModifier(
+            Zombies.id("add_speed_on_target"), 0.5, Operation.ADD_MULTIPLIED_BASE);
+
     register(
         registry,
         SPEED_ON_TARGET_TEMPLATE,
@@ -235,17 +250,10 @@ public final class ZombieVariantGenerator {
             .with(
                 MobAttachments.ON_ADD_TARGET,
                 createAttributeModifierEffect(
-                    EntityAttributes.MOVEMENT_SPEED,
-                    "add_target",
-                    0.5,
-                    Operation.ADD_MULTIPLIED_BASE))
+                    EntityAttributes.MOVEMENT_SPEED, speedOnTargetAttribute))
             .with(
                 MobAttachments.ON_REMOVE_TARGET,
-                createAttributeModifierEffect(
-                    EntityAttributes.MOVEMENT_SPEED,
-                    "add_target",
-                    0,
-                    Operation.ADD_MULTIPLIED_BASE)),
+                removeAttributeEffect(EntityAttributes.MOVEMENT_SPEED, speedOnTargetAttribute)),
         condition(0));
 
     register(
