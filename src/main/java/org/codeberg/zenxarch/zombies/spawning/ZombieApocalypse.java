@@ -4,11 +4,9 @@ import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import java.util.List;
 import java.util.Optional;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.predicate.entity.EntityPredicates;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.Difficulty;
@@ -23,6 +21,10 @@ public class ZombieApocalypse {
 
   public ZombieApocalypse(ServerWorld world) {
     this.world = world;
+  }
+
+  public Object2IntMap<Vec3i> getZombieCount() {
+    return this.zombieCount;
   }
 
   private void spawnZombie(ExtendedZombieEntity zombie) {
@@ -77,15 +79,6 @@ public class ZombieApocalypse {
         EntityPredicates.VALID_LIVING_ENTITY.and(EntityPredicates.EXCEPT_SPECTATOR));
   }
 
-  private void debugCheck(Object2IntMap<Vec3i> zombieCount) {
-    for (var player : players(this.world)) {
-      var pos = player.getBlockPos();
-      var difficulty = (int) (new ExtendedDifficulty(world, pos).getClampedLocalDifficulty() * 100);
-      var zcount = ZombieDensityMap.getSubMap(zombieCount, pos).values().intStream().sum();
-      player.sendMessage(Text.of(difficulty + " : " + zcount), true);
-    }
-  }
-
   public void spawn(ServerWorld world, boolean spawnMonsters) {
     this.world = world;
     if (!spawnMonsters
@@ -97,8 +90,6 @@ public class ZombieApocalypse {
     var players = players(world);
     var positions = players.stream().map(ServerPlayerEntity::getBlockPos).toList();
     this.zombieCount = countZombies();
-
-    if (FabricLoader.getInstance().isDevelopmentEnvironment()) debugCheck(this.zombieCount);
 
     for (var player : players) {
       spawnZombiesNear(player, positions);

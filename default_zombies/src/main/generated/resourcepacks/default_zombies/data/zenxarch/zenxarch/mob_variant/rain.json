@@ -1,0 +1,20 @@
+{
+  "components": {
+    "zenxarch:loot_table": "minecraft:entities/drowned",
+    "zenxarch:overlay": {
+      "layerId": "minecraft:drowned",
+      "layerName": "outer",
+      "texture": "minecraft:entity/zombie/drowned_outer_layer"
+    },
+    "zenxarch:texture_override": "minecraft:entity/zombie/drowned"
+  },
+  "spawnConditions": [
+    {
+      "condition": {
+        "type": "zenxarch:is_raining"
+      },
+      "priority": 128
+    }
+  ],
+  "template": "zenxarch:template/loot"
+}

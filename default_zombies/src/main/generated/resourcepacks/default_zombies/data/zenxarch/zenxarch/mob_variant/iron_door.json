@@ -1,0 +1,14 @@
+{
+  "components": {
+    "zenxarch:equipment_table": {
+      "loot_table": "zenxarch:iron_door_shield_equipment",
+      "slot_drop_chances": 0.0
+    }
+  },
+  "spawnConditions": [
+    {
+      "priority": 64
+    }
+  ],
+  "template": "zenxarch:template/loot"
+}

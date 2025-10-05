@@ -1,0 +1,17 @@
+{
+  "components": {
+    "zenxarch:on_attack": {
+      "type": "zenxarch:single",
+      "effect": {
+        "type": "zenxarch:explosion",
+        "power": 3.0
+      }
+    }
+  },
+  "spawnConditions": [
+    {
+      "priority": 64
+    }
+  ],
+  "template": "zenxarch:template/loot"
+}

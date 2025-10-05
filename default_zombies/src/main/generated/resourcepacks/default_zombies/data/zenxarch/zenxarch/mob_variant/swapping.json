@@ -1,0 +1,35 @@
+{
+  "components": {
+    "zenxarch:on_attack": {
+      "type": "zenxarch:swap"
+    },
+    "zenxarch:on_tick": {
+      "type": "zenxarch:single",
+      "effect": {
+        "type": "zenxarch:spawn_particle",
+        "horizontal_position": {
+          "type": "in_bounding_box"
+        },
+        "horizontal_velocity": {
+          "base": 0.2
+        },
+        "particle": {
+          "type": "minecraft:portal"
+        },
+        "speed": 0.2,
+        "vertical_position": {
+          "type": "in_bounding_box"
+        },
+        "vertical_velocity": {
+          "base": 0.2
+        }
+      }
+    }
+  },
+  "spawnConditions": [
+    {
+      "priority": 64
+    }
+  ],
+  "template": "zenxarch:template/loot"
+}

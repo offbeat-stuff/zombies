@@ -1,0 +1,71 @@
+{
+  "type": "minecraft:equipment",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "chance": {
+            "type": "zenxarch:luck",
+            "max": 0.15
+          },
+          "condition": "minecraft:random_chance"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:loot_table",
+          "value": "zenxarch:enchanted_leather_equipment",
+          "weight": 23599
+        },
+        {
+          "type": "minecraft:loot_table",
+          "value": "zenxarch:enchanted_copper_equipment",
+          "weight": 32192
+        },
+        {
+          "type": "minecraft:loot_table",
+          "value": "zenxarch:enchanted_golden_equipment",
+          "weight": 33350
+        },
+        {
+          "type": "minecraft:loot_table",
+          "value": "zenxarch:enchanted_chainmail_equipment",
+          "weight": 9677
+        },
+        {
+          "type": "minecraft:loot_table",
+          "value": "zenxarch:enchanted_iron_equipment",
+          "weight": 1149
+        },
+        {
+          "type": "minecraft:loot_table",
+          "value": "zenxarch:enchanted_diamond_equipment",
+          "weight": 34
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "chance": 0.05,
+          "condition": "minecraft:random_chance"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:iron_sword"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:iron_shovel",
+          "weight": 2
+        }
+      ],
+      "rolls": 1.0
+    }
+  ]
+}

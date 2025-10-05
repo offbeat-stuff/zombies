@@ -1,0 +1,19 @@
+{
+  "values": [
+    "zenxarch:default",
+    "zenxarch:axe",
+    "zenxarch:swapping",
+    "zenxarch:fire",
+    "zenxarch:freeze",
+    "zenxarch:swamp",
+    "zenxarch:desert",
+    "zenxarch:rain",
+    "zenxarch:explosion",
+    "zenxarch:invisible",
+    "zenxarch:bonemeal",
+    "zenxarch:oak_door",
+    "zenxarch:copper_door",
+    "zenxarch:iron_door",
+    "zenxarch:headless"
+  ]
+}

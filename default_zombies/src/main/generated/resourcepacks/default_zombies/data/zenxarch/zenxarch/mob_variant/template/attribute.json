@@ -1,0 +1,92 @@
+{
+  "components": {
+    "zenxarch:on_spawn": {
+      "type": "zenxarch:all_of",
+      "effects": [
+        {
+          "type": "zenxarch:conditional",
+          "condition": {
+            "type": "zenxarch:is_day"
+          },
+          "effect": {
+            "type": "zenxarch:single",
+            "effect": {
+              "type": "zenxarch:default_attribute",
+              "attribute": "minecraft:follow_range",
+              "value": {
+                "type": "minecraft:clamped_normal",
+                "deviation": 8.0,
+                "max": 26.0,
+                "mean": 20.0,
+                "min": 14.0
+              }
+            }
+          },
+          "forSelf": true
+        },
+        {
+          "type": "zenxarch:conditional",
+          "condition": {
+            "type": "zenxarch:is_night"
+          },
+          "effect": {
+            "type": "zenxarch:single",
+            "effect": {
+              "type": "zenxarch:default_attribute",
+              "attribute": "minecraft:follow_range",
+              "value": {
+                "type": "minecraft:clamped_normal",
+                "deviation": 8.0,
+                "max": 38.0,
+                "mean": 32.0,
+                "min": 26.0
+              }
+            }
+          },
+          "forSelf": true
+        },
+        {
+          "type": "zenxarch:random",
+          "chance": 0.8,
+          "effects": {
+            "type": "zenxarch:all_of",
+            "effects": [
+              {
+                "type": "zenxarch:single",
+                "effect": {
+                  "type": "zenxarch:default_attribute",
+                  "attribute": "minecraft:max_health",
+                  "value": 10.0
+                }
+              },
+              {
+                "type": "zenxarch:conditional",
+                "condition": {
+                  "type": "zenxarch:is_night"
+                },
+                "effect": {
+                  "type": "zenxarch:single",
+                  "effect": {
+                    "type": "zenxarch:attribute_modifier",
+                    "attribute": "minecraft:movement_speed",
+                    "modifiers": {
+                      "amount": 0.5,
+                      "id": "zenxarch:zombie_speed_boost",
+                      "operation": "add_multiplied_total"
+                    }
+                  }
+                },
+                "forSelf": true
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "spawnConditions": [
+    {
+      "priority": 0
+    }
+  ]
+}

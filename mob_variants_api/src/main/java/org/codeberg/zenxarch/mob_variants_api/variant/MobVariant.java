@@ -11,16 +11,25 @@ import net.minecraft.entity.VariantSelectorProvider;
 import net.minecraft.entity.spawn.SpawnCondition;
 import net.minecraft.entity.spawn.SpawnConditionSelectors;
 import net.minecraft.entity.spawn.SpawnContext;
+import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.registry.entry.RegistryFixedCodec;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.dynamic.Codecs;
+import org.codeberg.zenxarch.mob_variants_api.registry.MobRegistryKeys;
 
 public record MobVariant(
-    Map<AttachmentType<?>, Object> components, SpawnConditionSelectors spawnConditions)
+    Map<AttachmentType<?>, Object> components,
+    SpawnConditionSelectors spawnConditions,
+    List<RegistryEntry<MobVariant>> template)
     implements VariantSelectorProvider<SpawnContext, SpawnCondition> {
 
   private static final Codec<Map<AttachmentType<?>, Object>> COMPONENT_CODEC =
       Codec.dispatchedMap(
           Identifier.CODEC.comapFlatMap(MobVariant::getAttachment, AttachmentType::identifier),
           AttachmentType::persistenceCodec);
+
+  public static final Codec<RegistryEntry<MobVariant>> ENTRY_CODEC =
+      RegistryFixedCodec.of(MobRegistryKeys.MOB_VARIANT);
 
   public static final Codec<MobVariant> CODEC =
       RecordCodecBuilder.create(
@@ -30,8 +39,16 @@ public record MobVariant(
                       COMPONENT_CODEC.fieldOf("components").forGetter(MobVariant::components),
                       SpawnConditionSelectors.CODEC
                           .fieldOf("spawnConditions")
-                          .forGetter(MobVariant::spawnConditions))
+                          .forGetter(MobVariant::spawnConditions),
+                      Codecs.listOrSingle(ENTRY_CODEC)
+                          .optionalFieldOf("template", List.of())
+                          .forGetter(MobVariant::template))
                   .apply(instance, MobVariant::new));
+
+  public MobVariant(
+      Map<AttachmentType<?>, Object> components, SpawnConditionSelectors spawnConditions) {
+    this(components, spawnConditions, List.of());
+  }
 
   private static DataResult<AttachmentType<?>> getAttachment(Identifier id) {
     var attachmentType = AttachmentRegistryImpl.get(id);

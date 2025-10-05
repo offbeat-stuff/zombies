@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:equipment",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:loot_table",
+          "quality": -500,
+          "value": "zenxarch:iron_equipment",
+          "weight": 1000
+        },
+        {
+          "type": "minecraft:loot_table",
+          "functions": [
+            {
+              "function": "zenxarch:enchantment_provider",
+              "provider": "zenxarch:zombie_spawn_equipment"
+            }
+          ],
+          "quality": 500,
+          "value": "zenxarch:iron_equipment",
+          "weight": 0
+        }
+      ],
+      "rolls": 1.0
+    }
+  ]
+}

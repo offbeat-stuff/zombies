@@ -1,0 +1,14 @@
+{
+  "components": {
+    "zenxarch:render_head": false
+  },
+  "spawnConditions": [
+    {
+      "priority": 128
+    }
+  ],
+  "template": [
+    "zenxarch:template/loot",
+    "zenxarch:template/attribute"
+  ]
+}

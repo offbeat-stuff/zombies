@@ -24,12 +24,13 @@ import net.minecraft.world.WorldView;
 import net.tslat.smartbrainlib.api.SmartBrainOwner;
 import net.tslat.smartbrainlib.api.core.BrainActivityGroup;
 import net.tslat.smartbrainlib.api.core.sensor.ExtendedSensor;
-import org.codeberg.zenxarch.mob_variants_api.registry.MobVariantUtils;
+import org.codeberg.zenxarch.mob_variants_api.registry.MobVariants;
 import org.codeberg.zenxarch.mob_variants_api.variant.MobAttachments;
 import org.codeberg.zenxarch.mob_variants_api.variant.MobVariant;
 import org.codeberg.zenxarch.mob_variants_api.variant.effect.MobEffect;
 import org.codeberg.zenxarch.zombies.ZombieGamerules;
 import org.codeberg.zenxarch.zombies.brain.ZombieBrain;
+import org.codeberg.zenxarch.zombies.data.ZMobVariantTags;
 import org.codeberg.zenxarch.zombies.difficulty.ExtendedDifficulty;
 import org.codeberg.zenxarch.zombies.spawning.ZombieNbtUtils;
 import org.jetbrains.annotations.Nullable;
@@ -120,7 +121,7 @@ public class ExtendedZombieEntity extends ZombieEntity
     if (entityData instanceof ExtendedZombieData extendedZombieData) {
       this.setVariant(extendedZombieData.getVariant());
     } else {
-      MobVariantUtils.getRandomVariantFromPos(world.toServerWorld(), this.getBlockPos())
+      MobVariants.select(world.toServerWorld(), this.getBlockPos(), ZMobVariantTags.ZOMBIE_VARIANTS)
           .ifPresent(this::setVariant);
     }
     var result = super.initialize(world, difficulty, spawnReason, new ZombieData(false, false));
@@ -231,12 +232,7 @@ public class ExtendedZombieEntity extends ZombieEntity
 
   public void setVariant(RegistryEntry<MobVariant> variant) {
     this.variant = variant;
-    if (variant != null) this.variant.value().components().forEach(this::setAttachedFromVariant);
-  }
-
-  @SuppressWarnings("unchecked")
-  private void setAttachedFromVariant(AttachmentType<?> attachment, Object value) {
-    if (!this.hasAttached(attachment)) this.setAttached((AttachmentType<Object>) attachment, value);
+    MobVariants.updateAttachments(this, variant);
   }
 
   public RegistryEntry<MobVariant> getVariant() {

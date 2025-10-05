@@ -1,0 +1,12 @@
+{
+  "components": {},
+  "spawnConditions": [
+    {
+      "priority": 512
+    }
+  ],
+  "template": [
+    "zenxarch:template/loot",
+    "zenxarch:template/attribute"
+  ]
+}
