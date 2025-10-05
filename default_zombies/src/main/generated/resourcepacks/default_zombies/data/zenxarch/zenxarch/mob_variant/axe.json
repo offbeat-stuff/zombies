@@ -46,6 +46,7 @@
   ],
   "template": [
     "zenxarch:template/loot",
-    "zenxarch:template/attribute"
+    "zenxarch:template/attribute",
+    "zenxarch:template/speed_on_target"
   ]
 }

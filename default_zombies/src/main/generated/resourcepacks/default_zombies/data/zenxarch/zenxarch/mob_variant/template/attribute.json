@@ -6,14 +6,26 @@
         {
           "type": "zenxarch:single",
           "effect": {
+            "type": "zenxarch:attribute_modifier",
+            "attribute": "minecraft:attack_damage",
+            "modifiers": {
+              "amount": 1.5,
+              "id": "zenxarch:zombie_damage",
+              "operation": "add_multiplied_total"
+            }
+          }
+        },
+        {
+          "type": "zenxarch:single",
+          "effect": {
             "type": "zenxarch:default_attribute",
             "attribute": "minecraft:follow_range",
             "value": {
               "type": "minecraft:clamped_normal",
-              "deviation": 4.0,
-              "max": 8.0,
-              "mean": 6.0,
-              "min": 4.0
+              "deviation": 5.0,
+              "max": 14.0,
+              "mean": 10.0,
+              "min": 8.0
             }
           }
         },
@@ -27,10 +39,10 @@
               "attribute": "minecraft:follow_range",
               "value": {
                 "type": "minecraft:clamped_normal",
-                "deviation": 5.0,
-                "max": 13.0,
-                "mean": 10.0,
-                "min": 7.0
+                "deviation": 8.0,
+                "max": 25.0,
+                "mean": 20.0,
+                "min": 18.0
               }
             }
           }
@@ -94,9 +106,9 @@
                   "value": {
                     "type": "minecraft:clamped_normal",
                     "deviation": 8.0,
-                    "max": 24.0,
-                    "mean": 16.0,
-                    "min": 12.0
+                    "max": 28.0,
+                    "mean": 24.0,
+                    "min": 20.0
                   }
                 }
               },
@@ -108,6 +120,18 @@
                   "modifiers": {
                     "amount": 0.1,
                     "id": "zenxarch:zombie_speed",
+                    "operation": "add_multiplied_total"
+                  }
+                }
+              },
+              {
+                "type": "zenxarch:single",
+                "effect": {
+                  "type": "zenxarch:attribute_modifier",
+                  "attribute": "minecraft:attack_damage",
+                  "modifiers": {
+                    "amount": 0.0,
+                    "id": "zenxarch:zombie_damage",
                     "operation": "add_multiplied_total"
                   }
                 }

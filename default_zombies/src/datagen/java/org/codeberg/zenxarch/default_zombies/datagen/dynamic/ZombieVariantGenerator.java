@@ -78,6 +78,8 @@ public final class ZombieVariantGenerator {
   public static final RegistryKey<MobVariant> LOOT_TEMPLATE = INITIALIZER.of("template/loot");
   public static final RegistryKey<MobVariant> ATTRIBUTE_TEMPLATE =
       INITIALIZER.of("template/attribute");
+  public static final RegistryKey<MobVariant> SPEED_ON_TARGET_TEMPLATE =
+      INITIALIZER.of("template/speed_on_target");
 
   public static final RegistryKey<MobVariant> COMMON = INITIALIZER.of("default");
   public static final RegistryKey<MobVariant> AXE = INITIALIZER.of("axe");
@@ -228,11 +230,32 @@ public final class ZombieVariantGenerator {
 
     register(
         registry,
+        SPEED_ON_TARGET_TEMPLATE,
+        new ZombieVariantMapBuilder()
+            .with(
+                MobAttachments.ON_ADD_TARGET,
+                createAttributeModifierEffect(
+                    EntityAttributes.MOVEMENT_SPEED,
+                    "add_target",
+                    0.5,
+                    Operation.ADD_MULTIPLIED_BASE))
+            .with(
+                MobAttachments.ON_REMOVE_TARGET,
+                createAttributeModifierEffect(
+                    EntityAttributes.MOVEMENT_SPEED,
+                    "add_target",
+                    0,
+                    Operation.ADD_MULTIPLIED_BASE)),
+        condition(0));
+
+    register(
+        registry,
         COMMON,
         new ZombieVariantMapBuilder(),
         condition(COMMON_WEIGHT),
         LOOT_TEMPLATE,
-        ATTRIBUTE_TEMPLATE);
+        ATTRIBUTE_TEMPLATE,
+        SPEED_ON_TARGET_TEMPLATE);
     register(
         registry,
         SWAPPING,
@@ -240,7 +263,8 @@ public final class ZombieVariantGenerator {
             .with(MobAttachments.ON_ATTACK, swapPositions())
             .with(MobAttachments.ON_TICK, spawnParticles(ParticleTypes.PORTAL, 0.2F)),
         condition(RARE_WEIGHT),
-        LOOT_TEMPLATE);
+        LOOT_TEMPLATE,
+        SPEED_ON_TARGET_TEMPLATE);
 
     register(
         registry,
@@ -250,7 +274,8 @@ public final class ZombieVariantGenerator {
             .with(MobAttachments.ON_TICK, spawnParticles(ParticleTypes.FLAME, 0.2F))
             .with(MobAttachments.INVULNERABLE_TO, lookup.getOrThrow(DamageTypeTags.IS_FIRE)),
         condition(registry, ZBiomeTags.WITH_FLAME_ZOMBIES, RARE_WEIGHT),
-        LOOT_TEMPLATE);
+        LOOT_TEMPLATE,
+        SPEED_ON_TARGET_TEMPLATE);
 
     register(
         registry,
@@ -260,7 +285,8 @@ public final class ZombieVariantGenerator {
             .with(MobAttachments.ON_TICK, spawnParticles(ParticleTypes.SNOWFLAKE, 0.2F))
             .with(MobAttachments.INVULNERABLE_TO, lookup.getOrThrow(DamageTypeTags.IS_FREEZING)),
         condition(registry, ZBiomeTags.WITH_FROST_ZOMBIES, RARE_WEIGHT),
-        LOOT_TEMPLATE);
+        LOOT_TEMPLATE,
+        SPEED_ON_TARGET_TEMPLATE);
 
     register(
         registry,
@@ -273,14 +299,16 @@ public final class ZombieVariantGenerator {
             .with(MobAttachments.EQUIPMENT_TABLE, ZLootTableProvider.AXE_ZOMBIE_EQUIPMENT),
         condition(registry, ZBiomeTags.WITH_AXE_ZOMBIES, UNCOMMON_WEIGHT),
         LOOT_TEMPLATE,
-        ATTRIBUTE_TEMPLATE);
+        ATTRIBUTE_TEMPLATE,
+        SPEED_ON_TARGET_TEMPLATE);
     register(
         registry,
         SWAMP,
         defaultEffectMapWithSpawnCloud(
             new ZombieVariantMapBuilder(), List.of(StatusEffects.POISON)),
         condition(registry, ZBiomeTags.WITH_SWAMP_ZOMBIES, RARE_WEIGHT),
-        LOOT_TEMPLATE);
+        LOOT_TEMPLATE,
+        SPEED_ON_TARGET_TEMPLATE);
     register(
         registry,
         DESERT,
@@ -292,7 +320,8 @@ public final class ZombieVariantGenerator {
                 new TextureAssetInfo(Identifier.ofVanilla("entity/zombie/husk"))),
         condition(registry, ZBiomeTags.WITH_DESERT_ZOMBIES, RARE_WEIGHT),
         LOOT_TEMPLATE,
-        ATTRIBUTE_TEMPLATE);
+        ATTRIBUTE_TEMPLATE,
+        SPEED_ON_TARGET_TEMPLATE);
     register(
         registry,
         RAIN,
@@ -308,7 +337,8 @@ public final class ZombieVariantGenerator {
                     new TextureAssetInfo(
                         Identifier.ofVanilla("entity/zombie/drowned_outer_layer")))),
         SpawnConditionSelectors.createSingle(RainingSpawnCondition.INSTANCE, UNCOMMON_WEIGHT),
-        LOOT_TEMPLATE);
+        LOOT_TEMPLATE,
+        SPEED_ON_TARGET_TEMPLATE);
     register(
         registry,
         EXPLOSION,
@@ -333,7 +363,8 @@ public final class ZombieVariantGenerator {
                         20, new SingleMobEffect(new BonemealLivingEffect(), true)),
                     spawnParticles(ParticleTypes.HAPPY_VILLAGER, 0.2F))),
         condition(registry, ZBiomeTags.WITH_AXE_ZOMBIES, RARE_WEIGHT),
-        LOOT_TEMPLATE);
+        LOOT_TEMPLATE,
+        SPEED_ON_TARGET_TEMPLATE);
 
     register(
         registry,
@@ -365,7 +396,8 @@ public final class ZombieVariantGenerator {
         new ZombieVariantMapBuilder().with(MobAttachments.RENDER_HEAD, false),
         condition(UNCOMMON_WEIGHT),
         LOOT_TEMPLATE,
-        ATTRIBUTE_TEMPLATE);
+        ATTRIBUTE_TEMPLATE,
+        SPEED_ON_TARGET_TEMPLATE);
 
     // register(
     //     registry,

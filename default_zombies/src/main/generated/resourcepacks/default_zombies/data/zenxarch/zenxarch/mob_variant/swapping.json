@@ -31,5 +31,8 @@
       "priority": 64
     }
   ],
-  "template": "zenxarch:template/loot"
+  "template": [
+    "zenxarch:template/loot",
+    "zenxarch:template/speed_on_target"
+  ]
 }
