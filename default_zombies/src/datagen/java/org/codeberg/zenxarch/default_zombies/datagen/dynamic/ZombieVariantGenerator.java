@@ -129,8 +129,8 @@ public final class ZombieVariantGenerator {
   }
 
   private static MobEffect attributesOnSpawn() {
-    var commonFollowRange = ClampedNormalFloatProvider.create(6f, 4f, 4f, 8f);
-    var uncommonFollowRange = ClampedNormalFloatProvider.create(10f, 5f, 7f, 13f);
+    var commonFollowRange = ClampedNormalFloatProvider.create(10f, 5f, 8f, 14f);
+    var uncommonFollowRange = ClampedNormalFloatProvider.create(20f, 8f, 18f, 25f);
     var rareFollowRange = ClampedNormalFloatProvider.create(32f, 8f, 28f, 36f);
 
     var commonFollowRangeEffect =
@@ -149,7 +149,7 @@ public final class ZombieVariantGenerator {
 
     var lowHealthEffect =
         createAttributeEffect(
-            EntityAttributes.MAX_HEALTH, ClampedNormalFloatProvider.create(16f, 8f, 12f, 24f));
+            EntityAttributes.MAX_HEALTH, ClampedNormalFloatProvider.create(24f, 8f, 20f, 28f));
     var highSpeedEffect =
         createAttributeModifierEffect(
             EntityAttributes.MOVEMENT_SPEED, "zombie_speed", 0.1, Operation.ADD_MULTIPLIED_TOTAL);
