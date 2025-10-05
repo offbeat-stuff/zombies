@@ -154,13 +154,23 @@ public final class ZombieVariantGenerator {
         createAttributeModifierEffect(
             EntityAttributes.MOVEMENT_SPEED, "zombie_speed", 0.1, Operation.ADD_MULTIPLIED_TOTAL);
 
+    var damageEffect =
+        createAttributeModifierEffect(
+            EntityAttributes.ATTACK_DAMAGE, "zombie_damage", 1.5, Operation.ADD_MULTIPLIED_TOTAL);
+
+    var noDamageEffect =
+        createAttributeModifierEffect(
+            EntityAttributes.ATTACK_DAMAGE, "zombie_damage", 0, Operation.ADD_MULTIPLIED_TOTAL);
+
     return AllOfMobEffect.create(
+        damageEffect,
         commonFollowRangeEffect,
         RandomMobEffect.create(ConstantFloatProvider.create(0.05f), uncommonFollowRangeEffect),
         AllOfMobEffect.create(extraHealthEffect, lowSpeedEffect),
         RandomMobEffect.create(
             ConstantFloatProvider.create(0.001f),
-            AllOfMobEffect.create(rareFollowRangeEffect, lowHealthEffect, highSpeedEffect)));
+            AllOfMobEffect.create(
+                rareFollowRangeEffect, lowHealthEffect, highSpeedEffect, noDamageEffect)));
   }
 
   private static ZombieVariantMapBuilder defaultEffectMap(
