@@ -26,7 +26,9 @@ public record DefaultAttributeEffect(RegistryEntry<EntityAttribute> attribute, F
 
   @Override
   public void run(ServerWorld world, LivingEntity target) {
-    target.getAttributeInstance(attribute).setBaseValue(value.get(target.getRandom()));
+    var instance = target.getAttributeInstance(attribute);
+    if (instance == null) return;
+    instance.setBaseValue(value.get(target.getRandom()));
   }
 
   @Override

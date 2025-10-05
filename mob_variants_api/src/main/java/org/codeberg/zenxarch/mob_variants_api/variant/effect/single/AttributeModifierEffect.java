@@ -36,6 +36,7 @@ public record AttributeModifierEffect(
   @Override
   public void run(ServerWorld world, LivingEntity target) {
     var instance = target.getAttributeInstance(attribute);
+    if (instance == null) return;
     if (persistent) instance.addPersistentModifiers(modifiers);
     else modifiers.forEach(instance::addTemporaryModifier);
   }
