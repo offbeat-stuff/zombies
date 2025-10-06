@@ -4,7 +4,6 @@ import com.mojang.serialization.MapCodec;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SpawnReason;
-import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.passive.ChickenEntity;
 import net.minecraft.server.world.ServerWorld;
 import org.codeberg.zenxarch.mob_variants_api.variant.effect.LivingEffect;
@@ -17,19 +16,28 @@ public record SummonVehicleEffect(EntityType<?> entityType) implements LivingEff
 
   @Override
   public void run(ServerWorld world, LivingEntity target) {
-    var entity = entityType.spawn(world, target.getBlockPos(), SpawnReason.JOCKEY);
+    var beforePos = target.getEntityPos();
+    var beforeYaw = target.getYaw();
+    var beforePitch = target.getPitch();
+    var entity =
+        entityType.create(world, null, target.getBlockPos(), SpawnReason.JOCKEY, false, false);
     if (entity == null) return;
-    target.startRiding(entity);
-    if (!world.isSpaceEmpty(entity) || !world.isSpaceEmpty(target)) {
+    if (!(entity instanceof LivingEntity living)) return;
+    target.startRiding(living);
+    if (!doesMobFit(world, target) || !doesMobFit(world, living)) {
       target.stopRiding();
-      entity.discard();
+      target.refreshPositionAndAngles(beforePos, beforeYaw, beforePitch);
       return;
     }
 
-    if (entity instanceof MobEntity mob)
-      mob.initialize(
-          world, world.getLocalDifficulty(target.getBlockPos()), SpawnReason.JOCKEY, null);
-    if (entity instanceof ChickenEntity chicken) chicken.setHasJockey(true);
+    world.spawnEntity(living);
+    if (living instanceof ChickenEntity chicken) chicken.setHasJockey(true);
+  }
+
+  private boolean doesMobFit(ServerWorld world, LivingEntity entity) {
+    return world.isSpaceEmpty(entity.getBoundingBox())
+        && !world.containsFluid(entity.getBoundingBox())
+        && world.doesNotIntersectEntities(entity);
   }
 
   @Override
