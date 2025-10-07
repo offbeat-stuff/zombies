@@ -3,9 +3,18 @@ package org.codeberg.zenxarch.zombies;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.ArgumentTypeRegistry;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.entity.event.v1.ServerEntityCombatEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.command.argument.serialize.ConstantArgumentSerializer;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.attribute.EntityAttributes;
+import net.minecraft.entity.mob.ZombieEntity;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
+import net.minecraft.stat.Stats;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.MathHelper;
 import org.codeberg.zenxarch.zombies.loot_table.condition.ZombieLootConditionTypes;
 import org.codeberg.zenxarch.zombies.loot_table.function.ZombieLootFunctionTypes;
 import org.codeberg.zenxarch.zombies.loot_table.number_provider.ZombieLootNumberProviderTypes;
@@ -42,5 +51,24 @@ public class Zombies implements ModInitializer {
     }
 
     SpawnerAttachments.initialize();
+    ServerEntityEvents.ENTITY_LOAD.register(
+        (entity, world) -> {
+          if (entity instanceof ServerPlayerEntity player) updatePlayerStats(world, player);
+        });
+
+    ServerEntityCombatEvents.AFTER_KILLED_OTHER_ENTITY.register(
+        (world, self, dead, source) -> {
+          if (self instanceof ServerPlayerEntity player && dead instanceof ZombieEntity)
+            updatePlayerStats(world, player);
+        });
+  }
+
+  private static void updatePlayerStats(ServerWorld world, ServerPlayerEntity player) {
+    var health = player.getHealth();
+    var maxHealth = player.getMaxHealth();
+    var kills = player.getStatHandler().getStat(Stats.KILLED.getOrCreateStat(EntityType.ZOMBIE));
+    var newHealth = MathHelper.clamp(6f + MathHelper.lerp(kills / 2500f, 0f, 44f), 6f, 50f);
+    player.getAttributeInstance(EntityAttributes.MAX_HEALTH).setBaseValue(newHealth);
+    player.setHealth(health * newHealth / maxHealth);
   }
 }
