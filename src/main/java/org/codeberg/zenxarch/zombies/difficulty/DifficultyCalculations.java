@@ -33,7 +33,7 @@ public abstract class DifficultyCalculations {
   private static double[] getPlayerScore(ServerWorld world, BlockPos pos) {
     var players = 0;
     var result = new double[] {0.0, 0.0};
-    for (ServerPlayerEntity player : ZombieApocalypse.players(world)) {
+    for (var player : ZombieApocalypse.players(world)) {
       if (player.squaredDistanceTo(pos.toCenterPos()) > 128.0 * 128.0) continue;
       players++;
       result[0] += getPlayerScore(player);
@@ -58,7 +58,6 @@ public abstract class DifficultyCalculations {
 
   public static double calculateDifficulty(ServerWorld world, BlockPos pos) {
     var inhabitedTimeFactor = mapHours(world.getDifficulty(), getHoursInhabited(world, pos));
-    if (inhabitedTimeFactor < 0.0) return 0.0;
 
     return inhabitedTimeFactor * baseDifficulty(world, pos);
   }
