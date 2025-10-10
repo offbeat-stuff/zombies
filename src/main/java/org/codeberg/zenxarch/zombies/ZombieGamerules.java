@@ -46,6 +46,9 @@ public final class ZombieGamerules {
   public static final GameRules.Key<GameRules.BooleanRule> ZOMBIE_TARGET_PLAYER_ON_SPAWN =
       newGameRule("zombieTargetPlayerOnSpawn", false);
 
+  public static final GameRules.Key<GameRules.BooleanRule> DO_ZOMBIE_KILLS_BASED_HEARTS =
+      newGameRule("doZombieKillsBasedHearts", false);
+
   public static void initialize() {
     /* force load class */
   }

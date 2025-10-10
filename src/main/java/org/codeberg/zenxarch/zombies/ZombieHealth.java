@@ -36,6 +36,7 @@ public interface ZombieHealth {
   }
 
   private static void updatePlayerStats(ServerWorld world, ServerPlayerEntity player) {
+    if (!world.getGameRules().getBoolean(ZombieGamerules.DO_ZOMBIE_KILLS_BASED_HEARTS)) return;
     var health = player.getHealth();
     var maxHealth = player.getMaxHealth();
     var kills = player.getAttachedOrCreate(ZOMBIE_KILLS);
