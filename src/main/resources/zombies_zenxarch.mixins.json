@@ -4,7 +4,8 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "EntityTypeMixin",
-    "ServerChunkManagerMixin"
+    "ServerChunkManagerMixin",
+    "WorldMixin"
   ],
   "injectors": {
     "defaultRequire": 1
