@@ -91,8 +91,7 @@ public class ExtendedZombieEntity extends ZombieEntity
     tickBrain(this);
   }
 
-  @Override
-  protected boolean burnsInDaylight() {
+  public boolean burnsInDaylight() {
     if (this.getEntityWorld() instanceof ServerWorld sw)
       return sw.getGameRules().getBoolean(ZombieGamerules.ZOMBIES_BURN_IN_DAYLIGHT);
     return false;
