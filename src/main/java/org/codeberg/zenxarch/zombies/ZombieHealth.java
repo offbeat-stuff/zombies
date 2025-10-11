@@ -1,5 +1,6 @@
 package org.codeberg.zenxarch.zombies;
 
+import com.mojang.serialization.Codec;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
 import net.fabricmc.fabric.api.entity.event.v1.ServerEntityCombatEvents;
@@ -8,7 +9,6 @@ import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.registry.tag.EntityTypeTags;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.dynamic.Codecs;
 import net.minecraft.util.math.MathHelper;
 
 public interface ZombieHealth {
@@ -16,7 +16,7 @@ public interface ZombieHealth {
   public static final AttachmentType<Integer> ZOMBIE_KILLS =
       AttachmentRegistry.create(
           Zombies.id("zombie_kills"),
-          builder -> builder.persistent(Codecs.POSITIVE_INT).initializer(() -> 0));
+          builder -> builder.persistent(Codec.INT).initializer(() -> 0));
 
   public static void registerEvents() {
     ServerEntityCombatEvents.AFTER_KILLED_OTHER_ENTITY.register(
@@ -43,6 +43,7 @@ public interface ZombieHealth {
     var zombiesToKill =
         (float) world.getGameRules().getInt(ZombieGamerules.ZOMBIE_KILLS_FOR_MAX_HEARTS);
     var additionalHalfHearts = (int) (MathHelper.clamp(kills / zombiesToKill, 0f, 44f) * 2f);
+    Zombies.LOGGER.info("Additional Hearts: {}", additionalHalfHearts);
     var newHealth = MathHelper.clamp(6f + additionalHalfHearts / 2f, 6f, 50f);
     player.getAttributeInstance(EntityAttributes.MAX_HEALTH).setBaseValue(newHealth);
     player.setHealth(health * newHealth / maxHealth);
