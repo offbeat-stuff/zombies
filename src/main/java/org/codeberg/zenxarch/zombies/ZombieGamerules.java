@@ -49,6 +49,9 @@ public final class ZombieGamerules {
   public static final GameRules.Key<GameRules.BooleanRule> DO_ZOMBIE_KILLS_BASED_HEARTS =
       newGameRule("doZombieKillsBasedHearts", false);
 
+  public static final GameRules.Key<GameRules.IntRule> ZOMBIE_KILLS_FOR_MAX_HEARTS =
+      newGameRule("zombieKillsForMaxHearts", 2500);
+
   public static void initialize() {
     /* force load class */
   }

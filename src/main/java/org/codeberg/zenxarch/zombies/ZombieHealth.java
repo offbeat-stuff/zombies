@@ -40,7 +40,9 @@ public interface ZombieHealth {
     var health = player.getHealth();
     var maxHealth = player.getMaxHealth();
     var kills = player.getAttachedOrCreate(ZOMBIE_KILLS);
-    var additionalHalfHearts = (int) (MathHelper.clamp(kills / 2500f, 0f, 44f) * 2f);
+    var zombiesToKill =
+        (float) world.getGameRules().getInt(ZombieGamerules.ZOMBIE_KILLS_FOR_MAX_HEARTS);
+    var additionalHalfHearts = (int) (MathHelper.clamp(kills / zombiesToKill, 0f, 44f) * 2f);
     var newHealth = MathHelper.clamp(6f + additionalHalfHearts / 2f, 6f, 50f);
     player.getAttributeInstance(EntityAttributes.MAX_HEALTH).setBaseValue(newHealth);
     player.setHealth(health * newHealth / maxHealth);
