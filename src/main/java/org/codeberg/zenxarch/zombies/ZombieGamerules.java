@@ -17,8 +17,14 @@ public final class ZombieGamerules {
 
   public static final CustomGameRuleCategory ZOMBIES_GENERAL =
       new CustomGameRuleCategory(
-          Zombies.id("general"),
+          Zombies.id("zombies_general"),
           MutableText.of(PlainTextContent.of("Zombies"))
+              .setStyle(Style.EMPTY.withColor(Formatting.YELLOW)));
+
+  public static final CustomGameRuleCategory ZOMBIES_HEARTS =
+      new CustomGameRuleCategory(
+          Zombies.id("zombies_hearts"),
+          MutableText.of(PlainTextContent.of("Zombies Heart Mechanic"))
               .setStyle(Style.EMPTY.withColor(Formatting.YELLOW)));
 
   private static GameRules.Key<GameRules.IntRule> newGameRule(String name, int defaultValue) {
@@ -47,10 +53,20 @@ public final class ZombieGamerules {
       newGameRule("zombieTargetPlayerOnSpawn", false);
 
   public static final GameRules.Key<GameRules.BooleanRule> DO_ZOMBIE_KILLS_BASED_HEARTS =
-      newGameRule("doZombieKillsBasedHearts", false);
+      GameRuleRegistry.register(
+          "doZombieKillsBasedHearts", ZOMBIES_HEARTS, GameRuleFactory.createBooleanRule(false));
 
   public static final GameRules.Key<GameRules.IntRule> ZOMBIE_KILLS_FOR_MAX_HEARTS =
-      newGameRule("zombieKillsForMaxHearts", 2500);
+      GameRuleRegistry.register(
+          "zombieKillsForMaxHearts", ZOMBIES_HEARTS, GameRuleFactory.createIntRule(2500));
+
+  public static final GameRules.Key<GameRules.IntRule> MIN_HEARTS =
+      GameRuleRegistry.register(
+          "zombies.minHearts", ZOMBIES_HEARTS, GameRuleFactory.createIntRule(3));
+
+  public static final GameRules.Key<GameRules.IntRule> MAX_HEARTS =
+      GameRuleRegistry.register(
+          "zombies.maxHearts", ZOMBIES_HEARTS, GameRuleFactory.createIntRule(25));
 
   public static void initialize() {
     /* force load class */
