@@ -3,6 +3,7 @@ package org.codeberg.zenxarch.zombies;
 import net.fabricmc.fabric.api.gamerule.v1.CustomGameRuleCategory;
 import net.fabricmc.fabric.api.gamerule.v1.GameRuleFactory;
 import net.fabricmc.fabric.api.gamerule.v1.GameRuleRegistry;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.PlainTextContent;
 import net.minecraft.text.Style;
@@ -54,19 +55,32 @@ public final class ZombieGamerules {
 
   public static final GameRules.Key<GameRules.BooleanRule> DO_ZOMBIE_KILLS_BASED_HEARTS =
       GameRuleRegistry.register(
-          "doZombieKillsBasedHearts", ZOMBIES_HEARTS, GameRuleFactory.createBooleanRule(false));
+          "doZombieKillsBasedHearts",
+          ZOMBIES_HEARTS,
+          GameRuleFactory.createBooleanRule(false, (server, rule) -> updateAllPlayers(server)));
 
   public static final GameRules.Key<GameRules.IntRule> ZOMBIE_KILLS_FOR_MAX_HEARTS =
       GameRuleRegistry.register(
-          "zombieKillsForMaxHearts", ZOMBIES_HEARTS, GameRuleFactory.createIntRule(2500));
+          "zombieKillsForMaxHearts",
+          ZOMBIES_HEARTS,
+          GameRuleFactory.createIntRule(2500, 1, (server, rule) -> updateAllPlayers(server)));
 
   public static final GameRules.Key<GameRules.IntRule> MIN_HEARTS =
       GameRuleRegistry.register(
-          "zombies.minHearts", ZOMBIES_HEARTS, GameRuleFactory.createIntRule(3));
+          "zombies.minHearts",
+          ZOMBIES_HEARTS,
+          GameRuleFactory.createIntRule(3, 1, (server, rule) -> updateAllPlayers(server)));
 
   public static final GameRules.Key<GameRules.IntRule> MAX_HEARTS =
       GameRuleRegistry.register(
-          "zombies.maxHearts", ZOMBIES_HEARTS, GameRuleFactory.createIntRule(25));
+          "zombies.maxHearts",
+          ZOMBIES_HEARTS,
+          GameRuleFactory.createIntRule(25, 1, (server, rules) -> updateAllPlayers(server)));
+
+  private static void updateAllPlayers(MinecraftServer server) {
+    for (var world : server.getWorlds())
+      for (var player : world.getPlayers()) ZombieHealth.updatePlayerStats(world, player);
+  }
 
   public static void initialize() {
     /* force load class */
