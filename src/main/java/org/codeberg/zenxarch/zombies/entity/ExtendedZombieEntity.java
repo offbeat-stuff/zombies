@@ -1,16 +1,12 @@
 package org.codeberg.zenxarch.zombies.entity;
 
-import java.util.List;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityData;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SpawnReason;
-import net.minecraft.entity.ai.brain.Brain.Profile;
-import net.minecraft.entity.ai.pathing.EntityNavigation;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.mob.ZombieEntity;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.storage.ReadView;
@@ -21,74 +17,23 @@ import net.minecraft.world.LocalDifficulty;
 import net.minecraft.world.ServerWorldAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldView;
-import net.tslat.smartbrainlib.api.SmartBrainOwner;
-import net.tslat.smartbrainlib.api.core.BrainActivityGroup;
-import net.tslat.smartbrainlib.api.core.sensor.ExtendedSensor;
 import org.codeberg.zenxarch.mob_variants_api.registry.MobVariants;
 import org.codeberg.zenxarch.mob_variants_api.variant.MobAttachments;
 import org.codeberg.zenxarch.mob_variants_api.variant.MobVariant;
 import org.codeberg.zenxarch.mob_variants_api.variant.effect.MobEffect;
 import org.codeberg.zenxarch.zombies.ZombieGamerules;
-import org.codeberg.zenxarch.zombies.brain.ZombieBrain;
+import org.codeberg.zenxarch.zombies.brain.SmartZombieEntity;
 import org.codeberg.zenxarch.zombies.data.ZMobVariantTags;
 import org.codeberg.zenxarch.zombies.difficulty.ExtendedDifficulty;
 import org.codeberg.zenxarch.zombies.spawning.ZombieNbtUtils;
 import org.jetbrains.annotations.Nullable;
 
-public class ExtendedZombieEntity extends ZombieEntity
-    implements SmartBrainOwner<ExtendedZombieEntity> {
+public class ExtendedZombieEntity extends SmartZombieEntity {
 
-  private static ZombieBrain<ExtendedZombieEntity> BRAIN_PROVIDER = new ZombieBrain<>();
   private RegistryEntry<MobVariant> variant;
 
   public ExtendedZombieEntity(World world) {
     super(world);
-  }
-
-  @Override
-  protected Profile<?> createBrainProfile() {
-    return BRAIN_PROVIDER.getBrainProfile(this);
-  }
-
-  @Override
-  public List<ExtendedSensor<ExtendedZombieEntity>> getSensors() {
-    return BRAIN_PROVIDER.getSensors();
-  }
-
-  @Override
-  public BrainActivityGroup<ExtendedZombieEntity> getCoreTasks() {
-    return BRAIN_PROVIDER.getCoreTasks(ExtendedZombieEntity::burnsInDaylight);
-  }
-
-  @Override
-  public BrainActivityGroup<ExtendedZombieEntity> getIdleTasks() {
-    return BRAIN_PROVIDER.getIdleTasks();
-  }
-
-  @Override
-  public BrainActivityGroup<? extends ExtendedZombieEntity> getFightTasks() {
-    return BRAIN_PROVIDER.getFightTasks();
-  }
-
-  @Override
-  protected void initGoals() {
-    /* use smartbrainlib for ai */
-  }
-
-  @Override
-  public void setCanBreakDoors(boolean canBreakDoors) {
-    /* no griefing */
-  }
-
-  @Override
-  protected EntityNavigation createNavigation(World world) {
-    return BRAIN_PROVIDER.createNavigation(this, world);
-  }
-
-  @Override
-  protected void mobTick(ServerWorld world) {
-    super.mobTick(world);
-    tickBrain(this);
   }
 
   public boolean burnsInDaylight() {
