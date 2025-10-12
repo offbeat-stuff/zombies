@@ -37,7 +37,7 @@ public interface ZombieHealth {
         (oldPlayer, newPlayer, alive) -> updatePlayerStats(newPlayer.getEntityWorld(), newPlayer));
   }
 
-  private static void updatePlayerStats(ServerWorld world, ServerPlayerEntity player) {
+  public static void updatePlayerStats(ServerWorld world, ServerPlayerEntity player) {
     var rules = world.getGameRules();
     if (!rules.getBoolean(DO_ZOMBIE_KILLS_BASED_HEARTS)) return;
 
