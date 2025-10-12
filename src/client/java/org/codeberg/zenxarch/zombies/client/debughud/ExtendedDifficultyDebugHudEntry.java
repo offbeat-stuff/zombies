@@ -1,7 +1,6 @@
-package org.codeberg.zenxarch.zombies.client;
+package org.codeberg.zenxarch.zombies.client.debughud;
 
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.hud.debug.DebugHudEntry;
 import net.minecraft.client.gui.hud.debug.DebugHudLines;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.world.World;
@@ -10,7 +9,7 @@ import org.codeberg.zenxarch.zombies.difficulty.DifficultyCalculations;
 import org.codeberg.zenxarch.zombies.difficulty.ExtendedDifficulty;
 import org.jetbrains.annotations.Nullable;
 
-public class ExtendedDifficultyDebugHudEntry implements DebugHudEntry {
+public class ExtendedDifficultyDebugHudEntry implements ZombieDebugHudEntry {
 
   @Override
   public void render(
@@ -26,7 +25,8 @@ public class ExtendedDifficultyDebugHudEntry implements DebugHudEntry {
     if (chunk == null || !world.isInHeightLimit(pos.getY())) return;
     var difficulty = new ExtendedDifficulty(serverWorld, pos);
 
-    lines.addLine(
+    addLine(
+        lines,
         String.format(
             "Extended Difficulty: %.2f // %.2f (Day %d,Hour %.1f)",
             difficulty.getLocalDifficulty(),
