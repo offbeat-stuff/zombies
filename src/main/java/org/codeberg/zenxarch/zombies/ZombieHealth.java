@@ -4,10 +4,12 @@ import static org.codeberg.zenxarch.zombies.ZombieGamerules.*;
 
 import com.mojang.serialization.Codec;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
+import net.fabricmc.fabric.api.attachment.v1.AttachmentSyncPredicate;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
 import net.fabricmc.fabric.api.entity.event.v1.ServerEntityCombatEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.minecraft.entity.attribute.EntityAttributes;
+import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.registry.tag.EntityTypeTags;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -18,7 +20,11 @@ public interface ZombieHealth {
   public static final AttachmentType<Integer> ZOMBIE_KILLS =
       AttachmentRegistry.create(
           Zombies.id("zombie_kills"),
-          builder -> builder.persistent(Codec.INT).initializer(() -> 0));
+          builder ->
+              builder
+                  .persistent(Codec.INT)
+                  .initializer(() -> 0)
+                  .syncWith(PacketCodecs.INTEGER, AttachmentSyncPredicate.targetOnly()));
 
   public static void registerEvents() {
     ServerEntityCombatEvents.AFTER_KILLED_OTHER_ENTITY.register(
