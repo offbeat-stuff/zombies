@@ -45,6 +45,29 @@ public class ZEnglishLangProvider extends FabricLanguageProvider {
         ZombieGamerules.ZOMBIE_TARGET_PLAYER_ON_SPAWN,
         "Zombie target player on spawn",
         "Should a zombie target the nearest player within 64 blocks on spawn");
+
+    addGameruleTranslation(
+        translationBuilder,
+        ZombieGamerules.DO_ZOMBIE_KILLS_BASED_HEARTS,
+        "Do Zombie kills for hearts",
+        "Enable the heart mechanic that grants hearts based on amount of zombie kills since last"
+            + " respawn");
+    addGameruleTranslation(
+        translationBuilder,
+        ZombieGamerules.ZOMBIE_KILLS_FOR_MAX_HEARTS,
+        "Zombies kills needed for max hearts",
+        "Number of zombies needed to kill to grant max hearts");
+    addGameruleTranslation(
+        translationBuilder,
+        ZombieGamerules.MIN_HEARTS,
+        "Minimum hearts",
+        "Initial hearts when no zombies are killed");
+
+    addGameruleTranslation(
+        translationBuilder,
+        ZombieGamerules.MAX_HEARTS,
+        "Maximum hearts",
+        "Max hearts when max zombies are killed");
   }
 
   public static void addGameruleTranslation(

@@ -1,12 +1,20 @@
 {
+  "gamerule.doZombieKillsBasedHearts": "Do Zombie kills for hearts",
+  "gamerule.doZombieKillsBasedHearts.description": "Enable the heart mechanic that grants hearts based on amount of zombie kills since last respawn",
   "gamerule.doZombieSpawning": "Spawn zombies",
   "gamerule.doZombieSpawning.description": "Controls whether to spawn zombies (modded) or not",
   "gamerule.fillZombieCapOverSeconds": "Fill zombie cap over seconds",
   "gamerule.fillZombieCapOverSeconds.description": "The mod tries to spawn the target amount of zombies (difficulty dependent) over this many seconds assuming 1% of positions are spawnable",
   "gamerule.maxZombies": "Maximum zombies per player",
   "gamerule.maxZombies.description": "The max number of zombies that can spawn in a 80 block radius around player",
+  "gamerule.zombieKillsForMaxHearts": "Zombies kills needed for max hearts",
+  "gamerule.zombieKillsForMaxHearts.description": "Number of zombies needed to kill to grant max hearts",
   "gamerule.zombieTargetPlayerOnSpawn": "Zombie target player on spawn",
   "gamerule.zombieTargetPlayerOnSpawn.description": "Should a zombie target the nearest player within 64 blocks on spawn",
+  "gamerule.zombies.maxHearts": "Maximum hearts",
+  "gamerule.zombies.maxHearts.description": "Max hearts when max zombies are killed",
+  "gamerule.zombies.minHearts": "Minimum hearts",
+  "gamerule.zombies.minHearts.description": "Initial hearts when no zombies are killed",
   "gamerule.zombiesBurnInDaylight": "Zombies burn in daylight",
   "gamerule.zombiesBurnInDaylight.description": "Should zombies burn in (and not spawn in) daylight. (only affects mod's zombies)"
 }
