@@ -1,42 +1,43 @@
 package org.codeberg.zenxarch.zombies.client;
 
-import java.util.Objects;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.command.OrderedRenderCommandQueue;
 import net.minecraft.client.render.entity.feature.FeatureRenderer;
 import net.minecraft.client.render.entity.feature.FeatureRendererContext;
+import net.minecraft.client.render.entity.model.EntityModelLayer;
 import net.minecraft.client.render.entity.model.ZombieEntityModel;
 import net.minecraft.client.render.entity.state.ZombieEntityRenderState;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.Identifier;
 import org.codeberg.zenxarch.mob_variants_api.variant.OverlayAttachment;
 
 public class ExtendedZombieEntityOverlayRenderer
     extends FeatureRenderer<ZombieEntityRenderState, ZombieEntityModel<ZombieEntityRenderState>> {
-  private Identifier texture;
-  private ZombieEntityModel<ZombieEntityRenderState> model;
-  private OverlayAttachment overlay;
+  private static Map<EntityModelLayer, Optional<ZombieEntityModel<ZombieEntityRenderState>>>
+      MODEL_CACHE = new HashMap<>();
 
   public ExtendedZombieEntityOverlayRenderer(
       FeatureRendererContext<ZombieEntityRenderState, ZombieEntityModel<ZombieEntityRenderState>>
           context) {
     super(context);
-    this.overlay = null;
   }
 
-  private void setOverlay(OverlayAttachment overlay) {
-    if (Objects.equals(this.overlay, overlay)) return;
-    this.overlay = overlay;
-    if (this.overlay == null) return;
-    this.texture = this.overlay.texture().texturePath();
+  private Optional<ZombieEntityModel<ZombieEntityRenderState>> addModelToCache(
+      OverlayAttachment overlay) {
+    var layer = OverlayClient.getEntityModelLayer(overlay);
+    if (MODEL_CACHE.containsKey(layer)) return MODEL_CACHE.get(layer);
+
+    ZombieEntityModel<ZombieEntityRenderState> model = null;
     try {
       var loader = MinecraftClient.getInstance().getLoadedEntityModels();
-      this.model =
-          new ZombieEntityModel<>(
-              loader.getModelPart(OverlayClient.getEntityModelLayer(this.overlay)));
+      model = new ZombieEntityModel<>(loader.getModelPart(layer));
     } catch (Exception e) {
-      this.model = null;
     }
+    var result = Optional.ofNullable(model);
+    MODEL_CACHE.put(layer, result);
+    return result;
   }
 
   @Override
@@ -47,9 +48,11 @@ public class ExtendedZombieEntityOverlayRenderer
       ZombieEntityRenderState state,
       float limbAngle,
       float limbDistance) {
-    ExtendedZombieEntityRenderer.OVERLAY.get(state).ifPresent(this::setOverlay);
-    if (this.overlay == null) return;
-    if (this.model == null) return;
-    render(this.model, this.texture, matrices, queue, light, state, -1, 1);
+    var overlay = ExtendedZombieEntityRenderer.OVERLAY.get(state);
+    if (overlay.isEmpty()) return;
+    var model = addModelToCache(overlay.get());
+    if (model.isEmpty()) return;
+    render(
+        model.get(), overlay.get().texture().texturePath(), matrices, queue, light, state, -1, 1);
   }
 }
