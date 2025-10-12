@@ -1,7 +1,6 @@
-package org.codeberg.zenxarch.zombies.client;
+package org.codeberg.zenxarch.zombies.client.debughud;
 
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.hud.debug.DebugHudEntry;
 import net.minecraft.client.gui.hud.debug.DebugHudLines;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
@@ -12,7 +11,7 @@ import org.codeberg.zenxarch.zombies.spawning.ZombieApocalypse;
 import org.codeberg.zenxarch.zombies.spawning.ZombieDensityMap;
 import org.jetbrains.annotations.Nullable;
 
-public class ZombieCountDebugHudEntry implements DebugHudEntry {
+public class ZombieCountDebugHudEntry implements ZombieDebugHudEntry {
 
   @Override
   public void render(
@@ -32,7 +31,7 @@ public class ZombieCountDebugHudEntry implements DebugHudEntry {
         SpawnerAttachments.getApocalypses(serverWorld).stream()
             .mapToInt(spawner -> getZombie(spawner, pos))
             .sum();
-    lines.addLine("Extended Zombies : " + zombies);
+    addLine(lines, "Extended Zombies : " + zombies);
   }
 
   private int getZombie(ZombieApocalypse apocalypse, BlockPos center) {
