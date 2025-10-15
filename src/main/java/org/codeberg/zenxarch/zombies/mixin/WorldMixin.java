@@ -8,6 +8,6 @@ import org.spongepowered.asm.mixin.Unique;
 public abstract class WorldMixin {
   @Unique
   public long method_8510() {
-    return ((World) (Object) this).method_75260();
+    return ((World) (Object) this).getTime();
   }
 }

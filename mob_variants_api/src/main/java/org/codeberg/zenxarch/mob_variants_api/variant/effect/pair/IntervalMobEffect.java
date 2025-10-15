@@ -22,7 +22,7 @@ public record IntervalMobEffect(int ticks, MobEffect effect) implements MobEffec
 
   @Override
   public void run(ServerWorld world, MobEntity mob, @Nullable LivingEntity adversery) {
-    if (world.method_75260() % ticks == 0) effect.run(world, mob, adversery);
+    if (world.getTime() % ticks == 0) effect.run(world, mob, adversery);
   }
 
   @Override
