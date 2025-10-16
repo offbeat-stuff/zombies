@@ -22,7 +22,7 @@ public final class DifficultyCategory {
       new Object2ObjectOpenHashMap<>();
 
   public static void addDifficultyEntry(Identifier id, DifficultyEntry entry) {
-    categories.getOrDefault(entry, new ObjectArrayList<>()).add(entry);
+    categories.computeIfAbsent(id, unused -> new ObjectArrayList<>()).add(entry);
   }
 
   public static final AttachmentType<CachedValue> DIFFICULTY =
