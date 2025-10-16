@@ -5,6 +5,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.BiFunction;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
@@ -21,8 +22,17 @@ public final class DifficultyCategory {
   private static final Map<Identifier, List<DifficultyEntry>> categories =
       new Object2ObjectOpenHashMap<>();
 
+  private static final List<DifficultyCalculationStage> stages = new ObjectArrayList<>();
+
+  public static record DifficultyCalculationStage(
+      Identifier id, BiFunction<Double, Double, Double> mapper) {}
+
   public static void addDifficultyEntry(Identifier id, DifficultyEntry entry) {
     categories.computeIfAbsent(id, unused -> new ObjectArrayList<>()).add(entry);
+  }
+
+  public static void addDifficultyStage(Identifier id, BiFunction<Double, Double, Double> mapper) {
+    stages.add(new DifficultyCalculationStage(id, mapper));
   }
 
   public static final AttachmentType<CachedValue> DIFFICULTY =
@@ -36,8 +46,9 @@ public final class DifficultyCategory {
 
   private static double calculateDifficultyWOCache(ServerWorld world, Chunk chunk) {
     var result = 1.0;
-    for (var category : categories.values()) result *= calculateDifficulty(world, chunk, category);
-    return result;
+    for (var stage : stages)
+      result = stage.mapper.apply(result, calculateDifficulty(world, chunk, stage.id));
+    return MathHelper.clamp(result, 0.0, 1.0);
   }
 
   private static double calculateDifficulty(
@@ -55,6 +66,7 @@ public final class DifficultyCategory {
   }
 
   public static double calculateDifficulty(ServerWorld world, Chunk chunk, Identifier id) {
+    if (!categories.containsKey(id)) return 1.0;
     return calculateDifficulty(world, chunk, categories.get(id));
   }
 
