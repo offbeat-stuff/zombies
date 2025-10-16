@@ -1,0 +1,45 @@
+package org.codeberg.zenxarch.zombies.difficulty;
+
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import java.util.List;
+import java.util.Map;
+import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.chunk.Chunk;
+
+public final class DifficultyCategory {
+  private DifficultyCategory() {
+    throw new IllegalStateException("Only static members");
+  }
+
+  private static final Map<Identifier, List<DifficultyEntry>> categories =
+      new Object2ObjectOpenHashMap<>();
+
+  public static void addDifficultyCategory(Identifier id, DifficultyEntry entry) {
+    categories.getOrDefault(entry, new ObjectArrayList<>()).add(entry);
+  }
+
+  public static double calculateDifficulty(ServerWorld world, Chunk chunk) {
+    var result = 1.0;
+    for (var category : categories.values()) result *= calculateDifficulty(world, chunk, category);
+    return result;
+  }
+
+  private static double calculateDifficulty(
+      ServerWorld world, Chunk chunk, List<DifficultyEntry> entries) {
+    var calculations =
+        entries.stream().map(entry -> new DifficultyCalculation(entry, world, chunk)).toList();
+    final var weightSum = calculations.stream().mapToInt(DifficultyCalculation::weight).sum();
+    return calculations.stream()
+        .mapToDouble(entry -> (entry.value * entry.weight) / weightSum)
+        .sum();
+  }
+
+  private static record DifficultyCalculation(double value, int weight) {
+    public DifficultyCalculation(DifficultyEntry entry, ServerWorld world, Chunk chunk) {
+      this(MathHelper.clamp(entry.calculate(world, chunk), 0.0, 1.0), entry.getWeight());
+    }
+  }
+}
