@@ -5,6 +5,7 @@ import net.minecraft.client.gui.hud.debug.DebugHudLines;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.WorldChunk;
+import org.codeberg.zenxarch.zombies.difficulty.DifficultyCategory;
 import org.codeberg.zenxarch.zombies.difficulty.ExtendedDifficulty;
 import org.codeberg.zenxarch.zombies.difficulty.category.TimeCategory;
 import org.jetbrains.annotations.Nullable;
@@ -33,5 +34,12 @@ public class ExtendedDifficultyDebugHudEntry implements ZombieDebugHudEntry {
             difficulty.getClampedLocalDifficulty(),
             (int) TimeCategory.getDays(serverWorld),
             TimeCategory.getHoursInhabited(serverWorld, chunk)));
+
+    for (var category : DifficultyCategory.getCategories())
+      addLine(
+          lines,
+          String.format(
+              "Difficulty Category id: %s // %.2f",
+              category, DifficultyCategory.calculateDifficulty(serverWorld, chunk, category)));
   }
 }

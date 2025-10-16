@@ -4,6 +4,7 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
@@ -56,6 +57,14 @@ public final class DifficultyCategory {
     return calculations.stream()
         .mapToDouble(entry -> (entry.value * entry.weight) / weightSum)
         .sum();
+  }
+
+  public static Set<Identifier> getCategories() {
+    return categories.keySet();
+  }
+
+  public static double calculateDifficulty(ServerWorld world, Chunk chunk, Identifier id) {
+    return calculateDifficulty(world, chunk, categories.get(id));
   }
 
   private static record DifficultyCalculation(double value, int weight) {
