@@ -11,9 +11,6 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.chunk.Chunk;
 import org.codeberg.zenxarch.zombies.Zombies;
-import org.codeberg.zenxarch.zombies.difficulty.category.KillCategory;
-import org.codeberg.zenxarch.zombies.difficulty.category.PlayerCategory;
-import org.codeberg.zenxarch.zombies.difficulty.category.TimeCategory;
 import org.codeberg.zenxarch.zombies.difficulty.entry.DifficultyEntry;
 
 public final class DifficultyCategory {
@@ -23,12 +20,6 @@ public final class DifficultyCategory {
 
   private static final Map<Identifier, List<DifficultyEntry>> categories =
       new Object2ObjectOpenHashMap<>();
-
-  static {
-    KillCategory.initialize();
-    PlayerCategory.initialize();
-    TimeCategory.initialize();
-  }
 
   public static void addDifficultyEntry(Identifier id, DifficultyEntry entry) {
     categories.getOrDefault(entry, new ObjectArrayList<>()).add(entry);
