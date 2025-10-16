@@ -81,13 +81,4 @@ public interface ItemAttributeUtils {
       RegistryEntry<EntityAttribute> attribute) {
     return getAttributeValue(type, item, attribute, EquipmentSlot.MAINHAND);
   }
-
-  public static double getZombieAttribute(Item item, RegistryEntry<EntityAttribute> attribute) {
-    return getAttributeValue(EntityType.ZOMBIE, item, attribute);
-  }
-
-  public static double getZombieAttribute(
-      Item item, RegistryEntry<EntityAttribute> attribute, EquipmentSlot slot) {
-    return getAttributeValue(EntityType.ZOMBIE, item, attribute, slot);
-  }
 }
