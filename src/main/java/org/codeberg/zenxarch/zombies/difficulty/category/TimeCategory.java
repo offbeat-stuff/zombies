@@ -41,10 +41,11 @@ public abstract class TimeCategory {
         }
       };
 
+  public static final Identifier DAYS_CATEGORY = Zombies.id("days");
   public static final Identifier TIME_CATEGORY = Zombies.id("time");
 
   public static void initialize() {
-    DifficultyCategory.addDifficultyEntry(TIME_CATEGORY, DAYS_ENTRY);
+    DifficultyCategory.addDifficultyEntry(DAYS_CATEGORY, DAYS_ENTRY);
     DifficultyCategory.addDifficultyEntry(TIME_CATEGORY, HOURS_ENTRY);
   }
 
