@@ -4,10 +4,12 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import java.util.List;
 import java.util.Map;
+import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.chunk.Chunk;
+import org.codeberg.zenxarch.zombies.Zombies;
 import org.codeberg.zenxarch.zombies.difficulty.category.KillCategory;
 import org.codeberg.zenxarch.zombies.difficulty.category.PlayerCategory;
 import org.codeberg.zenxarch.zombies.difficulty.category.TimeCategory;
@@ -31,9 +33,17 @@ public final class DifficultyCategory {
     categories.getOrDefault(entry, new ObjectArrayList<>()).add(entry);
   }
 
+  public static final AttachmentType<CachedValue> DIFFICULTY =
+      CachedValue.createAttachmentType(Zombies.id("difficulty"));
+
   public static double calculateDifficulty(ServerWorld world, Chunk chunk) {
+    if (chunk == null) return 1.0;
+    return CachedValue.getOrUpdateValue(
+        world, chunk, DIFFICULTY, DifficultyCategory::calculateDifficultyWOCache);
+  }
+
+  private static double calculateDifficultyWOCache(ServerWorld world, Chunk chunk) {
     var result = 1.0;
-    if (chunk == null) return result;
     for (var category : categories.values()) result *= calculateDifficulty(world, chunk, category);
     return result;
   }

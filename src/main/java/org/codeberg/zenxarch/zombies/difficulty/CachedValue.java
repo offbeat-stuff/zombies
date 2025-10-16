@@ -1,9 +1,11 @@
 package org.codeberg.zenxarch.zombies.difficulty;
 
 import java.util.function.BiFunction;
+import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentTarget;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.Identifier;
 
 public record CachedValue(double value, long lastUpdated) {
   public static <T extends AttachmentTarget> double getOrUpdateValue(
@@ -19,5 +21,9 @@ public record CachedValue(double value, long lastUpdated) {
     var newValue = value.apply(world, target);
     target.setAttached(attachment, new CachedValue(newValue, time));
     return newValue;
+  }
+
+  public static AttachmentType<CachedValue> createAttachmentType(Identifier id) {
+    return AttachmentRegistry.create(id.withPrefixedPath("cache/"));
   }
 }

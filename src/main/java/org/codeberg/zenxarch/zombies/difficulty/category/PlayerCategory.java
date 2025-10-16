@@ -2,7 +2,6 @@ package org.codeberg.zenxarch.zombies.difficulty.category;
 
 import java.util.function.ToDoubleFunction;
 import java.util.stream.Stream;
-import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.EntityType;
@@ -23,7 +22,7 @@ import org.codeberg.zenxarch.zombies.difficulty.entry.CachedPlayerBasedDifficult
 public interface PlayerCategory {
 
   private static AttachmentType<CachedValue> createCache(String id) {
-    return AttachmentRegistry.create(Zombies.id(id));
+    return CachedValue.createAttachmentType(Zombies.id(id));
   }
 
   public static final AttachmentType<CachedValue> WEAPON_DAMAGE =

@@ -1,6 +1,5 @@
 package org.codeberg.zenxarch.zombies.difficulty.category;
 
-import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
 import net.minecraft.entity.EntityType;
 import net.minecraft.registry.Registries;
@@ -17,7 +16,7 @@ import org.codeberg.zenxarch.zombies.difficulty.entry.CachedPlayerBasedDifficult
 
 public interface KillCategory {
   private static AttachmentType<CachedValue> createCache(String id) {
-    return AttachmentRegistry.create(Zombies.id(id));
+    return CachedValue.createAttachmentType(Zombies.id(id));
   }
 
   public static final AttachmentType<CachedValue> ZOMBIE_KILLS = createCache("kills/zombie_kills");
