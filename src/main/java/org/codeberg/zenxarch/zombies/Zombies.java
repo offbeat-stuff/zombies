@@ -6,6 +6,7 @@ import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.command.argument.serialize.ConstantArgumentSerializer;
 import net.minecraft.util.Identifier;
+import org.codeberg.zenxarch.zombies.difficulty.DefaultDifficultyCategories;
 import org.codeberg.zenxarch.zombies.loot_table.condition.ZombieLootConditionTypes;
 import org.codeberg.zenxarch.zombies.loot_table.function.ZombieLootFunctionTypes;
 import org.codeberg.zenxarch.zombies.loot_table.number_provider.ZombieLootNumberProviderTypes;
@@ -43,5 +44,6 @@ public class Zombies implements ModInitializer {
 
     SpawnerAttachments.initialize();
     ZombieHealth.registerEvents();
+    DefaultDifficultyCategories.initialize();
   }
 }
