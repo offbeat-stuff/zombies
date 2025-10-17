@@ -2,7 +2,7 @@ package org.codeberg.zenxarch.zombies.difficulty.category;
 
 import com.mojang.serialization.Codec;
 import it.unimi.dsi.fastutil.longs.LongArrayList;
-import java.util.List;
+import java.util.function.Function;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
@@ -37,12 +37,12 @@ public interface PlayerDeathsCategory {
   public static final long TIME_WINDOW = 20 * 60 * 15;
   public static final int MAX_DEATHS = 10;
 
-  public static final AttachmentType<List<Long>> DEATH_TIMESTAMPS =
+  public static final AttachmentType<LongArrayList> DEATH_TIMESTAMPS =
       AttachmentRegistry.create(
           Zombies.id("player_death_timestamps"),
           builder ->
               builder
-                  .persistent(Codec.list(Codec.LONG))
+                  .persistent(Codec.list(Codec.LONG).xmap(LongArrayList::new, Function.identity()))
                   .initializer(() -> new LongArrayList(MAX_DEATHS))
                   .copyOnDeath());
 
@@ -58,16 +58,16 @@ public interface PlayerDeathsCategory {
         player.getAttachedOrCreate(DEATH_TIMESTAMPS), player.getEntityWorld().getTime());
   }
 
-  private static int trimDeaths(List<Long> deaths, long time) {
+  private static int trimDeaths(LongArrayList deaths, long time) {
     var deathCount = countRecentDeaths(deaths, time);
     while (deaths.size() > deathCount) deaths.removeFirst();
     return deathCount;
   }
 
-  private static int countRecentDeaths(List<Long> deaths, long time) {
+  private static int countRecentDeaths(LongArrayList deaths, long time) {
     var size = Math.min(deaths.size(), MAX_DEATHS);
     for (int i = 0; i < size; i++)
-      if ((time - deaths.get(deaths.size() - 1 - i)) > TIME_WINDOW) return i;
+      if ((time - deaths.getLong(deaths.size() - 1 - i)) > TIME_WINDOW) return i;
     return size;
   }
 
