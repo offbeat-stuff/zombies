@@ -38,12 +38,17 @@ public interface PlayerDeathsCategory {
   public static final int MAX_DEATHS = 10;
 
   public static final AttachmentType<List<Long>> DEATH_TIMESTAMPS =
-      AttachmentRegistry.createPersistent(
-          Zombies.id("player_death_timestamps"), Codec.list(Codec.LONG));
+      AttachmentRegistry.create(
+          Zombies.id("player_death_timestamps"),
+          builder ->
+              builder
+                  .persistent(Codec.list(Codec.LONG))
+                  .initializer(() -> new LongArrayList(MAX_DEATHS))
+                  .copyOnDeath());
 
   private static void recordPlayerDeath(ServerPlayerEntity player, DamageSource source) {
     var time = player.getEntityWorld().getTime();
-    var deaths = player.getAttachedOrCreate(DEATH_TIMESTAMPS, () -> new LongArrayList(MAX_DEATHS));
+    var deaths = player.getAttachedOrCreate(DEATH_TIMESTAMPS);
     deaths.add(time);
     trimDeaths(deaths, time);
   }
