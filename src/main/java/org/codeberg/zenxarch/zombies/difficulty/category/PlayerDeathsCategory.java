@@ -65,11 +65,10 @@ public interface PlayerDeathsCategory {
   }
 
   private static int countRecentDeaths(List<Long> deaths, long time) {
-    for (int i = 1; i <= deaths.size(); i++) {
-      if (i >= MAX_DEATHS) return i;
-      if ((time - deaths.get(deaths.size() - i)) > TIME_WINDOW) return i;
-    }
-    return deaths.size();
+    var size = Math.min(deaths.size(), MAX_DEATHS);
+    for (int i = 0; i < size; i++)
+      if ((time - deaths.get(deaths.size() - 1 - i)) > TIME_WINDOW) return i;
+    return size;
   }
 
   private static double mapDeathsToDifficulty(int deathCount) {
